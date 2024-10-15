@@ -27,7 +27,7 @@ import { z } from 'zod';
 const SIPCalculatorSchema = z.object({
 	monthlyInvestment: z.coerce
 		.number()
-		.min(0, { message: 'Monthly Investment must be non-negative' }),
+		.min(1, { message: 'Monthly Investment cannot be less than 1' }),
 	annualStepUpPercent: z.coerce.number().min(-99, {
 		message: 'Annual Step-Up Percent cannot be less than or equal to -100%',
 	}),
@@ -36,7 +36,7 @@ const SIPCalculatorSchema = z.object({
 	}),
 	numberOfYears: z.coerce
 		.number()
-		.min(0, { message: 'Investment Duration cannot be less than 0 years' }),
+		.min(1, { message: 'Investment Duration cannot be less than 1 year' }),
 });
 
 export default function SIPCalculatorCard({
