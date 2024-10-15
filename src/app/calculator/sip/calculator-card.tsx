@@ -4,14 +4,31 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import {
+	ChartConfig,
+	ChartContainer,
+	ChartTooltip,
+	ChartTooltipContent,
+} from '@/components/ui/chart';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
+import { Pie, PieChart } from 'recharts';
+
+const chartConfig = {
+	invested: {
+		label: 'Invested',
+		color: 'hsl(var(--chart-6))',
+	},
+	interest: {
+		label: 'Interest',
+		color: 'hsl(var(--chart-2))',
+	},
+} satisfies ChartConfig;
 
 export default function SIPCalculatorCard({
 	id,
@@ -30,6 +47,23 @@ export default function SIPCalculatorCard({
 	const maturityAmount =
 		investedAmount * Math.pow(1 + annualInterestRate / 100, investmentDuration);
 	const interestAmount = maturityAmount - investedAmount;
+
+	const chartData = [
+		{
+			amountType: 'invested',
+			amountValue: investedAmount,
+			amountValuePercent:
+				(investedAmount / Math.max(investedAmount, maturityAmount)) * 100,
+			fill: 'var(--color-invested)',
+		},
+		{
+			amountType: 'interest',
+			amountValue: interestAmount,
+			amountValuePercent:
+				(interestAmount / Math.max(investedAmount, maturityAmount)) * 100,
+			fill: 'var(--color-interest)',
+		},
+	];
 
 	return (
 		<Card className='mx-auto mt-10 p-2 rounded-lg shadow-md w-full'>
@@ -73,9 +107,9 @@ export default function SIPCalculatorCard({
 					</div>
 				</div>
 			</CardContent>
-			<CardFooter>
-				{maturityAmount !== 0 && (
-					<div className='p-4 bg-green-100 rounded-md w-full'>
+			{maturityAmount !== 0 && (
+				<>
+					<div className='mx-6 p-4 bg-green-100 rounded-md w-auto'>
 						<h2 className='text-lg font-semibold text-green-700'>
 							Maturity Amount: {maturityAmount.toFixed(2)}
 						</h2>
@@ -86,8 +120,47 @@ export default function SIPCalculatorCard({
 							Total Interest Earned: {interestAmount.toFixed(2)}
 						</p>
 					</div>
-				)}
-			</CardFooter>
+					<ChartContainer config={chartConfig} className='mx-auto'>
+						<PieChart>
+							<ChartTooltip
+								cursor={false}
+								content={<ChartTooltipContent hideLabel />}
+							/>
+							<Pie
+								data={chartData}
+								dataKey='amountValue'
+								nameKey='amountType'
+								label={({ payload, ...props }) => {
+									return (
+										<text
+											cx={props.cx}
+											cy={props.cy}
+											x={props.x}
+											y={props.y}
+											textAnchor={props.textAnchor}
+											dominantBaseline={props.dominantBaseline}
+											fill='hsla(var(--foreground))'>
+											<tspan x={props.x} dy='0'>
+												{`${
+													chartConfig[
+														payload.amountType as keyof typeof chartConfig
+													]?.label
+												}`}
+											</tspan>
+											<tspan x={props.x} dy='1.2em'>
+												{`${payload.amountValue.toFixed(2)}`}
+											</tspan>
+											<tspan x={props.x} dy='1.2em'>
+												{`(${payload.amountValuePercent.toFixed(2)}%)`}
+											</tspan>
+										</text>
+									);
+								}}
+							/>
+						</PieChart>
+					</ChartContainer>
+				</>
+			)}
 		</Card>
 	);
 }
