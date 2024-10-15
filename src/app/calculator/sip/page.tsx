@@ -1,31 +1,30 @@
 'use client';
 import { useState } from 'react';
 import SIPCalculator from './calculator-card';
+import { Button } from '@/components/ui/button';
+import { v7 } from 'uuid';
 
 export default function SipPage() {
-	const [calculators, setCalculators] = useState([{ id: 1 }]);
+	const [calculators, setCalculators] = useState([v7()]);
 
 	const addCalculator = () => {
-		setCalculators([...calculators, { id: calculators.length + 1 }]);
+		setCalculators([...calculators, v7()]);
 	};
 
-	const removeCalculator = (id: number) => {
-		setCalculators(calculators.filter((calculator) => calculator.id !== id));
+	const removeCalculator = (id: string) => {
+		setCalculators(calculators.filter((calculator) => calculator !== id));
 	};
 
 	return (
-		<div className='container mx-auto p-4'>
+		<div className='container mx-auto p-2'>
 			<h1 className='text-2xl font-bold mb-4'>SIP Calculator Page</h1>
-			<button
-				onClick={addCalculator}
-				className='mb-4 p-2 bg-blue-500 text-white rounded'>
-				Add Calculator
-			</button>
+			<Button onClick={addCalculator}>Add Calculator</Button>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-				{calculators.map((calculator) => (
+				{calculators.map((id, index) => (
 					<SIPCalculator
-						key={calculator.id}
-						id={calculator.id}
+						key={id}
+						id={id}
+						index={index}
 						removeCalculator={removeCalculator}
 					/>
 				))}

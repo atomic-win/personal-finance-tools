@@ -1,89 +1,93 @@
 'use client';
+import { Button } from '@/components/ui/button';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 
-const SIPCalculator = () => {
-	const [monthlyInvestment, setMonthlyInvestment] = useState('');
-	const [annualInterestRate, setAnnualInterestRate] = useState('');
-	const [investmentDuration, setInvestmentDuration] = useState('');
-	const [maturityAmount, setMaturityAmount] = useState('');
-	const [investedAmount, setInvestedAmount] = useState('');
-	const [interestAmount, setInterestAmount] = useState('');
+export default function SIPCalculatorCard({
+	id,
+	index,
+	removeCalculator,
+}: {
+	id: string;
+	index: number;
+	removeCalculator: (id: string) => void;
+}) {
+	const [monthlyInvestment, setMonthlyInvestment] = useState(0);
+	const [annualInterestRate, setAnnualInterestRate] = useState(0);
+	const [investmentDuration, setInvestmentDuration] = useState(0);
 
-	const calculateSIP = (e: { preventDefault: () => void }) => {
-		e.preventDefault();
-		const P = parseFloat(monthlyInvestment);
-		const r = parseFloat(annualInterestRate) / 12 / 100;
-		const n = parseInt(investmentDuration) * 12;
-
-		const A = P * (((1 + r) ** n - 1) / r) * (1 + r);
-		const totalInvested = P * n;
-		const totalInterest = A - totalInvested;
-
-		setMaturityAmount(A.toFixed(2));
-		setInvestedAmount(totalInvested.toFixed(2));
-		setInterestAmount(totalInterest.toFixed(2));
-	};
+	const investedAmount = monthlyInvestment * 12 * investmentDuration;
+	const maturityAmount =
+		investedAmount * Math.pow(1 + annualInterestRate / 100, investmentDuration);
+	const interestAmount = maturityAmount - investedAmount;
 
 	return (
-		<div className='max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md'>
-			<form onSubmit={calculateSIP} className='space-y-4'>
-				<div>
-					<label className='block text-sm font-medium text-gray-700'>
-						Monthly Investment Amount:
-					</label>
-					<input
-						type='number'
-						value={monthlyInvestment}
-						onChange={(e) => setMonthlyInvestment(e.target.value)}
-						required
-						className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-					/>
+		<Card className='mx-auto mt-10 p-2 rounded-lg shadow-md w-full'>
+			<CardHeader>
+				<div className='flex items-center justify-between'>
+					<CardTitle>SIP Calculator {index + 1}</CardTitle>
+					<Button onClick={() => removeCalculator(id)}>
+						<Trash2 className='size-4' />
+					</Button>
 				</div>
-				<div>
-					<label className='block text-sm font-medium text-gray-700'>
-						Annual Interest Rate (%):
-					</label>
-					<input
-						type='number'
-						value={annualInterestRate}
-						onChange={(e) => setAnnualInterestRate(e.target.value)}
-						required
-						className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-					/>
+				<CardDescription>Calculate your SIP investments</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<div className='grid w-full items-center gap-4'>
+					<div className='flex flex-col space-y-1.5'>
+						<Label htmlFor='name'>Monthly Installment</Label>
+						<Input
+							id='monthly-installment'
+							placeholder='0'
+							type='number'
+							onChange={(e) => setMonthlyInvestment(+e.target.value)}
+						/>
+					</div>
+					<div className='flex flex-col space-y-1.5'>
+						<Label htmlFor='interest'>Annual Interest Rate</Label>
+						<Input
+							id='interest'
+							placeholder='0'
+							type='number'
+							onChange={(e) => setAnnualInterestRate(+e.target.value)}
+						/>
+					</div>
+					<div className='flex flex-col space-y-1.5'>
+						<Label htmlFor='duration'>Investment Duration (Years)</Label>
+						<Input
+							id='duration'
+							placeholder='0'
+							type='number'
+							onChange={(e) => setInvestmentDuration(+e.target.value)}
+						/>
+					</div>
 				</div>
-				<div>
-					<label className='block text-sm font-medium text-gray-700'>
-						Investment Duration (years):
-					</label>
-					<input
-						type='number'
-						value={investmentDuration}
-						onChange={(e) => setInvestmentDuration(e.target.value)}
-						required
-						className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-					/>
-				</div>
-				<button
-					type='submit'
-					className='w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
-					Calculate
-				</button>
-			</form>
-			{maturityAmount && (
-				<div className='mt-6 p-4 bg-green-100 rounded-md'>
-					<h2 className='text-lg font-semibold text-green-700'>
-						Maturity Amount: {maturityAmount}
-					</h2>
-					<p className='text-sm text-green-700'>
-						Total Invested Amount: {investedAmount}
-					</p>
-					<p className='text-sm text-green-700'>
-						Total Interest Earned: {interestAmount}
-					</p>
-				</div>
-			)}
-		</div>
+			</CardContent>
+			<CardFooter>
+				{maturityAmount !== 0 && (
+					<div className='p-4 bg-green-100 rounded-md w-full'>
+						<h2 className='text-lg font-semibold text-green-700'>
+							Maturity Amount: {maturityAmount.toFixed(2)}
+						</h2>
+						<p className='text-sm text-green-700'>
+							Total Invested Amount: {investedAmount.toFixed(2)}
+						</p>
+						<p className='text-sm text-green-700'>
+							Total Interest Earned: {interestAmount.toFixed(2)}
+						</p>
+					</div>
+				)}
+			</CardFooter>
+		</Card>
 	);
-};
-
-export default SIPCalculator;
+}
