@@ -10,6 +10,7 @@ import {
 	NavigationMenuList,
 	NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
+import Link from 'next/link';
 
 const inter = Inter({
 	subsets: ['latin'],
@@ -29,18 +30,18 @@ export default function RootLayout({
 					inter.variable
 				)}>
 				<header className='flex py-2 border-b bg-card gap-2'>
-					<div className='flex items-center font-semibold px-8'>
+					<Link href='/' className='flex items-center font-semibold px-8'>
 						<DollarSignIcon className='size-6' />
 						<span>Personal Finance Tools</span>
-					</div>
+					</Link>
 					<NavigationMenu>
 						<NavigationMenuList>
 							<NavigationMenuItem>
 								<NavigationMenuTrigger>Calculator</NavigationMenuTrigger>
 								<NavigationMenuContent>
 									<ul className='gap-2'>
-										<ListItem title='SIP Calculator' />
-										<ListItem title='SWP Calculator' />
+										<ListItem title='SIP Calculator' href='/calculator/sip' />
+										<ListItem title='SWP Calculator' href='/calculator/swp' />
 									</ul>
 								</NavigationMenuContent>
 							</NavigationMenuItem>
@@ -53,16 +54,17 @@ export default function RootLayout({
 	);
 }
 
-function ListItem({ title }: { title: string }) {
+function ListItem({ title, href }: { title: string; href: string }) {
 	return (
 		<li>
-			<NavigationMenuLink href='/calculator/compound-interest'>
-				<a
+			<NavigationMenuLink>
+				<Link
+					href={href}
 					className={
 						'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
 					}>
 					<div className='font-medium whitespace-nowrap'>{title}</div>
-				</a>
+				</Link>
 			</NavigationMenuLink>
 		</li>
 	);
