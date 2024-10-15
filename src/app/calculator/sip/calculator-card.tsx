@@ -33,10 +33,12 @@ const chartConfig = {
 export default function SIPCalculatorCard({
 	id,
 	index,
+	canRemove,
 	removeCalculator,
 }: {
 	id: string;
 	index: number;
+	canRemove: boolean;
 	removeCalculator: (id: string) => void;
 }) {
 	const [monthlyInvestment, setMonthlyInvestment] = useState(0);
@@ -72,9 +74,11 @@ export default function SIPCalculatorCard({
 			<CardHeader>
 				<div className='flex items-center justify-between'>
 					<CardTitle>SIP Calculator {index + 1}</CardTitle>
-					<Button onClick={() => removeCalculator(id)}>
-						<Trash2 className='size-4' />
-					</Button>
+					{canRemove && (
+						<Button onClick={() => removeCalculator(id)}>
+							<Trash2 className='size-4' />
+						</Button>
+					)}
 				</div>
 				<CardDescription>Calculate your SIP investments</CardDescription>
 			</CardHeader>

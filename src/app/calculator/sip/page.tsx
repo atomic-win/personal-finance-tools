@@ -17,7 +17,7 @@ export default function SipPage() {
 
 	return (
 		<div className='container mx-auto p-2'>
-			<h1 className='text-2xl font-bold mb-4'>SIP Calculator Page</h1>
+			<h1 className='text-2xl font-bold mb-4'>SIP Calculator</h1>
 			<Button onClick={addCalculator}>Add Calculator</Button>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{calculators.map((id, index) => (
@@ -25,6 +25,7 @@ export default function SipPage() {
 						key={id}
 						id={id}
 						index={index}
+						canRemove={calculators.length > 1 || index !== 0}
 						removeCalculator={removeCalculator}
 					/>
 				))}
