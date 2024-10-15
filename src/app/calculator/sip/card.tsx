@@ -7,29 +7,11 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
-import {
-	ChartConfig,
-	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
-} from '@/components/ui/chart';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { formattedCurrencyAmount } from '@/lib/utils';
 import { Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
-import { Pie, PieChart } from 'recharts';
-
-const chartConfig = {
-	invested: {
-		label: 'Invested Amount',
-		color: 'hsl(var(--chart-6))',
-	},
-	returns: {
-		label: 'Expected Returns',
-		color: 'hsl(var(--chart-2))',
-	},
-} satisfies ChartConfig;
 
 export default function SIPCalculatorCard({
 	id,
@@ -43,42 +25,32 @@ export default function SIPCalculatorCard({
 	removeCalculator: (id: string) => void;
 }) {
 	const [monthlyInvestment, setMonthlyInvestment] = useState(0);
+	const [annualStepUpPercent, setAnnualStepUpPercent] = useState(0);
 	const [annualInterestPercent, setAnnualInterestPercent] = useState(0);
 	const [numberOfYears, setNumberOfYears] = useState(0);
 
-	const numberOfMonths = numberOfYears * 12;
-	const monthlyInterestRate = annualInterestPercent / 100 / 12;
+	const investedAmount = calculateInvestedAmount(
+		monthlyInvestment,
+		annualStepUpPercent,
+		numberOfYears
+	);
 
-	const investedAmount = numberOfMonths * monthlyInvestment;
-	const expectedMaturityAmount =
-		monthlyInterestRate === 0
-			? investedAmount
-			: (monthlyInvestment *
-					(Math.pow(1 + monthlyInterestRate, numberOfMonths) - 1)) /
-			  monthlyInterestRate;
+	const expectedMaturityAmount = calculateMaturityAmount(
+		monthlyInvestment,
+		annualInterestPercent,
+		annualStepUpPercent,
+		numberOfYears
+	);
+
 	const expectedReturns = expectedMaturityAmount - investedAmount;
 
-	const chartData = [
-		{
-			amountType: 'invested',
-			amountValue: investedAmount,
-			amountValuePercent:
-				(investedAmount / Math.max(investedAmount, expectedMaturityAmount)) *
-				100,
-			fill: 'var(--color-invested)',
-		},
-		{
-			amountType: 'returns',
-			amountValue: expectedReturns,
-			amountValuePercent:
-				(expectedReturns / Math.max(investedAmount, expectedMaturityAmount)) *
-				100,
-			fill: 'var(--color-returns)',
-		},
-	];
+	const investedAmountPercent =
+		(investedAmount / Math.max(1, expectedMaturityAmount)) * 100;
+	const expectedReturnsPercent =
+		(expectedReturns / Math.max(1, expectedMaturityAmount)) * 100;
 
 	return (
-		<Card className='mx-auto mt-10 p-2 rounded-lg shadow-md w-full'>
+		<Card className='mx-auto my-10 p-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<div className='flex items-center justify-between'>
 					<CardTitle>SIP Calculator {index + 1}</CardTitle>
@@ -111,6 +83,15 @@ export default function SIPCalculatorCard({
 						/>
 					</div>
 					<div className='flex flex-col space-y-1.5'>
+						<Label htmlFor='step-up'>Annual Step-Up (%)</Label>
+						<Input
+							id='step-up'
+							placeholder='0'
+							type='number'
+							onChange={(e) => setAnnualStepUpPercent(+e.target.value)}
+						/>
+					</div>
+					<div className='flex flex-col space-y-1.5'>
 						<Label htmlFor='duration'>Investment Duration (Years)</Label>
 						<Input
 							id='duration'
@@ -122,59 +103,56 @@ export default function SIPCalculatorCard({
 				</div>
 			</CardContent>
 			{expectedMaturityAmount !== 0 && (
-				<>
-					<div className='mx-6 p-4 bg-green-100 rounded-md w-auto'>
-						<h2 className='text-lg font-semibold text-green-700'>
-							Expected Maturity Amount:{' '}
-							{formattedCurrencyAmount(expectedMaturityAmount)}
-						</h2>
-						<p className='text-sm text-green-700'>
-							Total Invested Amount: {formattedCurrencyAmount(investedAmount)}
-						</p>
-						<p className='text-sm text-green-700'>
-							Expected Returns: {formattedCurrencyAmount(expectedReturns)}
-						</p>
-					</div>
-					<ChartContainer config={chartConfig} className='mx-auto'>
-						<PieChart>
-							<ChartTooltip
-								cursor={false}
-								content={<ChartTooltipContent hideLabel />}
-							/>
-							<Pie
-								data={chartData}
-								dataKey='amountValue'
-								nameKey='amountType'
-								label={({ payload, ...props }) => {
-									return (
-										<text
-											cx={props.cx}
-											cy={props.cy}
-											x={props.x}
-											y={props.y}
-											textAnchor={props.textAnchor}
-											dominantBaseline={props.dominantBaseline}
-											fill='hsla(var(--foreground))'>
-											<tspan x={props.x} dy='0'>
-												{`${
-													chartConfig[
-														payload.amountType as keyof typeof chartConfig
-													]?.label
-												}`}
-											</tspan>
-											<tspan x={props.x} dy='1.2em'>
-												{`${formattedCurrencyAmount(
-													payload.amountValue
-												)} (${payload.amountValuePercent.toFixed(2)}%)`}
-											</tspan>
-										</text>
-									);
-								}}
-							/>
-						</PieChart>
-					</ChartContainer>
-				</>
+				<div className='mx-6 mb-6 p-4 bg-green-100 rounded-md w-auto'>
+					<h2 className='text-lg font-semibold text-green-700'>
+						Expected Maturity Amount:{' '}
+						{formattedCurrencyAmount(expectedMaturityAmount)}
+					</h2>
+					<p className='text-sm text-green-700'>
+						Total Invested Amount: {formattedCurrencyAmount(investedAmount)} (
+						{investedAmountPercent.toFixed(2)}%)
+					</p>
+					<p className='text-sm text-green-700'>
+						Expected Returns: {formattedCurrencyAmount(expectedReturns)} (
+						{expectedReturnsPercent.toFixed(2)}%)
+					</p>
+				</div>
 			)}
 		</Card>
 	);
+}
+
+function calculateInvestedAmount(
+	monthlyInvestment: number,
+	annualStepUpPercent: number,
+	numberOfYears: number
+) {
+	let investedAmount = 0;
+	for (let year = 0; year < numberOfYears; ++year) {
+		investedAmount += monthlyInvestment * 12;
+		monthlyInvestment *= 1 + annualStepUpPercent / 100;
+	}
+	return investedAmount;
+}
+
+function calculateMaturityAmount(
+	monthlyInvestment: number,
+	annualInterestPercent: number,
+	annualStepUpPercent: number,
+	numberOfYears: number
+) {
+	const monthlyInterestRate =
+		Math.pow(1 + annualInterestPercent / 100, 1 / 12) - 1;
+
+	let maturityAmount = 0;
+
+	for (let year = 0; year < numberOfYears; ++year) {
+		for (let month = 0; month < 12; ++month) {
+			maturityAmount += monthlyInvestment;
+			monthlyInvestment *= 1 + monthlyInterestRate;
+		}
+		monthlyInvestment *= 1 + annualStepUpPercent / 100;
+	}
+
+	return maturityAmount;
 }
