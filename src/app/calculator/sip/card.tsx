@@ -42,12 +42,19 @@ export default function SIPCalculatorCard({
 	removeCalculator: (id: string) => void;
 }) {
 	const [monthlyInvestment, setMonthlyInvestment] = useState(0);
-	const [annualInterestRate, setAnnualInterestRate] = useState(0);
-	const [investmentDuration, setInvestmentDuration] = useState(0);
+	const [annualInterestPercent, setAnnualInterestPercent] = useState(0);
+	const [numberOfYears, setNumberOfYears] = useState(0);
 
-	const investedAmount = monthlyInvestment * 12 * investmentDuration;
+	const numberOfMonths = numberOfYears * 12;
+	const monthlyInterestRate = annualInterestPercent / 100 / 12;
+
+	const investedAmount = numberOfMonths * monthlyInvestment;
 	const expectedMaturityAmount =
-		investedAmount * Math.pow(1 + annualInterestRate / 100, investmentDuration);
+		monthlyInterestRate === 0
+			? investedAmount
+			: (monthlyInvestment *
+					(Math.pow(1 + monthlyInterestRate, numberOfMonths) - 1)) /
+			  monthlyInterestRate;
 	const expectedReturns = expectedMaturityAmount - investedAmount;
 
 	const chartData = [
@@ -94,12 +101,12 @@ export default function SIPCalculatorCard({
 						/>
 					</div>
 					<div className='flex flex-col space-y-1.5'>
-						<Label htmlFor='interest'>Annual Interest Rate</Label>
+						<Label htmlFor='interest'>Annual Interest Rate (%)</Label>
 						<Input
 							id='interest'
 							placeholder='0'
 							type='number'
-							onChange={(e) => setAnnualInterestRate(+e.target.value)}
+							onChange={(e) => setAnnualInterestPercent(+e.target.value)}
 						/>
 					</div>
 					<div className='flex flex-col space-y-1.5'>
@@ -108,7 +115,7 @@ export default function SIPCalculatorCard({
 							id='duration'
 							placeholder='0'
 							type='number'
-							onChange={(e) => setInvestmentDuration(+e.target.value)}
+							onChange={(e) => setNumberOfYears(+e.target.value)}
 						/>
 					</div>
 				</div>
