@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/chart';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { formattedCurrencyAmount } from '@/lib/utils';
 import { Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { Pie, PieChart } from 'recharts';
@@ -124,13 +125,14 @@ export default function SIPCalculatorCard({
 				<>
 					<div className='mx-6 p-4 bg-green-100 rounded-md w-auto'>
 						<h2 className='text-lg font-semibold text-green-700'>
-							Expected Maturity Amount: {expectedMaturityAmount.toFixed(2)}
+							Expected Maturity Amount:{' '}
+							{formattedCurrencyAmount(expectedMaturityAmount)}
 						</h2>
 						<p className='text-sm text-green-700'>
-							Total Invested Amount: {investedAmount.toFixed(2)}
+							Total Invested Amount: {formattedCurrencyAmount(investedAmount)}
 						</p>
 						<p className='text-sm text-green-700'>
-							Expected Returns: {expectedReturns.toFixed(2)}
+							Expected Returns: {formattedCurrencyAmount(expectedReturns)}
 						</p>
 					</div>
 					<ChartContainer config={chartConfig} className='mx-auto'>
@@ -161,8 +163,8 @@ export default function SIPCalculatorCard({
 												}`}
 											</tspan>
 											<tspan x={props.x} dy='1.2em'>
-												{`${payload.amountValue.toFixed(
-													2
+												{`${formattedCurrencyAmount(
+													payload.amountValue
 												)} (${payload.amountValuePercent.toFixed(2)}%)`}
 											</tspan>
 										</text>
