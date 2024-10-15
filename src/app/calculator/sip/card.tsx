@@ -7,11 +7,37 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import {
+	Form,
+	FormControl,
+	FormDescription,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { formattedCurrencyAmount } from '@/lib/utils';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+const SIPCalculatorSchema = z.object({
+	monthlyInvestment: z.coerce
+		.number()
+		.min(0, { message: 'Monthly Investment must be non-negative' }),
+	annualStepUpPercent: z.coerce.number().min(-99, {
+		message: 'Annual Step-Up Percent cannot be less than or equal to -100%',
+	}),
+	annualInterestPercent: z.coerce.number().min(-99, {
+		message: 'Annual Interest Percent cannot be less than or equal to -100%',
+	}),
+	numberOfYears: z.coerce
+		.number()
+		.min(0, { message: 'Investment Duration cannot be less than 0 years' }),
+});
 
 export default function SIPCalculatorCard({
 	id,
@@ -24,30 +50,64 @@ export default function SIPCalculatorCard({
 	canRemove: boolean;
 	removeCalculator: (id: string) => void;
 }) {
-	const [monthlyInvestment, setMonthlyInvestment] = useState(0);
-	const [annualStepUpPercent, setAnnualStepUpPercent] = useState(0);
-	const [annualInterestPercent, setAnnualInterestPercent] = useState(0);
-	const [numberOfYears, setNumberOfYears] = useState(0);
+	const form = useForm<z.infer<typeof SIPCalculatorSchema>>({
+		resolver: zodResolver(SIPCalculatorSchema),
+		defaultValues: {
+			monthlyInvestment: 500,
+			annualStepUpPercent: 10,
+			annualInterestPercent: 10,
+			numberOfYears: 10,
+		},
+	});
 
-	const investedAmount = calculateInvestedAmount(
+	const [investedAmount, setInvestedAmount] = React.useState(0);
+	const [expectedMaturityAmount, setExpectedMaturityAmount] = React.useState(0);
+	const [expectedReturns, setExpectedReturns] = React.useState(0);
+	const [investedAmountPercent, setInvestedAmountPercent] = React.useState(0);
+	const [expectedReturnsPercent, setExpectedReturnsPercent] = React.useState(0);
+
+	const monthlyInvestment = Number(form.watch('monthlyInvestment'));
+	const annualStepUpPercent = Number(form.watch('annualStepUpPercent'));
+	const annualInterestPercent = Number(form.watch('annualInterestPercent'));
+	const numberOfYears = Number(form.watch('numberOfYears'));
+
+	React.useEffect(() => {
+		const invested = calculateInvestedAmount(
+			monthlyInvestment,
+			annualStepUpPercent,
+			numberOfYears
+		);
+
+		const maturity = calculateMaturityAmount(
+			monthlyInvestment,
+			annualInterestPercent,
+			annualStepUpPercent,
+			numberOfYears
+		);
+
+		const returns = maturity - invested;
+
+		console.log({
+			monthlyInvestment,
+			annualStepUpPercent,
+			annualInterestPercent,
+			numberOfYears,
+			invested,
+			maturity,
+			returns,
+		});
+
+		setInvestedAmount(invested);
+		setExpectedMaturityAmount(maturity);
+		setExpectedReturns(returns);
+		setInvestedAmountPercent((invested / Math.max(1, maturity)) * 100);
+		setExpectedReturnsPercent((returns / Math.max(1, maturity)) * 100);
+	}, [
 		monthlyInvestment,
 		annualStepUpPercent,
-		numberOfYears
-	);
-
-	const expectedMaturityAmount = calculateMaturityAmount(
-		monthlyInvestment,
 		annualInterestPercent,
-		annualStepUpPercent,
-		numberOfYears
-	);
-
-	const expectedReturns = expectedMaturityAmount - investedAmount;
-
-	const investedAmountPercent =
-		(investedAmount / Math.max(1, expectedMaturityAmount)) * 100;
-	const expectedReturnsPercent =
-		(expectedReturns / Math.max(1, expectedMaturityAmount)) * 100;
+		numberOfYears,
+	]);
 
 	return (
 		<Card className='mx-auto my-10 p-2 rounded-lg shadow-md w-full'>
@@ -63,61 +123,91 @@ export default function SIPCalculatorCard({
 				<CardDescription>Calculate your SIP investments</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<div className='grid w-full items-center gap-4'>
-					<div className='flex flex-col space-y-1.5'>
-						<Label htmlFor='name'>Monthly Installment</Label>
-						<Input
-							id='monthly-installment'
-							placeholder='0'
-							type='number'
-							onChange={(e) => setMonthlyInvestment(+e.target.value)}
+				<Form {...form}>
+					<form onChange={form.handleSubmit(() => {})} className='space-y-4'>
+						<FormField
+							control={form.control}
+							name='monthlyInvestment'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Monthly Installment</FormLabel>
+									<FormControl>
+										<Input placeholder='0' {...field} />
+									</FormControl>
+									<FormDescription>
+										Enter the monthly installment
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
-					</div>
-					<div className='flex flex-col space-y-1.5'>
-						<Label htmlFor='interest'>Annual Interest Rate (%)</Label>
-						<Input
-							id='interest'
-							placeholder='0'
-							type='number'
-							onChange={(e) => setAnnualInterestPercent(+e.target.value)}
+						<FormField
+							control={form.control}
+							name='annualInterestPercent'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Annual Interest Rate (%)</FormLabel>
+									<FormControl>
+										<Input placeholder='0' {...field} />
+									</FormControl>
+									<FormDescription>
+										Enter the annual interest rate
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
-					</div>
-					<div className='flex flex-col space-y-1.5'>
-						<Label htmlFor='step-up'>Annual Step-Up (%)</Label>
-						<Input
-							id='step-up'
-							placeholder='0'
-							type='number'
-							onChange={(e) => setAnnualStepUpPercent(+e.target.value)}
+						<FormField
+							control={form.control}
+							name='annualStepUpPercent'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Annual Step-Up (%)</FormLabel>
+									<FormControl>
+										<Input placeholder='0' {...field} />
+									</FormControl>
+									<FormDescription>
+										Enter the annual step-up percentage
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
-					</div>
-					<div className='flex flex-col space-y-1.5'>
-						<Label htmlFor='duration'>Investment Duration (Years)</Label>
-						<Input
-							id='duration'
-							placeholder='0'
-							type='number'
-							onChange={(e) => setNumberOfYears(+e.target.value)}
+						<FormField
+							control={form.control}
+							name='numberOfYears'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Investment Duration (Years)</FormLabel>
+									<FormControl>
+										<Input placeholder='0' {...field} />
+									</FormControl>
+									<FormDescription>
+										Enter the investment duration in years
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
 						/>
+					</form>
+				</Form>
+				{expectedMaturityAmount !== 0 && (
+					<div className='mt-4 p-4 bg-green-100 rounded-md w-auto'>
+						<h2 className='text-lg font-semibold text-green-700'>
+							Expected Maturity Amount:
+							{` ` + formattedCurrencyAmount(expectedMaturityAmount)}
+						</h2>
+						<p className='text-sm text-green-700'>
+							Total Invested Amount: {formattedCurrencyAmount(investedAmount)} (
+							{investedAmountPercent.toFixed(2)}%)
+						</p>
+						<p className='text-sm text-green-700'>
+							Expected Returns: {formattedCurrencyAmount(expectedReturns)} (
+							{expectedReturnsPercent.toFixed(2)}%)
+						</p>
 					</div>
-				</div>
+				)}
 			</CardContent>
-			{expectedMaturityAmount !== 0 && (
-				<div className='mx-6 mb-6 p-4 bg-green-100 rounded-md w-auto'>
-					<h2 className='text-lg font-semibold text-green-700'>
-						Expected Maturity Amount:{' '}
-						{formattedCurrencyAmount(expectedMaturityAmount)}
-					</h2>
-					<p className='text-sm text-green-700'>
-						Total Invested Amount: {formattedCurrencyAmount(investedAmount)} (
-						{investedAmountPercent.toFixed(2)}%)
-					</p>
-					<p className='text-sm text-green-700'>
-						Expected Returns: {formattedCurrencyAmount(expectedReturns)} (
-						{expectedReturnsPercent.toFixed(2)}%)
-					</p>
-				</div>
-			)}
 		</Card>
 	);
 }
