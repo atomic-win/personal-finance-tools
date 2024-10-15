@@ -21,11 +21,11 @@ import { Pie, PieChart } from 'recharts';
 
 const chartConfig = {
 	invested: {
-		label: 'Invested',
+		label: 'Invested Amount',
 		color: 'hsl(var(--chart-6))',
 	},
-	interest: {
-		label: 'Interest',
+	returns: {
+		label: 'Expected Returns',
 		color: 'hsl(var(--chart-2))',
 	},
 } satisfies ChartConfig;
@@ -44,24 +44,26 @@ export default function SIPCalculatorCard({
 	const [investmentDuration, setInvestmentDuration] = useState(0);
 
 	const investedAmount = monthlyInvestment * 12 * investmentDuration;
-	const maturityAmount =
+	const expectedMaturityAmount =
 		investedAmount * Math.pow(1 + annualInterestRate / 100, investmentDuration);
-	const interestAmount = maturityAmount - investedAmount;
+	const expectedReturns = expectedMaturityAmount - investedAmount;
 
 	const chartData = [
 		{
 			amountType: 'invested',
 			amountValue: investedAmount,
 			amountValuePercent:
-				(investedAmount / Math.max(investedAmount, maturityAmount)) * 100,
+				(investedAmount / Math.max(investedAmount, expectedMaturityAmount)) *
+				100,
 			fill: 'var(--color-invested)',
 		},
 		{
-			amountType: 'interest',
-			amountValue: interestAmount,
+			amountType: 'returns',
+			amountValue: expectedReturns,
 			amountValuePercent:
-				(interestAmount / Math.max(investedAmount, maturityAmount)) * 100,
-			fill: 'var(--color-interest)',
+				(expectedReturns / Math.max(investedAmount, expectedMaturityAmount)) *
+				100,
+			fill: 'var(--color-returns)',
 		},
 	];
 
@@ -107,17 +109,17 @@ export default function SIPCalculatorCard({
 					</div>
 				</div>
 			</CardContent>
-			{maturityAmount !== 0 && (
+			{expectedMaturityAmount !== 0 && (
 				<>
 					<div className='mx-6 p-4 bg-green-100 rounded-md w-auto'>
 						<h2 className='text-lg font-semibold text-green-700'>
-							Maturity Amount: {maturityAmount.toFixed(2)}
+							Expected Maturity Amount: {expectedMaturityAmount.toFixed(2)}
 						</h2>
 						<p className='text-sm text-green-700'>
 							Total Invested Amount: {investedAmount.toFixed(2)}
 						</p>
 						<p className='text-sm text-green-700'>
-							Total Interest Earned: {interestAmount.toFixed(2)}
+							Expected Returns: {expectedReturns.toFixed(2)}
 						</p>
 					</div>
 					<ChartContainer config={chartConfig} className='mx-auto'>
@@ -148,10 +150,9 @@ export default function SIPCalculatorCard({
 												}`}
 											</tspan>
 											<tspan x={props.x} dy='1.2em'>
-												{`${payload.amountValue.toFixed(2)}`}
-											</tspan>
-											<tspan x={props.x} dy='1.2em'>
-												{`(${payload.amountValuePercent.toFixed(2)}%)`}
+												{`${payload.amountValue.toFixed(
+													2
+												)} (${payload.amountValuePercent.toFixed(2)}%)`}
 											</tspan>
 										</text>
 									);
