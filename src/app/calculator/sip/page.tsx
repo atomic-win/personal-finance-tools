@@ -1,10 +1,10 @@
 'use client';
 import { useState } from 'react';
-import SIPCalculator from './calculator-card';
+import SIPCalculator from './card';
 import { Button } from '@/components/ui/button';
 import { v7 } from 'uuid';
 
-export default function SipPage() {
+export default function SIPPage() {
 	const [calculators, setCalculators] = useState([v7()]);
 
 	const addCalculator = () => {
