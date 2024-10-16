@@ -17,7 +17,10 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { formattedCurrencyAmount } from '@/lib/utils';
+import {
+	formattedCurrencyAmount,
+	formattedYearlyTimeDuration,
+} from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -37,9 +40,6 @@ const SWPCalculatorSchema = z.object({
 	annualInterestPercent: z.coerce.number().min(-99, {
 		message: 'Annual Interest Percent cannot be less than or equal to -100%',
 	}),
-	numberOfYears: z.coerce
-		.number()
-		.min(1, { message: 'Withdrawal Duration cannot be less than 1 year' }),
 });
 
 const formFields = [
@@ -63,11 +63,6 @@ const formFields = [
 		label: 'Annual Interest (%)',
 		description: 'Enter the annual interest percentage',
 	},
-	{
-		name: 'numberOfYears',
-		label: 'Time Period (Years)',
-		description: 'Enter the time period in years',
-	},
 ];
 
 export default function SWPCalculatorCard({
@@ -88,20 +83,18 @@ export default function SWPCalculatorCard({
 			monthlyWithdrawal: 10000,
 			annualInflationPercent: 5,
 			annualInterestPercent: 10,
-			numberOfYears: 10,
 		},
 	});
 
 	const [result, setResult] = useState({
 		totalWithdrawalAmount: 0,
-		finalBalanceAmount: 0,
+		numberOfYears: 0,
 	});
 
 	const totalInvestmentAmount = Number(form.watch('totalInvestment'));
 	const monthlyWithdrawalAmount = Number(form.watch('monthlyWithdrawal'));
 	const annualInflationPercent = Number(form.watch('annualInflationPercent'));
 	const annualInterestPercent = Number(form.watch('annualInterestPercent'));
-	const numberOfYears = Number(form.watch('numberOfYears'));
 
 	useEffect(() => {
 		setResult(
@@ -109,8 +102,7 @@ export default function SWPCalculatorCard({
 				totalInvestmentAmount,
 				monthlyWithdrawalAmount,
 				annualInflationPercent,
-				annualInterestPercent,
-				numberOfYears
+				annualInterestPercent
 			)
 		);
 	}, [
@@ -118,7 +110,6 @@ export default function SWPCalculatorCard({
 		monthlyWithdrawalAmount,
 		annualInflationPercent,
 		annualInterestPercent,
-		numberOfYears,
 	]);
 
 	return (
@@ -179,21 +170,11 @@ export default function SWPCalculatorCard({
 									</td>
 								</tr>
 								<tr>
-									<td
-										className={`text-sm font-semibold ${
-											result.finalBalanceAmount < 0
-												? 'text-red-700'
-												: 'text-green-700'
-										}`}>
-										Expected Final Balance:
+									<td className='text-sm text-green-700 font-semibold'>
+										Corpus Lasted:
 									</td>
-									<td
-										className={`text-sm font-semibold ${
-											result.finalBalanceAmount < 0
-												? 'text-red-700'
-												: 'text-green-700'
-										}`}>
-										{formattedCurrencyAmount(result.finalBalanceAmount)}
+									<td className='text-sm text-green-700 font-semibold'>
+										{formattedYearlyTimeDuration(result.numberOfYears)}
 									</td>
 								</tr>
 							</tbody>
@@ -209,8 +190,7 @@ function calculateResult(
 	totalInvestment: number,
 	monthlyWithdrawal: number,
 	annualInflationPercent: number,
-	annualInterestPercent: number,
-	numberOfYears: number
+	annualInterestPercent: number
 ) {
 	const monthlyInterestRate =
 		Math.pow(1 + annualInterestPercent / 100, 1 / 12) - 1;
@@ -218,11 +198,15 @@ function calculateResult(
 
 	let withdrawalAmount = 0;
 	let balanceAmount = totalInvestment;
+	let numberOfMonths = 0;
 
-	for (let year = 0; year < numberOfYears; ++year) {
-		for (let month = 0; month < 12; ++month) {
-			withdrawalAmount += monthlyWithdrawal;
-			balanceAmount -= monthlyWithdrawal;
+	for (let year = 0; year <= 100 && balanceAmount > 0; ++year) {
+		for (let month = 0; month < 12 && balanceAmount > 0; ++month) {
+			const currentMonthWithdrawal = Math.min(monthlyWithdrawal, balanceAmount);
+			++numberOfMonths;
+
+			withdrawalAmount += currentMonthWithdrawal;
+			balanceAmount -= currentMonthWithdrawal;
 			balanceAmount *= 1 + monthlyInterestRate;
 		}
 		monthlyWithdrawal *= 1 + annualInflationRate;
@@ -230,6 +214,6 @@ function calculateResult(
 
 	return {
 		totalWithdrawalAmount: withdrawalAmount,
-		finalBalanceAmount: balanceAmount,
+		numberOfYears: numberOfMonths / 12,
 	};
 }
