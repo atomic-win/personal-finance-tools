@@ -6,7 +6,6 @@ import {
 	NavigationMenu,
 	NavigationMenuContent,
 	NavigationMenuItem,
-	NavigationMenuLink,
 	NavigationMenuList,
 	NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
@@ -57,15 +56,13 @@ export default function RootLayout({
 function ListItem({ title, href }: { title: string; href: string }) {
 	return (
 		<li>
-			<NavigationMenuLink>
-				<Link
-					href={href}
-					className={
-						'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
-					}>
-					<div className='font-medium whitespace-nowrap'>{title}</div>
-				</Link>
-			</NavigationMenuLink>
+			<Link
+				href={href}
+				className={
+					'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground'
+				}>
+				<div className='font-medium whitespace-nowrap'>{title}</div>
+			</Link>
 		</li>
 	);
 }
