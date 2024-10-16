@@ -169,14 +169,14 @@ export default function CalculatorCard({
 		<Card className='mx-auto my-10 p-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<div className='flex items-center justify-between'>
-					<CardTitle>SIP Calculator {index + 1}</CardTitle>
+					<CardTitle>SIP-SWP Calculator {index + 1}</CardTitle>
 					{canRemove && (
 						<Button onClick={() => removeCalculator(id)}>
 							<Trash2 className='size-4' />
 						</Button>
 					)}
 				</div>
-				<CardDescription>Calculate your SIP investments</CardDescription>
+				<CardDescription>Calculate your SIP-SWP investments</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>

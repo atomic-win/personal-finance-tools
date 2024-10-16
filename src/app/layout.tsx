@@ -42,7 +42,7 @@ export default function RootLayout({
 										<ListItem title='SIP Calculator' href='/calculator/sip' />
 										<ListItem title='SWP Calculator' href='/calculator/swp' />
 										<ListItem
-											title='SIP + SWP Calculator'
+											title='SIP-SWP Calculator'
 											href='/calculator/sip-swp'
 										/>
 									</ul>
