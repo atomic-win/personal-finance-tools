@@ -42,6 +42,34 @@ const SWPCalculatorSchema = z.object({
 		.min(1, { message: 'Withdrawal Duration cannot be less than 1 year' }),
 });
 
+const formFields = [
+	{
+		name: 'totalInvestment',
+		label: 'Total Investment',
+		description: 'Enter the total investment amount',
+	},
+	{
+		name: 'monthlyWithdrawal',
+		label: 'Monthly Withdrawal',
+		description: 'Enter the monthly withdrawal amount',
+	},
+	{
+		name: 'annualInflationPercent',
+		label: 'Annual Inflation (%)',
+		description: 'Enter the annual inflation percentage',
+	},
+	{
+		name: 'annualInterestPercent',
+		label: 'Annual Interest (%)',
+		description: 'Enter the annual interest percentage',
+	},
+	{
+		name: 'numberOfYears',
+		label: 'Time Period (Years)',
+		description: 'Enter the time period in years',
+	},
+];
+
 export default function SWPCalculatorCard({
 	id,
 	index,
@@ -115,86 +143,25 @@ export default function SWPCalculatorCard({
 			<CardContent>
 				<Form {...form}>
 					<form onChange={() => {}} className='space-y-4'>
-						<FormField
-							control={form.control}
-							name='totalInvestment'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Total Investment</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the total investment amount
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='monthlyWithdrawal'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Monthly Withdrawal</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the monthly withdrawal amount
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='annualInflationPercent'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Annual Inflation (%)</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the annual inflation percentage
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='annualInterestPercent'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Annual Interest (%)</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the annual interest percentage
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='numberOfYears'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Time Period (Years)</FormLabel>
-									<FormControl>
-										<Input {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the time period in years
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						{formFields.map((formField) => (
+							<FormField
+								key={formField.name}
+								control={form.control}
+								name={
+									formField.name as keyof z.infer<typeof SWPCalculatorSchema>
+								}
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>{formField.label}</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormDescription>{formField.description}</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						))}
 					</form>
 				</Form>
 				{totalInvestmentAmount !== 0 && (
