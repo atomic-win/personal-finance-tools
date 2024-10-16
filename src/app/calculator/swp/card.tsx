@@ -56,13 +56,13 @@ const formFields = [
 	},
 	{
 		name: 'annualInterestPercent',
-		label: 'Annual Interest (%)',
-		description: 'Enter the annual interest percentage',
+		label: 'Annual Interest Rate (%)',
+		description: 'Enter the annual interest rate',
 	},
 	{
 		name: 'annualInflationPercent',
-		label: 'Annual Inflation (%)',
-		description: 'Enter the annual inflation percentage',
+		label: 'Annual Inflation Rate (%)',
+		description: 'Enter the annual inflation rate',
 	},
 ];
 
