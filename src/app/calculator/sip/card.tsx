@@ -192,19 +192,37 @@ export default function SIPCalculatorCard({
 					</form>
 				</Form>
 				{expectedMaturityAmount !== 0 && (
-					<div className='mt-4 p-4 bg-green-100 rounded-md w-auto'>
-						<h2 className='text-lg font-semibold text-green-700'>
-							Expected Maturity Amount:
-							{` ` + formattedCurrencyAmount(expectedMaturityAmount)}
-						</h2>
-						<p className='text-sm text-green-700'>
-							Total Invested Amount: {formattedCurrencyAmount(investedAmount)} (
-							{investedAmountPercent.toFixed(2)}%)
-						</p>
-						<p className='text-sm text-green-700'>
-							Expected Returns: {formattedCurrencyAmount(expectedReturns)} (
-							{expectedReturnsPercent.toFixed(2)}%)
-						</p>
+					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
+						<table className='w-full'>
+							<tbody>
+								<tr>
+									<td className='text-sm text-green-700 font-semibold'>
+										Invested Amount:
+									</td>
+									<td className='text-sm text-green-700 font-semibold'>
+										{formattedCurrencyAmount(investedAmount)} (
+										{investedAmountPercent.toFixed(2)}%)
+									</td>
+								</tr>
+								<tr>
+									<td className='text-sm text-green-700 font-semibold'>
+										Expected Returns:
+									</td>
+									<td className='text-sm text-green-700 font-semibold'>
+										{formattedCurrencyAmount(expectedReturns)} (
+										{expectedReturnsPercent.toFixed(2)}%)
+									</td>
+								</tr>
+								<tr>
+									<td className='text-sm text-green-700 font-semibold'>
+										Expected Total Value:
+									</td>
+									<td className='text-sm text-green-700 font-semibold'>
+										{formattedCurrencyAmount(expectedMaturityAmount)}
+									</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				)}
 			</CardContent>
