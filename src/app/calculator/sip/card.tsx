@@ -87,16 +87,6 @@ export default function SIPCalculatorCard({
 
 		const returns = maturity - invested;
 
-		console.log({
-			monthlyInvestment,
-			annualStepUpPercent,
-			annualInterestPercent,
-			numberOfYears,
-			invested,
-			maturity,
-			returns,
-		});
-
 		setInvestedAmount(invested);
 		setExpectedMaturityAmount(maturity);
 		setExpectedReturns(returns);
