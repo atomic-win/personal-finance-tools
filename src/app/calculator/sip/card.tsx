@@ -39,6 +39,29 @@ const SIPCalculatorSchema = z.object({
 		.min(1, { message: 'Investment Duration cannot be less than 1 year' }),
 });
 
+const formFields = [
+	{
+		name: 'monthlyInvestment',
+		label: 'Monthly Installment',
+		description: 'Enter the monthly installment',
+	},
+	{
+		name: 'annualInterestPercent',
+		label: 'Annual Interest Rate (%)',
+		description: 'Enter the annual interest rate',
+	},
+	{
+		name: 'annualStepUpPercent',
+		label: 'Annual Step-Up (%)',
+		description: 'Enter the annual step-up percentage',
+	},
+	{
+		name: 'numberOfYears',
+		label: 'Investment Duration (Years)',
+		description: 'Enter the investment duration in years',
+	},
+];
+
 export default function SIPCalculatorCard({
 	id,
 	index,
@@ -115,70 +138,25 @@ export default function SIPCalculatorCard({
 			<CardContent>
 				<Form {...form}>
 					<form onChange={form.handleSubmit(() => {})} className='space-y-4'>
-						<FormField
-							control={form.control}
-							name='monthlyInvestment'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Monthly Installment</FormLabel>
-									<FormControl>
-										<Input placeholder='0' {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the monthly installment
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='annualInterestPercent'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Annual Interest Rate (%)</FormLabel>
-									<FormControl>
-										<Input placeholder='0' {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the annual interest rate
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='annualStepUpPercent'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Annual Step-Up (%)</FormLabel>
-									<FormControl>
-										<Input placeholder='0' {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the annual step-up percentage
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={form.control}
-							name='numberOfYears'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Investment Duration (Years)</FormLabel>
-									<FormControl>
-										<Input placeholder='0' {...field} />
-									</FormControl>
-									<FormDescription>
-										Enter the investment duration in years
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						{formFields.map((formField) => (
+							<FormField
+								key={formField.name}
+								control={form.control}
+								name={
+									formField.name as keyof z.infer<typeof SIPCalculatorSchema>
+								}
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>{formField.label}</FormLabel>
+										<FormControl>
+											<Input {...field} />
+										</FormControl>
+										<FormDescription>{formField.description}</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						))}
 					</form>
 				</Form>
 				{expectedMaturityAmount !== 0 && (
