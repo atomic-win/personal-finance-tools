@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import SIPCalculator from './card';
+import SIPCalculatorCard from './card';
 import { Button } from '@/components/ui/button';
 import { v7 } from 'uuid';
 
@@ -21,7 +21,7 @@ export default function SIPPage() {
 			<Button onClick={addCalculator}>Add Calculator</Button>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{calculators.map((id, index) => (
-					<SIPCalculator
+					<SIPCalculatorCard
 						key={id}
 						id={id}
 						index={index}
