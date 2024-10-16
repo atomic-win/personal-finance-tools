@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { formattedCurrencyAmount } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -83,11 +83,13 @@ export default function SIPCalculatorCard({
 		},
 	});
 
-	const [investedAmount, setInvestedAmount] = React.useState(0);
-	const [expectedMaturityAmount, setExpectedMaturityAmount] = React.useState(0);
-	const [expectedReturns, setExpectedReturns] = React.useState(0);
-	const [investedAmountPercent, setInvestedAmountPercent] = React.useState(0);
-	const [expectedReturnsPercent, setExpectedReturnsPercent] = React.useState(0);
+	const [result, setResult] = useState({
+		totalInvestedAmount: 0,
+		estimatedFinalValue: 0,
+		estimatedReturns: 0,
+		investedAmountPercent: 0,
+		estimatedReturnsPercent: 0,
+	});
 
 	const monthlyInvestment = Number(form.watch('monthlyInvestment'));
 	const annualStepUpPercent = Number(form.watch('annualStepUpPercent'));
@@ -95,26 +97,14 @@ export default function SIPCalculatorCard({
 	const numberOfYears = Number(form.watch('numberOfYears'));
 
 	React.useEffect(() => {
-		const invested = calculateInvestedAmount(
-			monthlyInvestment,
-			annualStepUpPercent,
-			numberOfYears
+		setResult(
+			calculateResult(
+				monthlyInvestment,
+				annualInterestPercent,
+				annualStepUpPercent,
+				numberOfYears
+			)
 		);
-
-		const maturity = calculateMaturityAmount(
-			monthlyInvestment,
-			annualInterestPercent,
-			annualStepUpPercent,
-			numberOfYears
-		);
-
-		const returns = maturity - invested;
-
-		setInvestedAmount(invested);
-		setExpectedMaturityAmount(maturity);
-		setExpectedReturns(returns);
-		setInvestedAmountPercent((invested / Math.max(1, maturity)) * 100);
-		setExpectedReturnsPercent((returns / Math.max(1, maturity)) * 100);
 	}, [
 		monthlyInvestment,
 		annualStepUpPercent,
@@ -159,34 +149,34 @@ export default function SIPCalculatorCard({
 						))}
 					</form>
 				</Form>
-				{expectedMaturityAmount !== 0 && (
+				{result.estimatedFinalValue !== 0 && (
 					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
 						<table className='w-full'>
 							<tbody>
 								<tr>
 									<td className='text-green-700 font-semibold'>
-										Expected Total Value:
+										Estimated Final Value:
 									</td>
 									<td className='text-green-700 font-semibold'>
-										{formattedCurrencyAmount(expectedMaturityAmount)}
+										{formattedCurrencyAmount(result.estimatedFinalValue)}
 									</td>
 								</tr>
 								<tr>
 									<td className='text-sm text-green-700 font-semibold'>
-										Invested Amount:
+										Total Invested Amount:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(investedAmount)} (
-										{investedAmountPercent.toFixed(2)}%)
+										{formattedCurrencyAmount(result.totalInvestedAmount)} (
+										{result.investedAmountPercent.toFixed(2)}%)
 									</td>
 								</tr>
 								<tr>
 									<td className='text-sm text-green-700 font-semibold'>
-										Expected Returns:
+										Estimated Returns:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(expectedReturns)} (
-										{expectedReturnsPercent.toFixed(2)}%)
+										{formattedCurrencyAmount(result.estimatedReturns)} (
+										{result.estimatedReturnsPercent.toFixed(2)}%)
 									</td>
 								</tr>
 							</tbody>
@@ -198,37 +188,38 @@ export default function SIPCalculatorCard({
 	);
 }
 
-function calculateInvestedAmount(
-	monthlyInvestment: number,
-	annualStepUpPercent: number,
-	numberOfYears: number
-) {
-	let investedAmount = 0;
-	for (let year = 0; year < numberOfYears; ++year) {
-		investedAmount += monthlyInvestment * 12;
-		monthlyInvestment *= 1 + annualStepUpPercent / 100;
-	}
-	return investedAmount;
-}
-
-function calculateMaturityAmount(
+function calculateResult(
 	monthlyInvestment: number,
 	annualInterestPercent: number,
 	annualStepUpPercent: number,
 	numberOfYears: number
 ) {
-	const monthlyInterestRate =
-		Math.pow(1 + annualInterestPercent / 100, 1 / 12) - 1;
+	const annualInterestRate = annualInterestPercent / 100;
+	const monthlyInterestRate = Math.pow(1 + annualInterestRate, 1 / 12) - 1;
 
-	let maturityAmount = 0;
+	let totalInvestedAmount = 0;
+	let estimatedFinalValue = 0;
 
 	for (let year = 0; year < numberOfYears; ++year) {
 		for (let month = 0; month < 12; ++month) {
-			maturityAmount += monthlyInvestment;
-			maturityAmount *= 1 + monthlyInterestRate;
+			totalInvestedAmount += monthlyInvestment;
+			estimatedFinalValue += monthlyInvestment;
+			estimatedFinalValue *= 1 + monthlyInterestRate;
 		}
 		monthlyInvestment *= 1 + annualStepUpPercent / 100;
 	}
 
-	return maturityAmount;
+	const estimatedReturns = estimatedFinalValue - totalInvestedAmount;
+	const investedAmountPercent =
+		(totalInvestedAmount / Math.max(1, estimatedFinalValue)) * 100;
+	const estimatedReturnsPercent =
+		(estimatedReturns / Math.max(1, estimatedFinalValue)) * 100;
+
+	return {
+		totalInvestedAmount,
+		estimatedFinalValue,
+		estimatedReturns,
+		investedAmountPercent,
+		estimatedReturnsPercent,
+	};
 }
