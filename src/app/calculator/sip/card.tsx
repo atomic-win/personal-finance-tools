@@ -225,7 +225,7 @@ function calculateMaturityAmount(
 	for (let year = 0; year < numberOfYears; ++year) {
 		for (let month = 0; month < 12; ++month) {
 			maturityAmount += monthlyInvestment;
-			monthlyInvestment *= 1 + monthlyInterestRate;
+			maturityAmount *= 1 + monthlyInterestRate;
 		}
 		monthlyInvestment *= 1 + annualStepUpPercent / 100;
 	}
