@@ -20,7 +20,7 @@ import { Input } from '@/components/ui/input';
 import { formattedCurrencyAmount } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -92,8 +92,10 @@ export default function SWPCalculatorCard({
 		},
 	});
 
-	const [totalWithdrawalAmount, setTotalWithdrawalAmount] = React.useState(0);
-	const [finalBalanceAmount, setFinalBalanceAmount] = React.useState(0);
+	const [result, setResult] = useState({
+		totalWithdrawalAmount: 0,
+		finalBalanceAmount: 0,
+	});
 
 	const totalInvestmentAmount = Number(form.watch('totalInvestment'));
 	const monthlyWithdrawalAmount = Number(form.watch('monthlyWithdrawal'));
@@ -102,16 +104,8 @@ export default function SWPCalculatorCard({
 	const numberOfYears = Number(form.watch('numberOfYears'));
 
 	useEffect(() => {
-		setTotalWithdrawalAmount(
-			calculateTotalWithdrawalAmount(
-				monthlyWithdrawalAmount,
-				annualInflationPercent,
-				numberOfYears
-			)
-		);
-
-		setFinalBalanceAmount(
-			calculateFinalBalanceAmount(
+		setResult(
+			calculateResult(
 				totalInvestmentAmount,
 				monthlyWithdrawalAmount,
 				annualInflationPercent,
@@ -181,21 +175,25 @@ export default function SWPCalculatorCard({
 										Total Withdrawal:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(totalWithdrawalAmount)}
+										{formattedCurrencyAmount(result.totalWithdrawalAmount)}
 									</td>
 								</tr>
 								<tr>
 									<td
 										className={`text-sm font-semibold ${
-											finalBalanceAmount < 0 ? 'text-red-700' : 'text-green-700'
+											result.finalBalanceAmount < 0
+												? 'text-red-700'
+												: 'text-green-700'
 										}`}>
 										Expected Final Balance:
 									</td>
 									<td
 										className={`text-sm font-semibold ${
-											finalBalanceAmount < 0 ? 'text-red-700' : 'text-green-700'
+											result.finalBalanceAmount < 0
+												? 'text-red-700'
+												: 'text-green-700'
 										}`}>
-										{formattedCurrencyAmount(finalBalanceAmount)}
+										{formattedCurrencyAmount(result.finalBalanceAmount)}
 									</td>
 								</tr>
 							</tbody>
@@ -207,24 +205,7 @@ export default function SWPCalculatorCard({
 	);
 }
 
-function calculateTotalWithdrawalAmount(
-	monthlyWithdrawal: number,
-	annualInflationPercent: number,
-	numberOfYears: number
-) {
-	const annualInflationRate = annualInflationPercent / 100;
-
-	let withdrawalAmount = 0;
-
-	for (let year = 0; year < numberOfYears; ++year) {
-		withdrawalAmount +=
-			12 * monthlyWithdrawal * Math.pow(1 + annualInflationRate, year);
-	}
-
-	return withdrawalAmount;
-}
-
-function calculateFinalBalanceAmount(
+function calculateResult(
 	totalInvestment: number,
 	monthlyWithdrawal: number,
 	annualInflationPercent: number,
@@ -235,15 +216,20 @@ function calculateFinalBalanceAmount(
 		Math.pow(1 + annualInterestPercent / 100, 1 / 12) - 1;
 	const annualInflationRate = annualInflationPercent / 100;
 
+	let withdrawalAmount = 0;
 	let balanceAmount = totalInvestment;
 
 	for (let year = 0; year < numberOfYears; ++year) {
 		for (let month = 0; month < 12; ++month) {
+			withdrawalAmount += monthlyWithdrawal;
 			balanceAmount -= monthlyWithdrawal;
 			balanceAmount *= 1 + monthlyInterestRate;
 		}
 		monthlyWithdrawal *= 1 + annualInflationRate;
 	}
 
-	return balanceAmount;
+	return {
+		totalWithdrawalAmount: withdrawalAmount,
+		finalBalanceAmount: balanceAmount,
+	};
 }
