@@ -171,25 +171,25 @@ export default function SIPCalculatorCard({
 										{formattedCurrencyAmount(expectedMaturityAmount)}
 									</td>
 								</tr>
+								<tr>
+									<td className='text-sm text-green-700 font-semibold'>
+										Invested Amount:
+									</td>
+									<td className='text-sm text-green-700 font-semibold'>
+										{formattedCurrencyAmount(investedAmount)} (
+										{investedAmountPercent.toFixed(2)}%)
+									</td>
+								</tr>
+								<tr>
+									<td className='text-sm text-green-700 font-semibold'>
+										Expected Returns:
+									</td>
+									<td className='text-sm text-green-700 font-semibold'>
+										{formattedCurrencyAmount(expectedReturns)} (
+										{expectedReturnsPercent.toFixed(2)}%)
+									</td>
+								</tr>
 							</tbody>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Invested Amount:
-								</td>
-								<td className='text-sm text-green-700 font-semibold'>
-									{formattedCurrencyAmount(investedAmount)} (
-									{investedAmountPercent.toFixed(2)}%)
-								</td>
-							</tr>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Expected Returns:
-								</td>
-								<td className='text-sm text-green-700 font-semibold'>
-									{formattedCurrencyAmount(expectedReturns)} (
-									{expectedReturnsPercent.toFixed(2)}%)
-								</td>
-							</tr>
 						</table>
 					</div>
 				)}
