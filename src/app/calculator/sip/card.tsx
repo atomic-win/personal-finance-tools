@@ -25,6 +25,9 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const SIPCalculatorSchema = z.object({
+	lumpsumAmount: z.coerce.number().min(0, {
+		message: 'Lumpsum Amount cannot be less than 0',
+	}),
 	monthlyInvestment: z.coerce
 		.number()
 		.min(1, { message: 'Monthly Investment cannot be less than 1' }),
@@ -40,6 +43,11 @@ const SIPCalculatorSchema = z.object({
 });
 
 const formFields = [
+	{
+		name: 'lumpsumAmount',
+		label: 'Lumpsum Amount',
+		description: 'Enter the lumpsum amount',
+	},
 	{
 		name: 'monthlyInvestment',
 		label: 'Monthly Installment',
@@ -76,6 +84,7 @@ export default function SIPCalculatorCard({
 	const form = useForm<z.infer<typeof SIPCalculatorSchema>>({
 		resolver: zodResolver(SIPCalculatorSchema),
 		defaultValues: {
+			lumpsumAmount: 0,
 			monthlyInvestment: 500,
 			annualStepUpPercent: 10,
 			annualInterestPercent: 10,
@@ -91,6 +100,7 @@ export default function SIPCalculatorCard({
 		estimatedReturnsPercent: 0,
 	});
 
+	const lumpsumAmount = Number(form.watch('lumpsumAmount'));
 	const monthlyInvestment = Number(form.watch('monthlyInvestment'));
 	const annualStepUpPercent = Number(form.watch('annualStepUpPercent'));
 	const annualInterestPercent = Number(form.watch('annualInterestPercent'));
@@ -99,6 +109,7 @@ export default function SIPCalculatorCard({
 	React.useEffect(() => {
 		setResult(
 			calculateResult(
+				lumpsumAmount,
 				monthlyInvestment,
 				annualInterestPercent,
 				annualStepUpPercent,
@@ -106,6 +117,7 @@ export default function SIPCalculatorCard({
 			)
 		);
 	}, [
+		lumpsumAmount,
 		monthlyInvestment,
 		annualStepUpPercent,
 		annualInterestPercent,
@@ -189,6 +201,7 @@ export default function SIPCalculatorCard({
 }
 
 function calculateResult(
+	lumpsumAmount: number,
 	monthlyInvestment: number,
 	annualInterestPercent: number,
 	annualStepUpPercent: number,
@@ -197,8 +210,8 @@ function calculateResult(
 	const annualInterestRate = annualInterestPercent / 100;
 	const monthlyInterestRate = Math.pow(1 + annualInterestRate, 1 / 12) - 1;
 
-	let totalInvestedAmount = 0;
-	let estimatedFinalValue = 0;
+	let totalInvestedAmount = lumpsumAmount;
+	let estimatedFinalValue = lumpsumAmount;
 
 	for (let year = 0; year < numberOfYears; ++year) {
 		for (let month = 0; month < 12; ++month) {
