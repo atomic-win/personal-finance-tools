@@ -142,7 +142,7 @@ export default function SWPCalculatorCard({
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
-					<form onChange={() => {}} className='space-y-4'>
+					<form onChange={form.handleSubmit(() => {})} className='space-y-4'>
 						{formFields.map((formField) => (
 							<FormField
 								key={formField.name}
