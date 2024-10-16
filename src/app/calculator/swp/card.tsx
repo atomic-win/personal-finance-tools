@@ -185,10 +185,16 @@ export default function SWPCalculatorCard({
 									</td>
 								</tr>
 								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
+									<td
+										className={`text-sm font-semibold ${
+											finalBalanceAmount < 0 ? 'text-red-700' : 'text-green-700'
+										}`}>
 										Expected Final Balance:
 									</td>
-									<td className='text-sm text-green-700 font-semibold'>
+									<td
+										className={`text-sm font-semibold ${
+											finalBalanceAmount < 0 ? 'text-red-700' : 'text-green-700'
+										}`}>
 										{formattedCurrencyAmount(finalBalanceAmount)}
 									</td>
 								</tr>
