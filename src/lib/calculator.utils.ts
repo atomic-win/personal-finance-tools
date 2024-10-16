@@ -49,7 +49,7 @@ export function calculateSwpResult(
 	let balanceAmount = totalInvestment;
 	let numberOfMonths = 0;
 
-	for (let year = 0; year <= 100 && balanceAmount > 0; ++year) {
+	for (let year = 0; year < 10000 && balanceAmount > 0; ++year) {
 		for (let month = 0; month < 12 && balanceAmount > 0; ++month) {
 			const currentMonthWithdrawal = Math.min(monthlyWithdrawal, balanceAmount);
 			++numberOfMonths;
@@ -59,6 +59,11 @@ export function calculateSwpResult(
 			balanceAmount *= 1 + monthlyInterestRate;
 		}
 		monthlyWithdrawal *= 1 + annualInflationRate;
+	}
+
+	if (withdrawalAmount > Math.pow(10, 20)) {
+		withdrawalAmount = Infinity;
+		numberOfMonths = Infinity;
 	}
 
 	return {
