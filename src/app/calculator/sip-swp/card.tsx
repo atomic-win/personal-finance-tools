@@ -145,8 +145,8 @@ export default function CalculatorCard({
 			calculateSwpResult(
 				estimatedTotalValueAfterSip,
 				monthlySwpWithdrawal,
-				annualInflationPercent,
-				annualInterestPercent
+				annualInterestPercent,
+				annualInflationPercent
 			);
 
 		setResult({

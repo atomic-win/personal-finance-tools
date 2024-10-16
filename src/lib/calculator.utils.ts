@@ -38,8 +38,8 @@ export function calculateSipResult(
 export function calculateSwpResult(
 	totalInvestment: number,
 	monthlyWithdrawal: number,
-	annualInflationPercent: number,
-	annualInterestPercent: number
+	annualInterestPercent: number,
+	annualInflationPercent: number
 ) {
 	const monthlyInterestRate =
 		Math.pow(1 + annualInterestPercent / 100, 1 / 12) - 1;

@@ -35,11 +35,11 @@ const SWPCalculatorSchema = z.object({
 	monthlyWithdrawal: z.coerce
 		.number()
 		.min(1, { message: 'Monthly Withdrawal cannot be less than 1' }),
-	annualInflationPercent: z.coerce.number().min(-99, {
-		message: 'Annual Inflation Percent cannot be less than or equal to -100%',
-	}),
 	annualInterestPercent: z.coerce.number().min(-99, {
 		message: 'Annual Interest Percent cannot be less than or equal to -100%',
+	}),
+	annualInflationPercent: z.coerce.number().min(-99, {
+		message: 'Annual Inflation Percent cannot be less than or equal to -100%',
 	}),
 });
 
@@ -55,14 +55,14 @@ const formFields = [
 		description: 'Enter the monthly withdrawal amount',
 	},
 	{
-		name: 'annualInflationPercent',
-		label: 'Annual Inflation (%)',
-		description: 'Enter the annual inflation percentage',
-	},
-	{
 		name: 'annualInterestPercent',
 		label: 'Annual Interest (%)',
 		description: 'Enter the annual interest percentage',
+	},
+	{
+		name: 'annualInflationPercent',
+		label: 'Annual Inflation (%)',
+		description: 'Enter the annual inflation percentage',
 	},
 ];
 
@@ -94,23 +94,23 @@ export default function SWPCalculatorCard({
 
 	const totalInvestmentAmount = Number(form.watch('totalInvestment'));
 	const monthlyWithdrawalAmount = Number(form.watch('monthlyWithdrawal'));
-	const annualInflationPercent = Number(form.watch('annualInflationPercent'));
 	const annualInterestPercent = Number(form.watch('annualInterestPercent'));
+	const annualInflationPercent = Number(form.watch('annualInflationPercent'));
 
 	useEffect(() => {
 		setResult(
 			calculateSwpResult(
 				totalInvestmentAmount,
 				monthlyWithdrawalAmount,
-				annualInflationPercent,
-				annualInterestPercent
+				annualInterestPercent,
+				annualInflationPercent
 			)
 		);
 	}, [
 		totalInvestmentAmount,
 		monthlyWithdrawalAmount,
-		annualInflationPercent,
 		annualInterestPercent,
+		annualInflationPercent,
 	]);
 
 	return (
