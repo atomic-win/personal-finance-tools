@@ -164,32 +164,32 @@ export default function SIPCalculatorCard({
 						<table className='w-full'>
 							<tbody>
 								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Invested Amount:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(investedAmount)} (
-										{investedAmountPercent.toFixed(2)}%)
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Expected Returns:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(expectedReturns)} (
-										{expectedReturnsPercent.toFixed(2)}%)
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
+									<td className='text-green-700 font-semibold'>
 										Expected Total Value:
 									</td>
-									<td className='text-sm text-green-700 font-semibold'>
+									<td className='text-green-700 font-semibold'>
 										{formattedCurrencyAmount(expectedMaturityAmount)}
 									</td>
 								</tr>
 							</tbody>
+							<tr>
+								<td className='text-sm text-green-700 font-semibold'>
+									Invested Amount:
+								</td>
+								<td className='text-sm text-green-700 font-semibold'>
+									{formattedCurrencyAmount(investedAmount)} (
+									{investedAmountPercent.toFixed(2)}%)
+								</td>
+							</tr>
+							<tr>
+								<td className='text-sm text-green-700 font-semibold'>
+									Expected Returns:
+								</td>
+								<td className='text-sm text-green-700 font-semibold'>
+									{formattedCurrencyAmount(expectedReturns)} (
+									{expectedReturnsPercent.toFixed(2)}%)
+								</td>
+							</tr>
 						</table>
 					</div>
 				)}
