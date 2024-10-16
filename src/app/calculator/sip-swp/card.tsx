@@ -110,7 +110,7 @@ export default function CalculatorCard({
 			annualInterestPercent: 10,
 			numberOfSipYears: 10,
 			monthlySwpWithdrawal: 10000,
-			annualInflationPercent: 5,
+			annualInflationPercent: 8,
 		},
 	});
 

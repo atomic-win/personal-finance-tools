@@ -82,7 +82,7 @@ export default function SWPCalculatorCard({
 		defaultValues: {
 			totalInvestment: 1000000,
 			monthlyWithdrawal: 10000,
-			annualInflationPercent: 5,
+			annualInflationPercent: 8,
 			annualInterestPercent: 10,
 		},
 	});
