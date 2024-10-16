@@ -17,6 +17,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { calculateSwpResult } from '@/lib/calculator.utils';
 import {
 	formattedCurrencyAmount,
 	formattedYearlyTimeDuration,
@@ -87,8 +88,8 @@ export default function SWPCalculatorCard({
 	});
 
 	const [result, setResult] = useState({
-		totalWithdrawalAmount: 0,
-		numberOfYears: 0,
+		estimatedWithdrawalAmount: 0,
+		estimatedNumberOfYears: 0,
 	});
 
 	const totalInvestmentAmount = Number(form.watch('totalInvestment'));
@@ -98,7 +99,7 @@ export default function SWPCalculatorCard({
 
 	useEffect(() => {
 		setResult(
-			calculateResult(
+			calculateSwpResult(
 				totalInvestmentAmount,
 				monthlyWithdrawalAmount,
 				annualInflationPercent,
@@ -163,18 +164,18 @@ export default function SWPCalculatorCard({
 								</tr>
 								<tr>
 									<td className='text-sm text-green-700 font-semibold'>
-										Total Withdrawal:
+										Estimated Total Withdrawal:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(result.totalWithdrawalAmount)}
+										{formattedCurrencyAmount(result.estimatedWithdrawalAmount)}
 									</td>
 								</tr>
 								<tr>
 									<td className='text-sm text-green-700 font-semibold'>
-										Corpus Lasted:
+										Estimated Corpus Lasted:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedYearlyTimeDuration(result.numberOfYears)}
+										{formattedYearlyTimeDuration(result.estimatedNumberOfYears)}
 									</td>
 								</tr>
 							</tbody>
@@ -184,36 +185,4 @@ export default function SWPCalculatorCard({
 			</CardContent>
 		</Card>
 	);
-}
-
-function calculateResult(
-	totalInvestment: number,
-	monthlyWithdrawal: number,
-	annualInflationPercent: number,
-	annualInterestPercent: number
-) {
-	const monthlyInterestRate =
-		Math.pow(1 + annualInterestPercent / 100, 1 / 12) - 1;
-	const annualInflationRate = annualInflationPercent / 100;
-
-	let withdrawalAmount = 0;
-	let balanceAmount = totalInvestment;
-	let numberOfMonths = 0;
-
-	for (let year = 0; year <= 100 && balanceAmount > 0; ++year) {
-		for (let month = 0; month < 12 && balanceAmount > 0; ++month) {
-			const currentMonthWithdrawal = Math.min(monthlyWithdrawal, balanceAmount);
-			++numberOfMonths;
-
-			withdrawalAmount += currentMonthWithdrawal;
-			balanceAmount -= currentMonthWithdrawal;
-			balanceAmount *= 1 + monthlyInterestRate;
-		}
-		monthlyWithdrawal *= 1 + annualInflationRate;
-	}
-
-	return {
-		totalWithdrawalAmount: withdrawalAmount,
-		numberOfYears: numberOfMonths / 12,
-	};
 }

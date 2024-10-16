@@ -17,6 +17,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { calculateSipResult } from '@/lib/calculator.utils';
 import { formattedCurrencyAmount } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
@@ -94,7 +95,7 @@ export default function SIPCalculatorCard({
 
 	const [result, setResult] = useState({
 		totalInvestedAmount: 0,
-		estimatedFinalValue: 0,
+		estimatedTotalValue: 0,
 		estimatedReturns: 0,
 		investedAmountPercent: 0,
 		estimatedReturnsPercent: 0,
@@ -108,7 +109,7 @@ export default function SIPCalculatorCard({
 
 	React.useEffect(() => {
 		setResult(
-			calculateResult(
+			calculateSipResult(
 				lumpsumAmount,
 				monthlyInvestment,
 				annualInterestPercent,
@@ -161,16 +162,16 @@ export default function SIPCalculatorCard({
 						))}
 					</form>
 				</Form>
-				{result.estimatedFinalValue !== 0 && (
+				{result.totalInvestedAmount !== 0 && (
 					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
 						<table className='w-full'>
 							<tbody>
 								<tr>
 									<td className='text-green-700 font-semibold'>
-										Estimated Final Value:
+										Estimated Total Value:
 									</td>
 									<td className='text-green-700 font-semibold'>
-										{formattedCurrencyAmount(result.estimatedFinalValue)}
+										{formattedCurrencyAmount(result.estimatedTotalValue)}
 									</td>
 								</tr>
 								<tr>
@@ -198,41 +199,4 @@ export default function SIPCalculatorCard({
 			</CardContent>
 		</Card>
 	);
-}
-
-function calculateResult(
-	lumpsumAmount: number,
-	monthlyInvestment: number,
-	annualInterestPercent: number,
-	annualStepUpPercent: number,
-	numberOfYears: number
-) {
-	const annualInterestRate = annualInterestPercent / 100;
-	const monthlyInterestRate = Math.pow(1 + annualInterestRate, 1 / 12) - 1;
-
-	let totalInvestedAmount = lumpsumAmount;
-	let estimatedFinalValue = lumpsumAmount;
-
-	for (let year = 0; year < numberOfYears; ++year) {
-		for (let month = 0; month < 12; ++month) {
-			totalInvestedAmount += monthlyInvestment;
-			estimatedFinalValue += monthlyInvestment;
-			estimatedFinalValue *= 1 + monthlyInterestRate;
-		}
-		monthlyInvestment *= 1 + annualStepUpPercent / 100;
-	}
-
-	const estimatedReturns = estimatedFinalValue - totalInvestedAmount;
-	const investedAmountPercent =
-		(totalInvestedAmount / Math.max(1, estimatedFinalValue)) * 100;
-	const estimatedReturnsPercent =
-		(estimatedReturns / Math.max(1, estimatedFinalValue)) * 100;
-
-	return {
-		totalInvestedAmount,
-		estimatedFinalValue,
-		estimatedReturns,
-		investedAmountPercent,
-		estimatedReturnsPercent,
-	};
 }

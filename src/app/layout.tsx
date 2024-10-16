@@ -41,6 +41,10 @@ export default function RootLayout({
 									<ul className='gap-2'>
 										<ListItem title='SIP Calculator' href='/calculator/sip' />
 										<ListItem title='SWP Calculator' href='/calculator/swp' />
+										<ListItem
+											title='SIP + SWP Calculator'
+											href='/calculator/sip-swp'
+										/>
 									</ul>
 								</NavigationMenuContent>
 							</NavigationMenuItem>
