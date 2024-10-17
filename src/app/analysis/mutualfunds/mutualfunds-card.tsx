@@ -35,7 +35,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const schema = z.object({
-	mfSchemeCode: z
+	mfSchemeCode: z.coerce
 		.number()
 		.min(100000, {
 			message: 'Mutual Fund Scheme Code must be a 6 digit number',
@@ -93,7 +93,11 @@ function MutualFundSearchForm() {
 					.includes(mutualfund.schemeCode.toString())
 		);
 
-	function onAdd() {
+	function addSchemeCode() {
+		if (!form.formState.isValid) {
+			return;
+		}
+
 		const params = new URLSearchParams(searchParams);
 		const schemeCodes = params.getAll('mfSchemeCode');
 		const selectedSchemeCode = form.getValues('mfSchemeCode').toString();
@@ -137,7 +141,11 @@ function MutualFundSearchForm() {
 											</Button>
 										</FormControl>
 									</PopoverTrigger>
-									<Button type='button' onClick={onAdd} className='h-full'>
+									<Button
+										type='button'
+										onClick={addSchemeCode}
+										className='h-full'
+										disabled={field.value === 0}>
 										Add
 									</Button>
 								</div>
@@ -157,7 +165,8 @@ function MutualFundSearchForm() {
 														onSelect={() => {
 															form.setValue(
 																'mfSchemeCode',
-																mutualfund.schemeCode
+																mutualfund.schemeCode,
+																{ shouldValidate: true }
 															);
 														}}>
 														<Check
@@ -187,69 +196,63 @@ function MutualFundSearchForm() {
 
 function MutualFundsDisplay() {
 	const searchParams = useSearchParams();
-	const pathname = usePathname();
-	const { replace } = useRouter();
+	const { data: mutualFundList } = useMutualFundListQuery();
 
-	const mfSchemeCodes = searchParams.getAll('mfSchemeCode');
+	const mfSchemeCodes = searchParams.getAll('mfSchemeCode').map(Number);
 
-	function onRemove(schemeCode: string) {
-		const params = new URLSearchParams(searchParams);
-		const schemeCodes = searchParams.getAll('mfSchemeCode');
-		params.delete('mfSchemeCode');
-		schemeCodes.forEach((code) => {
-			if (code !== schemeCode) {
-				params.append('mfSchemeCode', code);
-			}
-		});
-		replace(`${pathname}?${params.toString()}`);
+	const mutualfunds = (mutualFundList || []).filter((mutualfund) =>
+		mfSchemeCodes.includes(mutualfund.schemeCode)
+	);
+
+	if (!mutualfunds || !mutualfunds.length) {
+		return null;
 	}
 
 	return (
-		mfSchemeCodes.length > 0 && (
-			<div className='space-y-2 mt-2'>
-				<CardTitle className='text-base m-2 mt-4'>
-					Selected Mutual Funds
-				</CardTitle>
-				{mfSchemeCodes.map((schemeCode) => (
-					<MutualFundDisplayItem
-						key={schemeCode}
-						schemeCode={Number(schemeCode)}
-						onRemove={onRemove}
-					/>
-				))}
-			</div>
-		)
+		<div className='space-y-2 mt-2'>
+			<CardTitle className='text-base m-2 mt-4'>Added Mutual Funds:</CardTitle>
+			{mutualfunds.map((mutualfund) => (
+				<MutualFundDisplayItem
+					mutualfund={mutualfund}
+					key={mutualfund.schemeCode}
+				/>
+			))}
+		</div>
 	);
 }
 
 function MutualFundDisplayItem({
-	schemeCode,
-	onRemove,
+	mutualfund,
 }: {
-	schemeCode: number;
-	onRemove: (schemeCode: string) => void;
+	mutualfund: MutualFundListItem;
 }) {
-	const { data: mutualFundList } = useMutualFundListQuery();
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
+	const { replace } = useRouter();
 
-	if (!mutualFundList) {
-		return null;
-	}
+	function removeSchemeCode() {
+		const params = new URLSearchParams(searchParams);
+		const schemeCodes = searchParams.getAll('mfSchemeCode');
+		const schemeCode = mutualfund.schemeCode.toString();
 
-	const mutualFund = mutualFundList.find(
-		(mutualfund) => mutualfund.schemeCode === schemeCode
-	);
+		params.delete('mfSchemeCode');
 
-	if (!mutualFund) {
-		return null;
+		schemeCodes
+			.filter((code) => code !== schemeCode)
+			.forEach((code) => {
+				params.append('mfSchemeCode', code);
+			});
+
+		replace(`${pathname}?${params.toString()}`);
 	}
 
 	return (
 		<Card className='p-2 rounded-lg shadow-md'>
 			<CardContent className='flex justify-between items-center p-2 gap-2 text-sm'>
-				<span>{mutualFund.schemeName}</span>
+				<span>{mutualfund.schemeName}</span>
 				<Button
 					variant='secondary'
-					onClick={() => onRemove(schemeCode.toString())}
+					onClick={() => removeSchemeCode()}
 					className='h-full'>
 					<Trash2 />
 				</Button>
