@@ -205,18 +205,20 @@ function MutualFundsDisplay() {
 	}
 
 	return (
-		<div className='space-y-2 mt-2'>
-			<CardTitle className='text-base m-2 mt-4'>
-				Selected Mutual Funds
-			</CardTitle>
-			{mfSchemeCodes.map((schemeCode) => (
-				<MutualFundDisplayItem
-					key={schemeCode}
-					schemeCode={Number(schemeCode)}
-					onRemove={onRemove}
-				/>
-			))}
-		</div>
+		mfSchemeCodes.length > 0 && (
+			<div className='space-y-2 mt-2'>
+				<CardTitle className='text-base m-2 mt-4'>
+					Selected Mutual Funds
+				</CardTitle>
+				{mfSchemeCodes.map((schemeCode) => (
+					<MutualFundDisplayItem
+						key={schemeCode}
+						schemeCode={Number(schemeCode)}
+						onRemove={onRemove}
+					/>
+				))}
+			</div>
+		)
 	);
 }
 
