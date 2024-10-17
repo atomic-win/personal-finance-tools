@@ -1,3 +1,4 @@
+'use client';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
 import './globals.css';
@@ -10,10 +11,21 @@ import {
 	NavigationMenuTrigger,
 } from '@/components/ui/navigation-menu';
 import Link from 'next/link';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const inter = Inter({
 	subsets: ['latin'],
 	variable: '--font-sans',
+});
+
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			gcTime: 1000 * 60 * 60 * 15, // 24 hours
+			staleTime: 1000 * 60 * 10, // 1 hour
+		},
+	},
 });
 
 export default function RootLayout({
@@ -66,7 +78,12 @@ export default function RootLayout({
 						</NavigationMenuList>
 					</NavigationMenu>
 				</header>
-				<main className='container my-6 mx-auto'>{children}</main>
+				<main className='container my-6 mx-auto'>
+					<QueryClientProvider client={queryClient}>
+						{children}
+						<ReactQueryDevtools />
+					</QueryClientProvider>
+				</main>
 			</body>
 		</html>
 	);

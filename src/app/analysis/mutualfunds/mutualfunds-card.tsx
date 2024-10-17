@@ -1,4 +1,8 @@
 'use client';
+import {
+	MutualFundListItem,
+	useMutualFundListQuery,
+} from '@/components/hooks/useMutualFundListQuery';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -12,10 +16,8 @@ import {
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
-	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
 import {
@@ -28,25 +30,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
+import fuzzysort from 'fuzzysort';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const languages = [
-	{ label: 'English', value: 'en' },
-	{ label: 'French', value: 'fr' },
-	{ label: 'German', value: 'de' },
-	{ label: 'Spanish', value: 'es' },
-	{ label: 'Portuguese', value: 'pt' },
-	{ label: 'Russian', value: 'ru' },
-	{ label: 'Japanese', value: 'ja' },
-	{ label: 'Korean', value: 'ko' },
-	{ label: 'Chinese', value: 'zh' },
-] as const;
-
 const schema = z.object({
-	mf_query: z.string({
-		message: 'Please select a mutual fund',
-	}),
+	mfSchemeCode: z
+		.number()
+		.min(100000, {
+			message: 'Mutual Fund Scheme Code must be a 6 digit number',
+		})
+		.max(999999, {
+			message: 'Mutual Fund Scheme Code must be a 6 digit number',
+		}),
 });
 
 export default function MutualFundsInputCard() {
@@ -54,15 +50,40 @@ export default function MutualFundsInputCard() {
 	const pathname = usePathname();
 	const { replace } = useRouter();
 
+	const [mfSearchText, setMfSearchText] = React.useState('');
+
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			mf_query: '',
+			mfSchemeCode: 0,
 		},
 	});
 
-	function onChange(values: z.infer<typeof schema>) {
-		console.log(values);
+	const { data: mutualFundList } = useMutualFundListQuery();
+
+	if (!mutualFundList) {
+		return null;
+	}
+
+	const searchResults = fuzzysort
+		.go(mfSearchText, mutualFundList || [], {
+			threshold: 0.5,
+			limit: 10,
+			key: 'schemeName',
+		})
+		.map((x) => x.obj as MutualFundListItem);
+
+	function onAdd() {
+		const params = new URLSearchParams(searchParams);
+		const schemeCodes = params.getAll('mfSchemeCode');
+		const selectedSchemeCode = form.getValues('mfSchemeCode').toString();
+
+		if (!schemeCodes.includes(selectedSchemeCode)) {
+			params.append('mfSchemeCode', selectedSchemeCode);
+			replace(`${pathname}?${params.toString()}`);
+		}
+
+		form.reset();
 	}
 
 	return (
@@ -72,56 +93,67 @@ export default function MutualFundsInputCard() {
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
-					<form onChange={form.handleSubmit(onChange)} className='space-y-4'>
+					<form className='space-y-4'>
 						<FormField
 							control={form.control}
-							name='mf_query'
+							name='mfSchemeCode'
 							render={({ field }) => (
 								<FormItem className='flex flex-col'>
 									<Popover>
-										<div className='flex justify-between gap-2'>
+										<div className='flex justify-between gap-2 items-center'>
 											<PopoverTrigger asChild>
 												<FormControl>
 													<Button
 														variant='outline'
 														role='combobox'
 														className={cn(
-															'w-full justify-between',
+															'w-full justify-between h-full',
 															!field.value && 'text-muted-foreground'
 														)}>
-														{field.value
-															? languages.find(
-																	(language) => language.value === field.value
-															  )?.label
-															: 'Add a Mutual Fund'}
+														<span className='text-wrap'>
+															{field.value
+																? searchResults.find(
+																		(mutualfund) =>
+																			mutualfund.schemeCode === field.value
+																  )?.schemeName
+																: 'Add a Mutual Fund'}
+														</span>
 														<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 													</Button>
 												</FormControl>
 											</PopoverTrigger>
-											<Button type='button'>Add</Button>
+											<Button type='button' onClick={onAdd} className='h-full'>
+												Add
+											</Button>
 										</div>
-										<PopoverContent className='w-[200px] p-0'>
+										<PopoverContent className='w-full p-0'>
 											<Command>
-												<CommandInput placeholder='Search language...' />
+												<CommandInput
+													placeholder='Search Mutual Fund'
+													onValueChange={setMfSearchText}
+												/>
 												<CommandList>
-													<CommandEmpty>No language found.</CommandEmpty>
+													<CommandEmpty>No Mutual Funds found.</CommandEmpty>
 													<CommandGroup>
-														{languages.map((language) => (
+														{searchResults.map((mutualfund) => (
 															<CommandItem
-																value={language.label}
-																key={language.value}
+																value={mutualfund.schemeName}
+																key={`${mutualfund.schemeCode} - ${mutualfund.schemeName}`}
 																onSelect={() => {
-																	form.setValue('mf_query', language.value);
+																	form.setValue(
+																		'mfSchemeCode',
+																		mutualfund.schemeCode
+																	);
 																}}>
 																<Check
 																	className={cn(
 																		'mr-2 h-4 w-4',
-																		language.value === field.value
+																		mutualfund.schemeCode === field.value
 																			? 'opacity-100'
 																			: 'opacity-0'
 																	)}
 																/>
-																{language.label}
+																{mutualfund.schemeName}
 															</CommandItem>
 														))}
 													</CommandGroup>
