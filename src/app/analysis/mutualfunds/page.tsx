@@ -1,4 +1,5 @@
 'use client';
+import MutualFundsInputCard from './mutualfunds-card';
 import SIPInputCard from './sip-card';
 
 export default function SIPPage() {
@@ -7,6 +8,7 @@ export default function SIPPage() {
 			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analysis</h1>
 			<div className='grid grid-cols-3 gap-4'>
 				<SIPInputCard />
+				<MutualFundsInputCard />
 			</div>
 		</div>
 	);
