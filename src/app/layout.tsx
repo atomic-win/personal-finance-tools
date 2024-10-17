@@ -50,6 +50,21 @@ export default function RootLayout({
 							</NavigationMenuItem>
 						</NavigationMenuList>
 					</NavigationMenu>
+					<NavigationMenu>
+						<NavigationMenuList>
+							<NavigationMenuItem>
+								<NavigationMenuTrigger>Analysis</NavigationMenuTrigger>
+								<NavigationMenuContent>
+									<ul className='gap-2'>
+										<ListItem
+											title='Mutual Funds'
+											href='/analysis/mutualfunds'
+										/>
+									</ul>
+								</NavigationMenuContent>
+							</NavigationMenuItem>
+						</NavigationMenuList>
+					</NavigationMenu>
 				</header>
 				<main className='container my-6 mx-auto'>{children}</main>
 			</body>
