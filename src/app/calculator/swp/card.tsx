@@ -28,7 +28,7 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const SWPCalculatorSchema = z.object({
+const schema = z.object({
 	totalInvestment: z.coerce.number().min(1, {
 		message: 'Total Investment cannot be less than 1',
 	}),
@@ -77,8 +77,8 @@ export default function SWPCalculatorCard({
 	canRemove: boolean;
 	removeCalculator: (id: string) => void;
 }) {
-	const form = useForm<z.infer<typeof SWPCalculatorSchema>>({
-		resolver: zodResolver(SWPCalculatorSchema),
+	const form = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
 		defaultValues: {
 			totalInvestment: 1000000,
 			monthlyWithdrawal: 10000,
@@ -133,9 +133,7 @@ export default function SWPCalculatorCard({
 							<FormField
 								key={formField.name}
 								control={form.control}
-								name={
-									formField.name as keyof z.infer<typeof SWPCalculatorSchema>
-								}
+								name={formField.name as keyof z.infer<typeof schema>}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{formField.label}</FormLabel>

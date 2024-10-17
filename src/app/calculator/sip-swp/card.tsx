@@ -28,7 +28,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const CalculatorSchema = z.object({
+const schema = z.object({
 	lumpsumAmount: z.coerce.number().min(0, {
 		message: 'Lumpsum Amount cannot be less than 0',
 	}),
@@ -101,8 +101,8 @@ export default function CalculatorCard({
 	canRemove: boolean;
 	removeCalculator: (id: string) => void;
 }) {
-	const form = useForm<z.infer<typeof CalculatorSchema>>({
-		resolver: zodResolver(CalculatorSchema),
+	const form = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
 		defaultValues: {
 			lumpsumAmount: 0,
 			monthlySipInvestment: 500,
@@ -185,7 +185,7 @@ export default function CalculatorCard({
 							<FormField
 								key={formField.name}
 								control={form.control}
-								name={formField.name as keyof z.infer<typeof CalculatorSchema>}
+								name={formField.name as keyof z.infer<typeof schema>}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{formField.label}</FormLabel>

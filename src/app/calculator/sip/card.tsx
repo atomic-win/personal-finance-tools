@@ -25,7 +25,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const SIPCalculatorSchema = z.object({
+const schema = z.object({
 	lumpsumAmount: z.coerce.number().min(0, {
 		message: 'Lumpsum Amount cannot be less than 0',
 	}),
@@ -82,8 +82,8 @@ export default function SIPCalculatorCard({
 	canRemove: boolean;
 	removeCalculator: (id: string) => void;
 }) {
-	const form = useForm<z.infer<typeof SIPCalculatorSchema>>({
-		resolver: zodResolver(SIPCalculatorSchema),
+	const form = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
 		defaultValues: {
 			lumpsumAmount: 0,
 			monthlyInvestment: 500,
@@ -145,9 +145,7 @@ export default function SIPCalculatorCard({
 							<FormField
 								key={formField.name}
 								control={form.control}
-								name={
-									formField.name as keyof z.infer<typeof SIPCalculatorSchema>
-								}
+								name={formField.name as keyof z.infer<typeof schema>}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{formField.label}</FormLabel>

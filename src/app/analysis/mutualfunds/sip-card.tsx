@@ -16,7 +16,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-const SIPCalculatorSchema = z.object({
+const schema = z.object({
 	lumpsumAmount: z.coerce.number().min(0, {
 		message: 'Lumpsum Amount cannot be less than 0',
 	}),
@@ -67,8 +67,8 @@ export default function SIPInputCard() {
 	const pathname = usePathname();
 	const { replace } = useRouter();
 
-	const form = useForm<z.infer<typeof SIPCalculatorSchema>>({
-		resolver: zodResolver(SIPCalculatorSchema),
+	const form = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
 		defaultValues: {
 			lumpsumAmount: Number(searchParams.get('lumpsumAmount') || 0),
 			monthlyInvestment: Number(searchParams.get('monthlyInvestment') || 500),
@@ -82,7 +82,7 @@ export default function SIPInputCard() {
 		},
 	});
 
-	function onChange(values: z.infer<typeof SIPCalculatorSchema>) {
+	function onChange(values: z.infer<typeof schema>) {
 		const params = new URLSearchParams(searchParams);
 		for (const key in values) {
 			params.set(key, values[key as keyof typeof values].toString());
@@ -102,9 +102,7 @@ export default function SIPInputCard() {
 							<FormField
 								key={formField.name}
 								control={form.control}
-								name={
-									formField.name as keyof z.infer<typeof SIPCalculatorSchema>
-								}
+								name={formField.name as keyof z.infer<typeof schema>}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{formField.label}</FormLabel>
