@@ -29,7 +29,7 @@ import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 import fuzzysort from 'fuzzysort';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -64,7 +64,7 @@ function MutualFundSearchForm() {
 	const pathname = usePathname();
 	const { replace } = useRouter();
 
-	const [mfSearchText, setMfSearchText] = React.useState('');
+	const [mfSearchText, setMfSearchText] = useState('');
 
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
@@ -85,7 +85,13 @@ function MutualFundSearchForm() {
 			limit: 10,
 			key: 'schemeName',
 		})
-		.map((x) => x.obj as MutualFundListItem);
+		.map((x) => x.obj as MutualFundListItem)
+		.filter(
+			(mutualfund) =>
+				!searchParams
+					.getAll('mfSchemeCode')
+					.includes(mutualfund.schemeCode.toString())
+		);
 
 	function onAdd() {
 		const params = new URLSearchParams(searchParams);
