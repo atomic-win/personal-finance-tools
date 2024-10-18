@@ -41,7 +41,7 @@ export default function AnalysisTable({
 				<Table className='w-full'>
 					<TableHeader>
 						<TableRow>
-							<TableHead></TableHead>
+							<TableHead>XIRR (%) of the SIP ending in last</TableHead>
 							{mutualfunds.map((mf) => (
 								<TableHead key={mf.schemeCode} className='text-center'>
 									{mf.schemeName}
