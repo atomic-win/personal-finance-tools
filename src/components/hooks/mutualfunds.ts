@@ -108,6 +108,10 @@ export function useReturnQueries(
 	investmentDuration: PresetTimeDurations,
 	lookbackDuration: PresetTimeDurations
 ) {
+	const earliestDate = DateTime.min(
+		...mutualfunds.map((mf) => DateTime.fromISO(mf.earliestDate))
+	);
+
 	return useQueries({
 		queries: mutualfunds.map((mutualfund) => ({
 			queryKey: [
@@ -127,7 +131,7 @@ export function useReturnQueries(
 
 				const returns: MutualFundReturn[] = [];
 				for (
-					let date = startDate;
+					let date = DateTime.max(startDate, earliestDate);
 					date <= endDate;
 					date = date.plus({ days: 1 })
 				) {
@@ -182,9 +186,9 @@ export function useRollingReturnsQuery(
 
 			const returns = [];
 			for (
-				let date = endDate;
-				date >= startDate && date >= earliestDate;
-				date = date.minus({ days: 1 })
+				let date = DateTime.max(startDate, earliestDate);
+				date <= endDate;
+				date = date.plus({ days: 1 })
 			) {
 				returns.push(evaluateMutualFund(mutualfund.navs, rollingWindow, date));
 			}
