@@ -1,8 +1,8 @@
 'use client';
 import {
-	MutualFundListItem,
+	MutualFund,
 	useMutualFundListQuery,
-} from '@/components/hooks/useMutualFundListQuery';
+} from '@/components/hooks/mutualfunds';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -68,7 +68,7 @@ export default function MutualFundsInputCard() {
 function MutualFundSearchForm({
 	mutualFundList,
 }: {
-	mutualFundList: MutualFundListItem[];
+	mutualFundList: MutualFund[];
 }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -93,7 +93,7 @@ function MutualFundSearchForm({
 			limit: 10,
 			key: 'schemeName',
 		})
-		.map((x) => x.obj as MutualFundListItem)
+		.map((x) => x.obj as MutualFund)
 		.filter(
 			(mutualfund) =>
 				!searchParams
@@ -205,7 +205,7 @@ function MutualFundSearchForm({
 function MutualFundsDisplay({
 	mutualFundList,
 }: {
-	mutualFundList: MutualFundListItem[];
+	mutualFundList: MutualFund[];
 }) {
 	const searchParams = useSearchParams();
 
@@ -232,11 +232,7 @@ function MutualFundsDisplay({
 	);
 }
 
-function MutualFundDisplayItem({
-	mutualfund,
-}: {
-	mutualfund: MutualFundListItem;
-}) {
+function MutualFundDisplayItem({ mutualfund }: { mutualfund: MutualFund }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const { replace } = useRouter();
