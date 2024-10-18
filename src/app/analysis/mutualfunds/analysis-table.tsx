@@ -13,7 +13,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { PresetTimeDurations } from '@/lib/types';
-import { displayPresetTimeDuration } from '@/lib/utils';
+import { cn, displayPresetTimeDuration } from '@/lib/utils';
 
 export default function AnalysisTable({
 	mutualfunds,
@@ -43,7 +43,9 @@ export default function AnalysisTable({
 						<TableRow>
 							<TableHead></TableHead>
 							{mutualfunds.map((mf) => (
-								<TableHead key={mf.schemeCode}>{mf.schemeName}</TableHead>
+								<TableHead key={mf.schemeCode} className='text-center'>
+									{mf.schemeName}
+								</TableHead>
 							))}
 						</TableRow>
 					</TableHeader>
@@ -107,15 +109,22 @@ function AnalysisTableCell({
 
 	return (
 		<TableCell>
-			<>
-				<XIRRValue label='Min: ' value={anaysis.minXirr} />
-				<XIRRValue label='Max: ' value={anaysis.maxXirr} />
-				<XIRRValue label='Mean: ' value={anaysis.meanXirr} />
-			</>
+			<div className='mx-auto w-fit'>
+				<XIRRValue label='Mean' value={anaysis.meanXirr} />
+				<XIRRValue label='Min' value={anaysis.minXirr} />
+				<XIRRValue label='Max' value={anaysis.maxXirr} />
+			</div>
 		</TableCell>
 	);
 }
 
 function XIRRValue({ label, value }: { label: string; value: number }) {
-	return <div>{label + value.toFixed(2) + '%'}</div>;
+	return (
+		<div className='font-semibold'>
+			<text>{label}: </text>
+			<text className={cn(value < 0 ? 'text-red-500' : 'text-green-500')}>
+				{value.toFixed(2)}%
+			</text>
+		</div>
+	);
 }

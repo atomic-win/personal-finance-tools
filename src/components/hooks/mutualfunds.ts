@@ -14,9 +14,9 @@ export interface MutualFund {
 
 export interface MutualFundAnalysis {
 	isPending: boolean;
+	meanXirr: number;
 	minXirr: number;
 	maxXirr: number;
-	meanXirr: number;
 }
 
 interface MutualFundEvaluation {
@@ -74,6 +74,19 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 						lastDate = date;
 					}
 				});
+
+				let latestNav = navs.get(lastDate)!;
+				for (
+					let date = lastDate;
+					earliestDate <= date;
+					date = DateTime.fromISO(date).minus({ days: 1 }).toISODate()!
+				) {
+					if (!navs.has(date)) {
+						navs.set(date, latestNav);
+					} else {
+						latestNav = navs.get(date)!;
+					}
+				}
 
 				return {
 					schemeCode,
@@ -136,9 +149,9 @@ export function useXIRRQuery(
 
 			return {
 				isPending: results.some((r) => r.isPending),
+				meanXirr: xirrs.reduce((a, b) => a + b, 0) / Math.max(1, xirrs.length),
 				minXirr: xirrs.reduce((a, b) => Math.min(a, b), Infinity),
 				maxXirr: xirrs.reduce((a, b) => Math.max(a, b), -Infinity),
-				meanXirr: xirrs.reduce((a, b) => a + b, 0) / Math.max(1, xirrs.length),
 			} as MutualFundAnalysis;
 		},
 	});
@@ -157,6 +170,8 @@ function getDates(
 	if (startDate < mutualfund.earliestDate) {
 		return [];
 	}
+
+	return [DateTime.fromISO(startDate)];
 
 	const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
 		getLuxonDuration(investmentDuration)
@@ -185,6 +200,6 @@ function calculateXIRR(
 	return {
 		totalInvestment: 0,
 		totalValue: 0,
-		xirr: 0,
+		xirr: 200 * Math.random() - 100,
 	};
 }
