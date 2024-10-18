@@ -127,19 +127,14 @@ function ReturnsChart({
 					<Line
 						key={mutualfund.schemeCode}
 						dataKey={mutualfund.schemeCode.toString()}
+						name={mutualfund.schemeName} // Add this line to show label in legend
 						type='monotone'
 						stroke={`var(--color-${mutualfund.schemeCode})`}
 						strokeWidth={2}
 						dot={false}
 					/>
 				))}
-				<Legend
-					align='center'
-					iconType='circle'
-					wrapperStyle={{
-						paddingTop: '1rem',
-					}}
-				/>
+				<Legend iconType='circle' align='center' verticalAlign='bottom' />
 			</LineChart>
 		</ChartContainer>
 	);
