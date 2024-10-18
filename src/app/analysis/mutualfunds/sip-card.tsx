@@ -26,9 +26,6 @@ const schema = z.object({
 	annualStepUpPercent: z.coerce.number().min(-99, {
 		message: 'Annual Step-Up Percent cannot be less than or equal to -100%',
 	}),
-	annualInterestPercent: z.coerce.number().min(-99, {
-		message: 'Annual Interest Percent cannot be less than or equal to -100%',
-	}),
 	numberOfYears: z.coerce
 		.number()
 		.min(1, { message: 'Investment Duration cannot be less than 1 year' }),
@@ -44,11 +41,6 @@ const formFields = [
 		name: 'monthlyInvestment',
 		label: 'Monthly Installment',
 		description: 'Enter the monthly installment',
-	},
-	{
-		name: 'annualInterestPercent',
-		label: 'Annual Interest Rate (%)',
-		description: 'Enter the annual interest rate',
 	},
 	{
 		name: 'annualStepUpPercent',
@@ -75,9 +67,6 @@ export default function SIPInputCard() {
 			annualStepUpPercent: Number(
 				searchParams.get('annualStepUpPercent') || 10
 			),
-			annualInterestPercent: Number(
-				searchParams.get('annualInterestPercent') || 10
-			),
 			numberOfYears: Number(searchParams.get('numberOfYears') || 10),
 		},
 	});
@@ -98,11 +87,6 @@ export default function SIPInputCard() {
 		params.delete('annualStepUpPercent');
 		if (values.annualStepUpPercent !== 10) {
 			params.set('annualStepUpPercent', String(values.annualStepUpPercent));
-		}
-
-		params.delete('annualInterestPercent');
-		if (values.annualInterestPercent !== 10) {
-			params.set('annualInterestPercent', String(values.annualInterestPercent));
 		}
 
 		params.delete('numberOfYears');
