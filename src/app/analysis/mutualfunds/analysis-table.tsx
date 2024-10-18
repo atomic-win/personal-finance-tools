@@ -10,9 +10,7 @@ import {
 } from '@/components/ui/table';
 import { PresetTimeDurations } from '@/lib/types';
 import { displayPresetTimeDuration, getLuxonDuration } from '@/lib/utils';
-import { get } from 'http';
 import { DateTime } from 'luxon';
-import { useSearchParams } from 'next/navigation';
 
 export default function AnalysisTable({
 	mutualfunds,
