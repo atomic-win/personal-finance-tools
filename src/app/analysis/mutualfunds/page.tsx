@@ -8,6 +8,7 @@ import MutualFundsForm from './mutualfunds-form';
 import ReturnsForm from './returns-form';
 import { useSearchParams } from 'next/navigation';
 import { PresetTimeDurations } from '@/lib/types';
+import ReturnsChartCard from './returns-chart';
 
 export default function Page() {
 	const searchParams = useSearchParams();
@@ -35,7 +36,14 @@ export default function Page() {
 		<div className='container mx-auto p-2'>
 			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analysis</h1>
 			<div className='grid grid-cols-3 gap-4'>
-				<RollingReturnsTable mutualfunds={addedMutualfunds} />
+				<div className='col-span-2'>
+					<ReturnsChartCard
+						mutualfunds={addedMutualfunds}
+						investmentDuration={investmentDuration}
+						lookbackDuration={PresetTimeDurations.OneYear}
+					/>
+					<RollingReturnsTable mutualfunds={addedMutualfunds} />
+				</div>
 				<div>
 					<ReturnsForm investmentDuration={investmentDuration} />
 					<MutualFundsForm

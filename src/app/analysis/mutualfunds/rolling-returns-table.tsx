@@ -24,7 +24,7 @@ export default function RollingReturnsTable({
 	}
 
 	return (
-		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full col-span-2'>
+		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>Latest CAGR Rolling Returns</CardTitle>
 			</CardHeader>

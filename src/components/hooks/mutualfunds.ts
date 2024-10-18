@@ -19,6 +19,12 @@ export interface MutualFundRollingReturns {
 	maxReturn: number;
 }
 
+export interface MutualFundReturn {
+	schemeCode: number;
+	date: string;
+	return: number;
+}
+
 const mfApiClient = axios.create({
 	baseURL: 'https://api.mfapi.in',
 	validateStatus: () => true,
@@ -97,6 +103,59 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 	});
 }
 
+export function useReturnQueries(
+	mutualfunds: MutualFund[],
+	investmentDuration: PresetTimeDurations,
+	lookbackDuration: PresetTimeDurations
+) {
+	return useQueries({
+		queries: mutualfunds.map((mutualfund) => ({
+			queryKey: [
+				'mutualfunds',
+				mutualfund.schemeCode,
+				'returns',
+				{ investmentDuration, lookbackDuration },
+			],
+			queryFn: async () => {
+				const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
+					getLuxonDuration(investmentDuration)
+				);
+
+				const startDate = endDate
+					.minus(getLuxonDuration(lookbackDuration))
+					.plus({ days: 1 });
+
+				const returns: MutualFundReturn[] = [];
+				for (
+					let date = startDate;
+					date <= endDate;
+					date = date.plus({ days: 1 })
+				) {
+					returns.push({
+						schemeCode: 0,
+						date: date.plus(getLuxonDuration(investmentDuration)).toISODate()!,
+						return: evaluateMutualFund(
+							mutualfund.navs,
+							investmentDuration,
+							date
+						),
+					});
+				}
+
+				return returns;
+			},
+			select: (returns: MutualFundReturn[]) =>
+				returns.map((r) => ({
+					...r,
+					schemeCode: mutualfund.schemeCode,
+				})),
+			staleTime: 1000 * 60 * 60, // 1 hour
+			refetchInterval: 1000 * 60 * 60, // 1 hour
+			refetchIntervalInBackground: true,
+		})),
+	});
+}
+
 export function useRollingReturnsQuery(
 	mutualfund: MutualFund,
 	rollingWindow: PresetTimeDurations
@@ -111,11 +170,26 @@ export function useRollingReturnsQuery(
 			},
 		],
 		queryFn: async () => {
-			const dates = getRollingReturnsEvaluationDates(mutualfund, rollingWindow);
-
-			return dates.map((date) =>
-				evaluateMutualFund(mutualfund.navs, rollingWindow, date)
+			const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
+				getLuxonDuration(rollingWindow)
 			);
+
+			const startDate = endDate
+				.minus(getLuxonDuration(rollingWindow))
+				.plus({ days: 1 });
+
+			const earliestDate = DateTime.fromISO(mutualfund.earliestDate);
+
+			const returns = [];
+			for (
+				let date = endDate;
+				date >= startDate && date >= earliestDate;
+				date = date.minus({ days: 1 })
+			) {
+				returns.push(evaluateMutualFund(mutualfund.navs, rollingWindow, date));
+			}
+
+			return returns;
 		},
 		select: (returns) =>
 			({
@@ -129,32 +203,6 @@ export function useRollingReturnsQuery(
 		refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
 		refetchIntervalInBackground: true,
 	});
-}
-
-function getRollingReturnsEvaluationDates(
-	mutualfund: MutualFund,
-	rollingWindow: PresetTimeDurations
-): DateTime[] {
-	const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
-		getLuxonDuration(rollingWindow)
-	);
-
-	const startDate = endDate
-		.minus(getLuxonDuration(rollingWindow))
-		.plus({ days: 1 });
-
-	const earliestDate = DateTime.fromISO(mutualfund.earliestDate);
-
-	const dates = [];
-	for (
-		let date = endDate;
-		date >= startDate && date >= earliestDate;
-		date = date.minus({ days: 1 })
-	) {
-		dates.push(date);
-	}
-
-	return dates;
 }
 
 function evaluateMutualFund(
