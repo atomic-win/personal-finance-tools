@@ -60,13 +60,6 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 					}
 				});
 
-				console.log({
-					schemeCode,
-					schemeName,
-					startDate,
-					lastDate,
-				});
-
 				return {
 					schemeCode,
 					schemeName,

@@ -96,6 +96,5 @@ function AnalysisTableCell({
 		return <TableCell className='text-center'>-</TableCell>;
 	}
 
-	console.log(startDate, mutualfund.startDate);
 	return <TableCell></TableCell>;
 }
