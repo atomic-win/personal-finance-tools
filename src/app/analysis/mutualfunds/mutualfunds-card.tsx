@@ -46,20 +46,30 @@ const schema = z.object({
 });
 
 export default function MutualFundsInputCard() {
+	const { data: mutualFundList } = useMutualFundListQuery();
+
+	if (!mutualFundList || !mutualFundList.length) {
+		return null;
+	}
+
 	return (
 		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full col-start-3'>
 			<CardHeader>
 				<CardTitle>Mutual Funds</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<MutualFundSearchForm />
-				<MutualFundsDisplay />
+				<MutualFundSearchForm mutualFundList={mutualFundList} />
+				<MutualFundsDisplay mutualFundList={mutualFundList} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function MutualFundSearchForm() {
+function MutualFundSearchForm({
+	mutualFundList,
+}: {
+	mutualFundList: MutualFundListItem[];
+}) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const { replace } = useRouter();
@@ -72,8 +82,6 @@ function MutualFundSearchForm() {
 			mfSchemeCode: 0,
 		},
 	});
-
-	const { data: mutualFundList } = useMutualFundListQuery();
 
 	if (!mutualFundList) {
 		return null;
@@ -194,9 +202,12 @@ function MutualFundSearchForm() {
 	);
 }
 
-function MutualFundsDisplay() {
+function MutualFundsDisplay({
+	mutualFundList,
+}: {
+	mutualFundList: MutualFundListItem[];
+}) {
 	const searchParams = useSearchParams();
-	const { data: mutualFundList } = useMutualFundListQuery();
 
 	const mfSchemeCodes = searchParams.getAll('mfSchemeCode').map(Number);
 
@@ -204,7 +215,7 @@ function MutualFundsDisplay() {
 		mfSchemeCodes.includes(mutualfund.schemeCode)
 	);
 
-	if (!mutualfunds || !mutualfunds.length) {
+	if (!mutualfunds.length) {
 		return null;
 	}
 
