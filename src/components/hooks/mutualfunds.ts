@@ -25,6 +25,11 @@ interface MutualFundEvaluation {
 	xirr: number;
 }
 
+interface XIRRInput {
+	diffInYears: number;
+	value: number;
+}
+
 const mfApiClient = axios.create({
 	baseURL: 'https://api.mfapi.in',
 	validateStatus: () => true,
@@ -128,8 +133,8 @@ export function useXIRRQuery(
 				},
 			],
 			queryFn: async () => {
-				return calculateXIRR(
-					mutualfund,
+				return evaluateMutualFund(
+					mutualfund.navs,
 					lumpsumAmount,
 					monthlyInvestment,
 					annualStepUpPercent,
@@ -189,17 +194,77 @@ function getDates(
 	return dates;
 }
 
-function calculateXIRR(
-	mutualfund: MutualFund,
+function evaluateMutualFund(
+	navs: Map<string, number>,
 	lumpsumAmount: number,
 	monthlyInvestment: number,
 	annualStepUpPercent: number,
 	investmentDuration: PresetTimeDurations,
 	date: DateTime
 ): MutualFundEvaluation {
+	const annualStepUpRate = annualStepUpPercent / 100;
+
+	const endDate = date.plus(getLuxonDuration(investmentDuration));
+
+	let totalInvestment = lumpsumAmount;
+	let totalUnits = lumpsumAmount / navs.get(date.toISODate()!)!;
+	const xirrInputs: XIRRInput[] = [
+		{
+			diffInYears: endDate.diff(date, 'years')!.years,
+			value: lumpsumAmount,
+		},
+	];
+
+	for (
+		let monthsSinceStepUp = 0;
+		date < endDate;
+		date = date.plus({ months: 1 }), ++monthsSinceStepUp
+	) {
+		if (monthsSinceStepUp === 12) {
+			monthlyInvestment *= 1 + annualStepUpRate;
+			monthsSinceStepUp = 0;
+		}
+
+		totalInvestment += monthlyInvestment;
+		totalUnits += monthlyInvestment / navs.get(date.toISODate()!)!;
+
+		xirrInputs.push({
+			diffInYears: endDate.diff(date, 'years')!.years,
+			value: monthlyInvestment,
+		});
+	}
+
+	const totalValue = totalUnits * navs.get(date.toISODate()!)!;
+
+	xirrInputs.push({
+		diffInYears: 0,
+		value: -totalValue,
+	});
+
 	return {
-		totalInvestment: 0,
-		totalValue: 0,
-		xirr: 200 * Math.random() - 100,
+		totalInvestment,
+		totalValue,
+		xirr: calculateXIRR(xirrInputs),
 	};
+}
+
+function calculateXIRR(inputs: XIRRInput[]) {
+	let lowerBound = -1;
+	let upperBound = 100;
+
+	while (upperBound - lowerBound > 1e-6) {
+		const mid = (lowerBound + upperBound) / 2;
+		const value = inputs.reduce(
+			(acc, input) => acc + input.value * Math.pow(1 + mid, input.diffInYears),
+			0
+		);
+
+		if (value < 0) {
+			lowerBound = mid;
+		} else {
+			upperBound = mid;
+		}
+	}
+
+	return (100 * (lowerBound + upperBound)) / 2;
 }
