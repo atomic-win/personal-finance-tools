@@ -1,4 +1,8 @@
-import { MutualFund } from '@/components/hooks/mutualfunds';
+import {
+	MutualFund,
+	MutualFundAnalysis,
+	useXIRRQuery,
+} from '@/components/hooks/mutualfunds';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Table,
@@ -9,8 +13,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { PresetTimeDurations } from '@/lib/types';
-import { displayPresetTimeDuration, getLuxonDuration } from '@/lib/utils';
-import { DateTime } from 'luxon';
+import { displayPresetTimeDuration } from '@/lib/utils';
 
 export default function AnalysisTable({
 	mutualfunds,
@@ -85,14 +88,34 @@ function AnalysisTableCell({
 	investmentDuration: PresetTimeDurations;
 	lookback: PresetTimeDurations;
 }) {
-	const startDate = DateTime.local()
-		.minus(getLuxonDuration(lookback))
-		.minus(getLuxonDuration(investmentDuration))
-		.toISODate();
+	const anaysis: MutualFundAnalysis = useXIRRQuery(
+		mutualfund,
+		lumpsumAmount,
+		monthlyInvestment,
+		annualStepUpPercent,
+		investmentDuration,
+		lookback
+	);
 
-	if (startDate < mutualfund.startDate) {
+	if (anaysis.isPending) {
+		return <TableCell className='text-center'>Loading...</TableCell>;
+	}
+
+	if (!anaysis.isPending && anaysis.minXirr === Infinity) {
 		return <TableCell className='text-center'>-</TableCell>;
 	}
 
-	return <TableCell></TableCell>;
+	return (
+		<TableCell>
+			<>
+				<XIRRValue label='Min: ' value={anaysis.minXirr} />
+				<XIRRValue label='Max: ' value={anaysis.maxXirr} />
+				<XIRRValue label='Mean: ' value={anaysis.meanXirr} />
+			</>
+		</TableCell>
+	);
+}
+
+function XIRRValue({ label, value }: { label: string; value: number }) {
+	return <div>{label + value.toFixed(2) + '%'}</div>;
 }

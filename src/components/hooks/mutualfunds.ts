@@ -1,3 +1,5 @@
+import { PresetTimeDurations } from '@/lib/types';
+import { getLuxonDuration } from '@/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateTime } from 'luxon';
@@ -5,9 +7,22 @@ import { DateTime } from 'luxon';
 export interface MutualFund {
 	schemeCode: number;
 	schemeName: string;
-	startDate: string;
+	earliestDate: string;
 	lastDate: string;
 	navs: Map<string, number>;
+}
+
+export interface MutualFundAnalysis {
+	isPending: boolean;
+	minXirr: number;
+	maxXirr: number;
+	meanXirr: number;
+}
+
+interface MutualFundEvaluation {
+	totalInvestment: number;
+	totalValue: number;
+	xirr: number;
 }
 
 const mfApiClient = axios.create({
@@ -43,7 +58,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 				const schemeName = apiResponse.meta.scheme_name;
 				const navs = new Map<string, number>();
 
-				let startDate = DateTime.local().toISODate();
+				let earliestDate = DateTime.local().toISODate();
 				let lastDate = DateTime.local().minus({ months: 1 }).toISODate();
 
 				apiResponse.data.forEach((x) => {
@@ -51,8 +66,8 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 
 					navs.set(date, x.nav);
 
-					if (date < startDate) {
-						startDate = date;
+					if (date < earliestDate) {
+						earliestDate = date;
 					}
 
 					if (date > lastDate) {
@@ -63,7 +78,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 				return {
 					schemeCode,
 					schemeName,
-					startDate,
+					earliestDate,
 					lastDate,
 					navs,
 				} as MutualFund;
@@ -73,4 +88,103 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 			refetchIntervalInBackground: true,
 		})),
 	});
+}
+
+export function useXIRRQuery(
+	mutualfund: MutualFund,
+	lumpsumAmount: number,
+	monthlyInvestment: number,
+	annualStepUpPercent: number,
+	investmentDuration: PresetTimeDurations,
+	lookback: PresetTimeDurations
+) {
+	const dates = getDates(mutualfund, investmentDuration, lookback);
+
+	return useQueries({
+		queries: dates.map((date) => ({
+			queryKey: [
+				'mutualfunds',
+				mutualfund.schemeCode,
+				'evaluation',
+				{
+					lumpsumAmount,
+					monthlyInvestment,
+					annualStepUpPercent,
+					investmentDuration,
+					date: date.toISODate(),
+				},
+			],
+			queryFn: async () => {
+				return calculateXIRR(
+					mutualfund,
+					lumpsumAmount,
+					monthlyInvestment,
+					annualStepUpPercent,
+					investmentDuration,
+					date
+				);
+			},
+			staleTime: 1000 * 60 * 60 * 24, // 24 hours
+			refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
+			refetchIntervalInBackground: true,
+		})),
+		combine: (results) => {
+			const xirrs = results
+				.map((r) => r.data as MutualFundEvaluation)
+				.filter((x) => !!x)
+				.map((x) => x.xirr);
+
+			return {
+				isPending: results.some((r) => r.isPending),
+				minXirr: xirrs.reduce((a, b) => Math.min(a, b), Infinity),
+				maxXirr: xirrs.reduce((a, b) => Math.max(a, b), -Infinity),
+				meanXirr: xirrs.reduce((a, b) => a + b, 0) / Math.max(1, xirrs.length),
+			} as MutualFundAnalysis;
+		},
+	});
+}
+
+function getDates(
+	mutualfund: MutualFund,
+	investmentDuration: PresetTimeDurations,
+	lookback: PresetTimeDurations
+): DateTime[] {
+	const startDate = DateTime.local()
+		.minus(getLuxonDuration(lookback))
+		.minus(getLuxonDuration(investmentDuration))
+		.toISODate();
+
+	if (startDate < mutualfund.earliestDate) {
+		return [];
+	}
+
+	const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
+		getLuxonDuration(investmentDuration)
+	);
+
+	const dates = [];
+	for (
+		let date = DateTime.fromISO(startDate);
+		date <= endDate;
+		date = date.plus({ days: 1 })
+	) {
+		dates.push(date);
+	}
+
+	return dates;
+}
+
+function calculateXIRR(
+	mutualfund: MutualFund,
+	lumpsumAmount: number,
+	monthlyInvestment: number,
+	annualStepUpPercent: number,
+	investmentDuration: PresetTimeDurations,
+	date: DateTime
+): MutualFundEvaluation {
+	return {
+		totalInvestment: 0,
+		totalValue: 0,
+		xirr: 0,
+	};
 }
