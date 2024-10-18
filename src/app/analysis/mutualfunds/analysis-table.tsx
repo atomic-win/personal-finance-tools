@@ -121,10 +121,10 @@ function AnalysisTableCell({
 function XIRRValue({ label, value }: { label: string; value: number }) {
 	return (
 		<div className='font-semibold'>
-			<text>{label}: </text>
-			<text className={cn(value < 0 ? 'text-red-500' : 'text-green-500')}>
+			<span>{label}: </span>
+			<span className={cn(value < 0 ? 'text-red-500' : 'text-green-500')}>
 				{value.toFixed(2)}%
-			</text>
+			</span>
 		</div>
 	);
 }
