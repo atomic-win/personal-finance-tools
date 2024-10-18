@@ -84,9 +84,32 @@ export default function SIPInputCard() {
 
 	function onChange(values: z.infer<typeof schema>) {
 		const params = new URLSearchParams(searchParams);
-		for (const key in values) {
-			params.set(key, values[key as keyof typeof values].toString());
+
+		params.delete('lumpsumAmount');
+		if (values.lumpsumAmount !== 0) {
+			params.set('lumpsumAmount', String(values.lumpsumAmount));
 		}
+
+		params.delete('monthlyInvestment');
+		if (values.monthlyInvestment !== 500) {
+			params.set('monthlyInvestment', String(values.monthlyInvestment));
+		}
+
+		params.delete('annualStepUpPercent');
+		if (values.annualStepUpPercent !== 10) {
+			params.set('annualStepUpPercent', String(values.annualStepUpPercent));
+		}
+
+		params.delete('annualInterestPercent');
+		if (values.annualInterestPercent !== 10) {
+			params.set('annualInterestPercent', String(values.annualInterestPercent));
+		}
+
+		params.delete('numberOfYears');
+		if (values.numberOfYears !== 10) {
+			params.set('numberOfYears', String(values.numberOfYears));
+		}
+
 		replace(`${pathname}?${params.toString()}`);
 	}
 
