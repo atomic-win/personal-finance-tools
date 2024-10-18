@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { calculateSipResult } from '@/lib/calculator.utils';
-import { formattedCurrencyAmount } from '@/lib/utils';
+import { displayCurrencyAmount } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
@@ -169,7 +169,7 @@ export default function SIPCalculatorCard({
 										Estimated Total Value:
 									</td>
 									<td className='text-green-700 font-semibold'>
-										{formattedCurrencyAmount(result.estimatedTotalValue)}
+										{displayCurrencyAmount(result.estimatedTotalValue)}
 									</td>
 								</tr>
 								<tr>
@@ -177,7 +177,7 @@ export default function SIPCalculatorCard({
 										Total Invested Amount:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(result.totalInvestedAmount)} (
+										{displayCurrencyAmount(result.totalInvestedAmount)} (
 										{result.investedAmountPercent.toFixed(2)}%)
 									</td>
 								</tr>
@@ -186,7 +186,7 @@ export default function SIPCalculatorCard({
 										Estimated Returns:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(result.estimatedReturns)} (
+										{displayCurrencyAmount(result.estimatedReturns)} (
 										{result.estimatedReturnsPercent.toFixed(2)}%)
 									</td>
 								</tr>

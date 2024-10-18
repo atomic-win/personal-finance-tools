@@ -18,10 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { calculateSwpResult } from '@/lib/calculator.utils';
-import {
-	formattedCurrencyAmount,
-	formattedYearlyTimeDuration,
-} from '@/lib/utils';
+import { displayCurrencyAmount, displayYearlyTimeDuration } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -157,7 +154,7 @@ export default function SWPCalculatorCard({
 										Total Investment:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(totalInvestmentAmount)}
+										{displayCurrencyAmount(totalInvestmentAmount)}
 									</td>
 								</tr>
 								<tr>
@@ -165,7 +162,7 @@ export default function SWPCalculatorCard({
 										Estimated Total Withdrawal:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(result.estimatedWithdrawalAmount)}
+										{displayCurrencyAmount(result.estimatedWithdrawalAmount)}
 									</td>
 								</tr>
 								<tr>
@@ -173,7 +170,7 @@ export default function SWPCalculatorCard({
 										Estimated Corpus Lasted:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedYearlyTimeDuration(result.estimatedNumberOfYears)}
+										{displayYearlyTimeDuration(result.estimatedNumberOfYears)}
 									</td>
 								</tr>
 							</tbody>

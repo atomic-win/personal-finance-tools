@@ -10,6 +10,15 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { PresetTimeDurations } from '@/lib/types';
+import { displayPresetTimeDuration } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import React from 'react';
@@ -26,9 +35,7 @@ const schema = z.object({
 	annualStepUpPercent: z.coerce.number().min(-99, {
 		message: 'Annual Step-Up Percent cannot be less than or equal to -100%',
 	}),
-	numberOfYears: z.coerce
-		.number()
-		.min(1, { message: 'Investment Duration cannot be less than 1 year' }),
+	investmentDuration: z.nativeEnum(PresetTimeDurations),
 });
 
 const formFields = [
@@ -47,11 +54,6 @@ const formFields = [
 		label: 'Annual Step-Up (%)',
 		description: 'Enter the annual step-up percentage',
 	},
-	{
-		name: 'numberOfYears',
-		label: 'Investment Duration (Years)',
-		description: 'Enter the investment duration in years',
-	},
 ];
 
 export default function SIPInputCard() {
@@ -67,7 +69,10 @@ export default function SIPInputCard() {
 			annualStepUpPercent: Number(
 				searchParams.get('annualStepUpPercent') || 10
 			),
-			numberOfYears: Number(searchParams.get('numberOfYears') || 10),
+			investmentDuration:
+				(searchParams.get(
+					'investmentDuration'
+				) as unknown as PresetTimeDurations) || PresetTimeDurations.TenYears,
 		},
 	});
 
@@ -89,9 +94,9 @@ export default function SIPInputCard() {
 			params.set('annualStepUpPercent', String(values.annualStepUpPercent));
 		}
 
-		params.delete('numberOfYears');
-		if (values.numberOfYears !== 10) {
-			params.set('numberOfYears', String(values.numberOfYears));
+		params.delete('investmentDuration');
+		if (values.investmentDuration !== PresetTimeDurations.TenYears) {
+			params.set('investmentDuration', values.investmentDuration);
 		}
 
 		replace(`${pathname}?${params.toString()}`);
@@ -104,7 +109,9 @@ export default function SIPInputCard() {
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
-					<form onChange={form.handleSubmit(onChange)} className='space-y-4'>
+					<form
+						onChangeCapture={form.handleSubmit(onChange)}
+						className='space-y-4'>
 						{formFields.map((formField) => (
 							<FormField
 								key={formField.name}
@@ -122,6 +129,38 @@ export default function SIPInputCard() {
 								)}
 							/>
 						))}
+						<FormField
+							control={form.control}
+							name='investmentDuration'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Investment Time Duration</FormLabel>
+									<Select
+										onValueChange={(e) => {
+											field.onChange(e);
+											form.handleSubmit(onChange)();
+										}}
+										defaultValue={field.value}>
+										<FormControl>
+											<SelectTrigger>
+												<SelectValue placeholder='Select the investment duration' />
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+											{Object.values(PresetTimeDurations).map((duration) => (
+												<SelectItem key={duration} value={duration}>
+													{displayPresetTimeDuration(duration)}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									<FormDescription>
+										Choose the investment time duration
+									</FormDescription>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</form>
 				</Form>
 			</CardContent>

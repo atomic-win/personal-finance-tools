@@ -18,10 +18,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { calculateSipResult, calculateSwpResult } from '@/lib/calculator.utils';
-import {
-	formattedCurrencyAmount,
-	formattedYearlyTimeDuration,
-} from '@/lib/utils';
+import { displayCurrencyAmount, displayYearlyTimeDuration } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
@@ -209,7 +206,7 @@ export default function CalculatorCard({
 										Total Invested Amount:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(result.totalInvestedAmount)}
+										{displayCurrencyAmount(result.totalInvestedAmount)}
 									</td>
 								</tr>
 								<tr>
@@ -217,9 +214,7 @@ export default function CalculatorCard({
 										Estimated Total Value After SIP:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(
-											result.estimatedTotalValueAfterSip
-										)}
+										{displayCurrencyAmount(result.estimatedTotalValueAfterSip)}
 									</td>
 								</tr>
 								<tr>
@@ -227,7 +222,7 @@ export default function CalculatorCard({
 										Estimated Total Withdrawal:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedCurrencyAmount(result.estimatedWithdrawalAmount)}
+										{displayCurrencyAmount(result.estimatedWithdrawalAmount)}
 									</td>
 								</tr>
 								<tr>
@@ -235,7 +230,7 @@ export default function CalculatorCard({
 										Estimated Corpus Lasted:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{formattedYearlyTimeDuration(result.estimatedNumberOfYears)}
+										{displayYearlyTimeDuration(result.estimatedNumberOfYears)}
 									</td>
 								</tr>
 							</tbody>
