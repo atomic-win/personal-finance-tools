@@ -190,6 +190,10 @@ const ChartTooltipContent = React.forwardRef<
 						const itemConfig = getPayloadConfigFromPayload(config, item, key);
 						const indicatorColor = color || item.payload.fill || item.color;
 
+						if (Number.isNaN(item.value)) {
+							return null;
+						}
+
 						return (
 							<div
 								key={item.dataKey}
