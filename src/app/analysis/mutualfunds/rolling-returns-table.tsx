@@ -16,10 +16,8 @@ import { cn, displayPresetTimeDuration } from '@/lib/utils';
 
 export default function RollingReturnsTable({
 	mutualfunds,
-	investmentDuration,
 }: {
 	mutualfunds: MutualFund[];
-	investmentDuration: PresetTimeDurations;
 }) {
 	if (!mutualfunds.length) {
 		return null;
@@ -28,9 +26,7 @@ export default function RollingReturnsTable({
 	return (
 		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full col-span-2'>
 			<CardHeader>
-				<CardTitle>
-					{displayPresetTimeDuration(investmentDuration)} Rolling Returns Table
-				</CardTitle>
+				<CardTitle>Latest CAGR Rolling Returns</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<Table className='w-full'>
@@ -48,15 +44,13 @@ export default function RollingReturnsTable({
 						{Object.values(PresetTimeDurations).map((duration) => (
 							<TableRow key={duration}>
 								<TableCell>
-									Last{' '}
 									{displayPresetTimeDuration(duration as PresetTimeDurations)}
 								</TableCell>
 								{mutualfunds.map((mf) => (
 									<RollingReturnsTableCell
 										key={mf.schemeCode}
 										mutualfund={mf}
-										investmentDuration={investmentDuration}
-										lookback={duration as PresetTimeDurations}
+										investmentDuration={duration as PresetTimeDurations}
 									/>
 								))}
 							</TableRow>
@@ -71,17 +65,15 @@ export default function RollingReturnsTable({
 function RollingReturnsTableCell({
 	mutualfund,
 	investmentDuration,
-	lookback,
 }: {
 	mutualfund: MutualFund;
 	investmentDuration: PresetTimeDurations;
-	lookback: PresetTimeDurations;
 }) {
 	const {
 		data: returns,
 		isLoading,
 		isError,
-	} = useRollingReturnsQuery(mutualfund, investmentDuration, lookback);
+	} = useRollingReturnsQuery(mutualfund, investmentDuration);
 
 	if (isLoading) {
 		return <TableCell className='text-center'>Loading...</TableCell>;

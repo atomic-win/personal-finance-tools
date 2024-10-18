@@ -99,24 +99,22 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 
 export function useRollingReturnsQuery(
 	mutualfund: MutualFund,
-	investmentDuration: PresetTimeDurations,
-	lookback: PresetTimeDurations
+	rollingWindow: PresetTimeDurations
 ) {
 	return useQuery({
 		queryKey: [
 			'mutualfunds',
 			mutualfund.schemeCode,
-			'returns',
+			'rolling-returns',
 			{
-				investmentDuration,
-				lookback,
+				rollingWindow,
 			},
 		],
 		queryFn: async () => {
-			const dates = getDates(mutualfund, investmentDuration, lookback);
+			const dates = getRollingReturnsEvaluationDates(mutualfund, rollingWindow);
 
 			return dates.map((date) =>
-				evaluateMutualFund(mutualfund.navs, investmentDuration, date)
+				evaluateMutualFund(mutualfund.navs, rollingWindow, date)
 			);
 		},
 		select: (returns) =>
@@ -133,29 +131,25 @@ export function useRollingReturnsQuery(
 	});
 }
 
-function getDates(
+function getRollingReturnsEvaluationDates(
 	mutualfund: MutualFund,
-	investmentDuration: PresetTimeDurations,
-	lookback: PresetTimeDurations
+	rollingWindow: PresetTimeDurations
 ): DateTime[] {
-	const startDate = DateTime.local()
-		.minus(getLuxonDuration(lookback))
-		.minus(getLuxonDuration(investmentDuration))
-		.toISODate();
-
-	if (startDate < mutualfund.earliestDate) {
-		return [];
-	}
-
 	const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
-		getLuxonDuration(investmentDuration)
+		getLuxonDuration(rollingWindow)
 	);
+
+	const startDate = endDate
+		.minus(getLuxonDuration(rollingWindow))
+		.plus({ days: 1 });
+
+	const earliestDate = DateTime.fromISO(mutualfund.earliestDate);
 
 	const dates = [];
 	for (
-		let date = DateTime.fromISO(startDate);
-		date <= endDate;
-		date = date.plus({ days: 1 })
+		let date = endDate;
+		date >= startDate && date >= earliestDate;
+		date = date.minus({ days: 1 })
 	) {
 		dates.push(date);
 	}
@@ -168,13 +162,14 @@ function evaluateMutualFund(
 	investmentDuration: PresetTimeDurations,
 	date: DateTime
 ): number {
-	const endDate = date.plus(getLuxonDuration(investmentDuration));
+	const endDate = date
+		.plus(getLuxonDuration(investmentDuration))
+		.minus({ days: 1 });
 
 	return (
 		100 *
 		(Math.pow(
-			navs.get(endDate.minus({ days: 1 }).toISODate()!)! /
-				navs.get(date.toISODate()!)!,
+			navs.get(endDate.toISODate()!)! / navs.get(date.toISODate()!)!,
 			1 / endDate.diff(date, 'years')!.years
 		) -
 			1)

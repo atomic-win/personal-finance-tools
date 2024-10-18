@@ -35,10 +35,7 @@ export default function Page() {
 		<div className='container mx-auto p-2'>
 			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analysis</h1>
 			<div className='grid grid-cols-3 gap-4'>
-				<RollingReturnsTable
-					mutualfunds={addedMutualfunds}
-					investmentDuration={investmentDuration}
-				/>
+				<RollingReturnsTable mutualfunds={addedMutualfunds} />
 				<div>
 					<ReturnsForm investmentDuration={investmentDuration} />
 					<MutualFundsForm
