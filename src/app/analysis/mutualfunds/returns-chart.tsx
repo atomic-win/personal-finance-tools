@@ -11,7 +11,7 @@ import {
 	ChartTooltipContent,
 } from '@/components/ui/chart';
 import { PresetTimeDurations } from '@/lib/types';
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 export default function ReturnsChartCard({
 	mutualfunds,
@@ -133,6 +133,13 @@ function ReturnsChart({
 						dot={false}
 					/>
 				))}
+				<Legend
+					align='center'
+					iconType='circle'
+					wrapperStyle={{
+						paddingTop: '1rem',
+					}}
+				/>
 			</LineChart>
 		</ChartContainer>
 	);
