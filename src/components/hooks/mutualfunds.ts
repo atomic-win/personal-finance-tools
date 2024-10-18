@@ -232,17 +232,19 @@ function evaluateMutualFund(
 		});
 	}
 
-	const totalValue = totalUnits * navs.get(date.toISODate()!)!;
+	const totalValue = totalUnits * navs.get(endDate.toISODate()!)!;
 
 	xirrInputs.push({
 		diffInYears: 0,
 		value: -totalValue,
 	});
 
+	const xirr = calculateXIRR(xirrInputs);
+
 	return {
 		totalInvestment,
 		totalValue,
-		xirr: calculateXIRR(xirrInputs),
+		xirr: xirr,
 	};
 }
 
