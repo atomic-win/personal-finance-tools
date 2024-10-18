@@ -11,7 +11,7 @@ import {
 	ChartTooltipContent,
 } from '@/components/ui/chart';
 import { PresetTimeDurations } from '@/lib/types';
-import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 export default function ReturnsChartCard({
 	mutualfunds,
@@ -116,11 +116,12 @@ function ReturnsChart({
 				<CartesianGrid vertical={false} />
 				<XAxis
 					dataKey='date'
-					tickLine={false}
-					axisLine={false}
+					tickLine={true}
+					axisLine={true}
 					tickMargin={8}
 					minTickGap={32}
 				/>
+				<YAxis tickLine={true} axisLine={true} tickMargin={8} minTickGap={32} />
 				<ChartTooltip cursor={false} content={<ChartTooltipContent />} />
 				{mutualfunds.map((mutualfund) => (
 					<Line
