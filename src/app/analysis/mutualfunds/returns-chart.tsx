@@ -11,6 +11,7 @@ import {
 	ChartTooltipContent,
 } from '@/components/ui/chart';
 import { PresetTimeDurations } from '@/lib/types';
+import { displayPresetTimeDuration } from '@/lib/utils';
 import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 export default function ReturnsChartCard({
@@ -25,7 +26,9 @@ export default function ReturnsChartCard({
 	return (
 		<Card className='mx-auto my-2 rounded-lg shadow-md'>
 			<CardHeader>
-				<CardTitle>Historical Returns</CardTitle>
+				<CardTitle>{`${displayPresetTimeDuration(
+					investmentDuration
+				)} CAGR Returns`}</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<ReturnsChart
@@ -113,7 +116,21 @@ function ReturnsChart({
 					tickMargin={8}
 					minTickGap={32}
 				/>
-				<YAxis tickLine={true} axisLine={true} tickMargin={8} minTickGap={32} />
+				<YAxis
+					tickLine={true}
+					axisLine={true}
+					tickMargin={8}
+					minTickGap={32}
+					unit={'%'}
+					label={{
+						value: `${displayPresetTimeDuration(
+							investmentDuration
+						)} CAGR Returns (%)`,
+						position: 'insideLeft',
+						angle: -90,
+						style: { textAnchor: 'middle' },
+					}}
+				/>
 				<ChartTooltip cursor={true} content={<ChartTooltipContent />} />
 				{mutualfunds.map((mutualfund) => (
 					<Line
