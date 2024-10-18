@@ -29,13 +29,15 @@ export default function ReturnsTable({
 	return (
 		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full col-span-2'>
 			<CardHeader>
-				<CardTitle>Returns Table</CardTitle>
+				<CardTitle>
+					{displayPresetTimeDuration(investmentDuration)} Rolling Returns Table
+				</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<Table className='w-full'>
 					<TableHeader>
 						<TableRow>
-							<TableHead>Rolling Returns (%) in the last</TableHead>
+							<TableHead>Rolling Window</TableHead>
 							{mutualfunds.map((mf) => (
 								<TableHead key={mf.schemeCode} className='text-center'>
 									{mf.schemeName}
@@ -47,6 +49,7 @@ export default function ReturnsTable({
 						{Object.values(PresetTimeDurations).map((duration) => (
 							<TableRow key={duration}>
 								<TableCell>
+									Last{' '}
 									{displayPresetTimeDuration(duration as PresetTimeDurations)}
 								</TableCell>
 								{mutualfunds.map((mf) => (
