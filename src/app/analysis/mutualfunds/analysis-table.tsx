@@ -9,12 +9,23 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { PresetTimeDurations } from '@/lib/types';
-import { displayPresetTimeDuration } from '@/lib/utils';
+import { displayPresetTimeDuration, getLuxonDuration } from '@/lib/utils';
+import { get } from 'http';
+import { DateTime } from 'luxon';
+import { useSearchParams } from 'next/navigation';
 
 export default function AnalysisTable({
 	mutualfunds,
+	lumpsumAmount,
+	monthlyInvestment,
+	annualStepUpPercent,
+	investmentDuration,
 }: {
 	mutualfunds: MutualFund[];
+	lumpsumAmount: number;
+	monthlyInvestment: number;
+	annualStepUpPercent: number;
+	investmentDuration: PresetTimeDurations;
 }) {
 	if (!mutualfunds.length) {
 		return null;
@@ -45,7 +56,11 @@ export default function AnalysisTable({
 									<AnalysisTableCell
 										key={mf.schemeCode}
 										mutualfund={mf}
-										duration={duration as PresetTimeDurations}
+										lumpsumAmount={lumpsumAmount}
+										monthlyInvestment={monthlyInvestment}
+										annualStepUpPercent={annualStepUpPercent}
+										investmentDuration={investmentDuration}
+										lookback={duration as PresetTimeDurations}
 									/>
 								))}
 							</TableRow>
@@ -59,10 +74,28 @@ export default function AnalysisTable({
 
 function AnalysisTableCell({
 	mutualfund,
-	duration,
+	lumpsumAmount,
+	monthlyInvestment,
+	annualStepUpPercent,
+	investmentDuration,
+	lookback,
 }: {
 	mutualfund: MutualFund;
-	duration: PresetTimeDurations;
+	lumpsumAmount: number;
+	monthlyInvestment: number;
+	annualStepUpPercent: number;
+	investmentDuration: PresetTimeDurations;
+	lookback: PresetTimeDurations;
 }) {
+	const startDate = DateTime.local()
+		.minus(getLuxonDuration(lookback))
+		.minus(getLuxonDuration(investmentDuration))
+		.toISODate();
+
+	if (startDate < mutualfund.startDate) {
+		return <TableCell className='text-center'>-</TableCell>;
+	}
+
+	console.log(startDate, mutualfund.startDate);
 	return <TableCell></TableCell>;
 }

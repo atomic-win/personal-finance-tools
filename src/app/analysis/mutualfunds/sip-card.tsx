@@ -56,7 +56,17 @@ const formFields = [
 	},
 ];
 
-export default function SIPInputCard() {
+export default function SIPInputCard({
+	lumpsumAmount,
+	monthlyInvestment,
+	annualStepUpPercent,
+	investmentDuration,
+}: {
+	lumpsumAmount: number;
+	monthlyInvestment: number;
+	annualStepUpPercent: number;
+	investmentDuration: PresetTimeDurations;
+}) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const { replace } = useRouter();
@@ -64,15 +74,10 @@ export default function SIPInputCard() {
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			lumpsumAmount: Number(searchParams.get('lumpsumAmount') || 0),
-			monthlyInvestment: Number(searchParams.get('monthlyInvestment') || 500),
-			annualStepUpPercent: Number(
-				searchParams.get('annualStepUpPercent') || 10
-			),
-			investmentDuration:
-				(searchParams.get(
-					'investmentDuration'
-				) as unknown as PresetTimeDurations) || PresetTimeDurations.TenYears,
+			lumpsumAmount,
+			monthlyInvestment,
+			annualStepUpPercent,
+			investmentDuration,
 		},
 	});
 
@@ -95,7 +100,7 @@ export default function SIPInputCard() {
 		}
 
 		params.delete('investmentDuration');
-		if (values.investmentDuration !== PresetTimeDurations.TenYears) {
+		if (values.investmentDuration !== PresetTimeDurations.OneYear) {
 			params.set('investmentDuration', values.investmentDuration);
 		}
 

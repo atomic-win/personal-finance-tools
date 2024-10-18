@@ -1,9 +1,12 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { DateTime } from 'luxon';
 
 export interface MutualFund {
 	schemeCode: number;
 	schemeName: string;
+	startDate: string;
+	lastDate: string;
 	navs: Map<string, number>;
 }
 
@@ -35,11 +38,43 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 			select: (apiResponse: {
 				meta: { scheme_code: number; scheme_name: string };
 				data: { date: string; nav: number }[];
-			}) => ({
-				schemeCode,
-				schemeName: apiResponse.meta.scheme_name,
-				navs: new Map(apiResponse.data.map((x) => [x.date, x.nav])),
-			}),
+			}) => {
+				const schemeCode = apiResponse.meta.scheme_code;
+				const schemeName = apiResponse.meta.scheme_name;
+				const navs = new Map<string, number>();
+
+				let startDate = DateTime.local().toISODate();
+				let lastDate = DateTime.local().minus({ months: 1 }).toISODate();
+
+				apiResponse.data.forEach((x) => {
+					const date = DateTime.fromFormat(x.date, 'dd-MM-yyyy').toISODate()!;
+
+					navs.set(date, x.nav);
+
+					if (date < startDate) {
+						startDate = date;
+					}
+
+					if (date > lastDate) {
+						lastDate = date;
+					}
+				});
+
+				console.log({
+					schemeCode,
+					schemeName,
+					startDate,
+					lastDate,
+				});
+
+				return {
+					schemeCode,
+					schemeName,
+					startDate,
+					lastDate,
+					navs,
+				} as MutualFund;
+			},
 			staleTime: 1000 * 60 * 60, // 1 hour
 			refetchInterval: 1000 * 60 * 60, // 1 hour
 			refetchIntervalInBackground: true,

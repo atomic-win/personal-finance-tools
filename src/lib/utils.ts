@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { PresetTimeDurations } from './types';
+import { DurationLike } from 'luxon';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -40,6 +41,33 @@ export function displayPresetTimeDuration(
 			return '15 Years';
 		case PresetTimeDurations.TwentyYears:
 			return '20 Years';
+	}
+}
+
+export function getLuxonDuration(duration: PresetTimeDurations): DurationLike {
+	switch (duration) {
+		case PresetTimeDurations.OneMonth:
+			return { months: 1 };
+		case PresetTimeDurations.TwoMonths:
+			return { months: 2 };
+		case PresetTimeDurations.ThreeMonths:
+			return { months: 3 };
+		case PresetTimeDurations.SixMonths:
+			return { months: 6 };
+		case PresetTimeDurations.OneYear:
+			return { years: 1 };
+		case PresetTimeDurations.TwoYears:
+			return { years: 2 };
+		case PresetTimeDurations.ThreeYears:
+			return { years: 3 };
+		case PresetTimeDurations.FiveYears:
+			return { years: 5 };
+		case PresetTimeDurations.TenYears:
+			return { years: 10 };
+		case PresetTimeDurations.FifteenYears:
+			return { years: 15 };
+		case PresetTimeDurations.TwentyYears:
+			return { years: 20 };
 	}
 }
 
