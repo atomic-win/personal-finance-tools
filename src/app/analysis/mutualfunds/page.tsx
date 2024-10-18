@@ -13,16 +13,6 @@ export default function Page() {
 	const searchParams = useSearchParams();
 	const { data: mutualFundList } = useMutualFundListQuery();
 
-	const lumpsumAmount = Number(searchParams.get('lumpsumAmount') || 0);
-
-	const monthlyInvestment = Number(
-		searchParams.get('monthlyInvestment') || 500
-	);
-
-	const annualStepUpPercent = Number(
-		searchParams.get('annualStepUpPercent') || 10
-	);
-
 	const investmentDuration =
 		(searchParams.get(
 			'investmentDuration'
@@ -47,17 +37,9 @@ export default function Page() {
 			<div className='grid grid-cols-3 gap-4'>
 				<AnalysisTable
 					mutualfunds={addedMutualfunds}
-					lumpsumAmount={lumpsumAmount}
-					monthlyInvestment={monthlyInvestment}
-					annualStepUpPercent={annualStepUpPercent}
 					investmentDuration={investmentDuration}
 				/>
-				<SIPInputCard
-					lumpsumAmount={lumpsumAmount}
-					monthlyInvestment={monthlyInvestment}
-					annualStepUpPercent={annualStepUpPercent}
-					investmentDuration={investmentDuration}
-				/>
+				<SIPInputCard investmentDuration={investmentDuration} />
 				<MutualFundsInputCard
 					mutualFundList={mutualFundList}
 					addedMutualFunds={addedMutualfunds}

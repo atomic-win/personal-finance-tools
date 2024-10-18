@@ -17,15 +17,9 @@ import { cn, displayPresetTimeDuration } from '@/lib/utils';
 
 export default function AnalysisTable({
 	mutualfunds,
-	lumpsumAmount,
-	monthlyInvestment,
-	annualStepUpPercent,
 	investmentDuration,
 }: {
 	mutualfunds: MutualFund[];
-	lumpsumAmount: number;
-	monthlyInvestment: number;
-	annualStepUpPercent: number;
 	investmentDuration: PresetTimeDurations;
 }) {
 	if (!mutualfunds.length) {
@@ -41,7 +35,7 @@ export default function AnalysisTable({
 				<Table className='w-full'>
 					<TableHeader>
 						<TableRow>
-							<TableHead>XIRR (%) of the SIP ending in last</TableHead>
+							<TableHead>Rolling Return (%) in the last</TableHead>
 							{mutualfunds.map((mf) => (
 								<TableHead key={mf.schemeCode} className='text-center'>
 									{mf.schemeName}
@@ -59,9 +53,6 @@ export default function AnalysisTable({
 									<AnalysisTableCell
 										key={mf.schemeCode}
 										mutualfund={mf}
-										lumpsumAmount={lumpsumAmount}
-										monthlyInvestment={monthlyInvestment}
-										annualStepUpPercent={annualStepUpPercent}
 										investmentDuration={investmentDuration}
 										lookback={duration as PresetTimeDurations}
 									/>
@@ -77,24 +68,15 @@ export default function AnalysisTable({
 
 function AnalysisTableCell({
 	mutualfund,
-	lumpsumAmount,
-	monthlyInvestment,
-	annualStepUpPercent,
 	investmentDuration,
 	lookback,
 }: {
 	mutualfund: MutualFund;
-	lumpsumAmount: number;
-	monthlyInvestment: number;
-	annualStepUpPercent: number;
 	investmentDuration: PresetTimeDurations;
 	lookback: PresetTimeDurations;
 }) {
 	const anaysis: MutualFundAnalysis = useXIRRQuery(
 		mutualfund,
-		lumpsumAmount,
-		monthlyInvestment,
-		annualStepUpPercent,
 		investmentDuration,
 		lookback
 	);
@@ -103,16 +85,16 @@ function AnalysisTableCell({
 		return <TableCell className='text-center'>Loading...</TableCell>;
 	}
 
-	if (!anaysis.isPending && anaysis.minXirr === Infinity) {
+	if (!anaysis.isPending && anaysis.noData) {
 		return <TableCell className='text-center'>-</TableCell>;
 	}
 
 	return (
 		<TableCell>
 			<div className='mx-auto w-fit'>
-				<XIRRValue label='Mean' value={anaysis.meanXirr} />
-				<XIRRValue label='Min' value={anaysis.minXirr} />
-				<XIRRValue label='Max' value={anaysis.maxXirr} />
+				<XIRRValue label='Avg' value={anaysis.avgReturn} />
+				<XIRRValue label='Min' value={anaysis.minReturn} />
+				<XIRRValue label='Max' value={anaysis.maxReturn} />
 			</div>
 		</TableCell>
 	);

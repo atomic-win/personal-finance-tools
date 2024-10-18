@@ -14,20 +14,10 @@ export interface MutualFund {
 
 export interface MutualFundAnalysis {
 	isPending: boolean;
-	meanXirr: number;
-	minXirr: number;
-	maxXirr: number;
-}
-
-interface MutualFundEvaluation {
-	totalInvestment: number;
-	totalValue: number;
-	xirr: number;
-}
-
-interface XIRRInput {
-	diffInYears: number;
-	value: number;
+	noData: boolean;
+	avgReturn: number;
+	minReturn: number;
+	maxReturn: number;
 }
 
 const mfApiClient = axios.create({
@@ -110,9 +100,6 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 
 export function useXIRRQuery(
 	mutualfund: MutualFund,
-	lumpsumAmount: number,
-	monthlyInvestment: number,
-	annualStepUpPercent: number,
 	investmentDuration: PresetTimeDurations,
 	lookback: PresetTimeDurations
 ) {
@@ -123,40 +110,38 @@ export function useXIRRQuery(
 			queryKey: [
 				'mutualfunds',
 				mutualfund.schemeCode,
-				'evaluation',
+				'return',
 				{
-					lumpsumAmount,
-					monthlyInvestment,
-					annualStepUpPercent,
 					investmentDuration,
 					date: date.toISODate(),
 				},
 			],
 			queryFn: async () => {
-				return evaluateMutualFund(
-					mutualfund.navs,
-					lumpsumAmount,
-					monthlyInvestment,
-					annualStepUpPercent,
-					investmentDuration,
-					date
-				);
+				return evaluateMutualFund(mutualfund.navs, investmentDuration, date);
 			},
 			staleTime: 1000 * 60 * 60 * 24, // 24 hours
 			refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
 			refetchIntervalInBackground: true,
 		})),
 		combine: (results) => {
-			const xirrs = results
-				.map((r) => r.data as MutualFundEvaluation)
+			if (results.some((r) => r.isPending)) {
+				return { isPending: true } as MutualFundAnalysis;
+			}
+
+			const returns = results
+				.map((r) => r.data)
 				.filter((x) => !!x)
-				.map((x) => x.xirr);
+				.map((x) => x as number);
+
+			if (returns.length === 0) {
+				return { noData: true } as MutualFundAnalysis;
+			}
 
 			return {
-				isPending: results.some((r) => r.isPending),
-				meanXirr: xirrs.reduce((a, b) => a + b, 0) / Math.max(1, xirrs.length),
-				minXirr: xirrs.reduce((a, b) => Math.min(a, b), Infinity),
-				maxXirr: xirrs.reduce((a, b) => Math.max(a, b), -Infinity),
+				avgReturn:
+					returns.reduce((a, b) => a + b, 0) / Math.max(1, returns.length),
+				minReturn: returns.reduce((a, b) => Math.min(a, b), Infinity),
+				maxReturn: returns.reduce((a, b) => Math.max(a, b), -Infinity),
 			} as MutualFundAnalysis;
 		},
 	});
@@ -194,77 +179,18 @@ function getDates(
 
 function evaluateMutualFund(
 	navs: Map<string, number>,
-	lumpsumAmount: number,
-	monthlyInvestment: number,
-	annualStepUpPercent: number,
 	investmentDuration: PresetTimeDurations,
 	date: DateTime
-): MutualFundEvaluation {
-	const annualStepUpRate = annualStepUpPercent / 100;
-
+): number {
 	const endDate = date.plus(getLuxonDuration(investmentDuration));
 
-	let totalInvestment = lumpsumAmount;
-	let totalUnits = lumpsumAmount / navs.get(date.toISODate()!)!;
-	const xirrInputs: XIRRInput[] = [
-		{
-			diffInYears: endDate.diff(date, 'years')!.years,
-			value: lumpsumAmount,
-		},
-	];
-
-	for (
-		let monthsSinceStepUp = 0;
-		date < endDate;
-		date = date.plus({ months: 1 }), ++monthsSinceStepUp
-	) {
-		if (monthsSinceStepUp === 12) {
-			monthlyInvestment *= 1 + annualStepUpRate;
-			monthsSinceStepUp = 0;
-		}
-
-		totalInvestment += monthlyInvestment;
-		totalUnits += monthlyInvestment / navs.get(date.toISODate()!)!;
-
-		xirrInputs.push({
-			diffInYears: endDate.diff(date, 'years')!.years,
-			value: monthlyInvestment,
-		});
-	}
-
-	const totalValue = totalUnits * navs.get(endDate.toISODate()!)!;
-
-	xirrInputs.push({
-		diffInYears: 0,
-		value: -totalValue,
-	});
-
-	const xirr = calculateXIRR(xirrInputs);
-
-	return {
-		totalInvestment,
-		totalValue,
-		xirr: xirr,
-	};
-}
-
-function calculateXIRR(inputs: XIRRInput[]) {
-	let lowerBound = -1;
-	let upperBound = 100;
-
-	while (upperBound - lowerBound > 1e-6) {
-		const mid = (lowerBound + upperBound) / 2;
-		const value = inputs.reduce(
-			(acc, input) => acc + input.value * Math.pow(1 + mid, input.diffInYears),
-			0
-		);
-
-		if (value < 0) {
-			lowerBound = mid;
-		} else {
-			upperBound = mid;
-		}
-	}
-
-	return (100 * (lowerBound + upperBound)) / 2;
+	return (
+		100 *
+		(Math.pow(
+			navs.get(endDate.minus({ days: 1 }).toISODate()!)! /
+				navs.get(date.toISODate()!)!,
+			1 / endDate.diff(date, 'years')!.years
+		) -
+			1)
+	);
 }
