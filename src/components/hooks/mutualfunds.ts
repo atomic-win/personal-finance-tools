@@ -12,7 +12,7 @@ export interface MutualFund {
 	navs: Map<string, number>;
 }
 
-export interface MutualFundAnalysis {
+export interface MutualFundReturns {
 	isPending: boolean;
 	noData: boolean;
 	avgReturn: number;
@@ -98,7 +98,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 	});
 }
 
-export function useXIRRQuery(
+export function useReturnsQuery(
 	mutualfund: MutualFund,
 	investmentDuration: PresetTimeDurations,
 	lookback: PresetTimeDurations
@@ -125,7 +125,7 @@ export function useXIRRQuery(
 		})),
 		combine: (results) => {
 			if (results.some((r) => r.isPending)) {
-				return { isPending: true } as MutualFundAnalysis;
+				return { isPending: true } as MutualFundReturns;
 			}
 
 			const returns = results
@@ -134,7 +134,7 @@ export function useXIRRQuery(
 				.map((x) => x as number);
 
 			if (returns.length === 0) {
-				return { noData: true } as MutualFundAnalysis;
+				return { noData: true } as MutualFundReturns;
 			}
 
 			return {
@@ -142,7 +142,7 @@ export function useXIRRQuery(
 					returns.reduce((a, b) => a + b, 0) / Math.max(1, returns.length),
 				minReturn: returns.reduce((a, b) => Math.min(a, b), Infinity),
 				maxReturn: returns.reduce((a, b) => Math.max(a, b), -Infinity),
-			} as MutualFundAnalysis;
+			} as MutualFundReturns;
 		},
 	});
 }

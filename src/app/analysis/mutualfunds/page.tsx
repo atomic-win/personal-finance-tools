@@ -3,9 +3,9 @@ import {
 	useMutualFundListQuery,
 	useMutualFundQueries,
 } from '@/components/hooks/mutualfunds';
-import AnalysisTable from './analysis-table';
-import MutualFundsInputCard from './mutualfunds-card';
-import SIPInputCard from './sip-card';
+import ReturnsTable from './returns-table';
+import MutualFundsForm from './mutualfunds-form';
+import ReturnsForm from './returns-form';
 import { useSearchParams } from 'next/navigation';
 import { PresetTimeDurations } from '@/lib/types';
 
@@ -35,15 +35,17 @@ export default function Page() {
 		<div className='container mx-auto p-2'>
 			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analysis</h1>
 			<div className='grid grid-cols-3 gap-4'>
-				<AnalysisTable
+				<ReturnsTable
 					mutualfunds={addedMutualfunds}
 					investmentDuration={investmentDuration}
 				/>
-				<SIPInputCard investmentDuration={investmentDuration} />
-				<MutualFundsInputCard
-					mutualFundList={mutualFundList}
-					addedMutualFunds={addedMutualfunds}
-				/>
+				<div>
+					<ReturnsForm investmentDuration={investmentDuration} />
+					<MutualFundsForm
+						mutualFundList={mutualFundList}
+						addedMutualFunds={addedMutualfunds}
+					/>
+				</div>
 			</div>
 		</div>
 	);

@@ -1,7 +1,7 @@
 import {
 	MutualFund,
-	MutualFundAnalysis,
-	useXIRRQuery,
+	MutualFundReturns,
+	useReturnsQuery,
 } from '@/components/hooks/mutualfunds';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -15,7 +15,7 @@ import {
 import { PresetTimeDurations } from '@/lib/types';
 import { cn, displayPresetTimeDuration } from '@/lib/utils';
 
-export default function AnalysisTable({
+export default function ReturnsTable({
 	mutualfunds,
 	investmentDuration,
 }: {
@@ -29,13 +29,13 @@ export default function AnalysisTable({
 	return (
 		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full col-span-2'>
 			<CardHeader>
-				<CardTitle>XIRR Analysis Table</CardTitle>
+				<CardTitle>Returns Table</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<Table className='w-full'>
 					<TableHeader>
 						<TableRow>
-							<TableHead>Rolling Return (%) in the last</TableHead>
+							<TableHead>Rolling Returns (%) in the last</TableHead>
 							{mutualfunds.map((mf) => (
 								<TableHead key={mf.schemeCode} className='text-center'>
 									{mf.schemeName}
@@ -50,7 +50,7 @@ export default function AnalysisTable({
 									{displayPresetTimeDuration(duration as PresetTimeDurations)}
 								</TableCell>
 								{mutualfunds.map((mf) => (
-									<AnalysisTableCell
+									<ReturnsTableCell
 										key={mf.schemeCode}
 										mutualfund={mf}
 										investmentDuration={investmentDuration}
@@ -66,7 +66,7 @@ export default function AnalysisTable({
 	);
 }
 
-function AnalysisTableCell({
+function ReturnsTableCell({
 	mutualfund,
 	investmentDuration,
 	lookback,
@@ -75,32 +75,32 @@ function AnalysisTableCell({
 	investmentDuration: PresetTimeDurations;
 	lookback: PresetTimeDurations;
 }) {
-	const anaysis: MutualFundAnalysis = useXIRRQuery(
+	const returns: MutualFundReturns = useReturnsQuery(
 		mutualfund,
 		investmentDuration,
 		lookback
 	);
 
-	if (anaysis.isPending) {
+	if (returns.isPending) {
 		return <TableCell className='text-center'>Loading...</TableCell>;
 	}
 
-	if (!anaysis.isPending && anaysis.noData) {
+	if (!returns.isPending && returns.noData) {
 		return <TableCell className='text-center'>-</TableCell>;
 	}
 
 	return (
 		<TableCell>
 			<div className='mx-auto w-fit'>
-				<XIRRValue label='Avg' value={anaysis.avgReturn} />
-				<XIRRValue label='Min' value={anaysis.minReturn} />
-				<XIRRValue label='Max' value={anaysis.maxReturn} />
+				<ReturnsValue label='Avg' value={returns.avgReturn} />
+				<ReturnsValue label='Min' value={returns.minReturn} />
+				<ReturnsValue label='Max' value={returns.maxReturn} />
 			</div>
 		</TableCell>
 	);
 }
 
-function XIRRValue({ label, value }: { label: string; value: number }) {
+function ReturnsValue({ label, value }: { label: string; value: number }) {
 	return (
 		<div className='font-semibold'>
 			<span>{label}: </span>

@@ -28,7 +28,7 @@ const schema = z.object({
 	investmentDuration: z.nativeEnum(PresetTimeDurations),
 });
 
-export default function SIPInputCard({
+export default function ReturnsForm({
 	investmentDuration,
 }: {
 	investmentDuration: PresetTimeDurations;
@@ -56,9 +56,9 @@ export default function SIPInputCard({
 	}
 
 	return (
-		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full col-start-3'>
+		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
-				<CardTitle>SIP Parameters</CardTitle>
+				<CardTitle>Mutual Fund Returns Parameters</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>

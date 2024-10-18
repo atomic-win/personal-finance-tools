@@ -42,7 +42,7 @@ const schema = z.object({
 		}),
 });
 
-export default function MutualFundsInputCard({
+export default function MutualFundsForm({
 	mutualFundList,
 	addedMutualFunds,
 }: {
@@ -50,7 +50,7 @@ export default function MutualFundsInputCard({
 	addedMutualFunds: MutualFund[];
 }) {
 	return (
-		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full col-start-3'>
+		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>Mutual Funds</CardTitle>
 			</CardHeader>
