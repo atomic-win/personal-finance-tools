@@ -131,7 +131,10 @@ function ReturnsChart({
 						style: { textAnchor: 'middle' },
 					}}
 				/>
-				<ChartTooltip cursor={true} content={<ChartTooltipContent />} />
+				<ChartTooltip
+					cursor={true}
+					content={<ChartTooltipContent unit='%' />}
+				/>
 				{mutualfunds.map((mutualfund) => (
 					<Line
 						key={mutualfund.schemeCode}
