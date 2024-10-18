@@ -23,7 +23,7 @@ export default function ReturnsChartCard({
 	lookbackDuration: PresetTimeDurations;
 }) {
 	return (
-		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
+		<Card className='mx-auto my-2 rounded-lg shadow-md'>
 			<CardHeader>
 				<CardTitle>Historical Returns</CardTitle>
 			</CardHeader>
@@ -103,7 +103,7 @@ function ReturnsChart({
 	const chartData = Array.from(chartDataMap.values());
 
 	return (
-		<ChartContainer config={chartConfig} className='w-full'>
+		<ChartContainer config={chartConfig}>
 			<LineChart accessibilityLayer data={chartData}>
 				<CartesianGrid vertical={false} />
 				<XAxis
