@@ -176,8 +176,6 @@ function getDates(
 		return [];
 	}
 
-	return [DateTime.fromISO(startDate)];
-
 	const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
 		getLuxonDuration(investmentDuration)
 	);
