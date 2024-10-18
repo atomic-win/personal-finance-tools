@@ -3,7 +3,7 @@ import {
 	useMutualFundListQuery,
 	useMutualFundQueries,
 } from '@/components/hooks/mutualfunds';
-import ReturnsTable from './returns-table';
+import RollingReturnsTable from './rolling-returns-table';
 import MutualFundsForm from './mutualfunds-form';
 import ReturnsForm from './returns-form';
 import { useSearchParams } from 'next/navigation';
@@ -35,7 +35,7 @@ export default function Page() {
 		<div className='container mx-auto p-2'>
 			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analysis</h1>
 			<div className='grid grid-cols-3 gap-4'>
-				<ReturnsTable
+				<RollingReturnsTable
 					mutualfunds={addedMutualfunds}
 					investmentDuration={investmentDuration}
 				/>

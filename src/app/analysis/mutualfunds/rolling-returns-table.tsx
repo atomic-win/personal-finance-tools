@@ -1,7 +1,6 @@
 import {
 	MutualFund,
-	MutualFundReturns,
-	useReturnsQuery,
+	useRollingReturnsQuery,
 } from '@/components/hooks/mutualfunds';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -15,7 +14,7 @@ import {
 import { PresetTimeDurations } from '@/lib/types';
 import { cn, displayPresetTimeDuration } from '@/lib/utils';
 
-export default function ReturnsTable({
+export default function RollingReturnsTable({
 	mutualfunds,
 	investmentDuration,
 }: {
@@ -53,7 +52,7 @@ export default function ReturnsTable({
 									{displayPresetTimeDuration(duration as PresetTimeDurations)}
 								</TableCell>
 								{mutualfunds.map((mf) => (
-									<ReturnsTableCell
+									<RollingReturnsTableCell
 										key={mf.schemeCode}
 										mutualfund={mf}
 										investmentDuration={investmentDuration}
@@ -69,7 +68,7 @@ export default function ReturnsTable({
 	);
 }
 
-function ReturnsTableCell({
+function RollingReturnsTableCell({
 	mutualfund,
 	investmentDuration,
 	lookback,
@@ -78,32 +77,42 @@ function ReturnsTableCell({
 	investmentDuration: PresetTimeDurations;
 	lookback: PresetTimeDurations;
 }) {
-	const returns: MutualFundReturns = useReturnsQuery(
-		mutualfund,
-		investmentDuration,
-		lookback
-	);
+	const {
+		data: returns,
+		isLoading,
+		isError,
+	} = useRollingReturnsQuery(mutualfund, investmentDuration, lookback);
 
-	if (returns.isPending) {
+	if (isLoading) {
 		return <TableCell className='text-center'>Loading...</TableCell>;
 	}
 
-	if (!returns.isPending && returns.noData) {
+	if (isError || !returns) {
+		return <TableCell className='text-center'>Error</TableCell>;
+	}
+
+	if (returns.noData) {
 		return <TableCell className='text-center'>-</TableCell>;
 	}
 
 	return (
 		<TableCell>
 			<div className='mx-auto w-fit'>
-				<ReturnsValue label='Avg' value={returns.avgReturn} />
-				<ReturnsValue label='Min' value={returns.minReturn} />
-				<ReturnsValue label='Max' value={returns.maxReturn} />
+				<RollingReturnsValue label='Avg' value={returns.avgReturn} />
+				<RollingReturnsValue label='Min' value={returns.minReturn} />
+				<RollingReturnsValue label='Max' value={returns.maxReturn} />
 			</div>
 		</TableCell>
 	);
 }
 
-function ReturnsValue({ label, value }: { label: string; value: number }) {
+function RollingReturnsValue({
+	label,
+	value,
+}: {
+	label: string;
+	value: number;
+}) {
 	return (
 		<div className='font-semibold'>
 			<span>{label}: </span>

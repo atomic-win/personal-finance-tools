@@ -12,8 +12,7 @@ export interface MutualFund {
 	navs: Map<string, number>;
 }
 
-export interface MutualFundReturns {
-	isPending: boolean;
+export interface MutualFundRollingReturns {
 	noData: boolean;
 	avgReturn: number;
 	minReturn: number;
@@ -98,52 +97,39 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 	});
 }
 
-export function useReturnsQuery(
+export function useRollingReturnsQuery(
 	mutualfund: MutualFund,
 	investmentDuration: PresetTimeDurations,
 	lookback: PresetTimeDurations
 ) {
-	const dates = getDates(mutualfund, investmentDuration, lookback);
-
-	return useQueries({
-		queries: dates.map((date) => ({
-			queryKey: [
-				'mutualfunds',
-				mutualfund.schemeCode,
-				'return',
-				{
-					investmentDuration,
-					date: date.toISODate(),
-				},
-			],
-			queryFn: async () => {
-				return evaluateMutualFund(mutualfund.navs, investmentDuration, date);
+	return useQuery({
+		queryKey: [
+			'mutualfunds',
+			mutualfund.schemeCode,
+			'returns',
+			{
+				investmentDuration,
+				lookback,
 			},
-			staleTime: 1000 * 60 * 60 * 24, // 24 hours
-			refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
-			refetchIntervalInBackground: true,
-		})),
-		combine: (results) => {
-			if (results.some((r) => r.isPending)) {
-				return { isPending: true } as MutualFundReturns;
-			}
+		],
+		queryFn: async () => {
+			const dates = getDates(mutualfund, investmentDuration, lookback);
 
-			const returns = results
-				.map((r) => r.data)
-				.filter((x) => !!x)
-				.map((x) => x as number);
-
-			if (returns.length === 0) {
-				return { noData: true } as MutualFundReturns;
-			}
-
-			return {
+			return dates.map((date) =>
+				evaluateMutualFund(mutualfund.navs, investmentDuration, date)
+			);
+		},
+		select: (returns) =>
+			({
+				noData: returns.length === 0,
 				avgReturn:
 					returns.reduce((a, b) => a + b, 0) / Math.max(1, returns.length),
 				minReturn: returns.reduce((a, b) => Math.min(a, b), Infinity),
 				maxReturn: returns.reduce((a, b) => Math.max(a, b), -Infinity),
-			} as MutualFundReturns;
-		},
+			} as MutualFundRollingReturns),
+		staleTime: 1000 * 60 * 60 * 24, // 24 hours
+		refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
+		refetchIntervalInBackground: true,
 	});
 }
 
