@@ -103,16 +103,8 @@ function ReturnsChart({
 	const chartData = Array.from(chartDataMap.values());
 
 	return (
-		<ChartContainer
-			config={chartConfig}
-			className='aspect-auto h-[250px] w-full'>
-			<LineChart
-				accessibilityLayer
-				data={chartData}
-				margin={{
-					left: 12,
-					right: 12,
-				}}>
+		<ChartContainer config={chartConfig} className='w-full'>
+			<LineChart accessibilityLayer data={chartData}>
 				<CartesianGrid vertical={false} />
 				<XAxis
 					dataKey='date'
@@ -122,7 +114,7 @@ function ReturnsChart({
 					minTickGap={32}
 				/>
 				<YAxis tickLine={true} axisLine={true} tickMargin={8} minTickGap={32} />
-				<ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+				<ChartTooltip cursor={true} content={<ChartTooltipContent />} />
 				{mutualfunds.map((mutualfund) => (
 					<Line
 						key={mutualfund.schemeCode}
