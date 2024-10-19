@@ -59,7 +59,7 @@ export default function ReturnsCard({
 					</CardDescription>
 				</div>
 				<div className='w-1/2'>
-					<Label>Return Window</Label>
+					<Label>CAGR Window</Label>
 					<Select
 						onValueChange={(x) => setReturnWindow(x as PresetTimeDurations)}
 						value={returnWindow.toString()}>
@@ -83,7 +83,7 @@ export default function ReturnsCard({
 					</Select>
 				</div>
 				<div className='w-1/2'>
-					<Label>Lookback Duration</Label>
+					<Label>Last</Label>
 					<Select
 						onValueChange={(x) => setLookbackDuration(x as PresetTimeDurations)}
 						value={lookbackDuration.toString()}>
