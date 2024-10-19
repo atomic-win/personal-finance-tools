@@ -14,23 +14,36 @@ import {
 } from '@/components/ui/chart';
 import { PresetTimeDurations } from '@/lib/types';
 import { displayPresetTimeDuration } from '@/lib/utils';
+import { useSearchParams } from 'next/navigation';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import ReturnsForm from './returns-form';
 
 export default function ReturnsChartCard({
 	mutualfunds,
-	investmentDuration,
-	lookbackDuration,
 }: {
 	mutualfunds: MutualFund[];
-	investmentDuration: PresetTimeDurations;
-	lookbackDuration: PresetTimeDurations;
 }) {
+	const searchParams = useSearchParams();
+
+	const investmentDuration =
+		(searchParams.get(
+			'investmentDuration'
+		) as unknown as PresetTimeDurations) || PresetTimeDurations.OneYear;
+
+	const lookbackDuration =
+		(searchParams.get('lookbackDuration') as unknown as PresetTimeDurations) ||
+		PresetTimeDurations.TwoYears;
+
 	return (
 		<Card className='mx-auto my-2 rounded-lg shadow-md'>
 			<CardHeader>
 				<CardTitle>{`${displayPresetTimeDuration(
 					investmentDuration
 				)} CAGR (%)`}</CardTitle>
+				<ReturnsForm
+					investmentDuration={investmentDuration}
+					lookbackDuration={lookbackDuration}
+				/>
 			</CardHeader>
 			<CardContent>
 				<ReturnsChart

@@ -5,19 +5,12 @@ import {
 } from '@/components/hooks/mutualfunds';
 import RollingReturnsTable from './rolling-returns-table';
 import MutualFundsForm from './mutualfunds-form';
-import ReturnsForm from './returns-form';
 import { useSearchParams } from 'next/navigation';
-import { PresetTimeDurations } from '@/lib/types';
 import ReturnsChartCard from './returns-chart';
 
 export default function Page() {
 	const searchParams = useSearchParams();
 	const { data: mutualFundList } = useMutualFundListQuery();
-
-	const investmentDuration =
-		(searchParams.get(
-			'investmentDuration'
-		) as unknown as PresetTimeDurations) || PresetTimeDurations.OneYear;
 
 	const addedMutualFundResults = useMutualFundQueries(
 		searchParams.getAll('mfSchemeCode').map(Number)
@@ -37,15 +30,10 @@ export default function Page() {
 			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analysis</h1>
 			<div className='grid grid-cols-3 gap-4'>
 				<div className='col-span-2'>
-					<ReturnsChartCard
-						mutualfunds={addedMutualfunds}
-						investmentDuration={investmentDuration}
-						lookbackDuration={PresetTimeDurations.OneYear}
-					/>
+					<ReturnsChartCard mutualfunds={addedMutualfunds} />
 					<RollingReturnsTable mutualfunds={addedMutualfunds} />
 				</div>
 				<div>
-					<ReturnsForm investmentDuration={investmentDuration} />
 					<MutualFundsForm
 						mutualFundList={mutualFundList}
 						addedMutualFunds={addedMutualfunds}

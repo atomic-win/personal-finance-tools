@@ -1,5 +1,3 @@
-'use client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Form,
 	FormControl,
@@ -26,12 +24,30 @@ import { z } from 'zod';
 
 const schema = z.object({
 	investmentDuration: z.nativeEnum(PresetTimeDurations),
+	lookbackDuration: z.nativeEnum(PresetTimeDurations),
 });
+
+const formFields = [
+	{
+		name: 'investmentDuration',
+		label: 'Investment Time Duration',
+		description: 'Choose the investment time duration',
+		placeholder: 'Select the investment duration',
+	},
+	{
+		name: 'lookbackDuration',
+		label: 'Lookback Time Duration',
+		description: 'Choose the lookback time duration',
+		placeholder: 'Select the lookback duration',
+	},
+];
 
 export default function ReturnsForm({
 	investmentDuration,
+	lookbackDuration,
 }: {
 	investmentDuration: PresetTimeDurations;
+	lookbackDuration: PresetTimeDurations;
 }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -41,6 +57,7 @@ export default function ReturnsForm({
 		resolver: zodResolver(schema),
 		defaultValues: {
 			investmentDuration,
+			lookbackDuration,
 		},
 	});
 
@@ -52,54 +69,51 @@ export default function ReturnsForm({
 			params.set('investmentDuration', values.investmentDuration);
 		}
 
+		params.delete('lookbackDuration');
+		if (values.lookbackDuration !== PresetTimeDurations.TwoYears) {
+			params.set('lookbackDuration', values.lookbackDuration);
+		}
+
 		replace(`${pathname}?${params.toString()}`);
 	}
 
 	return (
-		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
-			<CardHeader>
-				<CardTitle>Mutual Fund Returns Parameters</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<Form {...form}>
-					<form
-						onChangeCapture={form.handleSubmit(onChange)}
-						className='space-y-4'>
-						<FormField
-							control={form.control}
-							name='investmentDuration'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Investment Time Duration</FormLabel>
-									<Select
-										onValueChange={(e) => {
-											field.onChange(e);
-											form.handleSubmit(onChange)();
-										}}
-										defaultValue={field.value}>
-										<FormControl>
-											<SelectTrigger>
-												<SelectValue placeholder='Select the investment duration' />
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											{Object.values(PresetTimeDurations).map((duration) => (
-												<SelectItem key={duration} value={duration}>
-													{displayPresetTimeDuration(duration)}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-									<FormDescription>
-										Choose the investment time duration
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</form>
-				</Form>
-			</CardContent>
-		</Card>
+		<Form {...form}>
+			<form onChangeCapture={form.handleSubmit(onChange)} className='space-y-4'>
+				{formFields.map((formField) => (
+					<FormField
+						key={formField.name}
+						control={form.control}
+						name={formField.name as keyof z.infer<typeof schema>}
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>{formField.label}</FormLabel>
+								<Select
+									onValueChange={(e) => {
+										field.onChange(e);
+										form.handleSubmit(onChange)();
+									}}
+									defaultValue={field.value}>
+									<FormControl>
+										<SelectTrigger>
+											<SelectValue placeholder={formField.placeholder} />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										{Object.values(PresetTimeDurations).map((duration) => (
+											<SelectItem key={duration} value={duration}>
+												{displayPresetTimeDuration(duration)}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+								<FormDescription>{formField.description}</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				))}
+			</form>
+		</Form>
 	);
 }
