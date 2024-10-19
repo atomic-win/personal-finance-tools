@@ -1,9 +1,16 @@
+'use client';
 import {
 	MutualFund,
 	MutualFundReturn,
 	useReturnQueries,
 } from '@/components/hooks/mutualfunds';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
 import {
 	ChartConfig,
 	ChartContainer,
@@ -14,35 +21,93 @@ import {
 } from '@/components/ui/chart';
 import { PresetTimeDurations } from '@/lib/types';
 import { displayPresetTimeDuration } from '@/lib/utils';
-import { useSearchParams } from 'next/navigation';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-import ReturnsForm from './returns-form';
+import { useState } from 'react';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
 
 export default function ReturnsChartCard({
 	mutualfunds,
 }: {
 	mutualfunds: MutualFund[];
 }) {
-	const searchParams = useSearchParams();
+	const [returnWindow, setReturnWindow] = useState<PresetTimeDurations>(
+		PresetTimeDurations.OneYear
+	);
 
-	const returnWindow =
-		(searchParams.get('returnWindow') as unknown as PresetTimeDurations) ||
-		PresetTimeDurations.OneYear;
-
-	const lookbackDuration =
-		(searchParams.get('lookbackDuration') as unknown as PresetTimeDurations) ||
-		PresetTimeDurations.TwoYears;
+	const [lookbackDuration, setLookbackDuration] = useState<PresetTimeDurations>(
+		PresetTimeDurations.TwoYears
+	);
 
 	return (
 		<Card className='mx-auto my-2 rounded-lg shadow-md'>
-			<CardHeader>
-				<CardTitle>{`${displayPresetTimeDuration(
-					returnWindow
-				)} CAGR (%)`}</CardTitle>
-				<ReturnsForm
-					returnWindow={returnWindow}
-					lookbackDuration={lookbackDuration}
-				/>
+			<CardHeader className='flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row'>
+				<div className='grid flex-1 gap-1 text-center sm:text-left'>
+					<CardTitle>CAGR (%)</CardTitle>
+					<CardDescription>
+						{`Showing ${displayPresetTimeDuration(
+							returnWindow
+						)} CAGR % for the last ${displayPresetTimeDuration(
+							lookbackDuration
+						)}`}
+					</CardDescription>
+				</div>
+				<div className='w-auto'>
+					<Label>Return Window</Label>
+					<Select
+						onValueChange={(x) => setReturnWindow(x as PresetTimeDurations)}
+						value={returnWindow.toString()}>
+						<SelectTrigger
+							className='w-full rounded-lg sm:ml-auto'
+							aria-label='Select a value'>
+							<SelectValue
+								placeholder={`Last ${displayPresetTimeDuration(returnWindow)}`}
+							/>
+						</SelectTrigger>
+						<SelectContent className='rounded-xl'>
+							{Object.values(PresetTimeDurations).map((duration) => (
+								<SelectItem
+									key={duration}
+									value={duration}
+									className='rounded-lg'>
+									{displayPresetTimeDuration(duration)}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
+				<div className='w-auto'>
+					<Label>Lookback Duration</Label>
+					<Select
+						onValueChange={(x) => setLookbackDuration(x as PresetTimeDurations)}
+						value={lookbackDuration.toString()}>
+						<SelectTrigger
+							className='w-full rounded-lg sm:ml-auto'
+							aria-label='Select a value'>
+							<SelectValue
+								placeholder={`Last ${displayPresetTimeDuration(
+									lookbackDuration
+								)}`}
+							/>
+						</SelectTrigger>
+						<SelectContent className='rounded-xl'>
+							{Object.values(PresetTimeDurations).map((duration) => (
+								<SelectItem
+									key={duration}
+									value={duration}
+									className='rounded-lg'>
+									{displayPresetTimeDuration(duration)}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</div>
 			</CardHeader>
 			<CardContent>
 				<ReturnsChart
