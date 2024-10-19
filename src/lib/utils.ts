@@ -20,27 +20,27 @@ export function displayPresetTimeDuration(
 ): string {
 	switch (duration) {
 		case PresetTimeDurations.OneMonth:
-			return '1 Month';
+			return '1 month';
 		case PresetTimeDurations.TwoMonths:
-			return '2 Months';
+			return '2 months';
 		case PresetTimeDurations.ThreeMonths:
-			return '3 Months';
+			return '3 months';
 		case PresetTimeDurations.SixMonths:
-			return '6 Months';
+			return '6 months';
 		case PresetTimeDurations.OneYear:
-			return '1 Year';
+			return '1 year';
 		case PresetTimeDurations.TwoYears:
-			return '2 Years';
+			return '2 years';
 		case PresetTimeDurations.ThreeYears:
-			return '3 Years';
+			return '3 years';
 		case PresetTimeDurations.FiveYears:
-			return '5 Years';
+			return '5 years';
 		case PresetTimeDurations.TenYears:
-			return '10 Years';
+			return '10 years';
 		case PresetTimeDurations.FifteenYears:
-			return '15 Years';
+			return '15 years';
 		case PresetTimeDurations.TwentyYears:
-			return '20 Years';
+			return '20 years';
 	}
 }
 
