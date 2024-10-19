@@ -28,7 +28,7 @@ export default function ReturnsChartCard({
 			<CardHeader>
 				<CardTitle>{`${displayPresetTimeDuration(
 					investmentDuration
-				)} CAGR Returns`}</CardTitle>
+				)} CAGR (%)`}</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<ReturnsChart
@@ -123,9 +123,7 @@ function ReturnsChart({
 					minTickGap={32}
 					unit={'%'}
 					label={{
-						value: `${displayPresetTimeDuration(
-							investmentDuration
-						)} CAGR Returns (%)`,
+						value: `${displayPresetTimeDuration(investmentDuration)} CAGR (%)`,
 						position: 'insideLeft',
 						angle: -90,
 						style: { textAnchor: 'middle' },
