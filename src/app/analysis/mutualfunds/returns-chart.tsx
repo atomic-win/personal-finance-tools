@@ -122,7 +122,7 @@ function ReturnsChart({
 	return (
 		<ChartContainer config={chartConfig}>
 			<LineChart accessibilityLayer data={chartData}>
-				<CartesianGrid vertical={false} />
+				<CartesianGrid />
 				<XAxis
 					dataKey='date'
 					tickLine={true}
