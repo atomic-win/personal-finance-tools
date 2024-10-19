@@ -27,7 +27,7 @@ export default function Page() {
 
 	return (
 		<div className='container mx-auto p-2'>
-			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analysis</h1>
+			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analyzer</h1>
 			<div className='grid grid-cols-3 gap-4'>
 				<div className='col-span-2'>
 					<ReturnsCard mutualfunds={addedMutualfunds} />
