@@ -1,7 +1,6 @@
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -31,13 +30,11 @@ const formFields = [
 	{
 		name: 'investmentDuration',
 		label: 'Investment Time Duration',
-		description: 'Choose the investment time duration',
 		placeholder: 'Select the investment duration',
 	},
 	{
 		name: 'lookbackDuration',
 		label: 'Lookback Time Duration',
-		description: 'Choose the lookback time duration',
 		placeholder: 'Select the lookback duration',
 	},
 ];
@@ -79,14 +76,16 @@ export default function ReturnsForm({
 
 	return (
 		<Form {...form}>
-			<form onChangeCapture={form.handleSubmit(onChange)} className='space-y-4'>
+			<form
+				onChangeCapture={form.handleSubmit(onChange)}
+				className='flex flex-row align-middle justify-center items-center gap-4'>
 				{formFields.map((formField) => (
 					<FormField
 						key={formField.name}
 						control={form.control}
 						name={formField.name as keyof z.infer<typeof schema>}
 						render={({ field }) => (
-							<FormItem>
+							<FormItem className='m-0 mr-auto w-full'>
 								<FormLabel>{formField.label}</FormLabel>
 								<Select
 									onValueChange={(e) => {
@@ -107,7 +106,6 @@ export default function ReturnsForm({
 										))}
 									</SelectContent>
 								</Select>
-								<FormDescription>{formField.description}</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
