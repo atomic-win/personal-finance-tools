@@ -47,8 +47,8 @@ export default function ReturnsChartCard({
 
 	return (
 		<Card className='mx-auto my-2 rounded-lg shadow-md'>
-			<CardHeader className='flex items-center gap-2 space-y-0 border-b py-5 sm:flex-row'>
-				<div className='grid flex-1 gap-1 text-center sm:text-left'>
+			<CardHeader className='flex items-center gap-4 space-y-0 border-b py-4 sm:flex-row'>
+				<div className='grid text-center sm:text-left w-full gap-2'>
 					<CardTitle>CAGR (%)</CardTitle>
 					<CardDescription>
 						{`Showing ${displayPresetTimeDuration(
@@ -58,7 +58,7 @@ export default function ReturnsChartCard({
 						)}`}
 					</CardDescription>
 				</div>
-				<div className='w-auto'>
+				<div className='w-1/2'>
 					<Label>Return Window</Label>
 					<Select
 						onValueChange={(x) => setReturnWindow(x as PresetTimeDurations)}
@@ -82,7 +82,7 @@ export default function ReturnsChartCard({
 						</SelectContent>
 					</Select>
 				</div>
-				<div className='w-auto'>
+				<div className='w-1/2'>
 					<Label>Lookback Duration</Label>
 					<Select
 						onValueChange={(x) => setLookbackDuration(x as PresetTimeDurations)}
