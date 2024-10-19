@@ -109,7 +109,8 @@ export function useReturnQueries(
 	lookbackDuration: PresetTimeDurations
 ) {
 	const earliestDate = DateTime.min(
-		...mutualfunds.map((mf) => DateTime.fromISO(mf.lastDate))
+		...mutualfunds.map((mf) => DateTime.fromISO(mf.lastDate)),
+		DateTime.local()
 	)
 		.minus(getLuxonDuration(lookbackDuration))
 		.plus({ days: 1 });
