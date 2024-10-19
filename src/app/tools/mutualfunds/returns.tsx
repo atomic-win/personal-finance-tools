@@ -3,7 +3,7 @@ import {
 	MutualFund,
 	MutualFundReturn,
 	useReturnQueries,
-} from '@/components/hooks/mutualfunds';
+} from '@/hooks/mutualfunds';
 import {
 	Card,
 	CardContent,

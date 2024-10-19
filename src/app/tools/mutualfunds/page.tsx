@@ -2,7 +2,7 @@
 import {
 	useMutualFundListQuery,
 	useMutualFundQueries,
-} from '@/components/hooks/mutualfunds';
+} from '@/hooks/mutualfunds';
 import RollingReturnsCard from './rolling-returns';
 import MutualFundsForm from './mutualfunds-form';
 import { useSearchParams } from 'next/navigation';
