@@ -119,7 +119,7 @@ function RollingReturnsValue({
 	return (
 		<div className='font-semibold'>
 			<span>{label}: </span>
-			<span className={cn(value < 0 ? 'text-red-500' : 'text-green-500')}>
+			<span className={cn(value < 0 ? 'text-red-600' : 'text-green-600')}>
 				{value.toFixed(2)}%
 			</span>
 		</div>
