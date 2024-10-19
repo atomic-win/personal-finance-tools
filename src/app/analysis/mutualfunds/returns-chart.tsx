@@ -164,7 +164,12 @@ function ReturnsChart({
 		{}
 	) satisfies ChartConfig;
 
-	const chartDataMap = new Map<string, object>();
+	const chartDataMap = new Map<
+		string,
+		{
+			date: string;
+		}
+	>();
 
 	mutualFundReturns.forEach((r) => {
 		const date = r.date;
@@ -182,7 +187,9 @@ function ReturnsChart({
 		});
 	});
 
-	const chartData = Array.from(chartDataMap.values());
+	const chartData = Array.from(chartDataMap.values()).sort((a, b) =>
+		a.date.localeCompare(b.date)
+	);
 
 	return (
 		<ChartContainer config={chartConfig}>
