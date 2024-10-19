@@ -12,7 +12,7 @@ export interface MutualFund {
 	navs: Map<string, number>;
 }
 
-export interface MutualFundRollingReturns {
+export interface MutualFundRollingReturn {
 	noData: boolean;
 	avgReturn: number;
 	minReturn: number;
@@ -156,9 +156,9 @@ export function useReturnQueries(
 	});
 }
 
-export function useRollingReturnsQuery(
+export function useRollingReturnQuery(
 	mutualfund: MutualFund,
-	rollingWindow: PresetTimeDurations
+	returnWindow: PresetTimeDurations
 ) {
 	return useQuery({
 		queryKey: [
@@ -166,16 +166,16 @@ export function useRollingReturnsQuery(
 			mutualfund.schemeCode,
 			'rolling-returns',
 			{
-				rollingWindow,
+				returnWindow,
 			},
 		],
 		queryFn: async () => {
 			const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
-				getLuxonDuration(rollingWindow)
+				getLuxonDuration(returnWindow)
 			);
 
 			const startDate = endDate
-				.minus(getLuxonDuration(rollingWindow))
+				.minus(getLuxonDuration(returnWindow))
 				.plus({ days: 1 });
 
 			const earliestDate = DateTime.fromISO(mutualfund.earliestDate);
@@ -186,7 +186,7 @@ export function useRollingReturnsQuery(
 				date <= endDate;
 				date = date.plus({ days: 1 })
 			) {
-				returns.push(evaluateMutualFund(mutualfund.navs, rollingWindow, date));
+				returns.push(evaluateMutualFund(mutualfund.navs, returnWindow, date));
 			}
 
 			return returns;
@@ -198,7 +198,7 @@ export function useRollingReturnsQuery(
 					returns.reduce((a, b) => a + b, 0) / Math.max(1, returns.length),
 				minReturn: returns.reduce((a, b) => Math.min(a, b), Infinity),
 				maxReturn: returns.reduce((a, b) => Math.max(a, b), -Infinity),
-			} as MutualFundRollingReturns),
+			} as MutualFundRollingReturn),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
 		refetchIntervalInBackground: true,

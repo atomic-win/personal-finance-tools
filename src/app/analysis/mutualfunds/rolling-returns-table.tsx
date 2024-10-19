@@ -1,6 +1,6 @@
 import {
 	MutualFund,
-	useRollingReturnsQuery,
+	useRollingReturnQuery,
 } from '@/components/hooks/mutualfunds';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -50,7 +50,7 @@ export default function RollingReturnsTable({
 									<RollingReturnsTableCell
 										key={mf.schemeCode}
 										mutualfund={mf}
-										investmentDuration={duration as PresetTimeDurations}
+										returnWindow={duration as PresetTimeDurations}
 									/>
 								))}
 							</TableRow>
@@ -64,16 +64,16 @@ export default function RollingReturnsTable({
 
 function RollingReturnsTableCell({
 	mutualfund,
-	investmentDuration,
+	returnWindow,
 }: {
 	mutualfund: MutualFund;
-	investmentDuration: PresetTimeDurations;
+	returnWindow: PresetTimeDurations;
 }) {
 	const {
 		data: returns,
 		isLoading,
 		isError,
-	} = useRollingReturnsQuery(mutualfund, investmentDuration);
+	} = useRollingReturnQuery(mutualfund, returnWindow);
 
 	if (isLoading) {
 		return <TableCell className='text-center'>Loading...</TableCell>;
