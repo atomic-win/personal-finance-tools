@@ -25,10 +25,9 @@ export default function ReturnsChartCard({
 }) {
 	const searchParams = useSearchParams();
 
-	const investmentDuration =
-		(searchParams.get(
-			'investmentDuration'
-		) as unknown as PresetTimeDurations) || PresetTimeDurations.OneYear;
+	const returnWindow =
+		(searchParams.get('returnWindow') as unknown as PresetTimeDurations) ||
+		PresetTimeDurations.OneYear;
 
 	const lookbackDuration =
 		(searchParams.get('lookbackDuration') as unknown as PresetTimeDurations) ||
@@ -38,17 +37,17 @@ export default function ReturnsChartCard({
 		<Card className='mx-auto my-2 rounded-lg shadow-md'>
 			<CardHeader>
 				<CardTitle>{`${displayPresetTimeDuration(
-					investmentDuration
+					returnWindow
 				)} CAGR (%)`}</CardTitle>
 				<ReturnsForm
-					investmentDuration={investmentDuration}
+					returnWindow={returnWindow}
 					lookbackDuration={lookbackDuration}
 				/>
 			</CardHeader>
 			<CardContent>
 				<ReturnsChart
 					mutualfunds={mutualfunds}
-					investmentDuration={investmentDuration}
+					returnWindow={returnWindow}
 					lookbackDuration={lookbackDuration}
 				/>
 			</CardContent>
@@ -58,16 +57,16 @@ export default function ReturnsChartCard({
 
 function ReturnsChart({
 	mutualfunds,
-	investmentDuration,
+	returnWindow,
 	lookbackDuration,
 }: {
 	mutualfunds: MutualFund[];
-	investmentDuration: PresetTimeDurations;
+	returnWindow: PresetTimeDurations;
 	lookbackDuration: PresetTimeDurations;
 }) {
 	const mutualFundReturnResults = useReturnQueries(
 		mutualfunds,
-		investmentDuration,
+		returnWindow,
 		lookbackDuration
 	);
 
@@ -138,7 +137,7 @@ function ReturnsChart({
 					minTickGap={32}
 					unit={'%'}
 					label={{
-						value: `${displayPresetTimeDuration(investmentDuration)} CAGR (%)`,
+						value: `${displayPresetTimeDuration(returnWindow)} CAGR (%)`,
 						position: 'insideLeft',
 						angle: -90,
 						style: { textAnchor: 'middle' },

@@ -105,7 +105,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 
 export function useReturnQueries(
 	mutualfunds: MutualFund[],
-	investmentDuration: PresetTimeDurations,
+	returnWindow: PresetTimeDurations,
 	lookbackDuration: PresetTimeDurations
 ) {
 	const earliestDate = DateTime.min(
@@ -118,11 +118,11 @@ export function useReturnQueries(
 				'mutualfunds',
 				mutualfund.schemeCode,
 				'returns',
-				{ investmentDuration, lookbackDuration },
+				{ returnWindow, lookbackDuration },
 			],
 			queryFn: async () => {
 				const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
-					getLuxonDuration(investmentDuration)
+					getLuxonDuration(returnWindow)
 				);
 
 				const startDate = endDate
@@ -137,12 +137,8 @@ export function useReturnQueries(
 				) {
 					returns.push({
 						schemeCode: 0,
-						date: date.plus(getLuxonDuration(investmentDuration)).toISODate()!,
-						return: evaluateMutualFund(
-							mutualfund.navs,
-							investmentDuration,
-							date
-						),
+						date: date.plus(getLuxonDuration(returnWindow)).toISODate()!,
+						return: evaluateMutualFund(mutualfund.navs, returnWindow, date),
 					});
 				}
 

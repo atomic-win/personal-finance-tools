@@ -22,15 +22,15 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const schema = z.object({
-	investmentDuration: z.nativeEnum(PresetTimeDurations),
+	returnWindow: z.nativeEnum(PresetTimeDurations),
 	lookbackDuration: z.nativeEnum(PresetTimeDurations),
 });
 
 const formFields = [
 	{
-		name: 'investmentDuration',
-		label: 'Investment Time Duration',
-		placeholder: 'Select the investment duration',
+		name: 'returnWindow',
+		label: 'Return Window',
+		placeholder: 'Select the return window',
 	},
 	{
 		name: 'lookbackDuration',
@@ -40,10 +40,10 @@ const formFields = [
 ];
 
 export default function ReturnsForm({
-	investmentDuration,
+	returnWindow,
 	lookbackDuration,
 }: {
-	investmentDuration: PresetTimeDurations;
+	returnWindow: PresetTimeDurations;
 	lookbackDuration: PresetTimeDurations;
 }) {
 	const searchParams = useSearchParams();
@@ -53,7 +53,7 @@ export default function ReturnsForm({
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			investmentDuration,
+			returnWindow,
 			lookbackDuration,
 		},
 	});
@@ -61,9 +61,9 @@ export default function ReturnsForm({
 	function onChange(values: z.infer<typeof schema>) {
 		const params = new URLSearchParams(searchParams);
 
-		params.delete('investmentDuration');
-		if (values.investmentDuration !== PresetTimeDurations.OneYear) {
-			params.set('investmentDuration', values.investmentDuration);
+		params.delete('returnWindow');
+		if (values.returnWindow !== PresetTimeDurations.OneYear) {
+			params.set('returnWindow', values.returnWindow);
 		}
 
 		params.delete('lookbackDuration');
