@@ -7,12 +7,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	ChartConfig,
 	ChartContainer,
+	ChartLegend,
+	ChartLegendContent,
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart';
 import { PresetTimeDurations } from '@/lib/types';
 import { displayPresetTimeDuration } from '@/lib/utils';
-import { CartesianGrid, Legend, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 
 export default function ReturnsChartCard({
 	mutualfunds,
@@ -137,14 +139,13 @@ function ReturnsChart({
 					<Line
 						key={mutualfund.schemeCode}
 						dataKey={mutualfund.schemeCode.toString()}
-						name={mutualfund.schemeName} // Add this line to show label in legend
 						type='monotone'
 						stroke={`var(--color-${mutualfund.schemeCode})`}
 						strokeWidth={2}
 						dot={false}
 					/>
 				))}
-				<Legend iconType='circle' align='center' verticalAlign='bottom' />
+				<ChartLegend content={<ChartLegendContent />} />
 			</LineChart>
 		</ChartContainer>
 	);
