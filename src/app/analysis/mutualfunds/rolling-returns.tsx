@@ -3,6 +3,7 @@ import {
 	useRollingReturnQuery,
 } from '@/components/hooks/mutualfunds';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import {
 	Table,
 	TableBody,
@@ -14,51 +15,61 @@ import {
 import { PresetTimeDurations } from '@/lib/types';
 import { cn, displayPresetTimeDuration } from '@/lib/utils';
 
-export default function RollingReturnsTable({
+export default function RollingReturnsCard({
 	mutualfunds,
 }: {
 	mutualfunds: MutualFund[];
 }) {
-	if (!mutualfunds.length) {
-		return null;
-	}
-
 	return (
 		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>Latest Rolling CAGR (%)</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<Table className='w-full'>
-					<TableHeader>
-						<TableRow>
-							<TableHead>Rolling Window</TableHead>
-							{mutualfunds.map((mf) => (
-								<TableHead key={mf.schemeCode} className='text-center'>
-									{mf.schemeName}
-								</TableHead>
-							))}
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{Object.values(PresetTimeDurations).map((duration) => (
-							<TableRow key={duration}>
-								<TableCell>
-									{displayPresetTimeDuration(duration as PresetTimeDurations)}
-								</TableCell>
-								{mutualfunds.map((mf) => (
-									<RollingReturnsTableCell
-										key={mf.schemeCode}
-										mutualfund={mf}
-										returnWindow={duration as PresetTimeDurations}
-									/>
-								))}
-							</TableRow>
-						))}
-					</TableBody>
-				</Table>
+				<RollingReturnsTable mutualfunds={mutualfunds} />
 			</CardContent>
 		</Card>
+	);
+}
+
+function RollingReturnsTable({ mutualfunds }: { mutualfunds: MutualFund[] }) {
+	if (mutualfunds.length === 0) {
+		return (
+			<div className='flex items-center justify-center'>
+				<Label>No mutual funds selected</Label>
+			</div>
+		);
+	}
+
+	return (
+		<Table className='w-full'>
+			<TableHeader>
+				<TableRow>
+					<TableHead>Rolling Window</TableHead>
+					{mutualfunds.map((mf) => (
+						<TableHead key={mf.schemeCode} className='text-center'>
+							{mf.schemeName}
+						</TableHead>
+					))}
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{Object.values(PresetTimeDurations).map((duration) => (
+					<TableRow key={duration}>
+						<TableCell>
+							{displayPresetTimeDuration(duration as PresetTimeDurations)}
+						</TableCell>
+						{mutualfunds.map((mf) => (
+							<RollingReturnsTableCell
+								key={mf.schemeCode}
+								mutualfund={mf}
+								returnWindow={duration as PresetTimeDurations}
+							/>
+						))}
+					</TableRow>
+				))}
+			</TableBody>
+		</Table>
 	);
 }
 

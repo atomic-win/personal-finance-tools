@@ -3,10 +3,10 @@ import {
 	useMutualFundListQuery,
 	useMutualFundQueries,
 } from '@/components/hooks/mutualfunds';
-import RollingReturnsTable from './rolling-returns-table';
+import RollingReturnsCard from './rolling-returns';
 import MutualFundsForm from './mutualfunds-form';
 import { useSearchParams } from 'next/navigation';
-import ReturnsChartCard from './returns-chart';
+import ReturnsCard from './returns';
 
 export default function Page() {
 	const searchParams = useSearchParams();
@@ -30,8 +30,8 @@ export default function Page() {
 			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analysis</h1>
 			<div className='grid grid-cols-3 gap-4'>
 				<div className='col-span-2'>
-					<ReturnsChartCard mutualfunds={addedMutualfunds} />
-					<RollingReturnsTable mutualfunds={addedMutualfunds} />
+					<ReturnsCard mutualfunds={addedMutualfunds} />
+					<RollingReturnsCard mutualfunds={addedMutualfunds} />
 				</div>
 				<div>
 					<MutualFundsForm

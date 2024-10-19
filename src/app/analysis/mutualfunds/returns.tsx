@@ -32,7 +32,7 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
-export default function ReturnsChartCard({
+export default function ReturnsCard({
 	mutualfunds,
 }: {
 	mutualfunds: MutualFund[];
@@ -109,7 +109,7 @@ export default function ReturnsChartCard({
 					</Select>
 				</div>
 			</CardHeader>
-			<CardContent>
+			<CardContent className='p-6'>
 				<ReturnsChart
 					mutualfunds={mutualfunds}
 					returnWindow={returnWindow}
@@ -136,15 +136,27 @@ function ReturnsChart({
 	);
 
 	if (mutualfunds.length === 0) {
-		return <div>No mutual funds selected</div>;
+		return (
+			<div className='flex items-center justify-center'>
+				<Label>No mutual funds selected</Label>
+			</div>
+		);
 	}
 
 	if (mutualFundReturnResults.some((r) => r.isLoading)) {
-		return <div>Loading...</div>;
+		return (
+			<div className='flex items-center justify-center'>
+				<Label>Loading data...</Label>
+			</div>
+		);
 	}
 
 	if (mutualFundReturnResults.some((r) => r.isError)) {
-		return <div>Error fetching data</div>;
+		return (
+			<div className='flex items-center justify-center'>
+				<Label>Error loading data</Label>
+			</div>
+		);
 	}
 
 	const mutualFundReturns: MutualFundReturn[] = mutualFundReturnResults
