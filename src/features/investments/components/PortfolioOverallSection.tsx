@@ -8,19 +8,19 @@ import {
 
 const columns: ColumnDef<OverallPortfolio>[] = [
 	createNormalColumnDef({
-		accessorKey: 'initialAmount',
+		accessorKey: 'Initial Amount',
 		headerText: 'Initial Amount',
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.initialAmount),
 	}),
 	createNormalColumnDef({
-		accessorKey: 'currentAmount',
+		accessorKey: 'Current Amount',
 		headerText: 'Current Amount',
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.currentAmount),
 	}),
 	createNormalColumnDef({
-		accessorKey: 'xirrPercent',
+		accessorKey: 'XIRR (%)',
 		headerText: 'XIRR (%)',
 		cellTextFn: (data) => displayPercentage(data.xirrPercent),
 	}),
