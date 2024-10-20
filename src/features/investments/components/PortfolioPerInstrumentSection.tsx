@@ -13,45 +13,45 @@ import {
 
 const columns: ColumnDef<InstrumentPortfolio>[] = [
 	createNormalColumnDef({
-		accessorKey: 'Instrument',
+		accessorKey: 'instrument',
 		headerText: 'Instrument',
 		cellTextFn: (data) => data.instrumentName,
 	}),
 	createSortableColumnDef({
-		accessorKey: 'Instrument Type',
+		accessorKey: 'instrumentType',
 		headerText: 'Instrument Type',
 		cellTextFn: (data) => displayInstrumentType(data.instrumentType),
 		sortingFnCompare: (data) => data.instrumentType,
 		align: 'left',
 	}),
 	createSortableColumnDef({
-		accessorKey: 'Invested Value',
+		accessorKey: 'initialAmount',
 		headerText: 'Invested Value',
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.initialAmount),
 		sortingFnCompare: (data) => data.initialAmount,
 	}),
 	createSortableColumnDef({
-		accessorKey: 'Invested Value (%)',
+		accessorKey: 'initialAmountPercent',
 		headerText: 'Invested Value (%)',
 		cellTextFn: (data) => displayPercentage(data.initialAmountPercent),
 		sortingFnCompare: (data) => data.initialAmountPercent,
 	}),
 	createSortableColumnDef({
-		accessorKey: 'Current Value',
+		accessorKey: 'currentAmount',
 		headerText: 'Current Value',
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.currentAmount),
 		sortingFnCompare: (data) => data.currentAmount,
 	}),
 	createSortableColumnDef({
-		accessorKey: 'Current Value (%)',
+		accessorKey: 'currentAmountPercent',
 		headerText: 'Current Value (%)',
 		cellTextFn: (data) => displayPercentage(data.currentAmountPercent),
 		sortingFnCompare: (data) => data.currentAmountPercent,
 	}),
 	createSortableColumnDef({
-		accessorKey: 'XIRR (%)',
+		accessorKey: 'xirrPercent',
 		headerText: 'XIRR (%)',
 		cellTextFn: (data) => displayPercentage(data.xirrPercent),
 		sortingFnCompare: (data) => data.xirrPercent,
