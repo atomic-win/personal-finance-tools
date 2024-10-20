@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import './globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import {
 	SidebarInset,
 	SidebarProvider,
@@ -37,18 +38,20 @@ export default function RootLayout({
 					'min-h-screen, bg-background font-sans antialiased',
 					inter.variable
 				)}>
-				<SidebarProvider>
-					<AppSidebar />
-					<SidebarInset>
-						<main className='container my-6 mx-auto'>
-							<QueryClientProvider client={queryClient}>
-								<SidebarTrigger />
-								{children}
-								<ReactQueryDevtools />
-							</QueryClientProvider>
-						</main>
-					</SidebarInset>
-				</SidebarProvider>
+				<QueryClientProvider client={queryClient}>
+					<GoogleOAuthProvider clientId='73478229232-4shu2tigpasb0drjlsn39g4isdm6kuv3.apps.googleusercontent.com'>
+						<SidebarProvider>
+							<AppSidebar />
+							<SidebarInset>
+								<main className='container my-6 mx-auto'>
+									<SidebarTrigger />
+									{children}
+									<ReactQueryDevtools />
+								</main>
+							</SidebarInset>
+						</SidebarProvider>
+					</GoogleOAuthProvider>
+				</QueryClientProvider>
 			</body>
 		</html>
 	);

@@ -3,6 +3,7 @@ import { DollarSignIcon } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
+	SidebarFooter,
 	SidebarGroup,
 	SidebarHeader,
 	SidebarMenu,
@@ -13,6 +14,7 @@ import {
 	SidebarMenuSubItem,
 	SidebarRail,
 } from '@/components/ui/sidebar';
+import AccountMenu from './AccountMenu';
 
 const data = [
 	{
@@ -86,6 +88,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarMenu>
 				</SidebarGroup>
 			</SidebarContent>
+			<SidebarFooter>
+				<SidebarMenu>
+					<SidebarMenuItem>
+						<AccountMenu />
+					</SidebarMenuItem>
+				</SidebarMenu>
+			</SidebarFooter>
 			<SidebarRail />
 		</Sidebar>
 	);
