@@ -18,6 +18,11 @@ import AccountMenu from '@/components/AccountMenu';
 
 const data = [
 	{
+		title: 'Investments',
+		url: '#',
+		items: [{ title: 'Portfolio', url: '/investments/portfolio' }],
+	},
+	{
 		title: 'Calculators',
 		url: '#',
 		items: [
