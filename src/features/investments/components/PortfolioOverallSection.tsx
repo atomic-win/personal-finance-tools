@@ -9,7 +9,7 @@ import {
 const columns: ColumnDef<OverallPortfolio>[] = [
 	createColumnDef({
 		accessorKey: 'initialAmount',
-		headerText: 'Initial Amount',
+		headerText: 'Initial Value',
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.initialAmount),
 		align: 'left',
@@ -17,7 +17,7 @@ const columns: ColumnDef<OverallPortfolio>[] = [
 	}),
 	createColumnDef({
 		accessorKey: 'currentAmount',
-		headerText: 'Current Amount',
+		headerText: 'Current Value',
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.currentAmount),
 		align: 'left',
