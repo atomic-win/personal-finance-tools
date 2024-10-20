@@ -5,11 +5,7 @@ import '@/app/globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import {
-	SidebarInset,
-	SidebarProvider,
-	SidebarTrigger,
-} from '@/components/ui/sidebar';
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 
 const inter = Inter({
@@ -42,13 +38,11 @@ export default function RootLayout({
 					<GoogleOAuthProvider clientId='73478229232-4shu2tigpasb0drjlsn39g4isdm6kuv3.apps.googleusercontent.com'>
 						<SidebarProvider>
 							<AppSidebar />
-							<SidebarInset>
-								<main className='container my-6 mx-auto'>
-									<SidebarTrigger />
-									{children}
-									<ReactQueryDevtools />
-								</main>
-							</SidebarInset>
+							<main className='container my-6'>
+								<SidebarTrigger />
+								{children}
+								<ReactQueryDevtools />
+							</main>
 						</SidebarProvider>
 					</GoogleOAuthProvider>
 				</QueryClientProvider>
