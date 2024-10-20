@@ -3,10 +3,10 @@ import {
 	useMutualFundListQuery,
 	useMutualFundQueries,
 } from '@/hooks/mutualfunds';
-import RollingReturnsCard from './rolling-returns';
-import MutualFundsForm from './mutualfunds-form';
+import MutualFundsReturnsChart from '@/features/analyzers/components/MutualFundsReturnsChart';
+import MutualFundsRollingReturnsTable from '@/features/analyzers/components/MutualFundsRollingReturnsTable';
+import MutualFundsForm from '@/features/analyzers/components/MutualFundsForm';
 import { useSearchParams } from 'next/navigation';
-import ReturnsCard from './returns';
 
 export default function Page() {
 	const searchParams = useSearchParams();
@@ -30,8 +30,8 @@ export default function Page() {
 			<h1 className='text-2xl font-bold mb-4'>Mutual Funds Analyzer</h1>
 			<div className='grid grid-cols-3 gap-4'>
 				<div className='col-span-2'>
-					<ReturnsCard mutualfunds={addedMutualfunds} />
-					<RollingReturnsCard mutualfunds={addedMutualfunds} />
+					<MutualFundsReturnsChart mutualfunds={addedMutualfunds} />
+					<MutualFundsRollingReturnsTable mutualfunds={addedMutualfunds} />
 				</div>
 				<div>
 					<MutualFundsForm
