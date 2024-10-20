@@ -3,7 +3,7 @@ import {
 	MutualFund,
 	MutualFundReturn,
 	useReturnQueries,
-} from '@/hooks/mutualfunds';
+} from '@/features/analyzers/hooks/mutualfunds';
 import {
 	Card,
 	CardContent,
@@ -19,8 +19,7 @@ import {
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart';
-import { PresetTimeDurations } from '@/lib/types';
-import { displayPresetTimeDuration } from '@/lib/utils';
+import { PresetTimeDurations } from '@/features/analyzers/lib/types';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { useState } from 'react';
 import {
@@ -31,6 +30,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
+import { displayPresetTimeDuration } from '@/features/analyzers/lib/utils';
 
 export default function ReturnsCard({
 	mutualfunds,

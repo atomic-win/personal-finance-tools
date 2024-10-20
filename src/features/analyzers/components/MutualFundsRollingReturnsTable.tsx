@@ -1,4 +1,7 @@
-import { MutualFund, useRollingReturnQuery } from '@/hooks/mutualfunds';
+import {
+	MutualFund,
+	useRollingReturnQuery,
+} from '@/features/analyzers/hooks/mutualfunds';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import {
@@ -9,8 +12,9 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { PresetTimeDurations } from '@/lib/types';
-import { cn, displayPresetTimeDuration } from '@/lib/utils';
+import { PresetTimeDurations } from '@/features/analyzers/lib/types';
+import { cn } from '@/lib/utils';
+import { displayPresetTimeDuration } from '@/features/analyzers/lib/utils';
 
 export default function RollingReturnsCard({
 	mutualfunds,

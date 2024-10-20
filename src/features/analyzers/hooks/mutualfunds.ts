@@ -1,5 +1,5 @@
-import { PresetTimeDurations } from '@/lib/types';
-import { getLuxonDuration } from '@/lib/utils';
+import { PresetTimeDurations } from '@/features/analyzers/lib/types';
+import { getLuxonDuration } from '@/features/analyzers/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateTime } from 'luxon';

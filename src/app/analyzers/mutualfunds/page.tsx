@@ -2,7 +2,7 @@
 import {
 	useMutualFundListQuery,
 	useMutualFundQueries,
-} from '@/hooks/mutualfunds';
+} from '@/features/analyzers/hooks/mutualfunds';
 import MutualFundsReturnsChart from '@/features/analyzers/components/MutualFundsReturnsChart';
 import MutualFundsRollingReturnsTable from '@/features/analyzers/components/MutualFundsRollingReturnsTable';
 import MutualFundsForm from '@/features/analyzers/components/MutualFundsForm';
