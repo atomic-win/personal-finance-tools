@@ -17,7 +17,7 @@ import {
 import withAssets from '@/features/investments/components/hoc/withAssets';
 import withInstruments from '@/features/investments/components/hoc/withInstruments';
 import { withOverallPortfolios } from '@/features/investments/components/hoc/withOverallPortfolios';
-// import { withInstrumentTypePortfolios } from '@/features/investments/components/hoc/withInstrumentTypePortfolios';
+import { withInstrumentTypePortfolios } from '@/features/investments/components/hoc/withInstrumentTypePortfolios';
 // import { withInstrumentPortfolios } from '@/features/investments/components/hoc/withInstrumentPortfolios';
 // import { withAssetPortfolios } from '@/features/investments/components/hoc/withAssetPortfolios';
 import withInvestmentsFilter from '@/features/investments/components/hoc/withInvestmentsFilter';
@@ -87,9 +87,9 @@ function Page({
 		withOverallPortfolios(OverallSection)
 	);
 
-	// const WithLoadedInstrumentTypeSection = withCurrency(
-	// 	withInstrumentTypePortfolios(InstrumentTypeSection)
-	// );
+	const WithLoadedInstrumentTypeSection = withCurrency(
+		withInstrumentTypePortfolios(InstrumentTypeSection)
+	);
 
 	// const WithLoadedInstrumentSection = withCurrency(
 	// 	withInstrumentPortfolios(InstrumentSection)
@@ -105,6 +105,11 @@ function Page({
 				title='Overall Portfolio'
 				description='Overall stats for the portfolio'>
 				<WithLoadedOverallSection assetIds={assetIds} latest={latest} />
+			</PortfolioSectionCard>
+			<PortfolioSectionCard
+				title='Portfolio Per Instrument Type'
+				description='Stats for each instrument type in the portfolio'>
+				<WithLoadedInstrumentTypeSection assetIds={assetIds} latest={latest} />
 			</PortfolioSectionCard>
 			{/* <PortfolioSectionCard title='Per Instrument Type'>
 				<WithLoadedInstrumentTypeSection assetIds={assetIds} latest={latest} />
