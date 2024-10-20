@@ -17,7 +17,7 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { calculateSipResult } from '@/lib/calculator.utils';
+import { calculateSipResult } from '@/features/calculators/lib/utils';
 import { displayCurrencyAmount } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
