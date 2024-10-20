@@ -1,5 +1,12 @@
 import { Currency } from '@/lib/types';
-import { InstrumentType } from '@/features/investments/lib/types';
+import { Instrument, InstrumentType } from '@/features/investments/lib/types';
+
+export function findInstrumentById(
+	instruments: Instrument[],
+	id: string
+): Instrument | undefined {
+	return (instruments || []).find((instrument) => instrument.id === id);
+}
 
 export function displayCurrencyAmount(currency: Currency, amount: number) {
 	return Intl.NumberFormat('finance', {
