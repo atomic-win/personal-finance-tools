@@ -34,12 +34,12 @@ const data = [
 		],
 	},
 	{
-		title: 'Tools',
+		title: 'Analyzers',
 		url: '#',
 		items: [
 			{
 				title: 'Mutual Funds Analyzer',
-				url: '/tools/mutualfunds',
+				url: '/analyzers/mutualfunds',
 			},
 		],
 	},
