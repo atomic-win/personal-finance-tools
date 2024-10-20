@@ -10,6 +10,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import useAccessTokenQuery from '@/hooks/useAccessTokenQuery';
 import { useLogInMutation } from '@/hooks/useLogInMutation';
 import { useLogOutMutation } from '@/hooks/useLogOutMutation';
+import { useMyProfileQuery } from '@/hooks/useMyProfileQuery';
 
 export default function AccountMenu() {
 	const { data: accessToken, isFetching, error } = useAccessTokenQuery();
@@ -43,13 +44,23 @@ function LogInMenu() {
 }
 
 function LogOutMenu() {
+	const { data: profile, isFetching, error } = useMyProfileQuery();
 	const logoutMutation = useLogOutMutation();
+
+	if (isFetching) {
+		return <div>Fetching Profile...</div>;
+	}
+
+	if (error || !!!profile) {
+		return <div>Error fetching profile</div>;
+	}
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<SidebarMenuButton>
-					<User2 /> Username
+					<User2 />
+					{profile.fullName}
 					<ChevronUp className='ml-auto' />
 				</SidebarMenuButton>
 			</DropdownMenuTrigger>
