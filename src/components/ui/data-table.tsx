@@ -18,10 +18,88 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
+}
+
+export function createNormalColumnDef<TData>({
+	accessorKey,
+	headerText,
+	cellTextFn,
+}: {
+	accessorKey: (string & {}) | keyof TData;
+	headerText: string;
+	cellTextFn: (data: TData) => string;
+}): ColumnDef<TData> {
+	return {
+		accessorKey,
+		header: () => {
+			return (
+				<Button variant='ghost' className='p-0'>
+					{headerText}
+				</Button>
+			);
+		},
+		cell: ({ row }) => {
+			return (
+				<div className='text-left font-medium'>{cellTextFn(row.original)}</div>
+			);
+		},
+	};
+}
+
+export function createSortableColumnDef<TData>({
+	accessorKey,
+	headerText,
+	cellTextFn,
+	sortingFnCompare,
+}: {
+	accessorKey: (string & {}) | keyof TData;
+	headerText: string;
+	cellTextFn: (data: TData) => string;
+	sortingFnCompare: (data: TData) => string | number;
+}): ColumnDef<TData> {
+	return {
+		accessorKey,
+		header: ({ column }) => {
+			return (
+				<Button
+					variant='ghost'
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+					className='p-0'>
+					{headerText}
+					{column.getIsSorted() === 'asc' && <ArrowDown className='h-4 w-4' />}
+					{column.getIsSorted() === 'desc' && <ArrowUp className='h-4 w-4' />}
+					{column.getIsSorted() === false && (
+						<ArrowUpDown className='h-4 w-4' />
+					)}
+				</Button>
+			);
+		},
+		cell: ({ row }) => {
+			return (
+				<div className='text-right font-medium'>{cellTextFn(row.original)}</div>
+			);
+		},
+		sortingFn: (a, b) => {
+			const aVal = sortingFnCompare(a.original);
+			const bVal = sortingFnCompare(b.original);
+
+			if (aVal < bVal) {
+				return -1;
+			}
+
+			if (aVal > bVal) {
+				return 1;
+			}
+
+			return 0;
+		},
+	};
 }
 
 export function DataTable<TData, TValue>({
