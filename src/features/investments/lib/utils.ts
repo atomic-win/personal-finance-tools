@@ -17,17 +17,17 @@ export function findAssetById(assets: Asset[], id: string): Asset | undefined {
 }
 
 export function displayCurrencyAmount(currency: Currency, amount: number) {
-	return Intl.NumberFormat('finance', {
+	return Intl.NumberFormat('en-IN', {
 		style: 'currency',
 		currency: currency,
 		currencyDisplay: 'symbol',
-		maximumFractionDigits: 0,
-		notation: 'standard',
+		maximumFractionDigits: 2,
+		notation: 'compact',
 	}).format(amount);
 }
 
 export function displayPercentage(percent: number) {
-	return Intl.NumberFormat('finance', {
+	return Intl.NumberFormat('en-IN', {
 		style: 'percent',
 		maximumFractionDigits: 2,
 	}).format(percent / 100);
