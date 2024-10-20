@@ -185,7 +185,16 @@ export default function PortfolioPerInstrumentTypeSection({
 }) {
 	return (
 		<div className='mx-auto'>
-			<DataTable columns={columns} data={portfolios} />
+			<DataTable
+				columns={columns}
+				data={portfolios}
+				initialSorting={[
+					{
+						id: 'initialAmountPercent',
+						desc: true,
+					},
+				]}
+			/>
 		</div>
 	);
 }
