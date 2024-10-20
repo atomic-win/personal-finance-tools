@@ -21,15 +21,15 @@ const data = [
 		items: [
 			{
 				title: 'SIP Calculator',
-				url: '/calculator/sip',
+				url: '/calculators/sip',
 			},
 			{
 				title: 'SWP Calculator',
-				url: '/calculator/swp',
+				url: '/calculators/swp',
 			},
 			{
 				title: 'SIP-SWP Calculator',
-				url: '/calculator/sip-swp',
+				url: '/calculators/sip-swp',
 			},
 		],
 	},
