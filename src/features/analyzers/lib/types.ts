@@ -1,3 +1,24 @@
+export type MutualFund = {
+	schemeCode: number;
+	schemeName: string;
+	earliestDate: string;
+	lastDate: string;
+	navs: Map<string, number>;
+};
+
+export type MutualFundRollingReturn = {
+	noData: boolean;
+	avgReturn: number;
+	minReturn: number;
+	maxReturn: number;
+};
+
+export type MutualFundReturn = {
+	schemeCode: number;
+	date: string;
+	return: number;
+};
+
 export enum PresetTimeDurations {
 	OneMonth = '1Month',
 	TwoMonths = '2Months',

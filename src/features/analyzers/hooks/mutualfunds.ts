@@ -1,29 +1,13 @@
-import { PresetTimeDurations } from '@/features/analyzers/lib/types';
+import {
+	MutualFund,
+	MutualFundReturn,
+	MutualFundRollingReturn,
+	PresetTimeDurations,
+} from '@/features/analyzers/lib/types';
 import { getLuxonDuration } from '@/features/analyzers/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateTime } from 'luxon';
-
-export interface MutualFund {
-	schemeCode: number;
-	schemeName: string;
-	earliestDate: string;
-	lastDate: string;
-	navs: Map<string, number>;
-}
-
-export interface MutualFundRollingReturn {
-	noData: boolean;
-	avgReturn: number;
-	minReturn: number;
-	maxReturn: number;
-}
-
-export interface MutualFundReturn {
-	schemeCode: number;
-	date: string;
-	return: number;
-}
 
 const mfApiClient = axios.create({
 	baseURL: 'https://api.mfapi.in',

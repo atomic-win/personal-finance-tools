@@ -1,5 +1,4 @@
 'use client';
-import { MutualFund } from '@/features/analyzers/hooks/mutualfunds';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -30,6 +29,7 @@ import React, { useState } from 'react';
 import fuzzysort from 'fuzzysort';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { MutualFund } from '@/features/analyzers/lib/types';
 
 const schema = z.object({
 	mfSchemeCode: z.coerce
