@@ -22,6 +22,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
+import { cn } from '@/lib/utils';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -32,23 +33,33 @@ export function createNormalColumnDef<TData>({
 	accessorKey,
 	headerText,
 	cellTextFn,
+	align = 'left',
 }: {
 	accessorKey: (string & {}) | keyof TData;
 	headerText: string;
 	cellTextFn: (data: TData) => string;
+	align?: 'left' | 'right';
 }): ColumnDef<TData> {
 	return {
 		accessorKey,
 		header: () => {
 			return (
-				<Button variant='ghost' className='p-0'>
+				<Button
+					variant='ghost'
+					className={cn(
+						'p-0 w-full',
+						align === 'left' && 'justify-start',
+						align === 'right' && 'justify-end'
+					)}>
 					{headerText}
 				</Button>
 			);
 		},
 		cell: ({ row }) => {
 			return (
-				<div className='text-left font-medium'>{cellTextFn(row.original)}</div>
+				<div className={cn('font-medium', `text-${align}`)}>
+					{cellTextFn(row.original)}
+				</div>
 			);
 		},
 	};
@@ -59,11 +70,13 @@ export function createSortableColumnDef<TData>({
 	headerText,
 	cellTextFn,
 	sortingFnCompare,
+	align = 'right',
 }: {
 	accessorKey: (string & {}) | keyof TData;
 	headerText: string;
 	cellTextFn: (data: TData) => string;
 	sortingFnCompare: (data: TData) => string | number;
+	align?: 'left' | 'right';
 }): ColumnDef<TData> {
 	return {
 		accessorKey,
@@ -72,7 +85,11 @@ export function createSortableColumnDef<TData>({
 				<Button
 					variant='ghost'
 					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-					className='p-0'>
+					className={cn(
+						'p-0 w-full',
+						align === 'left' && 'justify-start',
+						align === 'right' && 'justify-end'
+					)}>
 					{headerText}
 					{column.getIsSorted() === 'asc' && <ArrowDown className='h-4 w-4' />}
 					{column.getIsSorted() === 'desc' && <ArrowUp className='h-4 w-4' />}
@@ -84,7 +101,9 @@ export function createSortableColumnDef<TData>({
 		},
 		cell: ({ row }) => {
 			return (
-				<div className='text-right font-medium'>{cellTextFn(row.original)}</div>
+				<div className={cn('font-medium', `text-${align}`)}>
+					{cellTextFn(row.original)}
+				</div>
 			);
 		},
 		sortingFn: (a, b) => {

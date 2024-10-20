@@ -22,6 +22,7 @@ const columns: ColumnDef<InstrumentPortfolio>[] = [
 		headerText: 'Instrument Type',
 		cellTextFn: (data) => displayInstrumentType(data.instrumentType),
 		sortingFnCompare: (data) => data.instrumentType,
+		align: 'left',
 	}),
 	createSortableColumnDef({
 		accessorKey: 'Invested Value',
