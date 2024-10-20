@@ -31,19 +31,24 @@ interface DataTableProps<TData, TValue> {
 
 export function createColumnDef<TData>({
 	accessorKey,
+	id,
 	headerText,
 	cellTextFn,
 	sortingFnCompare,
 	align = 'right',
+	enableHiding = true,
 }: {
 	accessorKey: (string & {}) | keyof TData;
+	id?: string;
 	headerText: string;
 	cellTextFn: (data: TData) => string;
 	sortingFnCompare?: (data: TData) => string | number;
 	align?: 'left' | 'right';
+	enableHiding?: boolean;
 }): ColumnDef<TData> {
 	return {
 		accessorKey,
+		id,
 		header: ({ column }) => {
 			return (
 				<Button
@@ -104,6 +109,7 @@ export function createColumnDef<TData>({
 			return 0;
 		},
 		enableSorting: !!sortingFnCompare,
+		enableHiding: enableHiding,
 	};
 }
 

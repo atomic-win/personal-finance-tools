@@ -13,6 +13,7 @@ const columns: ColumnDef<OverallPortfolio>[] = [
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.initialAmount),
 		align: 'left',
+		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'currentAmount',
@@ -20,12 +21,14 @@ const columns: ColumnDef<OverallPortfolio>[] = [
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.currentAmount),
 		align: 'left',
+		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'xirrPercent',
 		headerText: 'XIRR (%)',
 		cellTextFn: (data) => displayPercentage(data.xirrPercent),
 		align: 'left',
+		enableHiding: false,
 	}),
 ];
 

@@ -13,9 +13,11 @@ const columns: ColumnDef<InstrumentPortfolio>[] = [
 		headerText: 'Instrument',
 		cellTextFn: (data) => data.instrumentName,
 		align: 'left',
+		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'instrumentType',
+		id: 'Instrument Type',
 		headerText: 'Instrument Type',
 		cellTextFn: (data) => displayInstrumentType(data.instrumentType),
 		sortingFnCompare: (data) => data.instrumentType,
@@ -23,6 +25,7 @@ const columns: ColumnDef<InstrumentPortfolio>[] = [
 	}),
 	createColumnDef({
 		accessorKey: 'initialAmount',
+		id: 'Invested Value',
 		headerText: 'Invested Value',
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.initialAmount),
@@ -33,9 +36,11 @@ const columns: ColumnDef<InstrumentPortfolio>[] = [
 		headerText: 'Invested Value (%)',
 		cellTextFn: (data) => displayPercentage(data.initialAmountPercent),
 		sortingFnCompare: (data) => data.initialAmountPercent,
+		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'currentAmount',
+		id: 'Current Value',
 		headerText: 'Current Value',
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.currentAmount),
@@ -46,12 +51,14 @@ const columns: ColumnDef<InstrumentPortfolio>[] = [
 		headerText: 'Current Value (%)',
 		cellTextFn: (data) => displayPercentage(data.currentAmountPercent),
 		sortingFnCompare: (data) => data.currentAmountPercent,
+		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'xirrPercent',
 		headerText: 'XIRR (%)',
 		cellTextFn: (data) => displayPercentage(data.xirrPercent),
 		sortingFnCompare: (data) => data.xirrPercent,
+		enableHiding: false,
 	}),
 ];
 
