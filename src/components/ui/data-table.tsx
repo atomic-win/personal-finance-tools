@@ -29,43 +29,7 @@ interface DataTableProps<TData, TValue> {
 	data: TData[];
 }
 
-export function createNormalColumnDef<TData>({
-	accessorKey,
-	headerText,
-	cellTextFn,
-	align = 'left',
-}: {
-	accessorKey: (string & {}) | keyof TData;
-	headerText: string;
-	cellTextFn: (data: TData) => string;
-	align?: 'left' | 'right';
-}): ColumnDef<TData> {
-	return {
-		accessorKey,
-		header: () => {
-			return (
-				<Button
-					variant='ghost'
-					className={cn(
-						'p-0 w-full',
-						align === 'left' && 'justify-start',
-						align === 'right' && 'justify-end'
-					)}>
-					{headerText}
-				</Button>
-			);
-		},
-		cell: ({ row }) => {
-			return (
-				<div className={cn('font-medium', `text-${align}`)}>
-					{cellTextFn(row.original)}
-				</div>
-			);
-		},
-	};
-}
-
-export function createSortableColumnDef<TData>({
+export function createColumnDef<TData>({
 	accessorKey,
 	headerText,
 	cellTextFn,
@@ -75,7 +39,7 @@ export function createSortableColumnDef<TData>({
 	accessorKey: (string & {}) | keyof TData;
 	headerText: string;
 	cellTextFn: (data: TData) => string;
-	sortingFnCompare: (data: TData) => string | number;
+	sortingFnCompare?: (data: TData) => string | number;
 	align?: 'left' | 'right';
 }): ColumnDef<TData> {
 	return {
@@ -84,29 +48,48 @@ export function createSortableColumnDef<TData>({
 			return (
 				<Button
 					variant='ghost'
-					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+					onClick={() =>
+						sortingFnCompare &&
+						column.toggleSorting(column.getIsSorted() === 'asc')
+					}
 					className={cn(
 						'p-0 w-full',
 						align === 'left' && 'justify-start',
 						align === 'right' && 'justify-end'
 					)}>
 					{headerText}
-					{column.getIsSorted() === 'asc' && <ArrowDown className='h-4 w-4' />}
-					{column.getIsSorted() === 'desc' && <ArrowUp className='h-4 w-4' />}
-					{column.getIsSorted() === false && (
-						<ArrowUpDown className='h-4 w-4' />
+					{sortingFnCompare && (
+						<>
+							{column.getIsSorted() === 'asc' && (
+								<ArrowDown className='h-4 w-4' />
+							)}
+							{column.getIsSorted() === 'desc' && (
+								<ArrowUp className='h-4 w-4' />
+							)}
+							{column.getIsSorted() === false && (
+								<ArrowUpDown className='h-4 w-4' />
+							)}
+						</>
 					)}
 				</Button>
 			);
 		},
 		cell: ({ row }) => {
 			return (
-				<div className={cn('font-medium', `text-${align}`)}>
+				<div
+					className={cn(
+						'font-medium',
+						align === 'left' && 'text-left',
+						align === 'right' && 'text-right'
+					)}>
 					{cellTextFn(row.original)}
 				</div>
 			);
 		},
 		sortingFn: (a, b) => {
+			if (!sortingFnCompare) {
+				return 0;
+			}
 			const aVal = sortingFnCompare(a.original);
 			const bVal = sortingFnCompare(b.original);
 
@@ -120,6 +103,7 @@ export function createSortableColumnDef<TData>({
 
 			return 0;
 		},
+		enableSorting: !!sortingFnCompare,
 	};
 }
 
