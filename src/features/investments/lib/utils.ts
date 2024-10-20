@@ -1,11 +1,19 @@
 import { Currency } from '@/lib/types';
-import { Instrument, InstrumentType } from '@/features/investments/lib/types';
+import {
+	Instrument,
+	InstrumentType,
+	Asset,
+} from '@/features/investments/lib/types';
 
 export function findInstrumentById(
 	instruments: Instrument[],
 	id: string
 ): Instrument | undefined {
 	return (instruments || []).find((instrument) => instrument.id === id);
+}
+
+export function findAssetById(assets: Asset[], id: string): Asset | undefined {
+	return (assets || []).find((asset) => asset.id === id);
 }
 
 export function displayCurrencyAmount(currency: Currency, amount: number) {
