@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import SWPCalculatorCard from './card';
+import SWPCalculatorCard from '@/features/calculators/components/SWPCalculatorCard';
 import { Button } from '@/components/ui/button';
 import { v7 } from 'uuid';
 
