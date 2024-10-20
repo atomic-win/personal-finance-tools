@@ -1,7 +1,7 @@
 'use client';
 import { Inter } from 'next/font/google';
 import { cn } from '@/lib/utils';
-import './globals.css';
+import '@/app/globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { GoogleOAuthProvider } from '@react-oauth/google';

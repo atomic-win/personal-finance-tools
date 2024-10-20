@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { usePrimalApiClient } from './usePrimalApiClient';
+import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
 
 export const useLogInMutation = () => {
 	const primalApiClient = usePrimalApiClient();

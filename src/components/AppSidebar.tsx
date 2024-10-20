@@ -14,7 +14,7 @@ import {
 	SidebarMenuSubItem,
 	SidebarRail,
 } from '@/components/ui/sidebar';
-import AccountMenu from './AccountMenu';
+import AccountMenu from '@/components/AccountMenu';
 
 const data = [
 	{

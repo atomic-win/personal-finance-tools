@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { usePrimalApiClient } from './usePrimalApiClient';
+import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
 import { UserProfile } from '@/lib/types';
 
 export const useMyProfileQuery = () => {

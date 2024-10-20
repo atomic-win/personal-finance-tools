@@ -57,6 +57,12 @@
 					}
 				]
 			}
+		],
+		"no-restricted-imports": [
+			"error",
+			{
+				"patterns": [".*"]
+			}
 		]
 	}
 }

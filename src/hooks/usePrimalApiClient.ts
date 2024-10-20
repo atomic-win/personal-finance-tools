@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
-import { useLogOutMutation } from './useLogOutMutation';
+import { useLogOutMutation } from '@/hooks/useLogOutMutation';
 
 export const usePrimalApiClient = () => {
 	const queryClient = useQueryClient();
