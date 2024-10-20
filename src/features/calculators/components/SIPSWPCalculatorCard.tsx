@@ -20,8 +20,9 @@ import { Input } from '@/components/ui/input';
 import {
 	calculateSipResult,
 	calculateSwpResult,
+	displayCurrencyAmount,
+	displayYearlyTimeDuration,
 } from '@/features/calculators/lib/utils';
-import { displayCurrencyAmount, displayYearlyTimeDuration } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
