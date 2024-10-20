@@ -7,19 +7,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SidebarMenuButton } from '@/components/ui/sidebar';
 import { GoogleLogin } from '@react-oauth/google';
-import useAccessTokenQuery from '@/hooks/useAccessTokenQuery';
+import useAccessToken from '@/hooks/useAccessToken';
 import { useLogInMutation } from '@/hooks/useLogInMutation';
 import { useLogOutMutation } from '@/hooks/useLogOutMutation';
 import { useMyProfileQuery } from '@/hooks/useMyProfileQuery';
 
 export default function AccountMenu() {
-	const { data: accessToken, isFetching, error } = useAccessTokenQuery();
+	const accessToken = useAccessToken();
 
-	if (isFetching) {
-		return <div>Fetching Login Status...</div>;
-	}
-
-	if (error || !!!accessToken) {
+	if (!!!accessToken) {
 		return <LogInMenu />;
 	}
 

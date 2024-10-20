@@ -1,12 +1,11 @@
+'use client';
 import axios from 'axios';
-import { useQueryClient } from '@tanstack/react-query';
 import { useLogOutMutation } from '@/hooks/useLogOutMutation';
+import useAccessToken from '@/hooks/useAccessToken';
 
 export const usePrimalApiClient = () => {
-	const queryClient = useQueryClient();
+	const accessToken = useAccessToken();
 	const logOutMutation = useLogOutMutation();
-
-	const accessToken = queryClient.getQueryData(['accessToken']);
 
 	const headers = {
 		'Content-type': 'application/json',
