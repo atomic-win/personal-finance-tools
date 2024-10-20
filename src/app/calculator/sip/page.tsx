@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import SIPCalculatorCard from './card';
+import SIPCalculatorCard from '@/features/calculators/components/SIPCalculatorCard';
 import { Button } from '@/components/ui/button';
 import { v7 } from 'uuid';
 
