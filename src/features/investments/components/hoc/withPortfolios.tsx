@@ -24,6 +24,7 @@ import { withAssetPortfolios } from '@/features/investments/components/hoc/withA
 import withInvestmentsFilter from '@/features/investments/components/hoc/withInvestmentsFilter';
 import withCurrency from '@/features/investments/components/hoc/withCurrency';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 export default function withPortfolios(
 	OverallSection: React.ComponentType<{
@@ -85,6 +86,20 @@ function Page({
 		renderedFromPortfolioPage: boolean;
 	}>;
 }) {
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
+	const { replace } = useRouter();
+
+	const activeTab =
+		(searchParams.get('portfolioType') as PortfolioType) ||
+		PortfolioType.Overall;
+
+	function handleTabChange(portfolioType: PortfolioType) {
+		const params = new URLSearchParams(searchParams);
+		params.set('portfolioType', portfolioType);
+		replace(`${pathname}?${params.toString()}`);
+	}
+
 	const WithLoadedOverallSection = withCurrency(
 		withOverallPortfolios(OverallSection)
 	);
@@ -104,7 +119,9 @@ function Page({
 	return (
 		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md'>
 			<CardContent className='p-4'>
-				<Tabs defaultValue={PortfolioType.Overall}>
+				<Tabs
+					value={activeTab}
+					onValueChange={(value) => handleTabChange(value as PortfolioType)}>
 					<TabsList className='grid w-full grid-cols-4'>
 						<TabsTrigger value={PortfolioType.Overall}>Overall</TabsTrigger>
 						<TabsTrigger value={PortfolioType.PerInvestmentInstrumentType}>
