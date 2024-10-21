@@ -67,7 +67,7 @@ function PortfolioChart<TPortfolio extends Portfolio>({
 	}));
 
 	return (
-		<Card className='m-auto rounded-lg shadow-md w-full'>
+		<Card className='m-auto rounded-lg w-full'>
 			<CardTitle className='text-center m-2 text-base'>{title}</CardTitle>
 			<CardContent className='p-2'>
 				<ChartContainer
