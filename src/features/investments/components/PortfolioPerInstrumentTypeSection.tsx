@@ -9,6 +9,7 @@ import {
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
+import PortfolioCharts from '@/features/investments/components/PortfolioCharts';
 
 const columns: ColumnDef<InstrumentTypePortfolio>[] = [
 	createColumnDef({
@@ -66,6 +67,12 @@ export default function PortfolioPerInstrumentTypeSection({
 }) {
 	return (
 		<div className='mx-auto'>
+			<PortfolioCharts
+				portfolios={portfolios}
+				labelFn={(portfolio) =>
+					displayInstrumentType(portfolio.id as InstrumentType)
+				}
+			/>
 			<DataTable
 				columns={columns}
 				data={portfolios}
