@@ -145,14 +145,14 @@ function PortfolioSectionCard({
 	children: React.ReactNode;
 }) {
 	return (
-		<Card className='mx-auto my-2 rounded-lg shadow-md'>
+		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md'>
 			<CardHeader className='flex items-center gap-4 space-y-0 border-b py-2 pt-4 sm:flex-row'>
 				<div className='grid text-center sm:text-left w-full gap-2'>
 					<CardTitle>{title}</CardTitle>
 					<CardDescription>{description}</CardDescription>
 				</div>
 			</CardHeader>
-			<CardContent className='p-6'>{children}</CardContent>
+			<CardContent className='p-4'>{children}</CardContent>
 		</Card>
 	);
 }
