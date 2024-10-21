@@ -24,6 +24,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { displayInstrumentType } from '@/features/investments/lib/utils';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const schema = z.object({
 	instrumentTypes: z.array(z.nativeEnum(InstrumentType)),
@@ -38,14 +39,47 @@ export default function InvestmentsFilterForm({
 	assets: Asset[];
 	instruments: Instrument[];
 }) {
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
+	const { replace } = useRouter();
+
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			instrumentTypes: [],
-			instrumentIds: [],
-			assetIds: [],
+			instrumentTypes:
+				(searchParams.getAll('instrumentTypes') as InstrumentType[]) || [],
+			instrumentIds: searchParams.getAll('instrumentIds') || [],
+			assetIds: searchParams.getAll('assetIds') || [],
 		},
 	});
+
+	function onCheckedChange(data: z.infer<typeof schema>) {
+		const params = new URLSearchParams(searchParams);
+
+		for (const key in data) {
+			params.delete(key);
+		}
+
+		if (data.instrumentTypes.length > 0) {
+			for (const instrumentType of data.instrumentTypes) {
+				params.append('instrumentTypes', instrumentType);
+			}
+		}
+
+		if (data.instrumentIds.length > 0) {
+			for (const instrumentId of data.instrumentIds) {
+				params.append('instrumentIds', instrumentId);
+			}
+		}
+
+		if (data.assetIds.length > 0) {
+			for (const assetId of data.assetIds) {
+				params.append('assetIds', assetId);
+			}
+		}
+
+		replace(`${pathname}?${params.toString()}`);
+	}
 
 	return (
 		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md'>
@@ -93,17 +127,20 @@ export default function InvestmentsFilterForm({
 																			instrumentType
 																		)}
 																		onCheckedChange={(checked) => {
-																			return checked
-																				? field.onChange([
-																						...field.value,
-																						instrumentType,
-																				  ])
-																				: field.onChange(
-																						field.value?.filter(
-																							(value) =>
-																								value !== instrumentType
-																						)
-																				  );
+																			if (checked) {
+																				field.onChange([
+																					...field.value,
+																					instrumentType,
+																				]);
+																			} else {
+																				field.onChange(
+																					field.value?.filter(
+																						(value) => value !== instrumentType
+																					)
+																				);
+																			}
+
+																			form.handleSubmit(onCheckedChange)();
 																		}}
 																	/>
 																</FormControl>
@@ -146,16 +183,20 @@ export default function InvestmentsFilterForm({
 																<Checkbox
 																	checked={field.value?.includes(instrument.id)}
 																	onCheckedChange={(checked) => {
-																		return checked
-																			? field.onChange([
-																					...field.value,
-																					instrument.id,
-																			  ])
-																			: field.onChange(
-																					field.value?.filter(
-																						(value) => value !== instrument.id
-																					)
-																			  );
+																		if (checked) {
+																			field.onChange([
+																				...field.value,
+																				instrument.id,
+																			]);
+																		} else {
+																			field.onChange(
+																				field.value?.filter(
+																					(value) => value !== instrument.id
+																				)
+																			);
+																		}
+
+																		form.handleSubmit(onCheckedChange)();
 																	}}
 																/>
 															</FormControl>
@@ -198,16 +239,20 @@ export default function InvestmentsFilterForm({
 																<Checkbox
 																	checked={field.value?.includes(asset.id)}
 																	onCheckedChange={(checked) => {
-																		return checked
-																			? field.onChange([
-																					...field.value,
-																					asset.id,
-																			  ])
-																			: field.onChange(
-																					field.value?.filter(
-																						(value) => value !== asset.id
-																					)
-																			  );
+																		if (checked) {
+																			field.onChange([
+																				...field.value,
+																				asset.id,
+																			]);
+																		} else {
+																			field.onChange(
+																				field.value?.filter(
+																					(value) => value !== asset.id
+																				)
+																			);
+																		}
+
+																		form.handleSubmit(onCheckedChange)();
 																	}}
 																/>
 															</FormControl>
