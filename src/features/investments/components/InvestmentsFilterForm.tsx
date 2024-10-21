@@ -43,13 +43,17 @@ export default function InvestmentsFilterForm({
 	const pathname = usePathname();
 	const { replace } = useRouter();
 
+	const filteredInstrumentTypes =
+		(searchParams.getAll('instrumentTypes') as InstrumentType[]) || [];
+	const filteredInstrumentIds = searchParams.getAll('instrumentIds') || [];
+	const filteredAssetIds = searchParams.getAll('assetIds') || [];
+
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			instrumentTypes:
-				(searchParams.getAll('instrumentTypes') as InstrumentType[]) || [],
-			instrumentIds: searchParams.getAll('instrumentIds') || [],
-			assetIds: searchParams.getAll('assetIds') || [],
+			instrumentTypes: filteredInstrumentTypes,
+			instrumentIds: filteredInstrumentIds,
+			assetIds: filteredAssetIds,
 		},
 	});
 
@@ -198,6 +202,12 @@ export default function InvestmentsFilterForm({
 
 																		form.handleSubmit(onCheckedChange)();
 																	}}
+																	disabled={
+																		filteredInstrumentTypes.length !== 0 &&
+																		!filteredInstrumentTypes.includes(
+																			instrument.type
+																		)
+																	}
 																/>
 															</FormControl>
 															<FormLabel className='font-normal'>
@@ -254,6 +264,19 @@ export default function InvestmentsFilterForm({
 
 																		form.handleSubmit(onCheckedChange)();
 																	}}
+																	disabled={
+																		!instruments
+																			.filter(
+																				(instrument) =>
+																					filteredInstrumentTypes.length ===
+																						0 ||
+																					filteredInstrumentTypes.includes(
+																						instrument.type
+																					)
+																			)
+																			.map((instrument) => instrument.id)
+																			.includes(asset.instrumentId)
+																	}
 																/>
 															</FormControl>
 															<FormLabel className='font-normal'>
