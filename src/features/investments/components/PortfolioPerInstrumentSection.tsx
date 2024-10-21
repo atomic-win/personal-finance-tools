@@ -6,6 +6,7 @@ import {
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
+import PortfolioCharts from '@/features/investments/components/PortfolioCharts';
 
 const columns: ColumnDef<InstrumentPortfolio>[] = [
 	createColumnDef({
@@ -71,6 +72,10 @@ export default function PortfolioPerInstrumentSection({
 }) {
 	return (
 		<div className='mx-auto'>
+			<PortfolioCharts
+				portfolios={portfolios}
+				labelFn={(portfolio) => portfolio.instrumentName}
+			/>
 			<DataTable
 				columns={columns}
 				data={portfolios}

@@ -17,17 +17,31 @@ export default function PortfolioCharts<TPortfolio extends Portfolio>({
 	portfolios: TPortfolio[];
 	labelFn: (portfolio: TPortfolio) => string;
 }) {
+	const chartConfig = portfolios
+		.sort((a, b) => a.initialAmountPercent - b.initialAmountPercent)
+		.reverse()
+		.reduce(
+			(acc, portfolio, i) => ({
+				...acc,
+				[portfolio.id]: {
+					label: labelFn(portfolio),
+					color: `hsl(var(--chart-${i + 1}))`,
+				},
+			}),
+			{}
+		) satisfies ChartConfig;
+
 	return (
 		<div className='grid grid-cols-2 gap-2'>
 			<PortfolioChart
 				portfolios={portfolios}
-				labelFn={labelFn}
+				chartConfig={chartConfig}
 				title='Invested Value Allocation (%)'
 				valuePercentFn={(portfolio) => portfolio.initialAmountPercent}
 			/>
 			<PortfolioChart
 				portfolios={portfolios}
-				labelFn={labelFn}
+				chartConfig={chartConfig}
 				title='Current Value Allocation (%)'
 				valuePercentFn={(portfolio) => portfolio.currentAmountPercent}
 			/>
@@ -37,34 +51,20 @@ export default function PortfolioCharts<TPortfolio extends Portfolio>({
 
 function PortfolioChart<TPortfolio extends Portfolio>({
 	portfolios,
-	labelFn,
+	chartConfig,
 	title,
 	valuePercentFn,
 }: {
 	portfolios: TPortfolio[];
-	labelFn: (portfolio: TPortfolio) => string;
+	chartConfig: ChartConfig;
 	title: string;
 	valuePercentFn: (portfolio: TPortfolio) => number;
 }) {
-	const chartConfig = portfolios.reduce(
-		(acc, portfolio, i) => ({
-			...acc,
-			[portfolio.id]: {
-				label: labelFn(portfolio),
-				color: `hsl(var(--chart-${i + 1}))`,
-			},
-		}),
-		{}
-	) satisfies ChartConfig;
-
-	const chartData = portfolios
-		.sort((a, b) => valuePercentFn(a) - valuePercentFn(b))
-		.reverse()
-		.map((portfolio) => ({
-			id: portfolio.id,
-			data: parseFloat(valuePercentFn(portfolio).toFixed(2)),
-			fill: `var(--color-${portfolio.id})`,
-		}));
+	const chartData = portfolios.map((portfolio) => ({
+		id: portfolio.id,
+		data: parseFloat(valuePercentFn(portfolio).toFixed(2)),
+		fill: `var(--color-${portfolio.id})`,
+	}));
 
 	return (
 		<Card className='m-auto rounded-lg shadow-md w-full'>
@@ -72,7 +72,7 @@ function PortfolioChart<TPortfolio extends Portfolio>({
 			<CardContent className='p-2'>
 				<ChartContainer
 					config={chartConfig}
-					className='mx-auto aspect-square max-h-80'>
+					className='mx-auto aspect-square w-full'>
 					<PieChart>
 						<ChartTooltip
 							content={
@@ -108,6 +108,7 @@ function PortfolioChart<TPortfolio extends Portfolio>({
 							dataKey='data'
 							nameKey='id'
 							innerRadius={40}
+							width='100%'
 						/>
 						<ChartLegend
 							content={<ChartLegendContent />}
