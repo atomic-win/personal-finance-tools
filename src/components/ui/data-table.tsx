@@ -117,9 +117,15 @@ export function DataTable<TData, TValue>({
 	columns,
 	data,
 	initialSorting,
-}: DataTableProps<TData, TValue> & { initialSorting?: SortingState }) {
+	initialColumnVisibility,
+}: DataTableProps<TData, TValue> & {
+	initialSorting?: SortingState;
+	initialColumnVisibility?: VisibilityState;
+}) {
 	const [sorting, setSorting] = useState<SortingState>(initialSorting || []);
-	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+		initialColumnVisibility || {}
+	);
 
 	const table = useReactTable({
 		data,

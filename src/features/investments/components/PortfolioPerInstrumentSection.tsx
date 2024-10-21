@@ -30,6 +30,7 @@ const columns: ColumnDef<InstrumentPortfolio>[] = [
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.initialAmount),
 		sortingFnCompare: (data) => data.initialAmount,
+		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'initialAmountPercent',
@@ -45,6 +46,7 @@ const columns: ColumnDef<InstrumentPortfolio>[] = [
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.currentAmount),
 		sortingFnCompare: (data) => data.currentAmount,
+		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'currentAmountPercent',
@@ -78,6 +80,9 @@ export default function PortfolioPerInstrumentSection({
 						desc: true,
 					},
 				]}
+				initialColumnVisibility={{
+					'Instrument Type': false,
+				}}
 			/>
 		</div>
 	);

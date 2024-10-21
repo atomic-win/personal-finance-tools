@@ -25,6 +25,7 @@ const columns: ColumnDef<InstrumentTypePortfolio>[] = [
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.initialAmount),
 		sortingFnCompare: (data) => data.initialAmount,
+		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'initialAmountPercent',
@@ -40,6 +41,7 @@ const columns: ColumnDef<InstrumentTypePortfolio>[] = [
 		cellTextFn: (data) =>
 			displayCurrencyAmount(data.currency, data.currentAmount),
 		sortingFnCompare: (data) => data.currentAmount,
+		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'currentAmountPercent',
