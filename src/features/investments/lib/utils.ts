@@ -3,6 +3,7 @@ import {
 	Instrument,
 	InstrumentType,
 	Asset,
+	PortfolioType,
 } from '@/features/investments/lib/types';
 
 export function findInstrumentById(
@@ -51,5 +52,20 @@ export function displayInstrumentType(instrumentType: InstrumentType): string {
 			return 'Stock';
 		default:
 			return 'Unknown';
+	}
+}
+
+export function displayPortfolioType(portfolioType: PortfolioType): string {
+	switch (portfolioType) {
+		case PortfolioType.Overall:
+			return 'Overall';
+		case PortfolioType.PerInvestmentInstrumentType:
+			return 'Per Instrument Type';
+		case PortfolioType.PerInvestmentInstrument:
+			return 'Per Instrument';
+		case PortfolioType.PerAsset:
+			return 'Per Asset';
+		default:
+			throw new Error(`Unknown portfolio type: ${portfolioType}`);
 	}
 }
