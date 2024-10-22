@@ -57,3 +57,25 @@ export type AssetPortfolio = Portfolio & {
 	instrumentType: InstrumentType;
 	instrumentName: string;
 };
+
+export enum TransactionType {
+	Unknown = 'Unknown',
+	Buy = 'Buy',
+	Sell = 'Sell',
+	Deposit = 'Deposit',
+	Withdrawal = 'Withdrawal',
+	Dividend = 'Dividend',
+	Interest = 'Interest',
+	SelfInterest = 'SelfInterest',
+	InterestPenalty = 'InterestPenalty',
+}
+
+export type Transaction = {
+	id: string;
+	date: string;
+	name: string;
+	type: TransactionType;
+	assetId: string;
+	units: number;
+	amount: number;
+};

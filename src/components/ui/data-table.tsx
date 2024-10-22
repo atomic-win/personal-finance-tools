@@ -1,9 +1,14 @@
 'use client';
 
 import {
+	AccessorFn,
 	ColumnDef,
+	ColumnFiltersState,
 	flexRender,
 	getCoreRowModel,
+	getFacetedRowModel,
+	getFacetedUniqueValues,
+	getFilteredRowModel,
 	getPaginationRowModel,
 	getSortedRowModel,
 	SortingState,
@@ -33,6 +38,7 @@ interface DataTableProps<TData, TValue> {
 
 export function createColumnDef<TData>({
 	accessorKey,
+	accessorFn,
 	id,
 	headerText,
 	cellTextFn,
@@ -41,6 +47,7 @@ export function createColumnDef<TData>({
 	enableHiding = true,
 }: {
 	accessorKey: (string & {}) | keyof TData;
+	accessorFn?: AccessorFn<TData>;
 	id?: string;
 	headerText: string;
 	cellTextFn: (data: TData) => string;
@@ -50,6 +57,7 @@ export function createColumnDef<TData>({
 }): ColumnDef<TData> {
 	return {
 		accessorKey,
+		accessorFn,
 		id,
 		header: ({ column }) => {
 			return (
@@ -124,25 +132,38 @@ export function DataTable<TData, TValue>({
 	initialSorting?: SortingState;
 	initialColumnVisibility?: VisibilityState;
 }) {
-	const [sorting, setSorting] = useState<SortingState>(initialSorting || []);
+	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
 		initialColumnVisibility || {}
 	);
+	const [sorting, setSorting] = useState<SortingState>(initialSorting || []);
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
 		pageSize: 8,
 	});
 
+	console.log({
+		columnFilters,
+		columnVisibility,
+		sorting,
+		pagination,
+	});
+
 	const table = useReactTable({
 		data,
 		columns,
-		getCoreRowModel: getCoreRowModel(),
-		getSortedRowModel: getSortedRowModel(),
-		onSortingChange: setSorting,
+		onColumnFiltersChange: setColumnFilters,
 		onColumnVisibilityChange: setColumnVisibility,
-		getPaginationRowModel: getPaginationRowModel(),
+		onSortingChange: setSorting,
 		onPaginationChange: setPagination,
+		getCoreRowModel: getCoreRowModel(),
+		getFacetedRowModel: getFacetedRowModel(), //if you need a list of values for a column (other faceted row models depend on this one)
+		getFilteredRowModel: getFilteredRowModel(), //if you need a list of rows that match the filters
+		getFacetedUniqueValues: getFacetedUniqueValues(), //if you need a list of unique values
+		getSortedRowModel: getSortedRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
 		state: {
+			columnFilters,
 			sorting,
 			columnVisibility,
 			pagination,
