@@ -13,6 +13,7 @@ import { CartesianGrid, XAxis, YAxis, Line, LineChart } from 'recharts';
 import {
 	displayCurrencyAmount,
 	displayPercentage,
+	displayPortfolioType,
 } from '@/features/investments/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
@@ -163,7 +164,9 @@ function TrendsChart<TPortfolio extends Portfolio>({
 		<Card className='mx-auto my-2 rounded-lg shadow-md'>
 			<CardHeader className='flex items-center gap-4 space-y-0 p-4 mt-2 sm:flex-row'>
 				<div className='grid text-center sm:text-left w-full gap-2 justify-center'>
-					<CardTitle>{chartTitle}</CardTitle>
+					<CardTitle>
+						{chartTitle} - {displayPortfolioType(portfolios[0].type)}
+					</CardTitle>
 				</div>
 			</CardHeader>
 			<CardContent>
