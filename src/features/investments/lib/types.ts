@@ -56,5 +56,4 @@ export type AssetPortfolio = Portfolio & {
 	instrumentId: string;
 	instrumentType: InstrumentType;
 	instrumentName: string;
-	canEditAsset: boolean;
 };

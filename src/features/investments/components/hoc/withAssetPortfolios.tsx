@@ -17,16 +17,14 @@ import {
 export function withAssetPortfolios<
 	T extends {
 		portfolios: AssetPortfolio[];
-		renderedFromPortfolioPage: boolean;
 	}
 >(Component: React.ComponentType<T>) {
 	return function WithAssetPortfolios(
-		props: Omit<T, 'portfolios' | 'renderedFromPortfolioPage'> & {
+		props: Omit<T, 'portfolios'> & {
 			currency: Currency;
 			assetIds: string[];
 			assets: Asset[];
 			instruments: Instrument[];
-			renderedFromPortfolioPage: boolean;
 			latest: boolean;
 		}
 	) {
@@ -55,8 +53,7 @@ export function withAssetPortfolios<
 			portfolios,
 			props.assets,
 			props.instruments,
-			props.currency,
-			props.renderedFromPortfolioPage
+			props.currency
 		);
 
 		return (
@@ -69,8 +66,7 @@ function calculateAssetPortfolios(
 	portfolios: Portfolio[],
 	assets: Asset[],
 	instruments: Instrument[],
-	currency: Currency,
-	renderedFromPortfolioPage: boolean
+	currency: Currency
 ): AssetPortfolio[] {
 	return portfolios.map((portfolio) => {
 		const asset = findAssetById(assets, portfolio.id)!;
@@ -83,7 +79,6 @@ function calculateAssetPortfolios(
 			instrumentType: instrument.type,
 			instrumentName: instrument.name,
 			currency: currency,
-			canEditAsset: !renderedFromPortfolioPage,
 		};
 	});
 }

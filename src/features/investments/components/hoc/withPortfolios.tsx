@@ -39,7 +39,6 @@ export default function withPortfolios(
 	}>,
 	AssetSection: React.ComponentType<{
 		portfolios: AssetPortfolio[];
-		renderedFromPortfolioPage: boolean;
 	}>
 ) {
 	return function WithPortfolios({ latest }: { latest: boolean }) {
@@ -84,7 +83,6 @@ function Page({
 	}>;
 	AssetSection: React.ComponentType<{
 		portfolios: AssetPortfolio[];
-		renderedFromPortfolioPage: boolean;
 	}>;
 }) {
 	const searchParams = useSearchParams();
@@ -171,7 +169,6 @@ function Page({
 							instruments={instruments}
 							assets={assets}
 							latest={latest}
-							renderedFromPortfolioPage={true}
 						/>
 					</PortfolioTabsContent>
 				</Tabs>
