@@ -134,13 +134,13 @@ function Page({
 					</TabsList>
 					<PortfolioTabsContent
 						portfolioType={PortfolioType.Overall}
-						title='Overall Portfolio'
-						description='Overall stats for the portfolio'>
+						title='Overall'
+						description='Stats for the portfolio'>
 						<WithLoadedOverallSection assetIds={assetIds} latest={latest} />
 					</PortfolioTabsContent>
 					<PortfolioTabsContent
 						portfolioType={PortfolioType.PerInvestmentInstrumentType}
-						title='Portfolio Per Instrument Type'
+						title='Per Instrument Type'
 						description='Stats for each instrument type in the portfolio'>
 						<WithLoadedInstrumentTypeSection
 							assetIds={assetIds}
@@ -149,7 +149,7 @@ function Page({
 					</PortfolioTabsContent>
 					<PortfolioTabsContent
 						portfolioType={PortfolioType.PerInvestmentInstrument}
-						title='Portfolio Per Instrument'
+						title='Per Instrument'
 						description='Stats for each instrument in the portfolio'>
 						<WithLoadedInstrumentSection
 							assetIds={assetIds}
@@ -159,7 +159,7 @@ function Page({
 					</PortfolioTabsContent>
 					<PortfolioTabsContent
 						portfolioType={PortfolioType.PerAsset}
-						title='Portfolio Per Asset'
+						title='Per Asset'
 						description='Stats for each asset in the portfolio'>
 						<WithLoadedAssetSection
 							assetIds={assetIds}
