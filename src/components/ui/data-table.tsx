@@ -4,6 +4,7 @@ import {
 	ColumnDef,
 	flexRender,
 	getCoreRowModel,
+	getPaginationRowModel,
 	getSortedRowModel,
 	SortingState,
 	useReactTable,
@@ -23,6 +24,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
 import { cn } from '@/lib/utils';
+import { DataTablePagination } from '@/components/ui/data-table-pagination';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -126,17 +128,24 @@ export function DataTable<TData, TValue>({
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
 		initialColumnVisibility || {}
 	);
+	const [pagination, setPagination] = useState({
+		pageIndex: 0,
+		pageSize: 8,
+	});
 
 	const table = useReactTable({
 		data,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		onSortingChange: setSorting,
 		getSortedRowModel: getSortedRowModel(),
+		onSortingChange: setSorting,
 		onColumnVisibilityChange: setColumnVisibility,
+		getPaginationRowModel: getPaginationRowModel(),
+		onPaginationChange: setPagination,
 		state: {
 			sorting,
 			columnVisibility,
+			pagination,
 		},
 	});
 
@@ -192,6 +201,8 @@ export function DataTable<TData, TValue>({
 					</TableBody>
 				</Table>
 			</div>
+
+			<DataTablePagination table={table} />
 		</div>
 	);
 }
