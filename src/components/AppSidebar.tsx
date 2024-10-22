@@ -20,7 +20,10 @@ const data = [
 	{
 		title: 'Investments',
 		url: '#',
-		items: [{ title: 'Portfolio', url: '/investments/portfolio' }],
+		items: [
+			{ title: 'Portfolio', url: '/investments/portfolio' },
+			{ title: 'Portfolio Trends', url: '/investments/portfolio-trends' },
+		],
 	},
 	{
 		title: 'Calculators',
