@@ -25,6 +25,7 @@ import withInvestmentsFilter from '@/features/investments/components/hoc/withInv
 import withCurrency from '@/features/investments/components/hoc/withCurrency';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { displayPortfolioType } from '@/features/investments/lib/utils';
 
 export default function withPortfolios(
 	OverallSection: React.ComponentType<{
@@ -123,14 +124,18 @@ function Page({
 					value={activeTab}
 					onValueChange={(value) => handleTabChange(value as PortfolioType)}>
 					<TabsList className='grid w-full grid-cols-4'>
-						<TabsTrigger value={PortfolioType.Overall}>Overall</TabsTrigger>
+						<TabsTrigger value={PortfolioType.Overall}>
+							{displayPortfolioType(PortfolioType.Overall)}
+						</TabsTrigger>
 						<TabsTrigger value={PortfolioType.PerInvestmentInstrumentType}>
-							Per Instrument Type
+							{displayPortfolioType(PortfolioType.PerInvestmentInstrumentType)}
 						</TabsTrigger>
 						<TabsTrigger value={PortfolioType.PerInvestmentInstrument}>
-							Per Instrument
+							{displayPortfolioType(PortfolioType.PerInvestmentInstrument)}
 						</TabsTrigger>
-						<TabsTrigger value={PortfolioType.PerAsset}>Per Asset</TabsTrigger>
+						<TabsTrigger value={PortfolioType.PerAsset}>
+							{displayPortfolioType(PortfolioType.PerAsset)}
+						</TabsTrigger>
 					</TabsList>
 					<PortfolioTabsContent
 						portfolioType={PortfolioType.Overall}
