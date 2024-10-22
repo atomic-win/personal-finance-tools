@@ -17,7 +17,14 @@ export default function usePortfoliosQuery(
 	});
 
 	return useQuery({
-		queryKey: ['investments', 'portfolio', currency, hashValue],
+		queryKey: [
+			'investments',
+			'portfolio',
+			{
+				currency,
+				assetIdsHash: hashValue,
+			},
+		],
 		queryFn: async () => {
 			const response = await primalApiClient.post('/investments/portfolio', {
 				currency,
