@@ -1,4 +1,4 @@
-import { Portfolio } from '@/features/investments/lib/types';
+import { Portfolio, PortfolioType } from '@/features/investments/lib/types';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
@@ -62,6 +62,7 @@ export default function withPortfolioTrendsSection<
 
 		const portfolioIds = latestPortfolios.map((p) => p.id);
 		const currency = portfolios[0].currency;
+		const isOverallPortfolioType = portfolios[0].type === PortfolioType.Overall;
 
 		return (
 			<Tabs
@@ -86,7 +87,7 @@ export default function withPortfolioTrendsSection<
 						chartTitle='Invested Value Trend'
 						valueFn={(portfolio) => portfolio.initialAmount}
 						yAxisFormat={(value) => displayCurrencyAmount(currency, value)}
-						showTotalInTooltip={true}
+						showTotalInTooltip={!isOverallPortfolioType}
 					/>
 				</TabsContent>
 				<TabsContent value={TrendType.CurrentValue}>
@@ -97,7 +98,7 @@ export default function withPortfolioTrendsSection<
 						chartTitle='Current Value Trend'
 						valueFn={(portfolio) => portfolio.currentAmount}
 						yAxisFormat={(value) => displayCurrencyAmount(currency, value)}
-						showTotalInTooltip={true}
+						showTotalInTooltip={!isOverallPortfolioType}
 					/>
 				</TabsContent>
 				<TabsContent value={TrendType.XIRR}>
@@ -195,6 +196,12 @@ function TrendsChart<TPortfolio extends Portfolio>({
 									className='w-full'
 									formatter={(value, name, item, index) => (
 										<>
+											{/* Add this before the first item */}
+											{index === 0 && (
+												<div className='flex basis-full items-center pt-1.5 text-xs font-medium text-foreground'>
+													{item.payload.date}
+												</div>
+											)}
 											<div
 												className='h-2.5 w-2.5 shrink-0 rounded-[2px] bg-[--color-bg]'
 												style={
