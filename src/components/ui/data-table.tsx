@@ -120,9 +120,11 @@ export function DataTable<TData, TValue>({
 	data,
 	initialSorting,
 	initialColumnVisibility,
+	doPagination = false,
 }: DataTableProps<TData, TValue> & {
 	initialSorting?: SortingState;
 	initialColumnVisibility?: VisibilityState;
+	doPagination?: boolean;
 }) {
 	const [sorting, setSorting] = useState<SortingState>(initialSorting || []);
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
@@ -130,7 +132,7 @@ export function DataTable<TData, TValue>({
 	);
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
-		pageSize: 8,
+		pageSize: doPagination ? 8 : data.length,
 	});
 
 	const table = useReactTable({
@@ -202,7 +204,7 @@ export function DataTable<TData, TValue>({
 				</Table>
 			</div>
 
-			<DataTablePagination table={table} />
+			{doPagination && <DataTablePagination table={table} />}
 		</div>
 	);
 }
