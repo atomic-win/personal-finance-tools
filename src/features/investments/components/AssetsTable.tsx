@@ -20,6 +20,7 @@ const columns: ColumnDef<AssetPortfolio>[] = [
 	createColumnDef({
 		accessorKey: 'asset',
 		headerText: 'Asset',
+		linkFn: (data) => `/investments/assets/${data.id}`,
 		cellTextFn: (data) => data.assetName,
 		align: 'left',
 		enableHiding: false,

@@ -21,10 +21,11 @@ import {
 } from '@/components/ui/table';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
+import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink } from 'lucide-react';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
 import { cn } from '@/lib/utils';
 import { DataTablePagination } from '@/components/ui/data-table-pagination';
+import Link from 'next/link';
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
@@ -35,6 +36,7 @@ export function createColumnDef<TData>({
 	accessorKey,
 	id,
 	headerText,
+	linkFn,
 	cellTextFn,
 	sortingFnCompare,
 	align = 'right',
@@ -43,6 +45,7 @@ export function createColumnDef<TData>({
 	accessorKey: (string & {}) | keyof TData;
 	id?: string;
 	headerText: string;
+	linkFn?: (data: TData) => string;
 	cellTextFn: (data: TData) => string;
 	sortingFnCompare?: (data: TData) => string | number;
 	align?: 'left' | 'right';
@@ -89,7 +92,19 @@ export function createColumnDef<TData>({
 						align === 'left' && 'text-left',
 						align === 'right' && 'text-right'
 					)}>
-					{cellTextFn(row.original)}
+					{linkFn ? (
+						<Link
+							href={linkFn(row.original)}
+							target='_blank'
+							className='underline'>
+							<div className='flex items-center'>
+								{cellTextFn(row.original)}
+								<ExternalLink className='h-4 w-4 ml-1' />
+							</div>
+						</Link>
+					) : (
+						cellTextFn(row.original)
+					)}
 				</div>
 			);
 		},
@@ -130,6 +145,11 @@ export function DataTable<TData, TValue>({
 	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
 		initialColumnVisibility || {}
 	);
+
+	if (data.length === 1) {
+		doPagination = false;
+	}
+
 	const [pagination, setPagination] = useState({
 		pageIndex: 0,
 		pageSize: doPagination ? 8 : data.length,

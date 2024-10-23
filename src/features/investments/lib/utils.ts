@@ -4,6 +4,7 @@ import {
 	InstrumentType,
 	Asset,
 	PortfolioType,
+	TransactionType,
 } from '@/features/investments/lib/types';
 
 export function findInstrumentById(
@@ -68,4 +69,35 @@ export function displayPortfolioType(portfolioType: PortfolioType): string {
 		default:
 			throw new Error(`Unknown portfolio type: ${portfolioType}`);
 	}
+}
+
+export function displayTransactionType(transactionType: TransactionType) {
+	switch (transactionType) {
+		case TransactionType.Buy:
+			return 'Buy';
+		case TransactionType.Sell:
+			return 'Sell';
+		case TransactionType.Deposit:
+			return 'Deposit';
+		case TransactionType.Withdrawal:
+			return 'Withdrawal';
+		case TransactionType.Dividend:
+			return 'Dividend';
+		case TransactionType.Interest:
+			return 'Interest';
+		case TransactionType.SelfInterest:
+			return 'Self Interest';
+		case TransactionType.InterestPenalty:
+			return 'Interest Penalty';
+		default:
+			throw new Error(`Unknown transaction type: ${transactionType}`);
+	}
+}
+
+export function displayTransactionAmount(currency: Currency, amount: number) {
+	return Intl.NumberFormat('en-IN', {
+		style: 'currency',
+		currency: currency,
+		currencyDisplay: 'symbol',
+	}).format(amount);
 }
