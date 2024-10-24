@@ -1,6 +1,6 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
 import { Currency } from '@/lib/types';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Transaction } from '@/features/investments/lib/types';
 
 export default function useTransactionsQuery(
@@ -26,5 +26,21 @@ export default function useTransactionsQuery(
 		},
 		select: (data) => data.filter((t) => t.assetId === assetId),
 		enabled: !!currency && !!assetId,
+	});
+}
+
+export function useDeleteTransactionMutation() {
+	const queryClient = useQueryClient();
+	const primalApiClient = usePrimalApiClient();
+
+	return useMutation({
+		mutationFn: async (transactionId: string) => {
+			await primalApiClient.delete(`investments/transactions/${transactionId}`);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['investments'],
+			});
+		},
 	});
 }

@@ -40,6 +40,7 @@ export default function Asset({ asset }: { asset: AssetPortfolio }) {
 				</div>
 				<WithLoadedLoadedTransactionsTable
 					assetId={asset.id}
+					asset={asset}
 					currency={asset.currency}
 				/>
 			</CardContent>

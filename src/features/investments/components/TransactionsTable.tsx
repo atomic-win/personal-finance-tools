@@ -1,23 +1,14 @@
-import { Transaction } from '@/features/investments/lib/types';
-import { Button } from '@/components/ui/button';
+import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
-import {
-	DropdownMenu,
-	DropdownMenuTrigger,
-	DropdownMenuContent,
-	DropdownMenuLabel,
-	DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
 import { ColumnDef } from '@tanstack/react-table';
-import { MoreHorizontal } from 'lucide-react';
 import {
 	displayTransactionAmount,
 	displayTransactionType,
 } from '@/features/investments/lib/utils';
-import { Currency } from '@/lib/types';
+import DeleteTransactionDialog from '@/features/investments/components/DeleteTransactionDialog';
 
 type TransactionTableItem = Transaction & {
-	currency: Currency;
+	asset: AssetPortfolio;
 };
 
 const columns: ColumnDef<TransactionTableItem>[] = [
@@ -54,41 +45,30 @@ const columns: ColumnDef<TransactionTableItem>[] = [
 	createColumnDef({
 		accessorKey: 'transactionAmount',
 		headerText: 'Transaction Amount',
-		cellTextFn: (item) => displayTransactionAmount(item.currency, item.amount),
+		cellTextFn: (item) =>
+			displayTransactionAmount(item.asset.currency, item.amount),
 		align: 'right',
 		enableHiding: false,
 	}),
 	{
 		id: 'actions',
-		cell: () => {
-			return (
-				<DropdownMenu>
-					<DropdownMenuTrigger asChild>
-						<Button variant='ghost' className='h-8 w-8 p-0'>
-							<span className='sr-only'>Open menu</span>
-							<MoreHorizontal className='h-4 w-4' />
-						</Button>
-					</DropdownMenuTrigger>
-					<DropdownMenuContent align='end'>
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem className='destructive'>Delete</DropdownMenuItem>
-					</DropdownMenuContent>
-				</DropdownMenu>
-			);
+		cell: ({ row }) => {
+			const item = row.original;
+			return <DeleteTransactionDialog asset={item.asset} transaction={item} />;
 		},
 	},
 ];
 
 export default function TransactionsTable({
-	currency,
+	asset,
 	transactions,
 }: {
-	currency: Currency;
+	asset: AssetPortfolio;
 	transactions: Transaction[];
 }) {
 	const transactionTableItems = transactions.map((transaction) => ({
 		...transaction,
-		currency,
+		asset,
 	}));
 
 	return (
