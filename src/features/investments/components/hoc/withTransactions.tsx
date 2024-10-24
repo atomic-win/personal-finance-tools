@@ -2,7 +2,7 @@ import ErrorComponent from '@/components/ErrorComponent';
 import LoadingComponent from '@/components/LoadingComponent';
 import { Currency } from '@/lib/types';
 import { Transaction } from '@/features/investments/lib/types';
-import useTransactionsQuery from '@/features/investments/hooks/transactions';
+import { useTransactionsQuery } from '@/features/investments/hooks/transactions';
 
 export default function withTransactions<
 	T extends { transactions: Transaction[] }
