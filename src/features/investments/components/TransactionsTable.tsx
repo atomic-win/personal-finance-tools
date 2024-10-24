@@ -6,6 +6,8 @@ import {
 	displayTransactionType,
 } from '@/features/investments/lib/utils';
 import DeleteTransactionDialog from '@/features/investments/components/DeleteTransactionDialog';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 type TransactionTableItem = Transaction & {
 	asset: AssetPortfolio;
@@ -73,8 +75,13 @@ export default function TransactionsTable({
 
 	return (
 		<div className='mx-auto'>
-			<div className='flex justify-start text-xl font-semibold'>
-				Transactions
+			<div className='flex justify-between text-xl font-semibold items-center'>
+				<div className='text-xl font-semibold'>Transactions</div>
+				<Button asChild>
+					<Link href={`/investments/assets/${asset.id}/transactions/add`}>
+						Add Transaction
+					</Link>
+				</Button>
 			</div>
 			<DataTable
 				columns={columns}
