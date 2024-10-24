@@ -2,7 +2,7 @@
 import ErrorComponent from '@/components/ErrorComponent';
 import LoadingComponent from '@/components/LoadingComponent';
 import { Asset } from '@/features/investments/lib/types';
-import useAllAssetsQuery from '@/features/investments/hooks/assets';
+import { useAllAssetsQuery } from '@/features/investments/hooks/assets';
 
 export default function withAssets<T extends { assets: Asset[] }>(
 	Component: React.ComponentType<T>

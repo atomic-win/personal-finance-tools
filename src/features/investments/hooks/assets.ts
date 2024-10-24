@@ -1,8 +1,8 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Asset } from '@/features/investments/lib/types';
 
-export default function useAllAssetsQuery() {
+export function useAllAssetsQuery() {
 	const primalApiClient = usePrimalApiClient();
 
 	return useQuery({
@@ -10,6 +10,22 @@ export default function useAllAssetsQuery() {
 		queryFn: async () => {
 			const response = await primalApiClient.get('/investments/assets');
 			return response.data as Asset[];
+		},
+	});
+}
+
+export function useDeleteAssetMutation() {
+	const queryClient = useQueryClient();
+	const primalApiClient = usePrimalApiClient();
+
+	return useMutation({
+		mutationFn: async (assetId: string) => {
+			await primalApiClient.delete(`investments/assets/${assetId}`);
+		},
+		onSettled: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['investments'],
+			});
 		},
 	});
 }
