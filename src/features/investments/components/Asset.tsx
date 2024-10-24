@@ -5,6 +5,7 @@ import TransactionsTable from '@/features/investments/components/TransactionsTab
 import { Separator } from '@/components/ui/separator';
 import {
 	displayCurrencyAmount,
+	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 
@@ -22,7 +23,10 @@ export default function Asset({ asset }: { asset: AssetPortfolio }) {
 					<div className='grid grid-cols-3 justify-between gap-2'>
 						<InfoLine label='Asset Name' value={asset.assetName} />
 						<InfoLine label='Instrument Name' value={asset.instrumentName} />
-						<InfoLine label='Instrument Type' value={asset.instrumentType} />
+						<InfoLine
+							label='Instrument Type'
+							value={displayInstrumentType(asset.instrumentType)}
+						/>
 						<InfoLine
 							label='Invested Value'
 							value={displayCurrencyAmount(asset.currency, asset.initialAmount)}
