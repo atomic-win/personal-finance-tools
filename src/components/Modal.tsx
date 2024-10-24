@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
 
 export function Modal({ children }: { children: React.ReactNode }) {
 	const router = useRouter();
@@ -12,10 +13,12 @@ export function Modal({ children }: { children: React.ReactNode }) {
 
 	return (
 		<Dialog defaultOpen={true} open={true} onOpenChange={handleOpenChange}>
-			<DialogContent>
-				<DialogHeader></DialogHeader>
-				{children}
-			</DialogContent>
+			<Card>
+				<DialogContent>
+					<DialogHeader></DialogHeader>
+					{children}
+				</DialogContent>
+			</Card>
 		</Dialog>
 	);
 }
