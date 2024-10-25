@@ -11,6 +11,11 @@ export type AddTransactionRequest = {
 	units: number;
 };
 
+export type DeleteTransactionRequest = {
+	assetId: string;
+	transactionId: string;
+};
+
 export function useTransactionsQuery(
 	currency: Currency | undefined,
 	assetId: string | undefined
@@ -20,6 +25,8 @@ export function useTransactionsQuery(
 	return useQuery({
 		queryKey: [
 			'investments',
+			'assets',
+			assetId,
 			'transactions',
 			{
 				currency,
@@ -27,12 +34,11 @@ export function useTransactionsQuery(
 		],
 		queryFn: async () => {
 			const response = await primalApiClient.get(
-				`/investments/transactions?currency=${currency}`
+				`/investments/assets/${assetId}/transactions?currency=${currency}`
 			);
 			const transactions = response.data as Transaction[];
 			return transactions.sort((a, b) => b.date.localeCompare(a.date));
 		},
-		select: (data) => data.filter((t) => t.assetId === assetId),
 		enabled: !!currency && !!assetId,
 	});
 }
@@ -42,8 +48,10 @@ export function useDeleteTransactionMutation() {
 	const primalApiClient = usePrimalApiClient();
 
 	return useMutation({
-		mutationFn: async (transactionId: string) => {
-			await primalApiClient.delete(`investments/transactions/${transactionId}`);
+		mutationFn: async (request: DeleteTransactionRequest) => {
+			await primalApiClient.delete(
+				`investments/assets/${request.assetId}/transactions/${request.transactionId}`
+			);
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({
@@ -63,7 +71,10 @@ export function useAddTransactionMutation() {
 				return;
 			}
 
-			await primalApiClient.post('investments/transactions', transaction);
+			await primalApiClient.post(
+				`/investments/assets/${transaction.assetId}/transactions`,
+				transaction
+			);
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({

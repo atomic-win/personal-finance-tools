@@ -53,7 +53,10 @@ export default function DeleteTransactionDialog({
 					<Button variant='destructive' asChild>
 						<AlertDialogAction
 							onClick={async () => {
-								await deleteTransactionAsync(transaction.id);
+								await deleteTransactionAsync({
+									assetId: asset.id,
+									transactionId: transaction.id,
+								});
 							}}>
 							Delete
 						</AlertDialogAction>
