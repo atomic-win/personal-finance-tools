@@ -1,6 +1,5 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
 import { useQuery } from '@tanstack/react-query';
-import hash from 'object-hash';
 import { Currency } from '@/lib/types';
 import { Portfolio, PortfolioType } from '@/features/investments/lib/types';
 
@@ -12,9 +11,7 @@ export default function usePortfoliosQuery(
 ) {
 	const primalApiClient = usePrimalApiClient();
 
-	const hashValue = hash(assetIds || [], {
-		unorderedArrays: true,
-	});
+	assetIds = (assetIds || []).sort();
 
 	return useQuery({
 		queryKey: [
@@ -22,7 +19,7 @@ export default function usePortfoliosQuery(
 			'portfolio',
 			{
 				currency,
-				assetIdsHash: hashValue,
+				assetIds,
 			},
 		],
 		queryFn: async () => {
