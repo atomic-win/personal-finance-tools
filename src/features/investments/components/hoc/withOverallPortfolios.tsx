@@ -1,11 +1,12 @@
 import ErrorComponent from '@/components/ErrorComponent';
 import LoadingComponent from '@/components/LoadingComponent';
 import { Currency } from '@/lib/types';
-import usePortfoliosQuery from '@/features/investments/hooks/portfolios';
+import usePortfolioQueries from '@/features/investments/hooks/portfolios';
 import {
 	OverallPortfolio,
-	PortfolioType,
 	Portfolio,
+	Instrument,
+	Asset,
 } from '@/features/investments/lib/types';
 
 export function withOverallPortfolios<
@@ -15,30 +16,30 @@ export function withOverallPortfolios<
 		props: Omit<T, 'portfolios'> & {
 			currency: Currency;
 			assetIds: string[];
+			assets: Asset[];
+			instruments: Instrument[];
 			latest: boolean;
 		}
 	) {
-		const {
-			data: portfolios,
-			isFetching,
-			error: portfoliosError,
-		} = usePortfoliosQuery(
+		const portfolioQueryResults = usePortfolioQueries(
 			props.currency,
 			props.assetIds,
-			PortfolioType.Overall,
+			props.assets,
+			props.instruments,
+			() => 'overall',
 			props.latest
 		);
 
-		if (isFetching) {
+		if (portfolioQueryResults.some((result) => result.isFetching)) {
 			return <LoadingComponent loadingMessage='Fetching portfolios' />;
 		}
 
-		if (portfoliosError || !portfolios) {
+		if (portfolioQueryResults.some((result) => result.isError)) {
 			return <ErrorComponent errorMessage='Failed while fetching portfolios' />;
 		}
 
 		const overallPortfolios = calculateOverallPortfolios(
-			portfolios,
+			portfolioQueryResults.map((result) => result.data!),
 			props.currency
 		);
 

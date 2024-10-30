@@ -1,12 +1,11 @@
 import ErrorComponent from '@/components/ErrorComponent';
 import LoadingComponent from '@/components/LoadingComponent';
 import { Currency } from '@/lib/types';
-import usePortfoliosQuery from '@/features/investments/hooks/portfolios';
+import usePortfolioQueries from '@/features/investments/hooks/portfolios';
 import {
 	AssetPortfolio,
 	Asset,
 	Instrument,
-	PortfolioType,
 	Portfolio,
 } from '@/features/investments/lib/types';
 import {
@@ -28,29 +27,27 @@ export function withAssetPortfolios<
 			latest: boolean;
 		}
 	) {
-		const {
-			data: portfolios,
-			isFetching,
-			error: portfoliosError,
-		} = usePortfoliosQuery(
+		const portfolioQueryResults = usePortfolioQueries(
 			props.currency,
 			props.assetIds.length > 0
 				? props.assetIds
 				: props.assets.map((asset) => asset.id),
-			PortfolioType.PerAsset,
+			props.assets,
+			props.instruments,
+			(asset) => asset.id,
 			props.latest
 		);
 
-		if (isFetching) {
+		if (portfolioQueryResults.some((result) => result.isFetching)) {
 			return <LoadingComponent loadingMessage='Fetching portfolios' />;
 		}
 
-		if (portfoliosError || !portfolios) {
+		if (portfolioQueryResults.some((result) => result.isError)) {
 			return <ErrorComponent errorMessage='Failed while fetching portfolios' />;
 		}
 
 		const assetPortolios = calculateAssetPortfolios(
-			portfolios,
+			portfolioQueryResults.map((result) => result.data!),
 			props.assets,
 			props.instruments,
 			props.currency

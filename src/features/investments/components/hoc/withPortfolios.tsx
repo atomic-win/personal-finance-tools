@@ -139,7 +139,12 @@ function Page({
 						portfolioType={PortfolioType.Overall}
 						title='Overall'
 						description='Stats for the portfolio'>
-						<WithLoadedOverallSection assetIds={assetIds} latest={latest} />
+						<WithLoadedOverallSection
+							assetIds={assetIds}
+							assets={assets}
+							instruments={instruments}
+							latest={latest}
+						/>
 					</PortfolioTabsContent>
 					<PortfolioTabsContent
 						portfolioType={PortfolioType.PerInvestmentInstrumentType}
@@ -147,6 +152,8 @@ function Page({
 						description='Stats for each instrument type in the portfolio'>
 						<WithLoadedInstrumentTypeSection
 							assetIds={assetIds}
+							assets={assets}
+							instruments={instruments}
 							latest={latest}
 						/>
 					</PortfolioTabsContent>
@@ -156,6 +163,7 @@ function Page({
 						description='Stats for each instrument in the portfolio'>
 						<WithLoadedInstrumentSection
 							assetIds={assetIds}
+							assets={assets}
 							instruments={instruments}
 							latest={latest}
 						/>

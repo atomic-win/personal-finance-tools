@@ -1,59 +1,110 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries } from '@tanstack/react-query';
 import { Currency } from '@/lib/types';
-import { Portfolio, PortfolioType } from '@/features/investments/lib/types';
+import {
+	Asset,
+	Instrument,
+	Portfolio,
+	PortfolioType,
+	Valuation,
+} from '@/features/investments/lib/types';
+import { DateTime } from 'luxon';
 
-export default function usePortfoliosQuery(
+export default function usePortfolioQueries(
 	currency: Currency | undefined,
 	assetIds: string[] | undefined,
-	portfolioType: PortfolioType,
+	assets: Asset[],
+	instruments: Instrument[],
+	idSelector: (asset: Asset, instrument: Instrument) => string,
 	latest: boolean
 ) {
 	const primalApiClient = usePrimalApiClient();
-
 	assetIds = (assetIds || []).sort();
+	assets = assets || [];
+	instruments = instruments || [];
 
-	return useQuery({
-		queryKey: [
-			'investments',
-			'portfolio',
-			{
-				currency,
-				assetIds,
+	const queryInputs = getQueryInputs(assetIds, assets, instruments, idSelector);
+
+	console.log({
+		currency,
+		assetIds,
+		assets,
+		instruments,
+		idSelector,
+		latest,
+		queryInputs,
+	});
+
+	return useQueries({
+		queries: queryInputs.map(({ id, assetIds, date }) => ({
+			queryKey: [
+				'investments',
+				'assets',
+				'valuation',
+				{
+					date,
+					assetIds,
+					currency,
+				},
+			],
+			queryFn: async () => {
+				const response = await primalApiClient.post(
+					'/investments/assets/valuation',
+					{
+						date,
+						assetIds,
+						currency,
+					}
+				);
+				return response.data as Valuation;
 			},
-		],
-		queryFn: async () => {
-			const response = await primalApiClient.post('/investments/portfolio', {
-				currency,
-				assetIds,
-			});
-			return (response.data as Portfolio[]).sort((a, b) =>
-				a.date.localeCompare(b.date)
-			);
-		},
-		enabled: !!currency && !!assetIds?.length && assetIds.length > 0,
-		select: (data) => filterPortfolios(data, portfolioType, latest),
+			enabled:
+				!!currency &&
+				assetIds.length > 0 &&
+				assets.length > 0 &&
+				instruments.length > 0,
+			select: (data: Valuation) =>
+				({
+					id,
+					date,
+					type: PortfolioType.Overall,
+					initialAmount: data.investedValue,
+					initialAmountPercent: 100,
+					currentAmount: data.currentValue,
+					currentAmountPercent: 100,
+					xirrPercent: data.xirrPercent,
+					currency,
+				} as Portfolio),
+		})),
 	});
 }
 
-function filterPortfolios(
-	portfolios: Portfolio[],
-	portfolioType: PortfolioType,
-	latest: boolean
-) {
-	portfolios = portfolios.filter(
-		(portfolio) => portfolio.type === portfolioType
-	);
+function getQueryInputs(
+	assetIds: string[],
+	assets: Asset[],
+	instruments: Instrument[],
+	idSelector: (asset: Asset, instrument: Instrument) => string
+): { id: string; assetIds: string[]; date: string }[] {
+	const idToAssetIds = new Map<string, string[]>();
 
-	if (latest) {
-		const latestDate = portfolios
-			.map((x) => x.date)
-			.reduce((max, item) => (item > max ? item : max));
+	for (const assetId of assetIds) {
+		const asset = assets.find((x) => x.id === assetId)!;
+		const instrument = instruments.find((x) => x.id === asset.instrumentId)!;
 
-		portfolios = portfolios.filter(
-			(portfolio) => portfolio.date === latestDate
-		);
+		const id = idSelector(asset, instrument);
+
+		if (!idToAssetIds.has(id)) {
+			idToAssetIds.set(id, []);
+		}
+
+		idToAssetIds.get(id)!.push(assetId);
 	}
 
-	return portfolios;
+	return Array.from(idToAssetIds.entries()).map(([id, assetIds]) => {
+		return {
+			id,
+			assetIds,
+			date: DateTime.now().toISODate(),
+		};
+	});
 }

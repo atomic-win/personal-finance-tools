@@ -33,7 +33,6 @@ export type Asset = {
 export type Portfolio = {
 	id: string;
 	date: string;
-	type: PortfolioType;
 	initialAmount: number;
 	initialAmountPercent: number;
 	currentAmount: number;
@@ -79,3 +78,9 @@ export interface Transaction {
 	units: number;
 	amount: number;
 }
+
+export type Valuation = {
+	investedValue: number;
+	currentValue: number;
+	xirrPercent: number;
+};
