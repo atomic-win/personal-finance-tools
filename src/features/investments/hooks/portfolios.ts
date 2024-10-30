@@ -1,13 +1,7 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
 import { useQueries } from '@tanstack/react-query';
 import { Currency } from '@/lib/types';
-import {
-	Asset,
-	Instrument,
-	Portfolio,
-	PortfolioType,
-	Valuation,
-} from '@/features/investments/lib/types';
+import { Asset, Instrument, Valuation } from '@/features/investments/lib/types';
 import { DateTime } from 'luxon';
 
 export default function usePortfolioQueries(
@@ -24,16 +18,6 @@ export default function usePortfolioQueries(
 	instruments = instruments || [];
 
 	const queryInputs = getQueryInputs(assetIds, assets, instruments, idSelector);
-
-	console.log({
-		currency,
-		assetIds,
-		assets,
-		instruments,
-		idSelector,
-		latest,
-		queryInputs,
-	});
 
 	return useQueries({
 		queries: queryInputs.map(({ id, assetIds, date }) => ({
@@ -65,16 +49,10 @@ export default function usePortfolioQueries(
 				instruments.length > 0,
 			select: (data: Valuation) =>
 				({
+					...data,
 					id,
 					date,
-					type: PortfolioType.Overall,
-					initialAmount: data.investedValue,
-					initialAmountPercent: 100,
-					currentAmount: data.currentValue,
-					currentAmountPercent: 100,
-					xirrPercent: data.xirrPercent,
-					currency,
-				} as Portfolio),
+				} as Valuation),
 		})),
 	});
 }

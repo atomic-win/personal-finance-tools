@@ -8,7 +8,10 @@ import {
 	Portfolio,
 	Asset,
 } from '@/features/investments/lib/types';
-import { findInstrumentById } from '@/features/investments/lib/utils';
+import {
+	calculatePortfolios,
+	findInstrumentById,
+} from '@/features/investments/lib/utils';
 
 export function withInstrumentPortfolios<
 	T extends { portfolios: InstrumentPortfolio[] }
@@ -40,7 +43,7 @@ export function withInstrumentPortfolios<
 		}
 
 		const instrumentPortfolios = calculateInstrumentPortfolios(
-			portfolioQueryResults.map((result) => result.data!),
+			calculatePortfolios(portfolioQueryResults.map((result) => result.data!)),
 			props.instruments,
 			props.currency
 		);

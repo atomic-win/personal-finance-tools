@@ -9,6 +9,7 @@ import {
 	Portfolio,
 } from '@/features/investments/lib/types';
 import {
+	calculatePortfolios,
 	findAssetById,
 	findInstrumentById,
 } from '@/features/investments/lib/utils';
@@ -47,7 +48,7 @@ export function withAssetPortfolios<
 		}
 
 		const assetPortolios = calculateAssetPortfolios(
-			portfolioQueryResults.map((result) => result.data!),
+			calculatePortfolios(portfolioQueryResults.map((result) => result.data!)),
 			props.assets,
 			props.instruments,
 			props.currency

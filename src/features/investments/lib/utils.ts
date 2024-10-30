@@ -5,6 +5,8 @@ import {
 	Asset,
 	PortfolioType,
 	TransactionType,
+	Valuation,
+	Portfolio,
 } from '@/features/investments/lib/types';
 
 export function findInstrumentById(
@@ -100,4 +102,42 @@ export function displayTransactionAmount(currency: Currency, amount: number) {
 		currency: currency,
 		currencyDisplay: 'symbol',
 	}).format(amount);
+}
+
+export function calculatePortfolios(valuations: Valuation[]): Portfolio[] {
+	const dateToValuations = new Map<string, Valuation[]>();
+
+	for (const valuation of valuations) {
+		const valuations = dateToValuations.get(valuation.date) || [];
+		valuations.push(valuation);
+		dateToValuations.set(valuation.date, valuations);
+	}
+
+	return Array.from(dateToValuations.values()).flatMap((valuations) => {
+		return calculatePortfolio(valuations);
+	});
+}
+
+function calculatePortfolio(valuations: Valuation[]): Portfolio[] {
+	const totalInvestedValue = valuations.reduce((sum, valuation) => {
+		return sum + valuation.investedValue;
+	}, 0);
+
+	const totalCurrentValue = valuations.reduce((sum, valuation) => {
+		return sum + valuation.currentValue;
+	}, 0);
+
+	return valuations.map((valuation) => {
+		return {
+			id: valuation.id,
+			date: valuation.date,
+			initialAmount: valuation.investedValue,
+			initialAmountPercent:
+				(valuation.investedValue / Math.max(totalInvestedValue, 1)) * 100,
+			currentAmount: valuation.currentValue,
+			currentAmountPercent:
+				(valuation.currentValue / Math.max(totalCurrentValue, 1)) * 100,
+			xirrPercent: valuation.xirrPercent,
+		};
+	});
 }
