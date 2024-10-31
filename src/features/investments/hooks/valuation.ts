@@ -9,7 +9,7 @@ import {
 } from '@/features/investments/lib/types';
 import { DateTime } from 'luxon';
 
-export default function usePortfolioQueries(
+export default function useValuationQueries(
 	currency: Currency | undefined,
 	assetIds: string[] | undefined,
 	assets: Asset[],

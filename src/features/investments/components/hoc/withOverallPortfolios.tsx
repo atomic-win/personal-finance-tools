@@ -1,7 +1,7 @@
 import ErrorComponent from '@/components/ErrorComponent';
 import LoadingComponent from '@/components/LoadingComponent';
 import { Currency } from '@/lib/types';
-import usePortfolioQueries from '@/features/investments/hooks/portfolios';
+import useValuationQueries from '@/features/investments/hooks/valuation';
 import {
 	OverallPortfolio,
 	Portfolio,
@@ -25,7 +25,7 @@ export function withOverallPortfolios<
 			latest: boolean;
 		}
 	) {
-		const portfolioQueryResults = usePortfolioQueries(
+		const portfolioQueryResults = useValuationQueries(
 			props.currency,
 			props.assetIds,
 			props.assets,
