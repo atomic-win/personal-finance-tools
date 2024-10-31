@@ -1,7 +1,12 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
 import { useQueries } from '@tanstack/react-query';
 import { Currency } from '@/lib/types';
-import { Asset, Instrument, Valuation } from '@/features/investments/lib/types';
+import {
+	Asset,
+	Instrument,
+	Transaction,
+	Valuation,
+} from '@/features/investments/lib/types';
 import { DateTime } from 'luxon';
 
 export default function usePortfolioQueries(
@@ -9,6 +14,7 @@ export default function usePortfolioQueries(
 	assetIds: string[] | undefined,
 	assets: Asset[],
 	instruments: Instrument[],
+	transactions: Transaction[],
 	idSelector: (asset: Asset, instrument: Instrument) => string,
 	latest: boolean
 ) {
@@ -21,6 +27,7 @@ export default function usePortfolioQueries(
 		assetIds,
 		assets,
 		instruments,
+		transactions,
 		idSelector,
 		latest
 	);
@@ -67,6 +74,7 @@ function getQueryInputs(
 	assetIds: string[],
 	assets: Asset[],
 	instruments: Instrument[],
+	transactions: Transaction[],
 	idSelector: (asset: Asset, instrument: Instrument) => string,
 	latest: boolean
 ): { id: string; assetIds: string[]; date: string }[] {
@@ -85,7 +93,7 @@ function getQueryInputs(
 		idToAssetIds.get(id)!.push(assetId);
 	}
 
-	const dates = getQueryDates(latest);
+	const dates = getQueryDates(assetIds, transactions, latest);
 
 	return Array.from(idToAssetIds.entries()).flatMap(([id, assetIds]) =>
 		dates.map((date) => ({
@@ -96,16 +104,24 @@ function getQueryInputs(
 	);
 }
 
-function getQueryDates(latest: boolean): string[] {
+function getQueryDates(
+	assetIds: string[],
+	transactions: Transaction[],
+	latest: boolean
+): string[] {
 	const dates = [DateTime.now().toISODate()];
 
 	if (!latest) {
+		const earliestDate = DateTime.fromISO(
+			transactions
+				.filter((x) => assetIds.includes(x.assetId))
+				.reduce((acc, x) => (x.date < acc ? x.date : acc), dates[0])
+		);
+
 		let date = DateTime.now().minus({ months: 1 }).endOf('month');
-		for (let year = 0; year < 10; ++year) {
-			for (let month = 0; month < 12; ++month) {
-				dates.push(date.toISODate());
-				date = date.minus({ months: 1 }).endOf('month');
-			}
+		while (date >= earliestDate) {
+			dates.push(date.toISODate());
+			date = date.minus({ months: 1 }).endOf('month');
 		}
 	}
 

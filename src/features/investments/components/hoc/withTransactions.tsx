@@ -2,7 +2,7 @@ import ErrorComponent from '@/components/ErrorComponent';
 import LoadingComponent from '@/components/LoadingComponent';
 import { Currency } from '@/lib/types';
 import { Transaction } from '@/features/investments/lib/types';
-import { useTransactionsQuery } from '@/features/investments/hooks/transactions';
+import { useAssetTransactionsQueries } from '@/features/investments/hooks/transactions';
 
 export default function withTransactions<
 	T extends { transactions: Transaction[] }
@@ -10,27 +10,29 @@ export default function withTransactions<
 	return function WithTransactions(
 		props: Omit<T, 'transactions'> & {
 			currency: Currency;
-			assetId: string;
+			assetIds: string[];
 		}
 	) {
-		const {
-			data: transactions,
-			isFetching,
-			error: transactionsError,
-		} = useTransactionsQuery(props.currency, props.assetId);
+		const assetTransactionsResults = useAssetTransactionsQueries(
+			props.currency,
+			props.assetIds
+		);
 
-		if (isFetching) {
+		if (assetTransactionsResults.some((result) => result.isFetching)) {
 			return <LoadingComponent loadingMessage='Fetching transactions' />;
 		}
 
-		if (transactionsError || !transactions) {
+		if (assetTransactionsResults.some((result) => result.isError)) {
 			return (
 				<ErrorComponent errorMessage='Failed while fetching transactions' />
 			);
 		}
 
 		return (
-			<Component {...(props as unknown as T)} transactions={transactions} />
+			<Component
+				{...(props as unknown as T)}
+				transactions={assetTransactionsResults.flatMap((x) => x.data!)}
+			/>
 		);
 	};
 }

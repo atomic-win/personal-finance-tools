@@ -8,6 +8,7 @@ import {
 	Instrument,
 	Portfolio,
 	PortfolioType,
+	Transaction,
 } from '@/features/investments/lib/types';
 import {
 	calculatePortfolios,
@@ -26,6 +27,7 @@ export function withAssetPortfolios<
 			assetIds: string[];
 			assets: Asset[];
 			instruments: Instrument[];
+			transactions: Transaction[];
 			latest: boolean;
 		}
 	) {
@@ -36,6 +38,7 @@ export function withAssetPortfolios<
 				: props.assets.map((asset) => asset.id),
 			props.assets,
 			props.instruments,
+			props.transactions,
 			(asset) => asset.id,
 			props.latest
 		);

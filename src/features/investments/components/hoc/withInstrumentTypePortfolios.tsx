@@ -8,6 +8,7 @@ import {
 	Instrument,
 	Asset,
 	PortfolioType,
+	Transaction,
 } from '@/features/investments/lib/types';
 import { calculatePortfolios } from '@/features/investments/lib/utils';
 
@@ -20,6 +21,7 @@ export function withInstrumentTypePortfolios<
 			assetIds: string[];
 			assets: Asset[];
 			instruments: Instrument[];
+			transactions: Transaction[];
 			latest: boolean;
 		}
 	) {
@@ -28,6 +30,7 @@ export function withInstrumentTypePortfolios<
 			props.assetIds,
 			props.assets,
 			props.instruments,
+			props.transactions,
 			(_asset, instrument) => instrument.type,
 			props.latest
 		);

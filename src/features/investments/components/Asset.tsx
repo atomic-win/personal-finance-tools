@@ -50,7 +50,7 @@ export default function Asset({
 					<Separator />
 				</div>
 				<WithLoadedLoadedTransactionsTable
-					assetId={asset.id}
+					assetIds={[asset.id]}
 					asset={asset}
 					currency={currency}
 				/>

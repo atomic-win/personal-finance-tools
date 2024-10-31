@@ -14,6 +14,7 @@ import {
 	Asset,
 	Instrument,
 	PortfolioType,
+	Transaction,
 } from '@/features/investments/lib/types';
 import withAssets from '@/features/investments/components/hoc/withAssets';
 import withInstruments from '@/features/investments/components/hoc/withInstruments';
@@ -27,6 +28,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { displayPortfolioType } from '@/features/investments/lib/utils';
 import { Currency } from '@/lib/types';
+import withTransactions from '@/features/investments/components/hoc/withTransactions';
 
 export default function withPortfolios(
 	OverallSection: React.ComponentType<{
@@ -48,7 +50,9 @@ export default function withPortfolios(
 ) {
 	return function WithPortfolios({ latest }: { latest: boolean }) {
 		const WithLoadedComponent = withAssets(
-			withInstruments(withInvestmentsFilter(Page))
+			withInstruments(
+				withInvestmentsFilter(withCurrency(withTransactions(Page)))
+			)
 		);
 
 		return (
@@ -67,6 +71,7 @@ function Page({
 	assetIds,
 	assets,
 	instruments,
+	transactions,
 	latest,
 	OverallSection,
 	InstrumentTypeSection,
@@ -76,6 +81,7 @@ function Page({
 	assetIds: string[];
 	assets: Asset[];
 	instruments: Instrument[];
+	transactions: Transaction[];
 	latest: boolean;
 	OverallSection: React.ComponentType<{
 		portfolios: OverallPortfolio[];
@@ -152,6 +158,7 @@ function Page({
 							assetIds={assetIds}
 							assets={assets}
 							instruments={instruments}
+							transactions={transactions}
 							latest={latest}
 						/>
 					</PortfolioTabsContent>
@@ -163,6 +170,7 @@ function Page({
 							assetIds={assetIds}
 							assets={assets}
 							instruments={instruments}
+							transactions={transactions}
 							latest={latest}
 						/>
 					</PortfolioTabsContent>
@@ -174,6 +182,7 @@ function Page({
 							assetIds={assetIds}
 							assets={assets}
 							instruments={instruments}
+							transactions={transactions}
 							latest={latest}
 						/>
 					</PortfolioTabsContent>
@@ -184,6 +193,7 @@ function Page({
 						<WithLoadedAssetSection
 							assetIds={assetIds}
 							instruments={instruments}
+							transactions={transactions}
 							assets={assets}
 							latest={latest}
 						/>

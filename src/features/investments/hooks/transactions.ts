@@ -1,6 +1,6 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
 import { Currency } from '@/lib/types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query';
 import { Transaction, TransactionType } from '@/features/investments/lib/types';
 
 export type AddTransactionRequest = {
@@ -16,30 +16,37 @@ export type DeleteTransactionRequest = {
 	transactionId: string;
 };
 
-export function useTransactionsQuery(
+export function useAssetTransactionsQueries(
 	currency: Currency | undefined,
-	assetId: string | undefined
+	assetIds: string[] | undefined
 ) {
 	const primalApiClient = usePrimalApiClient();
 
-	return useQuery({
-		queryKey: [
-			'investments',
-			'assets',
-			assetId,
-			'transactions',
-			{
-				currency,
+	return useQueries({
+		queries: (assetIds || []).map((assetId) => ({
+			queryKey: [
+				'investments',
+				'assets',
+				assetId,
+				'transactions',
+				{
+					currency,
+				},
+			],
+			queryFn: async () => {
+				const response = await primalApiClient.get(
+					`/investments/assets/${assetId}/transactions?currency=${currency}`
+				);
+				const transactions = response.data as Transaction[];
+				return transactions.sort((a, b) => b.date.localeCompare(a.date));
 			},
-		],
-		queryFn: async () => {
-			const response = await primalApiClient.get(
-				`/investments/assets/${assetId}/transactions?currency=${currency}`
-			);
-			const transactions = response.data as Transaction[];
-			return transactions.sort((a, b) => b.date.localeCompare(a.date));
-		},
-		enabled: !!currency && !!assetId,
+			select: (data: Transaction[]) =>
+				data.map((x) => ({
+					...x,
+					assetId,
+				})),
+			enabled: !!currency && !!assetId,
+		})),
 	});
 }
 

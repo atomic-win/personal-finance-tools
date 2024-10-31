@@ -68,7 +68,7 @@ export enum TransactionType {
 	InterestPenalty = 'InterestPenalty',
 }
 
-export interface Transaction {
+export type Transaction = {
 	id: string;
 	date: string;
 	name: string;
@@ -76,7 +76,7 @@ export interface Transaction {
 	assetId: string;
 	units: number;
 	amount: number;
-}
+};
 
 export type Valuation = {
 	id: string;
