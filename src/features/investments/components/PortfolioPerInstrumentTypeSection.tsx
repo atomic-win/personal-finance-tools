@@ -23,35 +23,35 @@ const columns: ColumnDef<TableItem>[] = [
 		enableHiding: false,
 	}),
 	createColumnDef({
-		accessorKey: 'initialAmount',
+		accessorKey: 'investedValue',
 		id: 'Invested Value',
 		headerText: 'Invested Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.initialAmount),
-		sortingFnCompare: (data) => data.initialAmount,
+			displayCurrencyAmount(data.currency, data.investedValue),
+		sortingFnCompare: (data) => data.investedValue,
 		enableHiding: false,
 	}),
 	createColumnDef({
-		accessorKey: 'initialAmountPercent',
+		accessorKey: 'investedValuePercent',
 		headerText: 'Invested Value (%)',
-		cellTextFn: (data) => displayPercentage(data.initialAmountPercent),
-		sortingFnCompare: (data) => data.initialAmountPercent,
+		cellTextFn: (data) => displayPercentage(data.investedValuePercent),
+		sortingFnCompare: (data) => data.investedValuePercent,
 		enableHiding: false,
 	}),
 	createColumnDef({
-		accessorKey: 'currentAmount',
+		accessorKey: 'currentValue',
 		id: 'Current Value',
 		headerText: 'Current Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.currentAmount),
-		sortingFnCompare: (data) => data.currentAmount,
+			displayCurrencyAmount(data.currency, data.currentValue),
+		sortingFnCompare: (data) => data.currentValue,
 		enableHiding: false,
 	}),
 	createColumnDef({
-		accessorKey: 'currentAmountPercent',
+		accessorKey: 'currentValuePercent',
 		headerText: 'Current Value (%)',
-		cellTextFn: (data) => displayPercentage(data.currentAmountPercent),
-		sortingFnCompare: (data) => data.currentAmountPercent,
+		cellTextFn: (data) => displayPercentage(data.currentValuePercent),
+		sortingFnCompare: (data) => data.currentValuePercent,
 		enableHiding: false,
 	}),
 	createColumnDef({
@@ -88,7 +88,7 @@ export default function PortfolioPerInstrumentTypeSection({
 				data={items}
 				initialSorting={[
 					{
-						id: 'initialAmountPercent',
+						id: 'investedValuePercent',
 						desc: true,
 					},
 				]}

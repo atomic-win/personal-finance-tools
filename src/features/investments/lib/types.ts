@@ -33,10 +33,10 @@ export type Portfolio = {
 	id: string;
 	date: string;
 	type: PortfolioType;
-	initialAmount: number;
-	initialAmountPercent: number;
-	currentAmount: number;
-	currentAmountPercent: number;
+	investedValue: number;
+	investedValuePercent: number;
+	currentValue: number;
+	currentValuePercent: number;
 	xirrPercent: number;
 };
 

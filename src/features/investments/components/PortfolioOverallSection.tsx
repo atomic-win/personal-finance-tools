@@ -11,18 +11,18 @@ type TableItem = OverallPortfolio & { currency: Currency };
 
 const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
-		accessorKey: 'initialAmount',
+		accessorKey: 'investedValue',
 		headerText: 'Initial Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.initialAmount),
+			displayCurrencyAmount(data.currency, data.investedValue),
 		align: 'left',
 		enableHiding: false,
 	}),
 	createColumnDef({
-		accessorKey: 'currentAmount',
+		accessorKey: 'currentValue',
 		headerText: 'Current Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.currentAmount),
+			displayCurrencyAmount(data.currency, data.currentValue),
 		align: 'left',
 		enableHiding: false,
 	}),

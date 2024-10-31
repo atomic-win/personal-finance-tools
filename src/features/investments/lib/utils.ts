@@ -139,11 +139,11 @@ function calculatePortfolio(valuations: Valuation[]): Portfolio[] {
 			id: valuation.id,
 			date: valuation.date,
 			type: PortfolioType.Unknown,
-			initialAmount: valuation.investedValue,
-			initialAmountPercent:
+			investedValue: valuation.investedValue,
+			investedValuePercent:
 				(valuation.investedValue / Math.max(totalInvestedValue, 1)) * 100,
-			currentAmount: valuation.currentValue,
-			currentAmountPercent:
+			currentValue: valuation.currentValue,
+			currentValuePercent:
 				(valuation.currentValue / Math.max(totalCurrentValue, 1)) * 100,
 			xirrPercent: valuation.xirrPercent,
 		};

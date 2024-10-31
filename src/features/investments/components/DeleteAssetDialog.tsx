@@ -47,11 +47,11 @@ export default function DeleteAssetDialog({
 					/>
 					<InfoLine
 						label='Invested Value'
-						value={displayCurrencyAmount(asset.currency, asset.initialAmount)}
+						value={displayCurrencyAmount(asset.currency, asset.investedValue)}
 					/>
 					<InfoLine
 						label='Current Value'
-						value={displayCurrencyAmount(asset.currency, asset.currentAmount)}
+						value={displayCurrencyAmount(asset.currency, asset.currentValue)}
 					/>
 					<InfoLine label='XIRR' value={displayPercentage(asset.xirrPercent)} />
 				</div>

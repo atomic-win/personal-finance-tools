@@ -50,7 +50,7 @@ export default function withPortfolioTrendsSection<
 		const latestPortfolios = filterLatestPortfolios(portfolios);
 
 		const chartConfig = latestPortfolios
-			.sort((a, b) => a.initialAmountPercent - b.initialAmountPercent)
+			.sort((a, b) => a.investedValuePercent - b.investedValuePercent)
 			.reverse()
 			.reduce(
 				(acc, portfolio, i) => ({
@@ -87,7 +87,7 @@ export default function withPortfolioTrendsSection<
 						portfolios={portfolios}
 						chartConfig={chartConfig}
 						chartTitle='Invested Value Trend'
-						valueFn={(portfolio) => portfolio.initialAmount}
+						valueFn={(portfolio) => portfolio.investedValue}
 						yAxisFormat={(value) => displayCurrencyAmount(currency, value)}
 						showTotalInTooltip={!isOverallPortfolioType}
 					/>
@@ -98,7 +98,7 @@ export default function withPortfolioTrendsSection<
 						portfolios={portfolios}
 						chartConfig={chartConfig}
 						chartTitle='Current Value Trend'
-						valueFn={(portfolio) => portfolio.currentAmount}
+						valueFn={(portfolio) => portfolio.currentValue}
 						yAxisFormat={(value) => displayCurrencyAmount(currency, value)}
 						showTotalInTooltip={!isOverallPortfolioType}
 					/>
