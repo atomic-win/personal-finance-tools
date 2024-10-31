@@ -7,8 +7,11 @@ import {
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import DeleteAssetDialog from '@/features/investments/components/DeleteAssetDialog';
+import { Currency } from '@/lib/types';
 
-const columns: ColumnDef<AssetPortfolio>[] = [
+type TableItem = AssetPortfolio & { currency: Currency };
+
+const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
 		accessorKey: 'asset',
 		headerText: 'Asset',
@@ -74,22 +77,29 @@ const columns: ColumnDef<AssetPortfolio>[] = [
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			const asset = row.original;
-			return <DeleteAssetDialog asset={asset} />;
+			const item = row.original;
+			return <DeleteAssetDialog asset={item} currency={item.currency} />;
 		},
 	},
 ];
 
 export default function AssetsTable({
 	portfolios,
+	currency,
 }: {
 	portfolios: AssetPortfolio[];
+	currency: Currency;
 }) {
+	const items = portfolios.map((portfolio) => ({
+		...portfolio,
+		currency,
+	}));
+
 	return (
 		<div className='mx-auto'>
 			<DataTable
 				columns={columns}
-				data={portfolios}
+				data={items}
 				initialSorting={[
 					{
 						id: 'investedValuePercent',
