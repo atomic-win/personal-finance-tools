@@ -5,8 +5,11 @@ import {
 	displayCurrencyAmount,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
+import { Currency } from '@/lib/types';
 
-const columns: ColumnDef<OverallPortfolio>[] = [
+type TableItem = OverallPortfolio & { currency: Currency };
+
+const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
 		accessorKey: 'initialAmount',
 		headerText: 'Initial Value',
@@ -34,12 +37,19 @@ const columns: ColumnDef<OverallPortfolio>[] = [
 
 export default function PortfolioOverallSection({
 	portfolios,
+	currency,
 }: {
 	portfolios: OverallPortfolio[];
+	currency: Currency;
 }) {
+	const items = portfolios.map((portfolio) => ({
+		...portfolio,
+		currency,
+	}));
+
 	return (
 		<div className='mx-auto'>
-			<DataTable columns={columns} data={portfolios} />
+			<DataTable columns={columns} data={items} />
 		</div>
 	);
 }

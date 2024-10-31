@@ -10,8 +10,11 @@ import {
 } from '@/features/investments/lib/utils';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
 import PortfolioCharts from '@/features/investments/components/PortfolioCharts';
+import { Currency } from '@/lib/types';
 
-const columns: ColumnDef<InstrumentTypePortfolio>[] = [
+type TableItem = InstrumentTypePortfolio & { currency: Currency };
+
+const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
 		accessorKey: 'instrumentType',
 		headerText: 'Instrument Type',
@@ -62,9 +65,16 @@ const columns: ColumnDef<InstrumentTypePortfolio>[] = [
 
 export default function PortfolioPerInstrumentTypeSection({
 	portfolios,
+	currency,
 }: {
 	portfolios: InstrumentTypePortfolio[];
+	currency: Currency;
 }) {
+	const items = portfolios.map((portfolio) => ({
+		...portfolio,
+		currency,
+	}));
+
 	return (
 		<div className='mx-auto'>
 			<PortfolioCharts
@@ -75,7 +85,7 @@ export default function PortfolioPerInstrumentTypeSection({
 			/>
 			<DataTable
 				columns={columns}
-				data={portfolios}
+				data={items}
 				initialSorting={[
 					{
 						id: 'initialAmountPercent',
