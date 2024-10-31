@@ -17,7 +17,13 @@ export default function usePortfolioQueries(
 	assets = assets || [];
 	instruments = instruments || [];
 
-	const queryInputs = getQueryInputs(assetIds, assets, instruments, idSelector);
+	const queryInputs = getQueryInputs(
+		assetIds,
+		assets,
+		instruments,
+		idSelector,
+		latest
+	);
 
 	return useQueries({
 		queries: queryInputs.map(({ id, assetIds, date }) => ({
@@ -61,7 +67,8 @@ function getQueryInputs(
 	assetIds: string[],
 	assets: Asset[],
 	instruments: Instrument[],
-	idSelector: (asset: Asset, instrument: Instrument) => string
+	idSelector: (asset: Asset, instrument: Instrument) => string,
+	latest: boolean
 ): { id: string; assetIds: string[]; date: string }[] {
 	const idToAssetIds = new Map<string, string[]>();
 
@@ -78,11 +85,29 @@ function getQueryInputs(
 		idToAssetIds.get(id)!.push(assetId);
 	}
 
-	return Array.from(idToAssetIds.entries()).map(([id, assetIds]) => {
-		return {
+	const dates = getQueryDates(latest);
+
+	return Array.from(idToAssetIds.entries()).flatMap(([id, assetIds]) =>
+		dates.map((date) => ({
 			id,
 			assetIds,
-			date: DateTime.now().toISODate(),
-		};
-	});
+			date,
+		}))
+	);
+}
+
+function getQueryDates(latest: boolean): string[] {
+	const dates = [DateTime.now().toISODate()];
+
+	if (!latest) {
+		let date = DateTime.now().minus({ months: 1 }).endOf('month');
+		for (let year = 0; year < 10; ++year) {
+			for (let month = 0; month < 12; ++month) {
+				dates.push(date.toISODate());
+				date = date.minus({ months: 1 }).endOf('month');
+			}
+		}
+	}
+
+	return dates;
 }

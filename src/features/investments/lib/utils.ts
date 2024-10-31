@@ -108,6 +108,13 @@ export function calculatePortfolios(valuations: Valuation[]): Portfolio[] {
 	const dateToValuations = new Map<string, Valuation[]>();
 
 	for (const valuation of valuations) {
+		if (
+			valuation.investedValue === 0 &&
+			valuation.currentValue === 0 &&
+			valuation.xirrPercent === 0
+		) {
+			continue;
+		}
 		const valuations = dateToValuations.get(valuation.date) || [];
 		valuations.push(valuation);
 		dateToValuations.set(valuation.date, valuations);
@@ -131,6 +138,7 @@ function calculatePortfolio(valuations: Valuation[]): Portfolio[] {
 		return {
 			id: valuation.id,
 			date: valuation.date,
+			type: PortfolioType.Unknown,
 			initialAmount: valuation.investedValue,
 			initialAmountPercent:
 				(valuation.investedValue / Math.max(totalInvestedValue, 1)) * 100,
