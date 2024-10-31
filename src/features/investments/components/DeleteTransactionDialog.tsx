@@ -59,6 +59,7 @@ export default function DeleteTransactionDialog({
 								await deleteTransactionAsync({
 									assetId: asset.id,
 									transactionId: transaction.id,
+									date: transaction.date,
 								});
 							}}>
 							Delete

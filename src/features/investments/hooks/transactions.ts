@@ -1,6 +1,11 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
 import { Currency } from '@/lib/types';
-import { useMutation, useQueries, useQueryClient } from '@tanstack/react-query';
+import {
+	QueryClient,
+	useMutation,
+	useQueries,
+	useQueryClient,
+} from '@tanstack/react-query';
 import { Transaction, TransactionType } from '@/features/investments/lib/types';
 
 export type AddTransactionRequest = {
@@ -14,6 +19,7 @@ export type AddTransactionRequest = {
 export type DeleteTransactionRequest = {
 	assetId: string;
 	transactionId: string;
+	date: string;
 };
 
 export function useAssetTransactionsQueries(
@@ -60,11 +66,7 @@ export function useDeleteTransactionMutation() {
 				`investments/assets/${request.assetId}/transactions/${request.transactionId}`
 			);
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['investments'],
-			});
-		},
+		onSettled: (_data, _error, request) => onSettled(queryClient, request),
 	});
 }
 
@@ -83,10 +85,43 @@ export function useAddTransactionMutation() {
 				transaction
 			);
 		},
-		onSettled: () => {
-			queryClient.invalidateQueries({
-				queryKey: ['investments'],
-			});
+		onSettled: (_data, _error, request) => onSettled(queryClient, request),
+	});
+}
+
+function onSettled(
+	queryClient: QueryClient,
+	request: DeleteTransactionRequest | AddTransactionRequest
+) {
+	queryClient.invalidateQueries({
+		predicate: (query) => {
+			if (
+				query.queryKey[0] !== 'investments' ||
+				query.queryKey[1] !== 'assets'
+			) {
+				return false;
+			}
+
+			if (
+				query.queryKey[2] === request.assetId &&
+				query.queryKey[3] === 'transactions'
+			) {
+				return true;
+			}
+
+			if (query.queryKey[2] !== 'valuation') {
+				return false;
+			}
+
+			const valuationQueryData = query.queryKey[3] as {
+				assetIds: string[];
+				date: string;
+			};
+
+			return (
+				valuationQueryData.assetIds.includes(request.assetId) &&
+				valuationQueryData.date >= request.date
+			);
 		},
 	});
 }
