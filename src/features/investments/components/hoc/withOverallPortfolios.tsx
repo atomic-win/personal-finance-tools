@@ -7,6 +7,7 @@ import {
 	Portfolio,
 	Instrument,
 	Asset,
+	PortfolioType,
 } from '@/features/investments/lib/types';
 import { calculatePortfolios } from '@/features/investments/lib/utils';
 
@@ -40,8 +41,7 @@ export function withOverallPortfolios<
 		}
 
 		const overallPortfolios = calculateOverallPortfolios(
-			calculatePortfolios(portfolioQueryResults.map((result) => result.data!)),
-			props.currency
+			calculatePortfolios(portfolioQueryResults.map((result) => result.data!))
 		);
 
 		return (
@@ -51,13 +51,12 @@ export function withOverallPortfolios<
 }
 
 function calculateOverallPortfolios(
-	portfolios: Portfolio[],
-	currency: Currency
+	portfolios: Portfolio[]
 ): OverallPortfolio[] {
 	return portfolios.map((portfolio) => {
 		return {
 			...portfolio,
-			currency: currency,
+			type: PortfolioType.Overall,
 		};
 	});
 }

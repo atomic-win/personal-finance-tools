@@ -7,6 +7,7 @@ import {
 	Asset,
 	Instrument,
 	Portfolio,
+	PortfolioType,
 } from '@/features/investments/lib/types';
 import {
 	calculatePortfolios,
@@ -50,8 +51,7 @@ export function withAssetPortfolios<
 		const assetPortolios = calculateAssetPortfolios(
 			calculatePortfolios(portfolioQueryResults.map((result) => result.data!)),
 			props.assets,
-			props.instruments,
-			props.currency
+			props.instruments
 		);
 
 		return (
@@ -63,8 +63,7 @@ export function withAssetPortfolios<
 function calculateAssetPortfolios(
 	portfolios: Portfolio[],
 	assets: Asset[],
-	instruments: Instrument[],
-	currency: Currency
+	instruments: Instrument[]
 ): AssetPortfolio[] {
 	return portfolios.map((portfolio) => {
 		const asset = findAssetById(assets, portfolio.id)!;
@@ -72,11 +71,11 @@ function calculateAssetPortfolios(
 
 		return {
 			...portfolio,
+			type: PortfolioType.PerAsset,
 			assetName: asset.name,
 			instrumentId: asset.instrumentId,
 			instrumentType: instrument.type,
 			instrumentName: instrument.name,
-			currency: currency,
 		};
 	});
 }

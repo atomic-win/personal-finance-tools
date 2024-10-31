@@ -31,6 +31,7 @@ export type Asset = {
 export type Portfolio = {
 	id: string;
 	date: string;
+	type: PortfolioType;
 	initialAmount: number;
 	initialAmountPercent: number;
 	currentAmount: number;

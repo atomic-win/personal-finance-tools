@@ -7,6 +7,7 @@ import {
 	Portfolio,
 	Instrument,
 	Asset,
+	PortfolioType,
 } from '@/features/investments/lib/types';
 import { calculatePortfolios } from '@/features/investments/lib/utils';
 
@@ -40,8 +41,7 @@ export function withInstrumentTypePortfolios<
 		}
 
 		const instrumentTypePortfolios = calculateInstrumentTypePortfolios(
-			calculatePortfolios(portfolioQueryResults.map((result) => result.data!)),
-			props.currency
+			calculatePortfolios(portfolioQueryResults.map((result) => result.data!))
 		);
 
 		return (
@@ -54,13 +54,12 @@ export function withInstrumentTypePortfolios<
 }
 
 function calculateInstrumentTypePortfolios(
-	portfolios: Portfolio[],
-	currency: Currency
+	portfolios: Portfolio[]
 ): InstrumentTypePortfolio[] {
 	return portfolios.map((portfolio) => {
 		return {
 			...portfolio,
-			currency: currency,
+			type: PortfolioType.PerInvestmentInstrumentType,
 		};
 	});
 }
