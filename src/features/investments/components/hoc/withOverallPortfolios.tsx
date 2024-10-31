@@ -1,7 +1,4 @@
-import ErrorComponent from '@/components/ErrorComponent';
-import LoadingComponent from '@/components/LoadingComponent';
 import { Currency } from '@/lib/types';
-import useValuationQueries from '@/features/investments/hooks/valuation';
 import {
 	OverallPortfolio,
 	Portfolio,
@@ -10,7 +7,7 @@ import {
 	PortfolioType,
 	Transaction,
 } from '@/features/investments/lib/types';
-import { calculatePortfolios } from '@/features/investments/lib/utils';
+import { withValuations } from '@/features/investments/components/hoc/withValuations';
 
 export function withOverallPortfolios<
 	T extends { portfolios: OverallPortfolio[] }
@@ -25,41 +22,31 @@ export function withOverallPortfolios<
 			latest: boolean;
 		}
 	) {
-		const portfolioQueryResults = useValuationQueries(
-			props.currency,
-			props.assetIds,
-			props.assets,
-			props.instruments,
-			props.transactions,
-			() => 'overall',
-			props.latest
-		);
-
-		if (portfolioQueryResults.some((result) => result.isFetching)) {
-			return <LoadingComponent loadingMessage='Fetching portfolios' />;
-		}
-
-		if (portfolioQueryResults.some((result) => result.isError)) {
-			return <ErrorComponent errorMessage='Failed while fetching portfolios' />;
-		}
-
-		const overallPortfolios = calculateOverallPortfolios(
-			calculatePortfolios(portfolioQueryResults.map((result) => result.data!))
-		);
+		const WithLoadedValuationsComponent = withValuations(Component);
 
 		return (
-			<Component {...(props as unknown as T)} portfolios={overallPortfolios} />
+			<WithLoadedValuationsComponent
+				{...(props as unknown as T)}
+				currency={props.currency}
+				assetIds={props.assetIds}
+				assets={props.assets}
+				instruments={props.instruments}
+				transactions={props.transactions}
+				idSelector={() => 'overall'}
+				portfolioFn={calculateOverallPortfolio}
+				latest={props.latest}
+			/>
 		);
 	};
 }
 
-function calculateOverallPortfolios(
-	portfolios: Portfolio[]
-): OverallPortfolio[] {
-	return portfolios.map((portfolio) => {
-		return {
-			...portfolio,
-			type: PortfolioType.Overall,
-		};
-	});
+function calculateOverallPortfolio(
+	assets: Asset[],
+	instruments: Instrument[],
+	portfolio: Portfolio
+): OverallPortfolio {
+	return {
+		...portfolio,
+		type: PortfolioType.Overall,
+	};
 }

@@ -1,7 +1,4 @@
-import ErrorComponent from '@/components/ErrorComponent';
-import LoadingComponent from '@/components/LoadingComponent';
 import { Currency } from '@/lib/types';
-import useValuationQueries from '@/features/investments/hooks/valuation';
 import {
 	InstrumentPortfolio,
 	Instrument,
@@ -10,10 +7,8 @@ import {
 	PortfolioType,
 	Transaction,
 } from '@/features/investments/lib/types';
-import {
-	calculatePortfolios,
-	findInstrumentById,
-} from '@/features/investments/lib/utils';
+import { findInstrumentById } from '@/features/investments/lib/utils';
+import { withValuations } from '@/features/investments/components/hoc/withValuations';
 
 export function withInstrumentPortfolios<
 	T extends { portfolios: InstrumentPortfolio[] }
@@ -28,50 +23,35 @@ export function withInstrumentPortfolios<
 			latest: boolean;
 		}
 	) {
-		const portfolioQueryResults = useValuationQueries(
-			props.currency,
-			props.assetIds,
-			props.assets,
-			props.instruments,
-			props.transactions,
-			(_asset, instrument) => instrument.id,
-			props.latest
-		);
-
-		if (portfolioQueryResults.some((result) => result.isFetching)) {
-			return <LoadingComponent loadingMessage='Fetching portfolios' />;
-		}
-
-		if (portfolioQueryResults.some((result) => result.isError)) {
-			return <ErrorComponent errorMessage='Failed while fetching portfolios' />;
-		}
-
-		const instrumentPortfolios = calculateInstrumentPortfolios(
-			calculatePortfolios(portfolioQueryResults.map((result) => result.data!)),
-			props.instruments
-		);
+		const WithLoadedValuationsComponent = withValuations(Component);
 
 		return (
-			<Component
+			<WithLoadedValuationsComponent
 				{...(props as unknown as T)}
-				portfolios={instrumentPortfolios}
+				currency={props.currency}
+				assetIds={props.assetIds}
+				assets={props.assets}
+				instruments={props.instruments}
+				transactions={props.transactions}
+				idSelector={(_asset, instrument) => instrument.id}
+				portfolioFn={calculateInstrumentPortfolio}
+				latest={props.latest}
 			/>
 		);
 	};
 }
 
-function calculateInstrumentPortfolios(
-	portfolios: Portfolio[],
-	instruments: Instrument[]
-): InstrumentPortfolio[] {
-	return portfolios.map((portfolio) => {
-		const instrument = findInstrumentById(instruments, portfolio.id)!;
+function calculateInstrumentPortfolio(
+	assets: Asset[],
+	instruments: Instrument[],
+	portfolio: Portfolio
+): InstrumentPortfolio {
+	const instrument = findInstrumentById(instruments, portfolio.id)!;
 
-		return {
-			...portfolio,
-			type: PortfolioType.PerInvestmentInstrument,
-			instrumentName: instrument.name,
-			instrumentType: instrument.type,
-		};
-	});
+	return {
+		...portfolio,
+		type: PortfolioType.PerInvestmentInstrument,
+		instrumentName: instrument.name,
+		instrumentType: instrument.type,
+	};
 }
