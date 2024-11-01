@@ -1,10 +1,10 @@
 'use client';
 import axios from 'axios';
 import { useLogOutMutation } from '@/hooks/useLogOutMutation';
-import useAccessToken from '@/hooks/useAccessToken';
+import useAccessTokenQuery from '@/hooks/useAccessTokenQuery';
 
 export const usePrimalApiClient = () => {
-	const accessToken = useAccessToken();
+	const { data: accessToken } = useAccessTokenQuery();
 	const logOutMutation = useLogOutMutation();
 
 	const headers = {
