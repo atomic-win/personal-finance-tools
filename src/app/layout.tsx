@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils';
 import '@/app/globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -20,6 +22,15 @@ const queryClient = new QueryClient({
 			staleTime: 1000 * 60 * 10, // 1 hour
 		},
 	},
+});
+
+const localStoragePersister = createSyncStoragePersister({
+	storage: localStorage,
+});
+
+persistQueryClient({
+	queryClient,
+	persister: localStoragePersister,
 });
 
 export default function RootLayout({

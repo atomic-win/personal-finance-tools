@@ -9,7 +9,8 @@ export const useLogOutMutation = () => {
 	return useMutation({
 		mutationFn: async () => {
 			localStorage.removeItem('accessToken');
-			await queryClient.invalidateQueries();
+			queryClient.removeQueries();
+			queryClient.clear();
 			replace('/');
 		},
 	});
