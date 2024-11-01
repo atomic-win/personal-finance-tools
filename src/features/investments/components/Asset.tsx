@@ -8,8 +8,15 @@ import {
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
+import { Currency } from '@/lib/types';
 
-export default function Asset({ asset }: { asset: AssetPortfolio }) {
+export default function Asset({
+	asset,
+	currency,
+}: {
+	asset: AssetPortfolio;
+	currency: Currency;
+}) {
 	const WithLoadedLoadedTransactionsTable = withTransactions(TransactionsTable);
 
 	return (
@@ -29,11 +36,11 @@ export default function Asset({ asset }: { asset: AssetPortfolio }) {
 						/>
 						<InfoLine
 							label='Invested Value'
-							value={displayCurrencyAmount(asset.currency, asset.initialAmount)}
+							value={displayCurrencyAmount(currency, asset.investedValue)}
 						/>
 						<InfoLine
 							label='Current Value'
-							value={displayCurrencyAmount(asset.currency, asset.currentAmount)}
+							value={displayCurrencyAmount(currency, asset.currentValue)}
 						/>
 						<InfoLine
 							label='XIRR'
@@ -43,9 +50,9 @@ export default function Asset({ asset }: { asset: AssetPortfolio }) {
 					<Separator />
 				</div>
 				<WithLoadedLoadedTransactionsTable
-					assetId={asset.id}
+					assetIds={[asset.id]}
 					asset={asset}
-					currency={asset.currency}
+					currency={currency}
 				/>
 			</CardContent>
 		</Card>

@@ -7,8 +7,11 @@ import {
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import DeleteAssetDialog from '@/features/investments/components/DeleteAssetDialog';
+import { Currency } from '@/lib/types';
 
-const columns: ColumnDef<AssetPortfolio>[] = [
+type TableItem = AssetPortfolio & { currency: Currency };
+
+const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
 		accessorKey: 'asset',
 		headerText: 'Asset',
@@ -33,35 +36,35 @@ const columns: ColumnDef<AssetPortfolio>[] = [
 		align: 'left',
 	}),
 	createColumnDef({
-		accessorKey: 'initialAmount',
+		accessorKey: 'investedValue',
 		id: 'Invested Value',
 		headerText: 'Invested Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.initialAmount),
-		sortingFnCompare: (data) => data.initialAmount,
+			displayCurrencyAmount(data.currency, data.investedValue),
+		sortingFnCompare: (data) => data.investedValue,
 		enableHiding: false,
 	}),
 	createColumnDef({
-		accessorKey: 'initialAmountPercent',
+		accessorKey: 'investedValuePercent',
 		headerText: 'Invested Value (%)',
-		cellTextFn: (data) => displayPercentage(data.initialAmountPercent),
-		sortingFnCompare: (data) => data.initialAmountPercent,
+		cellTextFn: (data) => displayPercentage(data.investedValuePercent),
+		sortingFnCompare: (data) => data.investedValuePercent,
 		enableHiding: false,
 	}),
 	createColumnDef({
-		accessorKey: 'currentAmount',
+		accessorKey: 'currentValue',
 		id: 'Current Value',
 		headerText: 'Current Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.currentAmount),
-		sortingFnCompare: (data) => data.currentAmount,
+			displayCurrencyAmount(data.currency, data.currentValue),
+		sortingFnCompare: (data) => data.currentValue,
 		enableHiding: false,
 	}),
 	createColumnDef({
-		accessorKey: 'currentAmountPercent',
+		accessorKey: 'currentValuePercent',
 		headerText: 'Current Value (%)',
-		cellTextFn: (data) => displayPercentage(data.currentAmountPercent),
-		sortingFnCompare: (data) => data.currentAmountPercent,
+		cellTextFn: (data) => displayPercentage(data.currentValuePercent),
+		sortingFnCompare: (data) => data.currentValuePercent,
 		enableHiding: false,
 	}),
 	createColumnDef({
@@ -74,25 +77,32 @@ const columns: ColumnDef<AssetPortfolio>[] = [
 	{
 		id: 'actions',
 		cell: ({ row }) => {
-			const asset = row.original;
-			return <DeleteAssetDialog asset={asset} />;
+			const item = row.original;
+			return <DeleteAssetDialog asset={item} currency={item.currency} />;
 		},
 	},
 ];
 
 export default function AssetsTable({
 	portfolios,
+	currency,
 }: {
 	portfolios: AssetPortfolio[];
+	currency: Currency;
 }) {
+	const items = portfolios.map((portfolio) => ({
+		...portfolio,
+		currency,
+	}));
+
 	return (
 		<div className='mx-auto'>
 			<DataTable
 				columns={columns}
-				data={portfolios}
+				data={items}
 				initialSorting={[
 					{
-						id: 'initialAmountPercent',
+						id: 'investedValuePercent',
 						desc: true,
 					},
 				]}

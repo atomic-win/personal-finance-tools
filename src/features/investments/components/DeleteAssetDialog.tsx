@@ -17,11 +17,14 @@ import {
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import { useDeleteAssetMutation } from '@/features/investments/hooks/assets';
+import { Currency } from '@/lib/types';
 
 export default function DeleteAssetDialog({
 	asset,
+	currency,
 }: {
 	asset: AssetPortfolio;
+	currency: Currency;
 }) {
 	const { mutateAsync: deleteAssetAsync } = useDeleteAssetMutation();
 
@@ -47,11 +50,11 @@ export default function DeleteAssetDialog({
 					/>
 					<InfoLine
 						label='Invested Value'
-						value={displayCurrencyAmount(asset.currency, asset.initialAmount)}
+						value={displayCurrencyAmount(currency, asset.investedValue)}
 					/>
 					<InfoLine
 						label='Current Value'
-						value={displayCurrencyAmount(asset.currency, asset.currentAmount)}
+						value={displayCurrencyAmount(currency, asset.currentValue)}
 					/>
 					<InfoLine label='XIRR' value={displayPercentage(asset.xirrPercent)} />
 				</div>

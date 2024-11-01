@@ -6,7 +6,7 @@ export function useAllAssetsQuery() {
 	const primalApiClient = usePrimalApiClient();
 
 	return useQuery({
-		queryKey: ['investments', 'assets'],
+		queryKey: ['investments', 'assets', 'all'],
 		queryFn: async () => {
 			const response = await primalApiClient.get('/investments/assets');
 			return response.data as Asset[];
@@ -24,7 +24,7 @@ export function useDeleteAssetMutation() {
 		},
 		onSettled: () => {
 			queryClient.invalidateQueries({
-				queryKey: ['investments'],
+				queryKey: ['investments', 'assets', 'all'],
 			});
 		},
 	});

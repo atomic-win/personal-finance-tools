@@ -16,6 +16,7 @@ import {
 	displayPortfolioType,
 } from '@/features/investments/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Currency } from '@/lib/types';
 
 enum TrendType {
 	InvestedValue = 'InvestedValue',
@@ -28,8 +29,10 @@ export default function withPortfolioTrendsSection<
 >({ labelFn }: { labelFn: (portfolio: TPortfolio) => string }) {
 	return function PortfolioTrendsSection({
 		portfolios,
+		currency,
 	}: {
 		portfolios: TPortfolio[];
+		currency: Currency;
 	}) {
 		const searchParams = useSearchParams();
 		const pathname = usePathname();
@@ -47,7 +50,7 @@ export default function withPortfolioTrendsSection<
 		const latestPortfolios = filterLatestPortfolios(portfolios);
 
 		const chartConfig = latestPortfolios
-			.sort((a, b) => a.initialAmountPercent - b.initialAmountPercent)
+			.sort((a, b) => a.investedValuePercent - b.investedValuePercent)
 			.reverse()
 			.reduce(
 				(acc, portfolio, i) => ({
@@ -61,7 +64,6 @@ export default function withPortfolioTrendsSection<
 			) satisfies ChartConfig;
 
 		const portfolioIds = latestPortfolios.map((p) => p.id);
-		const currency = portfolios[0].currency;
 		const isOverallPortfolioType = portfolios[0].type === PortfolioType.Overall;
 
 		return (
@@ -85,7 +87,7 @@ export default function withPortfolioTrendsSection<
 						portfolios={portfolios}
 						chartConfig={chartConfig}
 						chartTitle='Invested Value Trend'
-						valueFn={(portfolio) => portfolio.initialAmount}
+						valueFn={(portfolio) => portfolio.investedValue}
 						yAxisFormat={(value) => displayCurrencyAmount(currency, value)}
 						showTotalInTooltip={!isOverallPortfolioType}
 					/>
@@ -96,7 +98,7 @@ export default function withPortfolioTrendsSection<
 						portfolios={portfolios}
 						chartConfig={chartConfig}
 						chartTitle='Current Value Trend'
-						valueFn={(portfolio) => portfolio.currentAmount}
+						valueFn={(portfolio) => portfolio.currentValue}
 						yAxisFormat={(value) => displayCurrencyAmount(currency, value)}
 						showTotalInTooltip={!isOverallPortfolioType}
 					/>

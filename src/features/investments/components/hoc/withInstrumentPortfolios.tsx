@@ -1,14 +1,14 @@
-import ErrorComponent from '@/components/ErrorComponent';
-import LoadingComponent from '@/components/LoadingComponent';
 import { Currency } from '@/lib/types';
-import usePortfoliosQuery from '@/features/investments/hooks/portfolios';
 import {
 	InstrumentPortfolio,
 	Instrument,
-	PortfolioType,
 	Portfolio,
+	Asset,
+	PortfolioType,
+	Transaction,
 } from '@/features/investments/lib/types';
 import { findInstrumentById } from '@/features/investments/lib/utils';
+import { withValuations } from '@/features/investments/components/hoc/withValuations';
 
 export function withInstrumentPortfolios<
 	T extends { portfolios: InstrumentPortfolio[] }
@@ -17,57 +17,41 @@ export function withInstrumentPortfolios<
 		props: Omit<T, 'portfolios'> & {
 			currency: Currency;
 			assetIds: string[];
+			assets: Asset[];
 			instruments: Instrument[];
+			transactions: Transaction[];
 			latest: boolean;
 		}
 	) {
-		const {
-			data: portfolios,
-			isFetching,
-			error: portfoliosError,
-		} = usePortfoliosQuery(
-			props.currency,
-			props.assetIds,
-			PortfolioType.PerInvestmentInstrument,
-			props.latest
-		);
-
-		if (isFetching) {
-			return <LoadingComponent loadingMessage='Fetching portfolios' />;
-		}
-
-		if (portfoliosError || !portfolios) {
-			return <ErrorComponent errorMessage='Failed while fetching portfolios' />;
-		}
-
-		const instrumentPortfolios = calculateInstrumentPortfolios(
-			portfolios,
-			props.instruments,
-			props.currency
-		);
+		const WithLoadedValuationsComponent = withValuations(Component);
 
 		return (
-			<Component
+			<WithLoadedValuationsComponent
 				{...(props as unknown as T)}
-				portfolios={instrumentPortfolios}
+				currency={props.currency}
+				assetIds={props.assetIds}
+				assets={props.assets}
+				instruments={props.instruments}
+				transactions={props.transactions}
+				idSelector={(_asset, instrument) => instrument.id}
+				portfolioFn={calculateInstrumentPortfolio}
+				latest={props.latest}
 			/>
 		);
 	};
 }
 
-function calculateInstrumentPortfolios(
-	portfolios: Portfolio[],
+function calculateInstrumentPortfolio(
+	assets: Asset[],
 	instruments: Instrument[],
-	currency: Currency
-): InstrumentPortfolio[] {
-	return portfolios.map((portfolio) => {
-		const instrument = findInstrumentById(instruments, portfolio.id)!;
+	portfolio: Portfolio
+): InstrumentPortfolio {
+	const instrument = findInstrumentById(instruments, portfolio.id)!;
 
-		return {
-			...portfolio,
-			instrumentName: instrument.name,
-			instrumentType: instrument.type,
-			currency: currency,
-		};
-	});
+	return {
+		...portfolio,
+		type: PortfolioType.PerInvestmentInstrument,
+		instrumentName: instrument.name,
+		instrumentType: instrument.type,
+	};
 }

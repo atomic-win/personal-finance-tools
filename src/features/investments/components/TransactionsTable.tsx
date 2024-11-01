@@ -8,12 +8,14 @@ import {
 import DeleteTransactionDialog from '@/features/investments/components/DeleteTransactionDialog';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { Currency } from '@/lib/types';
 
-type TransactionTableItem = Transaction & {
+type TableItem = Transaction & {
 	asset: AssetPortfolio;
+	currency: Currency;
 };
 
-const columns: ColumnDef<TransactionTableItem>[] = [
+const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
 		accessorKey: 'date',
 		headerText: 'Date',
@@ -47,8 +49,7 @@ const columns: ColumnDef<TransactionTableItem>[] = [
 	createColumnDef({
 		accessorKey: 'transactionAmount',
 		headerText: 'Transaction Amount',
-		cellTextFn: (item) =>
-			displayTransactionAmount(item.asset.currency, item.amount),
+		cellTextFn: (item) => displayTransactionAmount(item.currency, item.amount),
 		align: 'right',
 		enableHiding: false,
 	}),
@@ -56,7 +57,13 @@ const columns: ColumnDef<TransactionTableItem>[] = [
 		id: 'actions',
 		cell: ({ row }) => {
 			const item = row.original;
-			return <DeleteTransactionDialog asset={item.asset} transaction={item} />;
+			return (
+				<DeleteTransactionDialog
+					asset={item.asset}
+					transaction={item}
+					currency={item.currency}
+				/>
+			);
 		},
 	},
 ];
@@ -64,13 +71,16 @@ const columns: ColumnDef<TransactionTableItem>[] = [
 export default function TransactionsTable({
 	asset,
 	transactions,
+	currency,
 }: {
 	asset: AssetPortfolio;
 	transactions: Transaction[];
+	currency: Currency;
 }) {
-	const transactionTableItems = transactions.map((transaction) => ({
+	const items = transactions.map((transaction) => ({
 		...transaction,
 		asset,
+		currency,
 	}));
 
 	return (
@@ -85,7 +95,7 @@ export default function TransactionsTable({
 			</div>
 			<DataTable
 				columns={columns}
-				data={transactionTableItems}
+				data={items}
 				initialSorting={[
 					{
 						id: 'date',

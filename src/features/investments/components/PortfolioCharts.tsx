@@ -18,7 +18,7 @@ export default function PortfolioCharts<TPortfolio extends Portfolio>({
 	labelFn: (portfolio: TPortfolio) => string;
 }) {
 	const chartConfig = portfolios
-		.sort((a, b) => a.initialAmountPercent - b.initialAmountPercent)
+		.sort((a, b) => a.investedValuePercent - b.investedValuePercent)
 		.reverse()
 		.reduce(
 			(acc, portfolio, i) => ({
@@ -37,13 +37,13 @@ export default function PortfolioCharts<TPortfolio extends Portfolio>({
 				portfolios={portfolios}
 				chartConfig={chartConfig}
 				title='Invested Value Allocation (%)'
-				valuePercentFn={(portfolio) => portfolio.initialAmountPercent}
+				valuePercentFn={(portfolio) => portfolio.investedValuePercent}
 			/>
 			<PortfolioChart
 				portfolios={portfolios}
 				chartConfig={chartConfig}
 				title='Current Value Allocation (%)'
-				valuePercentFn={(portfolio) => portfolio.currentAmountPercent}
+				valuePercentFn={(portfolio) => portfolio.currentValuePercent}
 			/>
 		</div>
 	);

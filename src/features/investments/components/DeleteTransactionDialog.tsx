@@ -13,13 +13,16 @@ import { Button } from '@/components/ui/button';
 import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
 import { displayTransactionAmount } from '@/features/investments/lib/utils';
 import { useDeleteTransactionMutation } from '@/features/investments/hooks/transactions';
+import { Currency } from '@/lib/types';
 
 export default function DeleteTransactionDialog({
 	asset,
 	transaction,
+	currency,
 }: {
 	asset: AssetPortfolio;
 	transaction: Transaction;
+	currency: Currency;
 }) {
 	const { mutateAsync: deleteTransactionAsync } =
 		useDeleteTransactionMutation();
@@ -45,7 +48,7 @@ export default function DeleteTransactionDialog({
 					<InfoLine label='Units' value={transaction.units.toString()} />
 					<InfoLine
 						label='Transaction Amount'
-						value={displayTransactionAmount(asset.currency, transaction.amount)}
+						value={displayTransactionAmount(currency, transaction.amount)}
 					/>
 				</div>
 				<AlertDialogFooter>
@@ -56,6 +59,7 @@ export default function DeleteTransactionDialog({
 								await deleteTransactionAsync({
 									assetId: asset.id,
 									transactionId: transaction.id,
+									date: transaction.date,
 								});
 							}}>
 							Delete

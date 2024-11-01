@@ -1,5 +1,3 @@
-import { Currency } from '@/lib/types';
-
 export enum InstrumentType {
 	Unknown = 'Unknown',
 	EmergencyFunds = 'EmergencyFunds',
@@ -12,6 +10,7 @@ export enum InstrumentType {
 }
 
 export enum PortfolioType {
+	Unknown = 'Unknown',
 	Overall = 'Overall',
 	PerInvestmentInstrumentType = 'PerInvestmentInstrumentType',
 	PerInvestmentInstrument = 'PerInvestmentInstrument',
@@ -34,12 +33,11 @@ export type Portfolio = {
 	id: string;
 	date: string;
 	type: PortfolioType;
-	initialAmount: number;
-	initialAmountPercent: number;
-	currentAmount: number;
-	currentAmountPercent: number;
+	investedValue: number;
+	investedValuePercent: number;
+	currentValue: number;
+	currentValuePercent: number;
 	xirrPercent: number;
-	currency: Currency;
 };
 
 export type OverallPortfolio = Portfolio;
@@ -70,7 +68,7 @@ export enum TransactionType {
 	InterestPenalty = 'InterestPenalty',
 }
 
-export interface Transaction {
+export type Transaction = {
 	id: string;
 	date: string;
 	name: string;
@@ -78,4 +76,12 @@ export interface Transaction {
 	assetId: string;
 	units: number;
 	amount: number;
-}
+};
+
+export type Valuation = {
+	id: string;
+	date: string;
+	investedValue: number;
+	currentValue: number;
+	xirrPercent: number;
+};
