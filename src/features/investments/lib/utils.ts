@@ -35,6 +35,10 @@ export function displayPercentage(percent: number) {
 	}).format(percent / 100);
 }
 
+export function displayNumber(number: number) {
+	return Intl.NumberFormat('en-IN').format(number);
+}
+
 export function displayInstrumentType(instrumentType: InstrumentType): string {
 	switch (instrumentType) {
 		case InstrumentType.EmergencyFunds:
