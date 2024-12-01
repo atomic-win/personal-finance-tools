@@ -12,6 +12,7 @@ import {
 import { CartesianGrid, XAxis, YAxis, Line, LineChart } from 'recharts';
 import {
 	displayCurrencyAmount,
+	displayNumber,
 	displayPercentage,
 	displayPortfolioType,
 } from '@/features/investments/lib/utils';
@@ -22,6 +23,7 @@ enum TrendType {
 	InvestedValue = 'InvestedValue',
 	CurrentValue = 'CurrentValue',
 	XIRR = 'XIRR',
+	Ratio = 'Ratio',
 }
 
 export default function withPortfolioTrendsSection<
@@ -70,7 +72,7 @@ export default function withPortfolioTrendsSection<
 			<Tabs
 				value={activeTrendType}
 				onValueChange={(value) => handleTabChange(value as TrendType)}>
-				<TabsList className='grid w-full grid-cols-3'>
+				<TabsList className='grid w-full grid-cols-4'>
 					<TabsTrigger value={TrendType.InvestedValue}>
 						{displayTrendType(TrendType.InvestedValue)}
 					</TabsTrigger>
@@ -79,6 +81,9 @@ export default function withPortfolioTrendsSection<
 					</TabsTrigger>
 					<TabsTrigger value={TrendType.XIRR}>
 						{displayTrendType(TrendType.XIRR)}
+					</TabsTrigger>
+					<TabsTrigger value={TrendType.Ratio}>
+						{displayTrendType(TrendType.Ratio)}
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value={TrendType.InvestedValue}>
@@ -111,6 +116,19 @@ export default function withPortfolioTrendsSection<
 						chartTitle='XIRR % Trend'
 						valueFn={(portfolio) => portfolio.xirrPercent}
 						yAxisFormat={(value) => displayPercentage(value)}
+						showTotalInTooltip={false}
+					/>
+				</TabsContent>
+				<TabsContent value={TrendType.Ratio}>
+					<TrendsChart
+						portfolioIds={portfolioIds}
+						portfolios={portfolios}
+						chartConfig={chartConfig}
+						chartTitle='Current Value / Invested Value Ratio Trend'
+						valueFn={(portfolio) =>
+							portfolio.currentValue / Math.max(1, portfolio.investedValue)
+						}
+						yAxisFormat={(value) => displayNumber(value)}
 						showTotalInTooltip={false}
 					/>
 				</TabsContent>
@@ -276,6 +294,8 @@ function displayTrendType(trendType: TrendType) {
 			return 'Current Value';
 		case TrendType.XIRR:
 			return 'XIRR';
+		case TrendType.Ratio:
+			return 'Ratio';
 		default:
 			throw new Error(`Unknown trend type: ${trendType}`);
 	}
