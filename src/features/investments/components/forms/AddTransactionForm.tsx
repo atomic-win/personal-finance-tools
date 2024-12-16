@@ -36,6 +36,7 @@ import { Input } from '@/components/ui/input';
 import { useAddTransactionMutation } from '@/features/investments/hooks/transactions';
 import { useRouter } from 'next/navigation';
 import { DateTime } from 'luxon';
+import withTransactions from '@/features/investments/components/hoc/withTransactions';
 
 const schema = z.object({
 	date: z.date({
@@ -59,7 +60,9 @@ const schema = z.object({
 
 export default function AddTransactionForm({ assetId }: { assetId: string }) {
 	const WithLoadedForm = withAssets(
-		withInstruments(withCurrency(withAssetPortfolios(AddForm)))
+		withInstruments(
+			withCurrency(withTransactions(withAssetPortfolios(AddForm)))
+		)
 	);
 
 	return <WithLoadedForm assetIds={[assetId]} latest={true} />;
