@@ -16,14 +16,18 @@ const queryClient = new QueryClient({
 	},
 });
 
-const localStoragePersister = createSyncStoragePersister({
-	storage: localStorage,
-});
+const ISSERVER = typeof window === 'undefined';
 
-persistQueryClient({
-	queryClient,
-	persister: localStoragePersister,
-});
+if (!ISSERVER) {
+	const localStoragePersister = createSyncStoragePersister({
+		storage: localStorage,
+	});
+
+	persistQueryClient({
+		queryClient,
+		persister: localStoragePersister,
+	});
+}
 
 export default function Providers({
 	children,
