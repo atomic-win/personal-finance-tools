@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AssetPortfolio } from '@/features/investments/lib/types';
-import withTransactions from '@/features/investments/components/hoc/withTransactions';
+import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
 import TransactionsTable from '@/features/investments/components/TransactionsTable';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -12,13 +11,13 @@ import { Currency } from '@/lib/types';
 
 export default function Asset({
 	asset,
+	transactions,
 	currency,
 }: {
 	asset: AssetPortfolio;
+	transactions: Transaction[];
 	currency: Currency;
 }) {
-	const WithLoadedLoadedTransactionsTable = withTransactions(TransactionsTable);
-
 	return (
 		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
@@ -49,9 +48,9 @@ export default function Asset({
 					</div>
 					<Separator />
 				</div>
-				<WithLoadedLoadedTransactionsTable
-					assetIds={[asset.id]}
+				<TransactionsTable
 					asset={asset}
+					transactions={transactions}
 					currency={currency}
 				/>
 			</CardContent>
