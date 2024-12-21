@@ -41,18 +41,18 @@ const data = [
 				url: '/calculators/swp',
 			},
 			{
-				title: 'SIP-SWP Calculator',
+				title: 'SIP + SWP Calculator',
 				url: '/calculators/sip-swp',
 			},
 		],
 	},
 	{
-		title: 'Analyzers',
+		title: 'Mutual Funds Analysis',
 		url: '#',
 		auth: false,
 		items: [
 			{
-				title: 'Mutual Funds Analyzer',
+				title: 'Rolling Returns',
 				url: '/analyzers/mutualfunds',
 			},
 		],
