@@ -14,3 +14,14 @@ export type SwpCalculator = {
 	annualInterestPercent: number;
 	annualInflationPercent: number;
 };
+
+export type SipSwpCalculator = {
+	id: string;
+	lumpsumAmount: number;
+	monthlySipInvestmentAmount: number;
+	annualSipStepUpPercent: number;
+	annualInterestPercent: number;
+	numberOfSipYears: number;
+	monthlySwpWithdrawalAmount: number;
+	annualInflationPercent: number;
+};

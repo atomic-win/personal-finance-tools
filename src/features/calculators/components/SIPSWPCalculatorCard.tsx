@@ -25,15 +25,19 @@ import {
 } from '@/features/calculators/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { SipSwpCalculator } from '@/features/calculators/lib/types';
+import {
+	useRemoveCalculatorMutation,
+	useUpdateCalculatorMutation,
+} from '@/features/calculators/hooks/sip-swp';
 
 const schema = z.object({
 	lumpsumAmount: z.coerce.number().min(0, {
 		message: 'Lumpsum Amount cannot be less than 0',
 	}),
-	monthlySipInvestment: z.coerce
+	monthlySipInvestmentAmount: z.coerce
 		.number()
 		.min(1, { message: 'Monthly SIP Investment cannot be less than 1' }),
 	annualSipStepUpPercent: z.coerce.number().min(-99, {
@@ -45,7 +49,7 @@ const schema = z.object({
 	numberOfSipYears: z.coerce
 		.number()
 		.min(1, { message: 'SIP Investment Duration cannot be less than 1 year' }),
-	monthlySwpWithdrawal: z.coerce
+	monthlySwpWithdrawalAmount: z.coerce
 		.number()
 		.min(1, { message: 'Monthly SWP Withdrawal cannot be less than 1' }),
 	annualInflationPercent: z.coerce.number().min(-99, {
@@ -60,7 +64,7 @@ const formFields = [
 		description: 'Enter the lumpsum amount',
 	},
 	{
-		name: 'monthlySipInvestment',
+		name: 'monthlySipInvestmentAmount',
 		label: 'Monthly SIP Investment',
 		description: 'Enter the monthly SIP investment amount',
 	},
@@ -80,7 +84,7 @@ const formFields = [
 		description: 'Enter the SIP investment duration in years',
 	},
 	{
-		name: 'monthlySwpWithdrawal',
+		name: 'monthlySwpWithdrawalAmount',
 		label: 'Monthly SWP Withdrawal',
 		description: 'Enter the monthly SWP withdrawal amount',
 	},
@@ -92,79 +96,44 @@ const formFields = [
 ];
 
 export default function CalculatorCard({
-	id,
 	index,
+	calculator,
 	canRemove,
-	removeCalculator,
 }: {
-	id: string;
 	index: number;
+	calculator: SipSwpCalculator;
 	canRemove: boolean;
-	removeCalculator: (id: string) => void;
 }) {
+	const { mutate: updateCalculator } = useUpdateCalculatorMutation();
+	const { mutate: removeCalculator } = useRemoveCalculatorMutation();
+
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
-		defaultValues: {
-			lumpsumAmount: 0,
-			monthlySipInvestment: 500,
-			annualSipStepUpPercent: 10,
-			annualInterestPercent: 10,
-			numberOfSipYears: 10,
-			monthlySwpWithdrawal: 10000,
-			annualInflationPercent: 8,
-		},
+		defaultValues: calculator,
 	});
 
-	const [result, setResult] = useState({
-		totalInvestedAmount: 0,
-		estimatedTotalValueAfterSip: 0,
-		estimatedWithdrawalAmount: 0,
-		estimatedNumberOfYears: 0,
-	});
+	const {
+		totalInvestedAmount,
+		estimatedTotalValue: estimatedTotalValueAfterSip,
+	} = calculateSipResult(
+		calculator.lumpsumAmount,
+		calculator.monthlySipInvestmentAmount,
+		calculator.annualSipStepUpPercent,
+		calculator.annualInterestPercent,
+		calculator.numberOfSipYears
+	);
 
-	const lumpsumAmount = Number(form.watch('lumpsumAmount'));
-	const monthlySipInvestment = Number(form.watch('monthlySipInvestment'));
-	const annualSipStepUpPercent = Number(form.watch('annualSipStepUpPercent'));
-	const annualInterestPercent = Number(form.watch('annualInterestPercent'));
-	const numberOfSipYears = Number(form.watch('numberOfSipYears'));
-	const monthlySwpWithdrawal = Number(form.watch('monthlySwpWithdrawal'));
-	const annualInflationPercent = Number(form.watch('annualInflationPercent'));
-
-	React.useEffect(() => {
-		const {
-			totalInvestedAmount,
-			estimatedTotalValue: estimatedTotalValueAfterSip,
-		} = calculateSipResult(
-			lumpsumAmount,
-			monthlySipInvestment,
-			annualSipStepUpPercent,
-			annualInterestPercent,
-			numberOfSipYears
+	const { estimatedWithdrawalAmount, estimatedNumberOfYears } =
+		calculateSwpResult(
+			estimatedTotalValueAfterSip,
+			calculator.monthlySwpWithdrawalAmount,
+			calculator.annualInterestPercent,
+			calculator.annualInflationPercent
 		);
 
-		const { estimatedWithdrawalAmount, estimatedNumberOfYears } =
-			calculateSwpResult(
-				estimatedTotalValueAfterSip,
-				monthlySwpWithdrawal,
-				annualInterestPercent,
-				annualInflationPercent
-			);
-
-		setResult({
-			totalInvestedAmount,
-			estimatedTotalValueAfterSip,
-			estimatedWithdrawalAmount,
-			estimatedNumberOfYears,
-		});
-	}, [
-		lumpsumAmount,
-		monthlySipInvestment,
-		annualSipStepUpPercent,
-		annualInterestPercent,
-		numberOfSipYears,
-		monthlySwpWithdrawal,
-		annualInflationPercent,
-	]);
+	function onFormChange(data: z.infer<typeof schema>) {
+		updateCalculator({ ...calculator, ...data });
+	}
 
 	return (
 		<Card className='mx-auto my-10 p-2 rounded-lg shadow-md w-full'>
@@ -172,7 +141,7 @@ export default function CalculatorCard({
 				<div className='flex items-center justify-between'>
 					<CardTitle>SIP + SWP Calculator {index + 1}</CardTitle>
 					{canRemove && (
-						<Button onClick={() => removeCalculator(id)}>
+						<Button onClick={() => removeCalculator(calculator.id)}>
 							<Trash2 className='size-4' />
 						</Button>
 					)}
@@ -181,7 +150,9 @@ export default function CalculatorCard({
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
-					<form onChange={form.handleSubmit(() => {})} className='space-y-4'>
+					<form
+						onChange={form.handleSubmit(onFormChange)}
+						className='space-y-4'>
 						{formFields.map((formField) => (
 							<FormField
 								key={formField.name}
@@ -201,7 +172,7 @@ export default function CalculatorCard({
 						))}
 					</form>
 				</Form>
-				{result.totalInvestedAmount !== 0 && (
+				{totalInvestedAmount !== 0 && (
 					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
 						<table className='w-full'>
 							<tbody>
@@ -210,7 +181,7 @@ export default function CalculatorCard({
 										Total Invested Amount:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.totalInvestedAmount)}
+										{displayCurrencyAmount(totalInvestedAmount)}
 									</td>
 								</tr>
 								<tr>
@@ -218,7 +189,7 @@ export default function CalculatorCard({
 										Estimated Total Value After SIP:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.estimatedTotalValueAfterSip)}
+										{displayCurrencyAmount(estimatedTotalValueAfterSip)}
 									</td>
 								</tr>
 								<tr>
@@ -226,7 +197,7 @@ export default function CalculatorCard({
 										Estimated Total Withdrawal:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.estimatedWithdrawalAmount)}
+										{displayCurrencyAmount(estimatedWithdrawalAmount)}
 									</td>
 								</tr>
 								<tr>
@@ -234,7 +205,7 @@ export default function CalculatorCard({
 										Estimated Corpus Lasted:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{displayYearlyTimeDuration(result.estimatedNumberOfYears)}
+										{displayYearlyTimeDuration(estimatedNumberOfYears)}
 									</td>
 								</tr>
 							</tbody>
