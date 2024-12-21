@@ -35,7 +35,7 @@ const schema = z.object({
 	lumpsumAmount: z.coerce.number().min(0, {
 		message: 'Lumpsum Amount cannot be less than 0',
 	}),
-	monthlyInvestment: z.coerce
+	monthlyInvestmentAmount: z.coerce
 		.number()
 		.min(1, { message: 'Monthly Investment cannot be less than 1' }),
 	annualStepUpPercent: z.coerce.number().min(-99, {
@@ -56,7 +56,7 @@ const formFields = [
 		description: 'Enter the lumpsum amount',
 	},
 	{
-		name: 'monthlyInvestment',
+		name: 'monthlyInvestmentAmount',
 		label: 'Monthly Installment',
 		description: 'Enter the monthly installment',
 	},
@@ -96,7 +96,7 @@ export default function SipCalculatorCard({
 
 	const result = calculateSipResult(
 		calculator.lumpsumAmount,
-		calculator.monthlyInvestment,
+		calculator.monthlyInvestmentAmount,
 		calculator.annualInterestPercent,
 		calculator.annualStepUpPercent,
 		calculator.numberOfYears

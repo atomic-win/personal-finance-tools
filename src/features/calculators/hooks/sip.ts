@@ -5,7 +5,7 @@ import { SipCalculator } from '@/features/calculators/lib/types';
 const defaultSIPCalculator: SipCalculator = {
 	id: NIL,
 	lumpsumAmount: 0,
-	monthlyInvestment: 500,
+	monthlyInvestmentAmount: 500,
 	annualStepUpPercent: 10,
 	annualInterestPercent: 10,
 	numberOfYears: 10,

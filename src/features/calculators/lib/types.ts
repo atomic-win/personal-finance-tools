@@ -1,7 +1,7 @@
 export type SipCalculator = {
 	id: string;
 	lumpsumAmount: number;
-	monthlyInvestment: number;
+	monthlyInvestmentAmount: number;
 	annualStepUpPercent: number;
 	annualInterestPercent: number;
 	numberOfYears: number;
