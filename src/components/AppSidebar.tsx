@@ -20,6 +20,7 @@ const data = [
 	{
 		title: 'Investments',
 		url: '#',
+		auth: true,
 		items: [
 			{ title: 'Portfolio', url: '/investments/portfolio' },
 			{ title: 'Assets', url: '/investments/assets' },
@@ -29,6 +30,7 @@ const data = [
 	{
 		title: 'Calculators',
 		url: '#',
+		auth: false,
 		items: [
 			{
 				title: 'SIP Calculator',
@@ -47,6 +49,7 @@ const data = [
 	{
 		title: 'Analyzers',
 		url: '#',
+		auth: false,
 		items: [
 			{
 				title: 'Mutual Funds Analyzer',
@@ -57,6 +60,8 @@ const data = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+	const showAuthenticatedComponents = process.env.NODE_ENV === 'development';
+
 	return (
 		<Sidebar {...props}>
 			<SidebarHeader>
@@ -78,32 +83,36 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarMenu>
-						{data.map((item) => (
-							<SidebarMenuItem key={item.title}>
-								<SidebarMenuButton className='font-medium'>
-									{item.title}
-								</SidebarMenuButton>
-								<SidebarMenuSub>
-									{item.items.map((item) => (
-										<SidebarMenuSubItem key={item.title}>
-											<SidebarMenuSubButton asChild>
-												<a href={item.url}>{item.title}</a>
-											</SidebarMenuSubButton>
-										</SidebarMenuSubItem>
-									))}
-								</SidebarMenuSub>
-							</SidebarMenuItem>
-						))}
+						{data
+							.filter((item) => showAuthenticatedComponents || !item.auth)
+							.map((item) => (
+								<SidebarMenuItem key={item.title}>
+									<SidebarMenuButton className='font-medium'>
+										{item.title}
+									</SidebarMenuButton>
+									<SidebarMenuSub>
+										{item.items.map((item) => (
+											<SidebarMenuSubItem key={item.title}>
+												<SidebarMenuSubButton asChild>
+													<a href={item.url}>{item.title}</a>
+												</SidebarMenuSubButton>
+											</SidebarMenuSubItem>
+										))}
+									</SidebarMenuSub>
+								</SidebarMenuItem>
+							))}
 					</SidebarMenu>
 				</SidebarGroup>
 			</SidebarContent>
-			<SidebarFooter>
-				<SidebarMenu>
-					<SidebarMenuItem>
-						<AccountMenu />
-					</SidebarMenuItem>
-				</SidebarMenu>
-			</SidebarFooter>
+			{showAuthenticatedComponents && (
+				<SidebarFooter>
+					<SidebarMenu>
+						<SidebarMenuItem>
+							<AccountMenu />
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarFooter>
+			)}
 			<SidebarRail />
 		</Sidebar>
 	);
