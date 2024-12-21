@@ -18,7 +18,7 @@ export default function Page() {
 	return (
 		<div className='container mx-auto p-2'>
 			<h1 className='text-2xl font-bold mb-4'>SIP + SWP Calculator</h1>
-			<p className='mb-4'>
+			<p>
 				The SIP + SWP Calculator helps you plan your investments and
 				withdrawals. Systematic Investment Plan (SIP) allows you to invest a
 				fixed amount regularly, while Systematic Withdrawal Plan (SWP) enables
