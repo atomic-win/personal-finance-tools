@@ -47,12 +47,12 @@ const data = [
 		],
 	},
 	{
-		title: 'Analyzers',
+		title: 'Mutual Funds Analysis',
 		url: '#',
 		auth: false,
 		items: [
 			{
-				title: 'Mutual Funds Analyzer',
+				title: 'Rolling Returns',
 				url: '/analyzers/mutualfunds',
 			},
 		],
