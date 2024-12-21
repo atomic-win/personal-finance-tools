@@ -30,7 +30,7 @@ import { SwpCalculator } from '@/features/calculators/lib/types';
 import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
-} from '@/features/calculators/hooks/swp';
+} from '@/features/calculators/hooks/calculators';
 
 const schema = z.object({
 	totalInvestmentAmount: z.coerce.number().min(1, {
@@ -79,8 +79,10 @@ export default function SwpCalculatorCard({
 	calculator: SwpCalculator;
 	canRemove: boolean;
 }) {
-	const { mutate: updateCalculator } = useUpdateCalculatorMutation();
-	const { mutate: removeCalculator } = useRemoveCalculatorMutation();
+	const { mutate: updateCalculator } =
+		useUpdateCalculatorMutation<SwpCalculator>('swp');
+	const { mutate: removeCalculator } =
+		useRemoveCalculatorMutation<SwpCalculator>('swp');
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: calculator,

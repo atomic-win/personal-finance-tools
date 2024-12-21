@@ -5,11 +5,13 @@ import { PlusIcon } from 'lucide-react';
 import {
 	useAddCalculatorMutation,
 	useCalculatorsQuery,
-} from '@/features/calculators/hooks/sip';
+} from '@/features/calculators/hooks/calculators';
+import { SipCalculator } from '@/features/calculators/lib/types';
 
 export default function Page() {
-	const { data: calculators } = useCalculatorsQuery();
-	const { mutate: addCalculator } = useAddCalculatorMutation();
+	const { data: calculators } = useCalculatorsQuery<SipCalculator>('sip');
+	const { mutate: addCalculator } =
+		useAddCalculatorMutation<SipCalculator>('sip');
 
 	return (
 		<div className='container mx-auto p-2'>

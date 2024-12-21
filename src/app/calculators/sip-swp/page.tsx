@@ -4,12 +4,15 @@ import { Button } from '@/components/ui/button';
 import {
 	useAddCalculatorMutation,
 	useCalculatorsQuery,
-} from '@/features/calculators/hooks/sip-swp';
+} from '@/features/calculators/hooks/calculators';
 import { PlusIcon } from 'lucide-react';
+import { SipSwpCalculator } from '@/features/calculators/lib/types';
 
 export default function Page() {
-	const { data: calculators } = useCalculatorsQuery();
-	const { mutate: addCalculator } = useAddCalculatorMutation();
+	const { data: calculators } =
+		useCalculatorsQuery<SipSwpCalculator>('sip-swp');
+	const { mutate: addCalculator } =
+		useAddCalculatorMutation<SipSwpCalculator>('sip-swp');
 
 	return (
 		<div className='container mx-auto p-2'>

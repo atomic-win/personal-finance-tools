@@ -31,7 +31,7 @@ import { SipSwpCalculator } from '@/features/calculators/lib/types';
 import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
-} from '@/features/calculators/hooks/sip-swp';
+} from '@/features/calculators/hooks/calculators';
 
 const schema = z.object({
 	lumpsumAmount: z.coerce.number().min(0, {
@@ -104,8 +104,10 @@ export default function SipSwpCalculatorCard({
 	calculator: SipSwpCalculator;
 	canRemove: boolean;
 }) {
-	const { mutate: updateCalculator } = useUpdateCalculatorMutation();
-	const { mutate: removeCalculator } = useRemoveCalculatorMutation();
+	const { mutate: updateCalculator } =
+		useUpdateCalculatorMutation<SipSwpCalculator>('sip-swp');
+	const { mutate: removeCalculator } =
+		useRemoveCalculatorMutation<SipSwpCalculator>('sip-swp');
 
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
