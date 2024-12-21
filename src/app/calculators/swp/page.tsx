@@ -1,19 +1,15 @@
 'use client';
-import { useState } from 'react';
 import SWPCalculatorCard from '@/features/calculators/components/SWPCalculatorCard';
 import { Button } from '@/components/ui/button';
-import { v7 } from 'uuid';
+import {
+	useAddCalculatorMutation,
+	useCalculatorsQuery,
+} from '@/features/calculators/hooks/swp';
+import { PlusIcon } from 'lucide-react';
 
 export default function SWPPage() {
-	const [calculators, setCalculators] = useState([v7()]);
-
-	const addCalculator = () => {
-		setCalculators([...calculators, v7()]);
-	};
-
-	const removeCalculator = (id: string) => {
-		setCalculators(calculators.filter((calculator) => calculator !== id));
-	};
+	const { data: calculators } = useCalculatorsQuery();
+	const { mutate: addCalculator } = useAddCalculatorMutation();
 
 	return (
 		<div className='container mx-auto p-2'>
@@ -28,16 +24,18 @@ export default function SWPPage() {
 				expected returns.
 			</p>
 			<div className='flex justify-end'>
-				<Button onClick={addCalculator}>Add Calculator</Button>
+				<Button onClick={() => addCalculator()}>
+					<PlusIcon />
+					Add Calculator
+				</Button>
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-				{calculators.map((id, index) => (
+				{calculators.map((calculator, index) => (
 					<SWPCalculatorCard
-						key={id}
-						id={id}
+						key={calculator.id}
 						index={index}
+						calculator={calculator}
 						canRemove={calculators.length > 1 || index !== 0}
-						removeCalculator={removeCalculator}
 					/>
 				))}
 			</div>

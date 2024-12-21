@@ -24,15 +24,19 @@ import {
 } from '@/features/calculators/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { SWPCalculator } from '@/features/calculators/lib/types';
+import {
+	useRemoveCalculatorMutation,
+	useUpdateCalculatorMutation,
+} from '@/features/calculators/hooks/swp';
 
 const schema = z.object({
-	totalInvestment: z.coerce.number().min(1, {
+	totalInvestmentAmount: z.coerce.number().min(1, {
 		message: 'Total Investment cannot be less than 1',
 	}),
-	monthlyWithdrawal: z.coerce
+	monthlyWithdrawalAmount: z.coerce
 		.number()
 		.min(1, { message: 'Monthly Withdrawal cannot be less than 1' }),
 	annualInterestPercent: z.coerce.number().min(-99, {
@@ -45,12 +49,12 @@ const schema = z.object({
 
 const formFields = [
 	{
-		name: 'totalInvestment',
+		name: 'totalInvestmentAmount',
 		label: 'Total Investment',
 		description: 'Enter the total investment amount',
 	},
 	{
-		name: 'monthlyWithdrawal',
+		name: 'monthlyWithdrawalAmount',
 		label: 'Monthly Withdrawal',
 		description: 'Enter the monthly withdrawal amount',
 	},
@@ -67,51 +71,34 @@ const formFields = [
 ];
 
 export default function SWPCalculatorCard({
-	id,
 	index,
+	calculator,
 	canRemove,
-	removeCalculator,
 }: {
-	id: string;
 	index: number;
+	calculator: SWPCalculator;
 	canRemove: boolean;
-	removeCalculator: (id: string) => void;
 }) {
+	const { mutate: updateCalculator } = useUpdateCalculatorMutation();
+	const { mutate: removeCalculator } = useRemoveCalculatorMutation();
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
-		defaultValues: {
-			totalInvestment: 1000000,
-			monthlyWithdrawal: 10000,
-			annualInflationPercent: 8,
-			annualInterestPercent: 10,
-		},
+		defaultValues: calculator,
 	});
 
-	const [result, setResult] = useState({
-		estimatedWithdrawalAmount: 0,
-		estimatedNumberOfYears: 0,
-	});
+	const result = calculateSwpResult(
+		calculator.totalInvestmentAmount,
+		calculator.monthlyWithdrawalAmount,
+		calculator.annualInterestPercent,
+		calculator.annualInflationPercent
+	);
 
-	const totalInvestmentAmount = Number(form.watch('totalInvestment'));
-	const monthlyWithdrawalAmount = Number(form.watch('monthlyWithdrawal'));
-	const annualInterestPercent = Number(form.watch('annualInterestPercent'));
-	const annualInflationPercent = Number(form.watch('annualInflationPercent'));
-
-	useEffect(() => {
-		setResult(
-			calculateSwpResult(
-				totalInvestmentAmount,
-				monthlyWithdrawalAmount,
-				annualInterestPercent,
-				annualInflationPercent
-			)
-		);
-	}, [
-		totalInvestmentAmount,
-		monthlyWithdrawalAmount,
-		annualInterestPercent,
-		annualInflationPercent,
-	]);
+	function onFormChange(data: z.infer<typeof schema>) {
+		updateCalculator({
+			...calculator,
+			...data,
+		});
+	}
 
 	return (
 		<Card className='mx-auto my-10 p-2 rounded-lg shadow-md w-full'>
@@ -119,7 +106,7 @@ export default function SWPCalculatorCard({
 				<div className='flex items-center justify-between'>
 					<CardTitle>SWP Calculator {index + 1}</CardTitle>
 					{canRemove && (
-						<Button onClick={() => removeCalculator(id)}>
+						<Button onClick={() => removeCalculator(calculator.id)}>
 							<Trash2 className='size-4' />
 						</Button>
 					)}
@@ -128,7 +115,9 @@ export default function SWPCalculatorCard({
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
-					<form onChange={form.handleSubmit(() => {})} className='space-y-4'>
+					<form
+						onChange={form.handleSubmit(onFormChange)}
+						className='space-y-4'>
 						{formFields.map((formField) => (
 							<FormField
 								key={formField.name}
@@ -148,7 +137,7 @@ export default function SWPCalculatorCard({
 						))}
 					</form>
 				</Form>
-				{totalInvestmentAmount !== 0 && (
+				{calculator.totalInvestmentAmount !== 0 && (
 					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
 						<table className='w-full'>
 							<tbody>
@@ -157,7 +146,7 @@ export default function SWPCalculatorCard({
 										Total Investment:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(totalInvestmentAmount)}
+										{displayCurrencyAmount(calculator.totalInvestmentAmount)}
 									</td>
 								</tr>
 								<tr>
