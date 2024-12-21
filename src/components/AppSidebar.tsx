@@ -41,7 +41,7 @@ const data = [
 				url: '/calculators/swp',
 			},
 			{
-				title: 'SIP-SWP Calculator',
+				title: 'SIP + SWP Calculator',
 				url: '/calculators/sip-swp',
 			},
 		],
