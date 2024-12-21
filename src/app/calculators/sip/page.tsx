@@ -3,6 +3,7 @@ import { useState } from 'react';
 import SIPCalculatorCard from '@/features/calculators/components/SIPCalculatorCard';
 import { Button } from '@/components/ui/button';
 import { v7 } from 'uuid';
+import { PlusIcon } from 'lucide-react';
 
 export default function SIPPage() {
 	const [calculators, setCalculators] = useState([v7()]);
@@ -28,7 +29,10 @@ export default function SIPPage() {
 				returns.
 			</p>
 			<div className='flex justify-end'>
-				<Button onClick={addCalculator}>Add Calculator</Button>
+				<Button onClick={addCalculator}>
+					<PlusIcon />
+					Add Calculator
+				</Button>
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{calculators.map((id, index) => (
