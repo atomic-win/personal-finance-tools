@@ -1,8 +1,8 @@
-import { SWPCalculator } from '@/features/calculators/lib/types';
+import { SwpCalculator } from '@/features/calculators/lib/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { NIL, v7 } from 'uuid';
 
-const defaultSWPCalculator: SWPCalculator = {
+const defaultSWPCalculator: SwpCalculator = {
 	id: NIL,
 	totalInvestmentAmount: 100000,
 	monthlyWithdrawalAmount: 5000,
@@ -13,7 +13,7 @@ const defaultSWPCalculator: SWPCalculator = {
 export function useCalculatorsQuery() {
 	return useQuery({
 		queryKey: ['calculators', 'swp'],
-		initialData: [] as SWPCalculator[],
+		initialData: [] as SwpCalculator[],
 	});
 }
 
@@ -27,12 +27,12 @@ export function useAddCalculatorMutation() {
 				queryKey: ['calculators', 'swp'],
 			});
 
-			const previousData = queryClient.getQueryData<SWPCalculator[]>([
+			const previousData = queryClient.getQueryData<SwpCalculator[]>([
 				'calculators',
 				'swp',
 			]);
 
-			queryClient.setQueryData<SWPCalculator[]>(
+			queryClient.setQueryData<SwpCalculator[]>(
 				['calculators', 'swp'],
 				[
 					...(previousData ?? []),
@@ -49,7 +49,7 @@ export function useAddCalculatorMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				['calculators', 'swp'],
-				(context as { previousData: SWPCalculator[] }).previousData
+				(context as { previousData: SwpCalculator[] }).previousData
 			);
 		},
 	});
@@ -60,17 +60,17 @@ export function useUpdateCalculatorMutation() {
 
 	return useMutation({
 		mutationKey: ['calculators', 'swp', 'update'],
-		mutationFn: async (calculator: SWPCalculator) => {
+		mutationFn: async (calculator: SwpCalculator) => {
 			await queryClient.cancelQueries({
 				queryKey: ['calculators', 'swp'],
 			});
 
-			const previousData = queryClient.getQueryData<SWPCalculator[]>([
+			const previousData = queryClient.getQueryData<SwpCalculator[]>([
 				'calculators',
 				'swp',
 			]);
 
-			queryClient.setQueryData<SWPCalculator[]>(
+			queryClient.setQueryData<SwpCalculator[]>(
 				['calculators', 'swp'],
 				previousData?.map((c) => (c.id === calculator.id ? calculator : c))
 			);
@@ -81,7 +81,7 @@ export function useUpdateCalculatorMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				['calculators', 'swp'],
-				(context as { previousData: SWPCalculator[] }).previousData
+				(context as { previousData: SwpCalculator[] }).previousData
 			);
 		},
 	});
@@ -97,12 +97,12 @@ export function useRemoveCalculatorMutation() {
 				queryKey: ['calculators', 'swp'],
 			});
 
-			const previousData = queryClient.getQueryData<SWPCalculator[]>([
+			const previousData = queryClient.getQueryData<SwpCalculator[]>([
 				'calculators',
 				'swp',
 			]);
 
-			queryClient.setQueryData<SWPCalculator[]>(
+			queryClient.setQueryData<SwpCalculator[]>(
 				['calculators', 'swp'],
 				previousData?.filter((c) => c.id !== id)
 			);
@@ -113,7 +113,7 @@ export function useRemoveCalculatorMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				['calculators', 'swp'],
-				(context as { previousData: SWPCalculator[] }).previousData
+				(context as { previousData: SwpCalculator[] }).previousData
 			);
 		},
 	});

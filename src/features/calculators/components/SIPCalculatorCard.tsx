@@ -25,7 +25,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { SIPCalculator } from '@/features/calculators/lib/types';
+import { SipCalculator } from '@/features/calculators/lib/types';
 import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
@@ -83,7 +83,7 @@ export default function SIPCalculatorCard({
 	canRemove,
 }: {
 	index: number;
-	calculator: SIPCalculator;
+	calculator: SipCalculator;
 	canRemove: boolean;
 }) {
 	const { mutate: updateCalculator } = useUpdateCalculatorMutation();

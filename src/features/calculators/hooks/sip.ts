@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { NIL, v7 } from 'uuid';
-import { SIPCalculator } from '@/features/calculators/lib/types';
+import { SipCalculator } from '@/features/calculators/lib/types';
 
-const defaultSIPCalculator: SIPCalculator = {
+const defaultSIPCalculator: SipCalculator = {
 	id: NIL,
 	lumpsumAmount: 0,
 	monthlyInvestment: 500,
@@ -14,7 +14,7 @@ const defaultSIPCalculator: SIPCalculator = {
 export function useCalculatorsQuery() {
 	return useQuery({
 		queryKey: ['calculators', 'sip'],
-		initialData: [] as SIPCalculator[],
+		initialData: [] as SipCalculator[],
 	});
 }
 
@@ -28,12 +28,12 @@ export function useAddCalculatorMutation() {
 				queryKey: ['calculators', 'sip'],
 			});
 
-			const previousData = queryClient.getQueryData<SIPCalculator[]>([
+			const previousData = queryClient.getQueryData<SipCalculator[]>([
 				'calculators',
 				'sip',
 			]);
 
-			queryClient.setQueryData<SIPCalculator[]>(
+			queryClient.setQueryData<SipCalculator[]>(
 				['calculators', 'sip'],
 				[
 					...(previousData ?? []),
@@ -50,7 +50,7 @@ export function useAddCalculatorMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				['calculators', 'sip'],
-				(context as { previousData: SIPCalculator[] }).previousData
+				(context as { previousData: SipCalculator[] }).previousData
 			);
 		},
 	});
@@ -61,17 +61,17 @@ export function useUpdateCalculatorMutation() {
 
 	return useMutation({
 		mutationKey: ['calculators', 'sip', 'update'],
-		mutationFn: async (calculator: SIPCalculator) => {
+		mutationFn: async (calculator: SipCalculator) => {
 			await queryClient.cancelQueries({
 				queryKey: ['calculators', 'sip'],
 			});
 
-			const previousData = queryClient.getQueryData<SIPCalculator[]>([
+			const previousData = queryClient.getQueryData<SipCalculator[]>([
 				'calculators',
 				'sip',
 			]);
 
-			queryClient.setQueryData<SIPCalculator[]>(
+			queryClient.setQueryData<SipCalculator[]>(
 				['calculators', 'sip'],
 				(previousData ?? []).map((c) =>
 					c.id === calculator.id ? calculator : c
@@ -84,7 +84,7 @@ export function useUpdateCalculatorMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				['calculators', 'sip'],
-				(context as { previousData: SIPCalculator[] }).previousData
+				(context as { previousData: SipCalculator[] }).previousData
 			);
 		},
 	});
@@ -100,12 +100,12 @@ export function useRemoveCalculatorMutation() {
 				queryKey: ['calculators', 'sip'],
 			});
 
-			const previousData = queryClient.getQueryData<SIPCalculator[]>([
+			const previousData = queryClient.getQueryData<SipCalculator[]>([
 				'calculators',
 				'sip',
 			]);
 
-			queryClient.setQueryData<SIPCalculator[]>(
+			queryClient.setQueryData<SipCalculator[]>(
 				['calculators', 'sip'],
 				(previousData ?? []).filter((calculator) => calculator.id !== id)
 			);
@@ -116,7 +116,7 @@ export function useRemoveCalculatorMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				['calculators', 'sip'],
-				(context as { previousData: SIPCalculator[] }).previousData
+				(context as { previousData: SipCalculator[] }).previousData
 			);
 		},
 	});

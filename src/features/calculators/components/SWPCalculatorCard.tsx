@@ -26,7 +26,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { SWPCalculator } from '@/features/calculators/lib/types';
+import { SwpCalculator } from '@/features/calculators/lib/types';
 import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
@@ -76,7 +76,7 @@ export default function SWPCalculatorCard({
 	canRemove,
 }: {
 	index: number;
-	calculator: SWPCalculator;
+	calculator: SwpCalculator;
 	canRemove: boolean;
 }) {
 	const { mutate: updateCalculator } = useUpdateCalculatorMutation();

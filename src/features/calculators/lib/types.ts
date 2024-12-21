@@ -1,4 +1,4 @@
-export type SIPCalculator = {
+export type SipCalculator = {
 	id: string;
 	lumpsumAmount: number;
 	monthlyInvestment: number;
@@ -7,7 +7,7 @@ export type SIPCalculator = {
 	numberOfYears: number;
 };
 
-export type SWPCalculator = {
+export type SwpCalculator = {
 	id: string;
 	totalInvestmentAmount: number;
 	monthlyWithdrawalAmount: number;
