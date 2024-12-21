@@ -18,45 +18,47 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
-	calculateSwpResult,
+	calculateSipResult,
 	displayCurrencyAmount,
-	displayYearlyTimeDuration,
 } from '@/features/calculators/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { SwpCalculator } from '@/features/calculators/lib/types';
+import { SipCalculator } from '@/features/calculators/lib/types';
 import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
-} from '@/features/calculators/hooks/swp';
+} from '@/features/calculators/hooks/sip';
 
 const schema = z.object({
-	totalInvestmentAmount: z.coerce.number().min(1, {
-		message: 'Total Investment cannot be less than 1',
+	lumpsumAmount: z.coerce.number().min(0, {
+		message: 'Lumpsum Amount cannot be less than 0',
 	}),
-	monthlyWithdrawalAmount: z.coerce
+	monthlyInvestment: z.coerce
 		.number()
-		.min(1, { message: 'Monthly Withdrawal cannot be less than 1' }),
+		.min(1, { message: 'Monthly Investment cannot be less than 1' }),
+	annualStepUpPercent: z.coerce.number().min(-99, {
+		message: 'Annual Step-Up Percent cannot be less than or equal to -100%',
+	}),
 	annualInterestPercent: z.coerce.number().min(-99, {
 		message: 'Annual Interest Percent cannot be less than or equal to -100%',
 	}),
-	annualInflationPercent: z.coerce.number().min(-99, {
-		message: 'Annual Inflation Percent cannot be less than or equal to -100%',
-	}),
+	numberOfYears: z.coerce
+		.number()
+		.min(1, { message: 'Investment Duration cannot be less than 1 year' }),
 });
 
 const formFields = [
 	{
-		name: 'totalInvestmentAmount',
-		label: 'Total Investment',
-		description: 'Enter the total investment amount',
+		name: 'lumpsumAmount',
+		label: 'Lumpsum Amount',
+		description: 'Enter the lumpsum amount',
 	},
 	{
-		name: 'monthlyWithdrawalAmount',
-		label: 'Monthly Withdrawal',
-		description: 'Enter the monthly withdrawal amount',
+		name: 'monthlyInvestment',
+		label: 'Monthly Installment',
+		description: 'Enter the monthly installment',
 	},
 	{
 		name: 'annualInterestPercent',
@@ -64,54 +66,58 @@ const formFields = [
 		description: 'Enter the annual interest rate',
 	},
 	{
-		name: 'annualInflationPercent',
-		label: 'Annual Inflation Rate (%)',
-		description: 'Enter the annual inflation rate',
+		name: 'annualStepUpPercent',
+		label: 'Annual Step-Up (%)',
+		description: 'Enter the annual step-up percentage',
+	},
+	{
+		name: 'numberOfYears',
+		label: 'Investment Duration (Years)',
+		description: 'Enter the investment duration in years',
 	},
 ];
 
-export default function SWPCalculatorCard({
+export default function SipCalculatorCard({
 	index,
 	calculator,
 	canRemove,
 }: {
 	index: number;
-	calculator: SwpCalculator;
+	calculator: SipCalculator;
 	canRemove: boolean;
 }) {
 	const { mutate: updateCalculator } = useUpdateCalculatorMutation();
 	const { mutate: removeCalculator } = useRemoveCalculatorMutation();
+
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: calculator,
 	});
 
-	const result = calculateSwpResult(
-		calculator.totalInvestmentAmount,
-		calculator.monthlyWithdrawalAmount,
+	const result = calculateSipResult(
+		calculator.lumpsumAmount,
+		calculator.monthlyInvestment,
 		calculator.annualInterestPercent,
-		calculator.annualInflationPercent
+		calculator.annualStepUpPercent,
+		calculator.numberOfYears
 	);
 
 	function onFormChange(data: z.infer<typeof schema>) {
-		updateCalculator({
-			...calculator,
-			...data,
-		});
+		updateCalculator({ ...calculator, ...data });
 	}
 
 	return (
 		<Card className='mx-auto my-10 p-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<div className='flex items-center justify-between'>
-					<CardTitle>SWP Calculator {index + 1}</CardTitle>
+					<CardTitle>SIP Calculator {index + 1}</CardTitle>
 					{canRemove && (
 						<Button onClick={() => removeCalculator(calculator.id)}>
 							<Trash2 className='size-4' />
 						</Button>
 					)}
 				</div>
-				<CardDescription>Calculate your SWP investments</CardDescription>
+				<CardDescription>Calculate your SIP investments</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
@@ -137,32 +143,34 @@ export default function SWPCalculatorCard({
 						))}
 					</form>
 				</Form>
-				{calculator.totalInvestmentAmount !== 0 && (
+				{result.totalInvestedAmount !== 0 && (
 					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
 						<table className='w-full'>
 							<tbody>
 								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Total Investment:
+									<td className='text-green-700 font-semibold'>
+										Estimated Total Value:
 									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(calculator.totalInvestmentAmount)}
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Estimated Total Withdrawal:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.estimatedWithdrawalAmount)}
+									<td className='text-green-700 font-semibold'>
+										{displayCurrencyAmount(result.estimatedTotalValue)}
 									</td>
 								</tr>
 								<tr>
 									<td className='text-sm text-green-700 font-semibold'>
-										Estimated Corpus Lasted:
+										Total Invested Amount:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{displayYearlyTimeDuration(result.estimatedNumberOfYears)}
+										{displayCurrencyAmount(result.totalInvestedAmount)} (
+										{result.investedAmountPercent.toFixed(2)}%)
+									</td>
+								</tr>
+								<tr>
+									<td className='text-sm text-green-700 font-semibold'>
+										Estimated Returns:
+									</td>
+									<td className='text-sm text-green-700 font-semibold'>
+										{displayCurrencyAmount(result.estimatedReturns)} (
+										{result.estimatedReturnsPercent.toFixed(2)}%)
 									</td>
 								</tr>
 							</tbody>

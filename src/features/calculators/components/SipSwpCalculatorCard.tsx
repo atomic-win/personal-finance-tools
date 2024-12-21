@@ -95,7 +95,7 @@ const formFields = [
 	},
 ];
 
-export default function CalculatorCard({
+export default function SipSwpCalculatorCard({
 	index,
 	calculator,
 	canRemove,

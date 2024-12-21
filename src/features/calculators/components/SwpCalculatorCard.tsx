@@ -18,47 +18,45 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
-	calculateSipResult,
+	calculateSwpResult,
 	displayCurrencyAmount,
+	displayYearlyTimeDuration,
 } from '@/features/calculators/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { SipCalculator } from '@/features/calculators/lib/types';
+import { SwpCalculator } from '@/features/calculators/lib/types';
 import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
-} from '@/features/calculators/hooks/sip';
+} from '@/features/calculators/hooks/swp';
 
 const schema = z.object({
-	lumpsumAmount: z.coerce.number().min(0, {
-		message: 'Lumpsum Amount cannot be less than 0',
+	totalInvestmentAmount: z.coerce.number().min(1, {
+		message: 'Total Investment cannot be less than 1',
 	}),
-	monthlyInvestment: z.coerce
+	monthlyWithdrawalAmount: z.coerce
 		.number()
-		.min(1, { message: 'Monthly Investment cannot be less than 1' }),
-	annualStepUpPercent: z.coerce.number().min(-99, {
-		message: 'Annual Step-Up Percent cannot be less than or equal to -100%',
-	}),
+		.min(1, { message: 'Monthly Withdrawal cannot be less than 1' }),
 	annualInterestPercent: z.coerce.number().min(-99, {
 		message: 'Annual Interest Percent cannot be less than or equal to -100%',
 	}),
-	numberOfYears: z.coerce
-		.number()
-		.min(1, { message: 'Investment Duration cannot be less than 1 year' }),
+	annualInflationPercent: z.coerce.number().min(-99, {
+		message: 'Annual Inflation Percent cannot be less than or equal to -100%',
+	}),
 });
 
 const formFields = [
 	{
-		name: 'lumpsumAmount',
-		label: 'Lumpsum Amount',
-		description: 'Enter the lumpsum amount',
+		name: 'totalInvestmentAmount',
+		label: 'Total Investment',
+		description: 'Enter the total investment amount',
 	},
 	{
-		name: 'monthlyInvestment',
-		label: 'Monthly Installment',
-		description: 'Enter the monthly installment',
+		name: 'monthlyWithdrawalAmount',
+		label: 'Monthly Withdrawal',
+		description: 'Enter the monthly withdrawal amount',
 	},
 	{
 		name: 'annualInterestPercent',
@@ -66,58 +64,54 @@ const formFields = [
 		description: 'Enter the annual interest rate',
 	},
 	{
-		name: 'annualStepUpPercent',
-		label: 'Annual Step-Up (%)',
-		description: 'Enter the annual step-up percentage',
-	},
-	{
-		name: 'numberOfYears',
-		label: 'Investment Duration (Years)',
-		description: 'Enter the investment duration in years',
+		name: 'annualInflationPercent',
+		label: 'Annual Inflation Rate (%)',
+		description: 'Enter the annual inflation rate',
 	},
 ];
 
-export default function SIPCalculatorCard({
+export default function SwpCalculatorCard({
 	index,
 	calculator,
 	canRemove,
 }: {
 	index: number;
-	calculator: SipCalculator;
+	calculator: SwpCalculator;
 	canRemove: boolean;
 }) {
 	const { mutate: updateCalculator } = useUpdateCalculatorMutation();
 	const { mutate: removeCalculator } = useRemoveCalculatorMutation();
-
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: calculator,
 	});
 
-	const result = calculateSipResult(
-		calculator.lumpsumAmount,
-		calculator.monthlyInvestment,
+	const result = calculateSwpResult(
+		calculator.totalInvestmentAmount,
+		calculator.monthlyWithdrawalAmount,
 		calculator.annualInterestPercent,
-		calculator.annualStepUpPercent,
-		calculator.numberOfYears
+		calculator.annualInflationPercent
 	);
 
 	function onFormChange(data: z.infer<typeof schema>) {
-		updateCalculator({ ...calculator, ...data });
+		updateCalculator({
+			...calculator,
+			...data,
+		});
 	}
 
 	return (
 		<Card className='mx-auto my-10 p-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<div className='flex items-center justify-between'>
-					<CardTitle>SIP Calculator {index + 1}</CardTitle>
+					<CardTitle>SWP Calculator {index + 1}</CardTitle>
 					{canRemove && (
 						<Button onClick={() => removeCalculator(calculator.id)}>
 							<Trash2 className='size-4' />
 						</Button>
 					)}
 				</div>
-				<CardDescription>Calculate your SIP investments</CardDescription>
+				<CardDescription>Calculate your SWP investments</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
@@ -143,34 +137,32 @@ export default function SIPCalculatorCard({
 						))}
 					</form>
 				</Form>
-				{result.totalInvestedAmount !== 0 && (
+				{calculator.totalInvestmentAmount !== 0 && (
 					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
 						<table className='w-full'>
 							<tbody>
 								<tr>
-									<td className='text-green-700 font-semibold'>
-										Estimated Total Value:
+									<td className='text-sm text-green-700 font-semibold'>
+										Total Investment:
 									</td>
-									<td className='text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.estimatedTotalValue)}
+									<td className='text-sm text-green-700 font-semibold'>
+										{displayCurrencyAmount(calculator.totalInvestmentAmount)}
 									</td>
 								</tr>
 								<tr>
 									<td className='text-sm text-green-700 font-semibold'>
-										Total Invested Amount:
+										Estimated Total Withdrawal:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.totalInvestedAmount)} (
-										{result.investedAmountPercent.toFixed(2)}%)
+										{displayCurrencyAmount(result.estimatedWithdrawalAmount)}
 									</td>
 								</tr>
 								<tr>
 									<td className='text-sm text-green-700 font-semibold'>
-										Estimated Returns:
+										Estimated Corpus Lasted:
 									</td>
 									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.estimatedReturns)} (
-										{result.estimatedReturnsPercent.toFixed(2)}%)
+										{displayYearlyTimeDuration(result.estimatedNumberOfYears)}
 									</td>
 								</tr>
 							</tbody>

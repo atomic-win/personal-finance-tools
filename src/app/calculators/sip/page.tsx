@@ -1,5 +1,5 @@
 'use client';
-import SIPCalculatorCard from '@/features/calculators/components/SIPCalculatorCard';
+import SipCalculatorCard from '@/features/calculators/components/SipCalculatorCard';
 import { Button } from '@/components/ui/button';
 import { PlusIcon } from 'lucide-react';
 import {
@@ -31,7 +31,7 @@ export default function Page() {
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{(calculators || []).map((calculator, index) => (
-					<SIPCalculatorCard
+					<SipCalculatorCard
 						key={calculator.id}
 						index={index}
 						calculator={calculator}

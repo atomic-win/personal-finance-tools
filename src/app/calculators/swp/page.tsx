@@ -1,5 +1,5 @@
 'use client';
-import SWPCalculatorCard from '@/features/calculators/components/SWPCalculatorCard';
+import SwpCalculatorCard from '@/features/calculators/components/SwpCalculatorCard';
 import { Button } from '@/components/ui/button';
 import {
 	useAddCalculatorMutation,
@@ -7,7 +7,7 @@ import {
 } from '@/features/calculators/hooks/swp';
 import { PlusIcon } from 'lucide-react';
 
-export default function SWPPage() {
+export default function Page() {
 	const { data: calculators } = useCalculatorsQuery();
 	const { mutate: addCalculator } = useAddCalculatorMutation();
 
@@ -31,7 +31,7 @@ export default function SWPPage() {
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{calculators.map((calculator, index) => (
-					<SWPCalculatorCard
+					<SwpCalculatorCard
 						key={calculator.id}
 						index={index}
 						calculator={calculator}

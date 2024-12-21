@@ -1,5 +1,5 @@
 'use client';
-import SIPSWPCalculatorCard from '@/features/calculators/components/SIPSWPCalculatorCard';
+import SipSwpCalculatorCard from '@/features/calculators/components/SipSwpCalculatorCard';
 import { Button } from '@/components/ui/button';
 import {
 	useAddCalculatorMutation,
@@ -29,7 +29,7 @@ export default function Page() {
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{(calculators || []).map((calculator, index) => (
-					<SIPSWPCalculatorCard
+					<SipSwpCalculatorCard
 						key={calculator.id}
 						index={index}
 						calculator={calculator}
