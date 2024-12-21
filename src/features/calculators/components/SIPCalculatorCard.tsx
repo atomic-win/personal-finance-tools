@@ -23,9 +23,13 @@ import {
 } from '@/features/calculators/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { SIPCalculator } from '@/features/calculators/lib/types';
+import {
+	useRemoveCalculatorMutation,
+	useUpdateCalculatorMutation,
+} from '@/features/calculators/hooks/sip';
 
 const schema = z.object({
 	lumpsumAmount: z.coerce.number().min(0, {
@@ -74,58 +78,33 @@ const formFields = [
 ];
 
 export default function SIPCalculatorCard({
-	id,
 	index,
+	calculator,
 	canRemove,
-	removeCalculator,
 }: {
-	id: string;
 	index: number;
+	calculator: SIPCalculator;
 	canRemove: boolean;
-	removeCalculator: (id: string) => void;
 }) {
+	const { mutate: updateCalculator } = useUpdateCalculatorMutation();
+	const { mutate: removeCalculator } = useRemoveCalculatorMutation();
+
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
-		defaultValues: {
-			lumpsumAmount: 0,
-			monthlyInvestment: 500,
-			annualStepUpPercent: 10,
-			annualInterestPercent: 10,
-			numberOfYears: 10,
-		},
+		defaultValues: calculator,
 	});
 
-	const [result, setResult] = useState({
-		totalInvestedAmount: 0,
-		estimatedTotalValue: 0,
-		estimatedReturns: 0,
-		investedAmountPercent: 0,
-		estimatedReturnsPercent: 0,
-	});
+	const result = calculateSipResult(
+		calculator.lumpsumAmount,
+		calculator.monthlyInvestment,
+		calculator.annualInterestPercent,
+		calculator.annualStepUpPercent,
+		calculator.numberOfYears
+	);
 
-	const lumpsumAmount = Number(form.watch('lumpsumAmount'));
-	const monthlyInvestment = Number(form.watch('monthlyInvestment'));
-	const annualStepUpPercent = Number(form.watch('annualStepUpPercent'));
-	const annualInterestPercent = Number(form.watch('annualInterestPercent'));
-	const numberOfYears = Number(form.watch('numberOfYears'));
-
-	React.useEffect(() => {
-		setResult(
-			calculateSipResult(
-				lumpsumAmount,
-				monthlyInvestment,
-				annualInterestPercent,
-				annualStepUpPercent,
-				numberOfYears
-			)
-		);
-	}, [
-		lumpsumAmount,
-		monthlyInvestment,
-		annualStepUpPercent,
-		annualInterestPercent,
-		numberOfYears,
-	]);
+	function onFormChange(data: z.infer<typeof schema>) {
+		updateCalculator({ ...calculator, ...data });
+	}
 
 	return (
 		<Card className='mx-auto my-10 p-2 rounded-lg shadow-md w-full'>
@@ -133,7 +112,7 @@ export default function SIPCalculatorCard({
 				<div className='flex items-center justify-between'>
 					<CardTitle>SIP Calculator {index + 1}</CardTitle>
 					{canRemove && (
-						<Button onClick={() => removeCalculator(id)}>
+						<Button onClick={() => removeCalculator(calculator.id)}>
 							<Trash2 className='size-4' />
 						</Button>
 					)}
@@ -142,7 +121,9 @@ export default function SIPCalculatorCard({
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
-					<form onChange={form.handleSubmit(() => {})} className='space-y-4'>
+					<form
+						onChange={form.handleSubmit(onFormChange)}
+						className='space-y-4'>
 						{formFields.map((formField) => (
 							<FormField
 								key={formField.name}
