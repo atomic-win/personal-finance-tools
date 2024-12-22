@@ -26,26 +26,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { SwpCalculator } from '@/features/calculators/lib/types';
+import {
+	SwpCalculator,
+	swpCalculatorSchema,
+} from '@/features/calculators/lib/types';
 import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
 } from '@/features/calculators/hooks/calculators';
-
-const schema = z.object({
-	totalInvestmentAmount: z.coerce.number().min(1, {
-		message: 'Total Investment cannot be less than 1',
-	}),
-	monthlyWithdrawalAmount: z.coerce
-		.number()
-		.min(1, { message: 'Monthly Withdrawal cannot be less than 1' }),
-	annualInterestPercent: z.coerce.number().min(-99, {
-		message: 'Annual Interest Percent cannot be less than or equal to -100%',
-	}),
-	annualInflationPercent: z.coerce.number().min(-99, {
-		message: 'Annual Inflation Percent cannot be less than or equal to -100%',
-	}),
-});
 
 const formFields = [
 	{
@@ -83,8 +71,8 @@ export default function SwpCalculatorCard({
 		useUpdateCalculatorMutation<SwpCalculator>('swp');
 	const { mutate: removeCalculator } =
 		useRemoveCalculatorMutation<SwpCalculator>('swp');
-	const form = useForm<z.infer<typeof schema>>({
-		resolver: zodResolver(schema),
+	const form = useForm<SwpCalculator>({
+		resolver: zodResolver(swpCalculatorSchema),
 		defaultValues: calculator,
 	});
 
@@ -95,7 +83,7 @@ export default function SwpCalculatorCard({
 		calculator.annualInflationPercent
 	);
 
-	function onFormChange(data: z.infer<typeof schema>) {
+	function onFormChange(data: SwpCalculator) {
 		updateCalculator({
 			...calculator,
 			...data,
@@ -124,7 +112,9 @@ export default function SwpCalculatorCard({
 							<FormField
 								key={formField.name}
 								control={form.control}
-								name={formField.name as keyof z.infer<typeof schema>}
+								name={
+									formField.name as keyof z.infer<typeof swpCalculatorSchema>
+								}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{formField.label}</FormLabel>

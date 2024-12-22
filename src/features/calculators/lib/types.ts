@@ -20,6 +20,21 @@ export const sipCalculatorSchema = z.object({
 		.min(1, { message: 'Investment Duration cannot be less than 1 year' }),
 });
 
+export const swpCalculatorSchema = z.object({
+	totalInvestmentAmount: z.coerce.number().min(1, {
+		message: 'Total Investment cannot be less than 1',
+	}),
+	monthlyWithdrawalAmount: z.coerce
+		.number()
+		.min(1, { message: 'Monthly Withdrawal cannot be less than 1' }),
+	annualInterestPercent: z.coerce.number().min(-99, {
+		message: 'Annual Interest Percent cannot be less than or equal to -100%',
+	}),
+	annualInflationPercent: z.coerce.number().min(-99, {
+		message: 'Annual Inflation Percent cannot be less than or equal to -100%',
+	}),
+});
+
 export type Calculator = {
 	id: string;
 	type: CalculatorType;
@@ -31,11 +46,7 @@ export type SipCalculator = Calculator & {
 
 export type SwpCalculator = Calculator & {
 	type: 'swp';
-	totalInvestmentAmount: number;
-	monthlyWithdrawalAmount: number;
-	annualInterestPercent: number;
-	annualInflationPercent: number;
-};
+} & z.infer<typeof swpCalculatorSchema>;
 
 export type SipSwpCalculator = Calculator & {
 	type: 'sip-swp';
