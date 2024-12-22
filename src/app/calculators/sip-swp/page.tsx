@@ -1,19 +1,18 @@
 'use client';
-import { useState } from 'react';
-import SIPSWPCalculatorCard from '@/features/calculators/components/SIPSWPCalculatorCard';
+import SipSwpCalculatorCard from '@/features/calculators/components/SipSwpCalculatorCard';
 import { Button } from '@/components/ui/button';
-import { v7 } from 'uuid';
+import {
+	useAddCalculatorMutation,
+	useCalculatorsQuery,
+} from '@/features/calculators/hooks/calculators';
+import { PlusIcon } from 'lucide-react';
+import { SipSwpCalculator } from '@/features/calculators/lib/types';
 
 export default function Page() {
-	const [calculators, setCalculators] = useState([v7()]);
-
-	const addCalculator = () => {
-		setCalculators([...calculators, v7()]);
-	};
-
-	const removeCalculator = (id: string) => {
-		setCalculators(calculators.filter((calculator) => calculator !== id));
-	};
+	const { data: calculators } =
+		useCalculatorsQuery<SipSwpCalculator>('sip-swp');
+	const { mutate: addCalculator } =
+		useAddCalculatorMutation<SipSwpCalculator>('sip-swp');
 
 	return (
 		<div className='container mx-auto p-2'>
@@ -26,16 +25,18 @@ export default function Page() {
 				and manage your financial goals effectively.
 			</p>
 			<div className='flex justify-end'>
-				<Button onClick={addCalculator}>Add Calculator</Button>
+				<Button onClick={() => addCalculator()}>
+					<PlusIcon />
+					Add Calculator
+				</Button>
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-				{calculators.map((id, index) => (
-					<SIPSWPCalculatorCard
-						key={id}
-						id={id}
+				{(calculators || []).map((calculator, index) => (
+					<SipSwpCalculatorCard
+						key={calculator.id}
 						index={index}
-						canRemove={calculators.length > 1 || index !== 0}
-						removeCalculator={removeCalculator}
+						calculator={calculator}
+						canRemove={(calculators || []).length > 1}
 					/>
 				))}
 			</div>
