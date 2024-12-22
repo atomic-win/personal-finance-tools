@@ -8,12 +8,12 @@ import {
 import { Calculator } from '@/features/calculators/lib/types';
 
 export default function CalculatorPage<T extends Calculator>({
-	pageTitle,
+	calculatorName,
 	pageDescription,
 	type,
 	CalculatorCard,
 }: {
-	pageTitle: string;
+	calculatorName: string;
 	pageDescription: string;
 	type: T['type'];
 	CalculatorCard: React.ComponentType<{
@@ -27,12 +27,12 @@ export default function CalculatorPage<T extends Calculator>({
 
 	return (
 		<div className='container mx-auto p-2'>
-			<h1 className='text-2xl font-bold mb-4'>{pageTitle}</h1>
+			<h1 className='text-2xl font-bold mb-4'>{calculatorName} Calculator</h1>
 			<p>{pageDescription}</p>
 			<div className='flex justify-end'>
 				<Button onClick={() => addCalculator()}>
 					<PlusIcon />
-					Add Calculator
+					{`Add ${calculatorName} Calculator`}
 				</Button>
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>

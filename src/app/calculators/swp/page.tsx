@@ -8,7 +8,7 @@ export default function Page() {
 
 	return (
 		<CalculatorPage<SwpCalculator>
-			pageTitle='SWP Calculator'
+			calculatorName='SWP'
 			pageDescription={pageDescription}
 			type='swp'
 			CalculatorCard={SwpCalculatorCard}
