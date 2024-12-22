@@ -26,36 +26,14 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { SipSwpCalculator } from '@/features/calculators/lib/types';
+import {
+	SipSwpCalculator,
+	sipSwpCalculatorSchema,
+} from '@/features/calculators/lib/types';
 import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
 } from '@/features/calculators/hooks/calculators';
-
-const schema = z.object({
-	lumpsumAmount: z.coerce.number().min(0, {
-		message: 'Lumpsum Amount cannot be less than 0',
-	}),
-	monthlySipInvestmentAmount: z.coerce
-		.number()
-		.min(1, { message: 'Monthly SIP Investment cannot be less than 1' }),
-	annualSipStepUpPercent: z.coerce.number().min(-99, {
-		message: 'Annual SIP Step-Up Percent cannot be less than or equal to -100%',
-	}),
-	annualInterestPercent: z.coerce.number().min(-99, {
-		message: 'Annual Interest Percent cannot be less than or equal to -100%',
-	}),
-	numberOfSipYears: z.coerce
-		.number()
-		.min(1, { message: 'SIP Investment Duration cannot be less than 1 year' }),
-	monthlySwpWithdrawalAmount: z.coerce
-		.number()
-		.min(1, { message: 'Monthly SWP Withdrawal cannot be less than 1' }),
-	annualInflationPercent: z.coerce.number().min(-99, {
-		message: 'Annual Inflation Percent cannot be less than or equal to -100%',
-	}),
-});
 
 const formFields = [
 	{
@@ -109,8 +87,8 @@ export default function SipSwpCalculatorCard({
 	const { mutate: removeCalculator } =
 		useRemoveCalculatorMutation<SipSwpCalculator>('sip-swp');
 
-	const form = useForm<z.infer<typeof schema>>({
-		resolver: zodResolver(schema),
+	const form = useForm<SipSwpCalculator>({
+		resolver: zodResolver(sipSwpCalculatorSchema),
 		defaultValues: calculator,
 	});
 
@@ -133,7 +111,7 @@ export default function SipSwpCalculatorCard({
 			calculator.annualInflationPercent
 		);
 
-	function onFormChange(data: z.infer<typeof schema>) {
+	function onFormChange(data: SipSwpCalculator) {
 		updateCalculator({ ...calculator, ...data });
 	}
 
@@ -159,7 +137,7 @@ export default function SipSwpCalculatorCard({
 							<FormField
 								key={formField.name}
 								control={form.control}
-								name={formField.name as keyof z.infer<typeof schema>}
+								name={formField.name as keyof SipSwpCalculator}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{formField.label}</FormLabel>
