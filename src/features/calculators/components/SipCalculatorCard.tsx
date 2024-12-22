@@ -25,29 +25,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { SipCalculator } from '@/features/calculators/lib/types';
+import {
+	SipCalculator,
+	sipCalculatorSchema,
+} from '@/features/calculators/lib/types';
 import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
 } from '@/features/calculators/hooks/calculators';
-
-const schema = z.object({
-	lumpsumAmount: z.coerce.number().min(0, {
-		message: 'Lumpsum Amount cannot be less than 0',
-	}),
-	monthlyInvestmentAmount: z.coerce
-		.number()
-		.min(1, { message: 'Monthly Investment cannot be less than 1' }),
-	annualStepUpPercent: z.coerce.number().min(-99, {
-		message: 'Annual Step-Up Percent cannot be less than or equal to -100%',
-	}),
-	annualInterestPercent: z.coerce.number().min(-99, {
-		message: 'Annual Interest Percent cannot be less than or equal to -100%',
-	}),
-	numberOfYears: z.coerce
-		.number()
-		.min(1, { message: 'Investment Duration cannot be less than 1 year' }),
-});
 
 const formFields = [
 	{
@@ -91,8 +76,8 @@ export default function SipCalculatorCard({
 	const { mutate: removeCalculator } =
 		useRemoveCalculatorMutation<SipCalculator>('sip');
 
-	const form = useForm<z.infer<typeof schema>>({
-		resolver: zodResolver(schema),
+	const form = useForm<SipCalculator>({
+		resolver: zodResolver(sipCalculatorSchema),
 		defaultValues: calculator,
 	});
 
@@ -104,7 +89,7 @@ export default function SipCalculatorCard({
 		calculator.numberOfYears
 	);
 
-	function onFormChange(data: z.infer<typeof schema>) {
+	function onFormChange(data: SipCalculator) {
 		updateCalculator({ ...calculator, ...data });
 	}
 
@@ -130,7 +115,9 @@ export default function SipCalculatorCard({
 							<FormField
 								key={formField.name}
 								control={form.control}
-								name={formField.name as keyof z.infer<typeof schema>}
+								name={
+									formField.name as keyof z.infer<typeof sipCalculatorSchema>
+								}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{formField.label}</FormLabel>
