@@ -6,20 +6,27 @@ import {
 	useCalculatorsQuery,
 } from '@/features/calculators/hooks/calculators';
 import { Calculator } from '@/features/calculators/lib/types';
+import CalculatorCard from '@/features/calculators/components/CalculatorCard';
+import { z } from 'zod';
 
 export default function CalculatorPage<T extends Calculator>({
 	calculatorName,
 	pageDescription,
 	type,
-	CalculatorCard,
+	calculatorSchema,
+	formFields,
+	CalculatorResult,
 }: {
 	calculatorName: string;
 	pageDescription: string;
 	type: T['type'];
-	CalculatorCard: React.ComponentType<{
-		index: number;
-		calculator: T;
-	}>;
+	calculatorSchema: z.Schema;
+	formFields: {
+		name: string;
+		label: string;
+		description: string;
+	}[];
+	CalculatorResult: React.ComponentType<{ calculator: T }>;
 }) {
 	const { data: calculators } = useCalculatorsQuery<T>(type);
 	const { mutate: addCalculator } = useAddCalculatorMutation<T>(type);
@@ -36,10 +43,15 @@ export default function CalculatorPage<T extends Calculator>({
 			</div>
 			<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
 				{(calculators || []).map((calculator, index) => (
-					<CalculatorCard
+					<CalculatorCard<T>
 						key={calculator.id}
+						calculatorName={calculatorName}
+						type={type}
+						calculatorSchema={calculatorSchema}
+						formFields={formFields}
 						index={index}
 						calculator={calculator}
+						CalculatorResult={CalculatorResult}
 					/>
 				))}
 			</div>
