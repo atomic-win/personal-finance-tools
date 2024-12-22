@@ -17,11 +17,6 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-	calculateSwpResult,
-	displayCurrencyAmount,
-	displayYearlyTimeDuration,
-} from '@/features/calculators/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -33,6 +28,7 @@ import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
 } from '@/features/calculators/hooks/calculators';
+import SwpCalculatorResult from '@/features/calculators/components/SwpCalculatorResult';
 
 const formFields = [
 	{
@@ -74,13 +70,6 @@ export default function SwpCalculatorCard({
 		resolver: zodResolver(swpCalculatorSchema),
 		defaultValues: calculator,
 	});
-
-	const result = calculateSwpResult(
-		calculator.totalInvestmentAmount,
-		calculator.monthlyWithdrawalAmount,
-		calculator.annualInterestPercent,
-		calculator.annualInflationPercent
-	);
 
 	function onFormChange(data: SwpCalculator) {
 		updateCalculator({
@@ -126,38 +115,7 @@ export default function SwpCalculatorCard({
 						))}
 					</form>
 				</Form>
-				{calculator.totalInvestmentAmount !== 0 && (
-					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
-						<table className='w-full'>
-							<tbody>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Total Investment:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(calculator.totalInvestmentAmount)}
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Estimated Total Withdrawal:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.estimatedWithdrawalAmount)}
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Estimated Corpus Lasted:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayYearlyTimeDuration(result.estimatedNumberOfYears)}
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				)}
+				<SwpCalculatorResult calculator={calculator} />
 			</CardContent>
 		</Card>
 	);
