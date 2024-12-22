@@ -17,12 +17,6 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-	calculateSipResult,
-	calculateSwpResult,
-	displayCurrencyAmount,
-	displayYearlyTimeDuration,
-} from '@/features/calculators/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -34,6 +28,7 @@ import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
 } from '@/features/calculators/hooks/calculators';
+import SipSwpCalculatorResult from '@/features/calculators/components/SipSwpCalculatorResult';
 
 const formFields = [
 	{
@@ -92,25 +87,6 @@ export default function SipSwpCalculatorCard({
 		defaultValues: calculator,
 	});
 
-	const {
-		totalInvestedAmount,
-		estimatedTotalValue: estimatedTotalValueAfterSip,
-	} = calculateSipResult(
-		calculator.lumpsumAmount,
-		calculator.monthlySipInvestmentAmount,
-		calculator.annualSipStepUpPercent,
-		calculator.annualInterestPercent,
-		calculator.numberOfSipYears
-	);
-
-	const { estimatedWithdrawalAmount, estimatedNumberOfYears } =
-		calculateSwpResult(
-			estimatedTotalValueAfterSip,
-			calculator.monthlySwpWithdrawalAmount,
-			calculator.annualInterestPercent,
-			calculator.annualInflationPercent
-		);
-
 	function onFormChange(data: SipSwpCalculator) {
 		updateCalculator({ ...calculator, ...data });
 	}
@@ -152,46 +128,7 @@ export default function SipSwpCalculatorCard({
 						))}
 					</form>
 				</Form>
-				{totalInvestedAmount !== 0 && (
-					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
-						<table className='w-full'>
-							<tbody>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Total Invested Amount:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(totalInvestedAmount)}
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Estimated Total Value After SIP:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(estimatedTotalValueAfterSip)}
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Estimated Total Withdrawal:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(estimatedWithdrawalAmount)}
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Estimated Corpus Lasted:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayYearlyTimeDuration(estimatedNumberOfYears)}
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				)}
+				<SipSwpCalculatorResult calculator={calculator} />
 			</CardContent>
 		</Card>
 	);
