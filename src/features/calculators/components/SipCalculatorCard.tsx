@@ -24,7 +24,6 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import {
 	SipCalculator,
 	sipCalculatorSchema,
@@ -115,9 +114,7 @@ export default function SipCalculatorCard({
 							<FormField
 								key={formField.name}
 								control={form.control}
-								name={
-									formField.name as keyof z.infer<typeof sipCalculatorSchema>
-								}
+								name={formField.name as keyof SipCalculator}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{formField.label}</FormLabel>

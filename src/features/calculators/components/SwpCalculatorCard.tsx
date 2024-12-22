@@ -25,7 +25,6 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import {
 	SwpCalculator,
 	swpCalculatorSchema,
@@ -112,9 +111,7 @@ export default function SwpCalculatorCard({
 							<FormField
 								key={formField.name}
 								control={form.control}
-								name={
-									formField.name as keyof z.infer<typeof swpCalculatorSchema>
-								}
+								name={formField.name as keyof SwpCalculator}
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>{formField.label}</FormLabel>
