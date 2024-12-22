@@ -19,7 +19,6 @@ export default function CalculatorPage<T extends Calculator>({
 	CalculatorCard: React.ComponentType<{
 		index: number;
 		calculator: T;
-		canRemove: boolean;
 	}>;
 }) {
 	const { data: calculators } = useCalculatorsQuery<T>(type);
@@ -41,7 +40,6 @@ export default function CalculatorPage<T extends Calculator>({
 						key={calculator.id}
 						index={index}
 						calculator={calculator}
-						canRemove={(calculators || []).length > 1}
 					/>
 				))}
 			</div>
