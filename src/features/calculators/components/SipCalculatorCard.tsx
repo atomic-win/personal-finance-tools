@@ -17,10 +17,6 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-	calculateSipResult,
-	displayCurrencyAmount,
-} from '@/features/calculators/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
@@ -32,6 +28,7 @@ import {
 	useRemoveCalculatorMutation,
 	useUpdateCalculatorMutation,
 } from '@/features/calculators/hooks/calculators';
+import SipCalculatorResult from '@/features/calculators/components/SipCalculatorResult';
 
 const formFields = [
 	{
@@ -80,14 +77,6 @@ export default function SipCalculatorCard({
 		defaultValues: calculator,
 	});
 
-	const result = calculateSipResult(
-		calculator.lumpsumAmount,
-		calculator.monthlyInvestmentAmount,
-		calculator.annualInterestPercent,
-		calculator.annualStepUpPercent,
-		calculator.numberOfYears
-	);
-
 	function onFormChange(data: SipCalculator) {
 		updateCalculator({ ...calculator, ...data });
 	}
@@ -129,40 +118,7 @@ export default function SipCalculatorCard({
 						))}
 					</form>
 				</Form>
-				{result.totalInvestedAmount !== 0 && (
-					<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
-						<table className='w-full'>
-							<tbody>
-								<tr>
-									<td className='text-green-700 font-semibold'>
-										Estimated Total Value:
-									</td>
-									<td className='text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.estimatedTotalValue)}
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Total Invested Amount:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.totalInvestedAmount)} (
-										{result.investedAmountPercent.toFixed(2)}%)
-									</td>
-								</tr>
-								<tr>
-									<td className='text-sm text-green-700 font-semibold'>
-										Estimated Returns:
-									</td>
-									<td className='text-sm text-green-700 font-semibold'>
-										{displayCurrencyAmount(result.estimatedReturns)} (
-										{result.estimatedReturnsPercent.toFixed(2)}%)
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				)}
+				<SipCalculatorResult calculator={calculator} />
 			</CardContent>
 		</Card>
 	);
