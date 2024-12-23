@@ -44,7 +44,7 @@ function AddTransactionFormWrapper({
 				]}
 			/>
 			<div className='container mx-auto p-2 h-full'>
-				<Card className='p-8 w-1/3 mx-auto'>
+				<Card className='p-8 max-w-screen-sm mx-auto'>
 					<AddTransactionForm asset={asset} />
 				</Card>
 			</div>
