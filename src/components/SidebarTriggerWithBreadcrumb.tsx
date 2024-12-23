@@ -17,7 +17,10 @@ export type BreadcrumbItemDetail = {
 
 export default function SidebarTriggerWithBreadcrumb({
 	breadcrumbs,
-}: Readonly<{ breadcrumbs: BreadcrumbItemDetail[] }>) {
+}: {
+	breadcrumbs: BreadcrumbItemDetail[];
+}) {
+	breadcrumbs = [{ title: 'Home', href: '/' }, ...breadcrumbs];
 	return (
 		<header className='flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12'>
 			<div className='flex items-center gap-2 px-2'>
@@ -25,12 +28,11 @@ export default function SidebarTriggerWithBreadcrumb({
 				<Separator orientation='vertical' className='mr-2 h-4' />
 				<Breadcrumb>
 					<BreadcrumbList>
-						<BreadcrumbItem className='hidden md:block'>
-							<BreadcrumbLink href='/'>Home</BreadcrumbLink>
-						</BreadcrumbItem>
 						{breadcrumbs.map(({ title, href, disabled }, index) => (
 							<div key={index} className='flex items-center gap-2'>
-								<BreadcrumbSeparator className='hidden md:block' />
+								{index > 0 && (
+									<BreadcrumbSeparator className='hidden md:block' />
+								)}
 								<BreadcrumbItem>
 									{disabled || index === breadcrumbs.length - 1 ? (
 										<BreadcrumbPage>{title}</BreadcrumbPage>
