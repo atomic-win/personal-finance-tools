@@ -21,7 +21,7 @@ export default function Page() {
 				]}
 			/>
 			<div className='container mx-auto p-2'>
-				<Card>
+				<Card className='mx-auto rounded-lg shadow-md w-full'>
 					<CardContent className='p-6'>
 						<WithLoadedAssetsTable
 							assetIds={[]}

@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
 import TransactionsTable from '@/features/investments/components/TransactionsTable';
 import { Separator } from '@/components/ui/separator';
@@ -19,35 +19,28 @@ export default function Asset({
 	currency: Currency;
 }) {
 	return (
-		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
+		<Card className='mx-auto my-2 rounded-lg shadow-md w-full'>
 			<CardHeader>
-				<CardTitle>{asset.assetName}</CardTitle>
+				<div className='grid grid-cols-3 justify-between gap-2'>
+					<InfoLine label='Asset Name' value={asset.assetName} />
+					<InfoLine label='Instrument Name' value={asset.instrumentName} />
+					<InfoLine
+						label='Instrument Type'
+						value={displayInstrumentType(asset.instrumentType)}
+					/>
+					<InfoLine
+						label='Invested Value'
+						value={displayCurrencyAmount(currency, asset.investedValue)}
+					/>
+					<InfoLine
+						label='Current Value'
+						value={displayCurrencyAmount(currency, asset.currentValue)}
+					/>
+					<InfoLine label='XIRR' value={displayPercentage(asset.xirrPercent)} />
+				</div>
+				<Separator />
 			</CardHeader>
 			<CardContent className='mt-0 space-y-4'>
-				<div>
-					<Separator />
-					<div className='grid grid-cols-3 justify-between gap-2'>
-						<InfoLine label='Asset Name' value={asset.assetName} />
-						<InfoLine label='Instrument Name' value={asset.instrumentName} />
-						<InfoLine
-							label='Instrument Type'
-							value={displayInstrumentType(asset.instrumentType)}
-						/>
-						<InfoLine
-							label='Invested Value'
-							value={displayCurrencyAmount(currency, asset.investedValue)}
-						/>
-						<InfoLine
-							label='Current Value'
-							value={displayCurrencyAmount(currency, asset.currentValue)}
-						/>
-						<InfoLine
-							label='XIRR'
-							value={displayPercentage(asset.xirrPercent)}
-						/>
-					</div>
-					<Separator />
-				</div>
 				<TransactionsTable
 					asset={asset}
 					transactions={transactions}
