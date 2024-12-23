@@ -1,4 +1,5 @@
 'use client';
+import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
 import Asset from '@/features/investments/components/Asset';
 import { withAssetPortfolios } from '@/features/investments/components/hoc/withAssetPortfolios';
 import withAssets from '@/features/investments/components/hoc/withAssets';
@@ -32,8 +33,17 @@ function AssetWrapper({
 	const asset = portfolios[0];
 
 	return (
-		<div className='container mx-auto p-2'>
-			<Asset asset={asset} transactions={transactions} currency={currency} />
-		</div>
+		<>
+			<SidebarTriggerWithBreadcrumb
+				breadcrumbs={[
+					{ title: 'Investments', href: '#' },
+					{ title: 'Assets', href: '/investments/assets' },
+					{ title: asset.assetName, href: `/investments/assets/${asset.id}` },
+				]}
+			/>
+			<div className='container mx-auto p-2'>
+				<Asset asset={asset} transactions={transactions} currency={currency} />
+			</div>
+		</>
 	);
 }
