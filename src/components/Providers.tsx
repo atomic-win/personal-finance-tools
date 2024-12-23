@@ -10,8 +10,9 @@ import { persistQueryClient } from '@tanstack/react-query-persist-client';
 const queryClient = new QueryClient({
 	defaultOptions: {
 		queries: {
-			gcTime: 1000 * 60 * 60 * 15, // 24 hours
-			staleTime: 1000 * 60 * 10, // 1 hour
+			gcTime: 1000 * 60 * 60 * 24, // 24 hours
+			staleTime: 1000 * 60 * 60, // 1 hour
+			refetchOnWindowFocus: true,
 		},
 	},
 });

@@ -42,6 +42,7 @@ export function useCalculatorsQuery<T extends Calculator>(type: T['type']) {
 	return useQuery({
 		queryKey: ['calculators', type],
 		initialData: [] as T[],
+		staleTime: Infinity,
 	});
 }
 
