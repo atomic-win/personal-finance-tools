@@ -82,7 +82,7 @@ export default function AddTransactionForm({
 	}
 
 	return (
-		<CardContent className='pt-2'>
+		<CardContent className='p-0'>
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
