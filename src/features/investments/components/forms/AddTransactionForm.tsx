@@ -5,10 +5,6 @@ import {
 	InstrumentType,
 	TransactionType,
 } from '@/features/investments/lib/types';
-import withAssets from '@/features/investments/components/hoc/withAssets';
-import { withAssetPortfolios } from '@/features/investments/components/hoc/withAssetPortfolios';
-import withInstruments from '@/features/investments/components/hoc/withInstruments';
-import withCurrency from '@/features/investments/components/hoc/withCurrency';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -23,7 +19,6 @@ import {
 } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Label } from '@/components/ui/label';
 import {
 	Select,
 	SelectContent,
@@ -36,7 +31,6 @@ import { Input } from '@/components/ui/input';
 import { useAddTransactionMutation } from '@/features/investments/hooks/transactions';
 import { useRouter } from 'next/navigation';
 import { DateTime } from 'luxon';
-import withTransactions from '@/features/investments/components/hoc/withTransactions';
 
 const schema = z.object({
 	date: z.date({
@@ -58,19 +52,12 @@ const schema = z.object({
 	}),
 });
 
-export default function AddTransactionForm({ assetId }: { assetId: string }) {
-	const WithLoadedForm = withAssets(
-		withInstruments(
-			withCurrency(withTransactions(withAssetPortfolios(AddForm)))
-		)
-	);
-
-	return <WithLoadedForm assetIds={[assetId]} latest={true} />;
-}
-
-function AddForm({ portfolios }: { portfolios: AssetPortfolio[] }) {
+export default function AddTransactionForm({
+	asset,
+}: {
+	asset: AssetPortfolio;
+}) {
 	const { mutateAsync: addTransactionAsync } = useAddTransactionMutation();
-	const asset = portfolios[0];
 	const router = useRouter();
 
 	const form = useForm<z.infer<typeof schema>>({
@@ -95,14 +82,11 @@ function AddForm({ portfolios }: { portfolios: AssetPortfolio[] }) {
 	}
 
 	return (
-		<CardContent>
+		<CardContent className='p-0'>
 			<Form {...form}>
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
 					className='flex flex-col space-y-4'>
-					<Label className='text-xl'>
-						Asset Name: <span className='text-primary'>{asset.assetName}</span>
-					</Label>
 					<FormField
 						control={form.control}
 						name='date'
@@ -178,7 +162,7 @@ function AddForm({ portfolios }: { portfolios: AssetPortfolio[] }) {
 						)}
 					/>
 					<div className='flex justify-end'>
-						<Button type='submit'>Submit</Button>
+						<Button type='submit'>Add Transaction</Button>
 					</div>
 				</form>
 			</Form>

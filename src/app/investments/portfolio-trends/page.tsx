@@ -10,6 +10,7 @@ import {
 	OverallPortfolio,
 } from '@/features/investments/lib/types';
 import withPortfolioTrendsSection from '@/features/investments/components/hoc/withPortfolioTrendsSection';
+import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
 
 export default function Page() {
 	const PortfolioTrendsOverallSection =
@@ -44,16 +45,23 @@ export default function Page() {
 	);
 
 	return (
-		<div className='container mx-auto p-2'>
-			<h1 className='text-2xl font-bold mb-4'>Portfolio Trends</h1>
-			<div className='grid grid-cols-3 gap-4'>
-				<div className='col-span-2'>
-					<WithLoadedPortfolio latest={false} />
-				</div>
-				<div className='col-span-1'>
-					<WithLoadedInvestmentsFilterForm />
+		<>
+			<SidebarTriggerWithBreadcrumb
+				breadcrumbs={[
+					{ title: 'Investments', href: '#' },
+					{ title: 'Portfolio Trends', href: '/investments/portfolio-trends' },
+				]}
+			/>
+			<div className='container mx-auto p-2'>
+				<div className='grid grid-cols-3 gap-4'>
+					<div className='col-span-2'>
+						<WithLoadedPortfolio latest={false} />
+					</div>
+					<div className='col-span-1'>
+						<WithLoadedInvestmentsFilterForm />
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }

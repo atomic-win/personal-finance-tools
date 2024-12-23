@@ -182,7 +182,7 @@ function TrendsChart<TPortfolio extends Portfolio>({
 	);
 
 	return (
-		<Card className='mx-auto my-2 rounded-lg shadow-md'>
+		<Card className='mx-auto mt-8 border-0 shadow-none'>
 			<CardHeader className='flex items-center gap-4 space-y-0 p-4 mt-2 sm:flex-row'>
 				<div className='grid text-center sm:text-left w-full gap-2 justify-center'>
 					<CardTitle>

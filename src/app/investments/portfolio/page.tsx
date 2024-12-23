@@ -1,4 +1,5 @@
 'use client';
+import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
 import withAssets from '@/features/investments/components/hoc/withAssets';
 import withInstruments from '@/features/investments/components/hoc/withInstruments';
 import withPortfolios from '@/features/investments/components/hoc/withPortfolios';
@@ -21,16 +22,23 @@ export default function Page() {
 	);
 
 	return (
-		<div className='container mx-auto p-2'>
-			<h1 className='text-2xl font-bold mb-4'>Portfolio</h1>
-			<div className='grid grid-cols-3 gap-4'>
-				<div className='col-span-2'>
-					<WithLoadedPortfolio latest={true} />
-				</div>
-				<div className='col-span-1'>
-					<WithLoadedInvestmentsFilterForm />
+		<>
+			<SidebarTriggerWithBreadcrumb
+				breadcrumbs={[
+					{ title: 'Investments', href: '#' },
+					{ title: 'Portfolio', href: '/investments/portfolio' },
+				]}
+			/>
+			<div className='container mx-auto p-2'>
+				<div className='grid grid-cols-3 gap-4'>
+					<div className='col-span-2'>
+						<WithLoadedPortfolio latest={true} />
+					</div>
+					<div className='col-span-1'>
+						<WithLoadedInvestmentsFilterForm />
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }
