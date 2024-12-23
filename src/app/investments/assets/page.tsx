@@ -1,5 +1,6 @@
 'use client';
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
+import { Card, CardContent } from '@/components/ui/card';
 import AssetsTable from '@/features/investments/components/AssetsTable';
 import { withAssetPortfolios } from '@/features/investments/components/hoc/withAssetPortfolios';
 import withAssets from '@/features/investments/components/hoc/withAssets';
@@ -20,7 +21,15 @@ export default function Page() {
 				]}
 			/>
 			<div className='container mx-auto p-2'>
-				<WithLoadedAssetsTable assetIds={[]} latest={true} transactions={[]} />
+				<Card>
+					<CardContent className='p-6'>
+						<WithLoadedAssetsTable
+							assetIds={[]}
+							latest={true}
+							transactions={[]}
+						/>
+					</CardContent>
+				</Card>
 			</div>
 		</>
 	);
