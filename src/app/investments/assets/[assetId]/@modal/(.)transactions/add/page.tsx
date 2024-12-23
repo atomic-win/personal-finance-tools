@@ -37,7 +37,7 @@ function AddTransactionFormWrapper({
 				<DialogHeader>
 					<SidebarTriggerWithBreadcrumb
 						breadcrumbs={[
-							{ title: 'Investments', href: '#' },
+							{ title: 'Investments', href: '#', disabled: true },
 							{ title: 'Assets', href: '/investments/assets' },
 							{
 								title: asset.assetName,

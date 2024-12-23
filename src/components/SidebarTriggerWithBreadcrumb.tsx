@@ -34,8 +34,12 @@ export default function SidebarTriggerWithBreadcrumb({
 									<BreadcrumbSeparator className='hidden md:block' />
 								)}
 								<BreadcrumbItem>
-									{disabled || index === breadcrumbs.length - 1 ? (
+									{index === breadcrumbs.length - 1 ? (
 										<BreadcrumbPage>{title}</BreadcrumbPage>
+									) : disabled ? (
+										<BreadcrumbLink asChild>
+											<span className='text-muted-foreground'>{title}</span>
+										</BreadcrumbLink>
 									) : (
 										<BreadcrumbLink href={href}>{title}</BreadcrumbLink>
 									)}
