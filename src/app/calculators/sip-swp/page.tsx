@@ -33,9 +33,9 @@ const formFields = [
 		description: 'Enter the SIP investment duration in years',
 	},
 	{
-		name: 'monthlySwpWithdrawalAmount',
-		label: 'Monthly SWP Withdrawal',
-		description: 'Enter the monthly SWP withdrawal amount',
+		name: 'currentMonthlyExpenseAmount',
+		label: 'Current Monthly Expense',
+		description: 'Enter the current monthly expense amount',
 	},
 	{
 		name: 'annualInflationPercent',

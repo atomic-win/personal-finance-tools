@@ -34,7 +34,7 @@ const defaultSipSwpCalculator: SipSwpCalculator = {
 	annualSipStepUpPercent: 10,
 	annualInterestPercent: 10,
 	numberOfSipYears: 10,
-	monthlySwpWithdrawalAmount: 10000,
+	currentMonthlyExpenseAmount: 10000,
 	annualInflationPercent: 8,
 };
 

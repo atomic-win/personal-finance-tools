@@ -25,53 +25,52 @@ export default function SipSwpCalculatorResult({
 	const { estimatedWithdrawalAmount, estimatedNumberOfYears } =
 		calculateSwpResult(
 			estimatedTotalValueAfterSip,
-			calculator.monthlySwpWithdrawalAmount,
+			Math.pow(
+				1 + calculator.annualInflationPercent / 100,
+				calculator.numberOfSipYears
+			) * calculator.currentMonthlyExpenseAmount,
 			calculator.annualInterestPercent,
 			calculator.annualInflationPercent
 		);
 
 	return (
-		<>
-			{totalInvestedAmount !== 0 && (
-				<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
-					<table className='w-full'>
-						<tbody>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Total Invested Amount:
-								</td>
-								<td className='text-sm text-green-700 font-semibold'>
-									{displayCurrencyAmount(totalInvestedAmount)}
-								</td>
-							</tr>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Estimated Total Value After SIP:
-								</td>
-								<td className='text-sm text-green-700 font-semibold'>
-									{displayCurrencyAmount(estimatedTotalValueAfterSip)}
-								</td>
-							</tr>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Estimated Total Withdrawal:
-								</td>
-								<td className='text-sm text-green-700 font-semibold'>
-									{displayCurrencyAmount(estimatedWithdrawalAmount)}
-								</td>
-							</tr>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Estimated Corpus Lasted:
-								</td>
-								<td className='text-sm text-green-700 font-semibold'>
-									{displayYearlyTimeDuration(estimatedNumberOfYears)}
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			)}
-		</>
+		<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
+			<table className='w-full'>
+				<tbody>
+					<tr>
+						<td className='text-sm text-green-700 font-semibold'>
+							Total Invested Amount:
+						</td>
+						<td className='text-sm text-green-700 font-semibold'>
+							{displayCurrencyAmount(totalInvestedAmount)}
+						</td>
+					</tr>
+					<tr>
+						<td className='text-sm text-green-700 font-semibold'>
+							Estimated Total Value After SIP:
+						</td>
+						<td className='text-sm text-green-700 font-semibold'>
+							{displayCurrencyAmount(estimatedTotalValueAfterSip)}
+						</td>
+					</tr>
+					<tr>
+						<td className='text-sm text-green-700 font-semibold'>
+							Estimated Total Withdrawal:
+						</td>
+						<td className='text-sm text-green-700 font-semibold'>
+							{displayCurrencyAmount(estimatedWithdrawalAmount)}
+						</td>
+					</tr>
+					<tr>
+						<td className='text-sm text-green-700 font-semibold'>
+							Estimated Corpus Lasted:
+						</td>
+						<td className='text-sm text-green-700 font-semibold'>
+							{displayYearlyTimeDuration(estimatedNumberOfYears)}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 	);
 }
