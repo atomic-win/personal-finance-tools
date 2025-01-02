@@ -50,10 +50,10 @@ export const sipSwpCalculatorSchema = z.object({
 	}),
 	numberOfSipYears: z.coerce
 		.number()
-		.min(1, { message: 'SIP Investment Duration cannot be less than 1 year' }),
-	monthlySwpWithdrawalAmount: z.coerce
+		.min(0, { message: 'SIP Investment Duration cannot be negative' }),
+	currentMonthlyExpenseAmount: z.coerce
 		.number()
-		.min(1, { message: 'Monthly SWP Withdrawal cannot be less than 1' }),
+		.min(1, { message: 'Current Monthly Expense cannot be less than 1' }),
 	annualInflationPercent: z.coerce.number().min(-99, {
 		message: 'Annual Inflation Percent cannot be less than or equal to -100%',
 	}),
