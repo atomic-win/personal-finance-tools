@@ -18,13 +18,17 @@ export function findAssetById(assets: Asset[], id: string): Asset | undefined {
 	return (assets || []).find((asset) => asset.id === id);
 }
 
-export function displayCurrencyAmount(currency: Currency, amount: number) {
+export function displayCurrencyAmount(
+	currency: Currency,
+	amount: number,
+	notation: 'standard' | 'compact' = 'compact'
+) {
 	return Intl.NumberFormat('en-IN', {
 		style: 'currency',
 		currency: currency,
 		currencyDisplay: 'symbol',
 		maximumFractionDigits: 2,
-		notation: 'compact',
+		notation: notation,
 	}).format(amount);
 }
 

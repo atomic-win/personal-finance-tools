@@ -30,11 +30,19 @@ export default function Asset({
 					/>
 					<InfoLine
 						label='Invested Value'
-						value={displayCurrencyAmount(currency, asset.investedValue)}
+						value={displayCurrencyAmount(
+							currency,
+							asset.investedValue,
+							'standard'
+						)}
 					/>
 					<InfoLine
 						label='Current Value'
-						value={displayCurrencyAmount(currency, asset.currentValue)}
+						value={displayCurrencyAmount(
+							currency,
+							asset.currentValue,
+							'standard'
+						)}
 					/>
 					<InfoLine label='XIRR' value={displayPercentage(asset.xirrPercent)} />
 				</div>

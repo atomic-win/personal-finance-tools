@@ -40,7 +40,7 @@ const columns: ColumnDef<TableItem>[] = [
 		id: 'Invested Value',
 		headerText: 'Invested Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.investedValue),
+			displayCurrencyAmount(data.currency, data.investedValue, 'standard'),
 		sortingFnCompare: (data) => data.investedValue,
 		enableHiding: false,
 	}),
@@ -56,7 +56,7 @@ const columns: ColumnDef<TableItem>[] = [
 		id: 'Current Value',
 		headerText: 'Current Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.currentValue),
+			displayCurrencyAmount(data.currency, data.currentValue, 'standard'),
 		sortingFnCompare: (data) => data.currentValue,
 		enableHiding: false,
 	}),
