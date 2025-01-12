@@ -1,17 +1,17 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy to Test Azure Web App
+name: Build and deploy to Staging Environment
 
 on:
   push:
     branches:
-      - main  
+      - main
   workflow_dispatch:
 
 env:
-  APPLICATION_PUBLISH_PROFILE: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_6CBB1CCE2AB341DE9D7A8014CC35E222 }}
-  WEBAPP_NAME: 'personal-finance-tools-test'
+  APPLICATION_PUBLISH_PROFILE: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_00045E2B5E1F45359405E0DA17FB798D }}
+  WEBAPP_NAME: 'personal-finance-tools'
 
 jobs:
   build:
@@ -36,6 +36,6 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ env.WEBAPP_NAME }}
-          slot-name: 'Production'
+          slot-name: 'staging'
           publish-profile: ${{ env.APPLICATION_PUBLISH_PROFILE }}
           package: ./build/standalone
