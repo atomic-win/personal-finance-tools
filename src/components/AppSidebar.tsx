@@ -53,7 +53,7 @@ const data = [
 		items: [
 			{
 				title: 'Rolling Returns',
-				url: '/analyzers/mutualfunds',
+				url: '/mutual-funds-analysis/rolling-returns',
 			},
 		],
 	},

@@ -1,5 +1,5 @@
 'use client';
-import { useReturnQueries } from '@/features/analyzers/hooks/mutualfunds';
+import { useReturnQueries } from '@/features/mutual-funds-analysis/hooks/mutualfunds';
 import {
 	Card,
 	CardContent,
@@ -19,7 +19,7 @@ import {
 	MutualFund,
 	MutualFundReturn,
 	PresetTimeDurations,
-} from '@/features/analyzers/lib/types';
+} from '@/features/mutual-funds-analysis/lib/types';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { useState } from 'react';
 import {
@@ -30,9 +30,9 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { displayPresetTimeDuration } from '@/features/analyzers/lib/utils';
+import { displayPresetTimeDuration } from '@/features/mutual-funds-analysis/lib/utils';
 
-export default function ReturnsCard({
+export default function ReturnsChartCard({
 	mutualfunds,
 }: {
 	mutualfunds: MutualFund[];

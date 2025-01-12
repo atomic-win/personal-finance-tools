@@ -1,6 +1,6 @@
 'use client';
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
-import MutualFunds from '@/features/analyzers/components/MutualFunds';
+import RollingReturns from '@/features/mutual-funds-analysis/components/RollingReturns';
 import { Suspense } from 'react';
 
 export default function Page() {
@@ -8,13 +8,16 @@ export default function Page() {
 		<>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
-					{ title: 'Mutual Funds', href: '', disabled: true },
-					{ title: 'Rolling Returns Analysis', href: '/analyzers/mutualfunds' },
+					{ title: 'Mutual Funds Analysis', href: '', disabled: true },
+					{
+						title: 'Rolling Returns',
+						href: '/mutual-funds-analysis/rolling-returns',
+					},
 				]}
 			/>
 			<div className='px-4 space-y-2'>
-				<h1 className='text-2xl font-bold'>Mutual Funds</h1>
-				<h2 className='text-lg font-semibold'>Rolling Returns Analysis</h2>
+				<h1 className='text-2xl font-bold'>Mutual Funds Analysis</h1>
+				<h2 className='text-lg font-semibold'>Rolling Returns</h2>
 				<p>
 					Analyze CAGR (Compound Annual Growth Rate) rolling returns of Indian
 					Mutual Funds. Understand long-term fund performance across different
@@ -23,7 +26,7 @@ export default function Page() {
 					with your financial goals.
 				</p>
 				<Suspense>
-					<MutualFunds />
+					<RollingReturns />
 				</Suspense>
 			</div>
 		</>
