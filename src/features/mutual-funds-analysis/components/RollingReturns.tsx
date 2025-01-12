@@ -2,13 +2,13 @@
 import {
 	useMutualFundListQuery,
 	useMutualFundQueries,
-} from '@/features/analyzers/hooks/mutualfunds';
-import MutualFundsReturnsChart from '@/features/analyzers/components/MutualFundsReturnsChart';
-import MutualFundsRollingReturnsTable from '@/features/analyzers/components/MutualFundsRollingReturnsTable';
-import MutualFundsForm from '@/features/analyzers/components/MutualFundsForm';
+} from '@/features/mutual-funds-analysis/hooks/mutualfunds';
+import MutualFundsReturnsChart from '@/features/mutual-funds-analysis/components/ReturnsChartCard';
+import MutualFundsRollingReturnsTable from '@/features/mutual-funds-analysis/components/RollingReturnsTableCard';
+import SelectMutualFundsCard from '@/features/mutual-funds-analysis/components/SelectMutualFundsCard';
 import { useSearchParams } from 'next/navigation';
 
-export default function MutualFunds() {
+export default function RollingReturns() {
 	const searchParams = useSearchParams();
 	const { data: mutualFundList } = useMutualFundListQuery();
 
@@ -32,7 +32,7 @@ export default function MutualFunds() {
 				<MutualFundsRollingReturnsTable mutualfunds={addedMutualfunds} />
 			</div>
 			<div>
-				<MutualFundsForm
+				<SelectMutualFundsCard
 					mutualFundList={mutualFundList}
 					addedMutualFunds={addedMutualfunds}
 				/>

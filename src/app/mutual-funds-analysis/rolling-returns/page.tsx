@@ -1,6 +1,6 @@
 'use client';
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
-import MutualFunds from '@/features/analyzers/components/MutualFunds';
+import RollingReturns from '@/features/mutual-funds-analysis/components/RollingReturns';
 import { Suspense } from 'react';
 
 export default function Page() {
@@ -26,7 +26,7 @@ export default function Page() {
 					with your financial goals.
 				</p>
 				<Suspense>
-					<MutualFunds />
+					<RollingReturns />
 				</Suspense>
 			</div>
 		</>

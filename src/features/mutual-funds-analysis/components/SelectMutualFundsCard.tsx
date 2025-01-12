@@ -29,7 +29,7 @@ import React, { useState } from 'react';
 import fuzzysort from 'fuzzysort';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { MutualFund } from '@/features/analyzers/lib/types';
+import { MutualFund } from '@/features/mutual-funds-analysis/lib/types';
 
 const schema = z.object({
 	mfSchemeCode: z.coerce
@@ -42,7 +42,7 @@ const schema = z.object({
 		}),
 });
 
-export default function MutualFundsForm({
+export default function SelectMutualFundsCard({
 	mutualFundList,
 	addedMutualFunds,
 }: {
