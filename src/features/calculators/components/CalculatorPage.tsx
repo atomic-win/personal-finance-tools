@@ -25,7 +25,6 @@ export default function CalculatorPage<T extends Calculator>({
 	formFields: {
 		name: string;
 		label: string;
-		description: string;
 	}[];
 	CalculatorResult: React.ComponentType<{ calculator: T }>;
 }) {

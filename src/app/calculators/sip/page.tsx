@@ -9,28 +9,23 @@ import SipCalculatorResult from '@/features/calculators/components/SipCalculator
 const formFields = [
 	{
 		name: 'lumpsumAmount',
-		label: 'Lumpsum Amount',
-		description: 'Enter the lumpsum amount',
+		label: 'Initial Lumpsum Amount',
 	},
 	{
 		name: 'monthlyInvestmentAmount',
-		label: 'Monthly Installment',
-		description: 'Enter the monthly installment',
+		label: 'Monthly SIP Investment Amount',
 	},
 	{
 		name: 'annualInterestPercent',
 		label: 'Annual Interest Rate (%)',
-		description: 'Enter the annual interest rate',
 	},
 	{
 		name: 'annualStepUpPercent',
 		label: 'Annual Step-Up (%)',
-		description: 'Enter the annual step-up percentage',
 	},
 	{
 		name: 'numberOfYears',
 		label: 'Investment Duration (Years)',
-		description: 'Enter the investment duration in years',
 	},
 ];
 

@@ -1,16 +1,9 @@
 'use client';
 import { Button } from '@/components/ui/button';
-import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Form,
 	FormControl,
-	FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -42,7 +35,6 @@ export default function CalculatorCard<T extends Calculator>({
 	formFields: {
 		name: string;
 		label: string;
-		description: string;
 	}[];
 	index: number;
 	calculator: T;
@@ -65,21 +57,18 @@ export default function CalculatorCard<T extends Calculator>({
 			<CardHeader>
 				<div className='flex items-center justify-between'>
 					<CardTitle>
-						{calculatorName} Calculator {index + 1}
+						{calculatorName} {index + 1}
 					</CardTitle>
 					<Button onClick={() => removeCalculator(calculator.id)}>
 						<Trash2 className='size-4' />
 					</Button>
 				</div>
-				<CardDescription>
-					Calculate your {calculatorName} investments
-				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<Form {...form}>
 					<form
 						onChange={form.handleSubmit(onFormChange)}
-						className='space-y-2'>
+						className='space-y-4'>
 						{formFields.map((formField) => (
 							<FormField
 								key={formField.name}
@@ -91,7 +80,6 @@ export default function CalculatorCard<T extends Calculator>({
 										<FormControl>
 											<Input {...field} />
 										</FormControl>
-										<FormDescription>{formField.description}</FormDescription>
 										<FormMessage />
 									</FormItem>
 								)}

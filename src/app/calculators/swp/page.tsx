@@ -9,23 +9,19 @@ import SwpCalculatorResult from '@/features/calculators/components/SwpCalculator
 const formFields = [
 	{
 		name: 'totalInvestmentAmount',
-		label: 'Total Investment',
-		description: 'Enter the total investment amount',
+		label: 'Total Investment Amount',
 	},
 	{
 		name: 'monthlyWithdrawalAmount',
-		label: 'Monthly Withdrawal',
-		description: 'Enter the monthly withdrawal amount',
+		label: 'Monthly Withdrawal Amount',
 	},
 	{
 		name: 'annualInterestPercent',
 		label: 'Annual Interest Rate (%)',
-		description: 'Enter the annual interest rate',
 	},
 	{
 		name: 'annualInflationPercent',
 		label: 'Annual Inflation Rate (%)',
-		description: 'Enter the annual inflation rate',
 	},
 ];
 
