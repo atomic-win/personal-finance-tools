@@ -46,7 +46,7 @@ export default function ReturnsCard({
 	);
 
 	return (
-		<Card className='mx-auto my-2 rounded-lg shadow-md'>
+		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex items-center gap-4 space-y-0 border-b py-4 sm:flex-row'>
 				<div className='grid text-center sm:text-left w-full gap-2'>
 					<CardTitle>CAGR (%)</CardTitle>

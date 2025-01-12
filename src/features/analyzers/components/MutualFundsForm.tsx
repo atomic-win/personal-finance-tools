@@ -50,7 +50,7 @@ export default function MutualFundsForm({
 	addedMutualFunds: MutualFund[];
 }) {
 	return (
-		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
+		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>Mutual Funds</CardTitle>
 			</CardHeader>

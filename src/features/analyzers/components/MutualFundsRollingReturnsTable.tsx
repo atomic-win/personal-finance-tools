@@ -22,7 +22,7 @@ export default function RollingReturnsCard({
 	mutualfunds: MutualFund[];
 }) {
 	return (
-		<Card className='mx-auto my-2 p-2 rounded-lg shadow-md w-full'>
+		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>Latest Rolling CAGR (%)</CardTitle>
 			</CardHeader>
