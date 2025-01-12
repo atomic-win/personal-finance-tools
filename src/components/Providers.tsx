@@ -38,7 +38,7 @@ export default function Providers({
 			<GoogleOAuthProvider clientId='73478229232-4shu2tigpasb0drjlsn39g4isdm6kuv3.apps.googleusercontent.com'>
 				<SidebarProvider>
 					<AppSidebar />
-					<main className='container my-6'>
+					<main className='container'>
 						{children}
 						<ReactQueryDevtools />
 					</main>

@@ -27,7 +27,7 @@ export default function MutualFunds() {
 
 	return (
 		<div className='grid grid-cols-3 gap-4'>
-			<div className='col-span-2'>
+			<div className='col-span-2 space-y-4'>
 				<MutualFundsReturnsChart mutualfunds={addedMutualfunds} />
 				<MutualFundsRollingReturnsTable mutualfunds={addedMutualfunds} />
 			</div>

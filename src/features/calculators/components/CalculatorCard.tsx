@@ -61,7 +61,7 @@ export default function CalculatorCard<T extends Calculator>({
 	}
 
 	return (
-		<Card className='mx-auto my-10 p-2 rounded-lg shadow-md w-full'>
+		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<div className='flex items-center justify-between'>
 					<CardTitle>
@@ -79,7 +79,7 @@ export default function CalculatorCard<T extends Calculator>({
 				<Form {...form}>
 					<form
 						onChange={form.handleSubmit(onFormChange)}
-						className='space-y-4'>
+						className='space-y-2'>
 						{formFields.map((formField) => (
 							<FormField
 								key={formField.name}
