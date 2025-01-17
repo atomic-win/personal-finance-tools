@@ -1,6 +1,7 @@
 import { NIL, v7 } from 'uuid';
 import {
 	FdCalculator,
+	RdCalculator,
 	SipCalculator,
 	SipSwpCalculator,
 	SwpCalculator,
@@ -15,6 +16,14 @@ const defaultFdCalculator: FdCalculator = {
 	annualInterestRate: 7,
 	numberOfYears: 1,
 	compoundingFrequency: 4,
+};
+
+const defaultRdCalculator: RdCalculator = {
+	id: NIL,
+	type: 'recurring-deposit',
+	monthlyDepositAmount: 500,
+	annualInterestRate: 5,
+	numberOfYears: 1,
 };
 
 const defaultSipCalculator: SipCalculator = {
@@ -159,6 +168,8 @@ function getDefaultCalculator(type: Calculator['type']) {
 	switch (type) {
 		case 'fixed-deposit':
 			return defaultFdCalculator;
+		case 'recurring-deposit':
+			return defaultRdCalculator;
 		case 'sip':
 			return defaultSipCalculator;
 		case 'swp':

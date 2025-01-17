@@ -37,6 +37,10 @@ const data = [
 				url: '/calculators/fixed-deposit',
 			},
 			{
+				title: 'RD Interest Calculator',
+				url: '/calculators/recurring-deposit',
+			},
+			{
 				title: 'SIP Calculator',
 				url: '/calculators/sip',
 			},

@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export type CalculatorType = 'sip' | 'swp' | 'sip-swp' | 'fixed-deposit';
+export type CalculatorType = 'sip' | 'swp' | 'sip-swp' | 'fixed-deposit' | 'recurring-deposit';
 
 export const FdCalculatorSchema = z.object({
 	principalAmount: z.coerce.number().min(0, {
@@ -24,6 +24,23 @@ export const FdCalculatorSchema = z.object({
 		})
 		.int({
 			message: 'Compounding Frequency must be an integer',
+		}),
+});
+
+export const RdCalculatorSchema = z.object({
+	monthlyDepositAmount: z.coerce.number().min(0, {
+		message: 'Monthly Deposit Amount must be greater than or equal to 0',
+	}),
+	annualInterestRate: z.coerce.number().min(0, {
+		message: 'Annual Interest Rate must be greater than or equal to 0',
+	}),
+	numberOfYears: z.coerce
+		.number()
+		.min(0, {
+			message: 'Time Period must be greater than or equal to 0 years',
+		})
+		.int({
+			message: 'Time Period must be an integer',
 		}),
 });
 
@@ -92,6 +109,10 @@ export type Calculator = {
 export type FdCalculator = Calculator & {
 	type: 'fixed-deposit';
 } & z.infer<typeof FdCalculatorSchema>;
+
+export type RdCalculator = Calculator & {
+	type: 'recurring-deposit';
+} & z.infer<typeof RdCalculatorSchema>;
 
 export type SipCalculator = Calculator & {
 	type: 'sip';

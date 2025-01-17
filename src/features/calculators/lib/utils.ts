@@ -51,6 +51,33 @@ export function calculateFdResult(
 	};
 }
 
+export function calculateRdResult(
+	monthlyInvestment: number,
+	annualInterestRate: number,
+	numberOfYears: number
+) {
+	const monthlyInterestRate = annualInterestRate / 12 / 100;
+
+	let totalInvestedAmount = 0;
+	let maturityAmount = 0;
+
+	for (let year = 1; year <= numberOfYears; year++) {
+		for (let month = 1; month <= 12; month++) {
+			totalInvestedAmount += monthlyInvestment;
+			maturityAmount += monthlyInvestment;
+			maturityAmount *= 1 + monthlyInterestRate;
+		}
+	}
+
+	const interestEarned = maturityAmount - totalInvestedAmount;
+
+	return {
+		totalInvestedAmount,
+		interestEarned,
+		maturityAmount,
+	};
+}
+
 export function calculateSipResult(
 	lumpsumAmount: number,
 	monthlyInvestment: number,
