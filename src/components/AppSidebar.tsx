@@ -48,6 +48,10 @@ const data = [
 				title: 'SIP + SWP Calculator',
 				url: '/calculators/sip-swp',
 			},
+			{
+				title: 'RD Interest Calculator',
+				url: '/calculators/recurring-deposit',
+			},
 		],
 	},
 	{

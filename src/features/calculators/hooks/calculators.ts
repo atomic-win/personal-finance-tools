@@ -4,6 +4,7 @@ import {
 	SipCalculator,
 	SipSwpCalculator,
 	SwpCalculator,
+	RdCalculator,
 	Calculator,
 } from '@/features/calculators/lib/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -46,6 +47,14 @@ const defaultSipSwpCalculator: SipSwpCalculator = {
 	numberOfSipYears: 10,
 	currentMonthlyExpenseAmount: 10000,
 	annualInflationPercent: 8,
+};
+
+const defaultRdCalculator: RdCalculator = {
+	id: NIL,
+	type: 'recurring-deposit',
+	monthlyDepositAmount: 1000,
+	annualInterestRate: 7,
+	numberOfYears: 1,
 };
 
 export function useCalculatorsQuery<T extends Calculator>(type: T['type']) {
@@ -165,5 +174,7 @@ function getDefaultCalculator(type: Calculator['type']) {
 			return defaultSwpCalculator;
 		case 'sip-swp':
 			return defaultSipSwpCalculator;
+		case 'recurring-deposit':
+			return defaultRdCalculator;
 	}
 }
