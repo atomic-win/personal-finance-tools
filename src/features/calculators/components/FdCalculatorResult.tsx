@@ -25,7 +25,7 @@ export default function FdCalculatorResult({
 							Principal Amount:
 						</td>
 						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(calculator.principalAmount, 0, 'standard')}
+							{displayCurrencyAmount(calculator.principalAmount, 2, 'standard')}
 						</td>
 					</tr>
 					<tr>
@@ -33,13 +33,13 @@ export default function FdCalculatorResult({
 							Interest Earned:
 						</td>
 						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(interestEarned, 0, 'standard')}
+							{displayCurrencyAmount(interestEarned, 2, 'standard')}
 						</td>
 					</tr>
 					<tr>
 						<td className='text-green-700 font-semibold'>Maturity Amount:</td>
 						<td className='text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(maturityAmount, 0, 'standard')}
+							{displayCurrencyAmount(maturityAmount, 2, 'standard')}
 						</td>
 					</tr>
 				</tbody>

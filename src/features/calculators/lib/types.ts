@@ -3,15 +3,15 @@ import { z } from 'zod';
 export type CalculatorType = 'sip' | 'swp' | 'sip-swp' | 'fixed-deposit';
 
 export const FdCalculatorSchema = z.object({
-	principalAmount: z.coerce.number().positive({
+	principalAmount: z.coerce.number().min(0, {
 		message: 'Principal Amount must be greater than or equal to 0',
 	}),
-	annualInterestRate: z.coerce.number().positive({
+	annualInterestRate: z.coerce.number().min(0, {
 		message: 'Annual Interest Rate must be greater than or equal to 0',
 	}),
 	numberOfYears: z.coerce
 		.number()
-		.positive({
+		.min(0, {
 			message: 'Time Period must be greater than or equal to 0 years',
 		})
 		.int({
