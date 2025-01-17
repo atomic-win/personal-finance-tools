@@ -51,6 +51,28 @@ export function calculateFdResult(
 	};
 }
 
+export function calculateRdResult(
+	monthlyInvestment: number,
+	annualInterestRate: number,
+	numberOfMonths: number
+) {
+	const monthlyInterestRate = annualInterestRate / 12 / 100;
+	let maturityAmount = 0;
+
+	for (let month = 1; month <= numberOfMonths; month++) {
+		maturityAmount += monthlyInvestment * Math.pow(1 + monthlyInterestRate, numberOfMonths - month + 1);
+	}
+
+	const totalInvestment = monthlyInvestment * numberOfMonths;
+	const interestEarned = maturityAmount - totalInvestment;
+
+	return {
+		maturityAmount,
+		interestEarned,
+		totalInvestment,
+	};
+}
+
 export function calculateSipResult(
 	lumpsumAmount: number,
 	monthlyInvestment: number,
@@ -122,27 +144,5 @@ export function calculateSwpResult(
 	return {
 		estimatedWithdrawalAmount: withdrawalAmount,
 		estimatedNumberOfYears: numberOfMonths / 12,
-	};
-}
-
-export function calculateRdResult(
-	monthlyInvestment: number,
-	annualInterestRate: number,
-	numberOfMonths: number
-) {
-	const monthlyInterestRate = annualInterestRate / 12 / 100;
-	let maturityAmount = 0;
-
-	for (let month = 1; month <= numberOfMonths; month++) {
-		maturityAmount += monthlyInvestment * Math.pow(1 + monthlyInterestRate, numberOfMonths - month + 1);
-	}
-
-	const totalInvestment = monthlyInvestment * numberOfMonths;
-	const interestEarned = maturityAmount - totalInvestment;
-
-	return {
-		maturityAmount,
-		interestEarned,
-		totalInvestment,
 	};
 }

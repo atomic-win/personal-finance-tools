@@ -18,6 +18,14 @@ const defaultFdCalculator: FdCalculator = {
 	compoundingFrequency: 4,
 };
 
+const defaultRdCalculator: RdCalculator = {
+	id: NIL,
+	type: 'recurring-deposit',
+	monthlyDepositAmount: 1000,
+	annualInterestRate: 7,
+	numberOfYears: 1,
+};
+
 const defaultSipCalculator: SipCalculator = {
 	id: NIL,
 	type: 'sip',
@@ -47,14 +55,6 @@ const defaultSipSwpCalculator: SipSwpCalculator = {
 	numberOfSipYears: 10,
 	currentMonthlyExpenseAmount: 10000,
 	annualInflationPercent: 8,
-};
-
-const defaultRdCalculator: RdCalculator = {
-	id: NIL,
-	type: 'recurring-deposit',
-	monthlyDepositAmount: 1000,
-	annualInterestRate: 7,
-	numberOfYears: 1,
 };
 
 export function useCalculatorsQuery<T extends Calculator>(type: T['type']) {
@@ -168,13 +168,13 @@ function getDefaultCalculator(type: Calculator['type']) {
 	switch (type) {
 		case 'fixed-deposit':
 			return defaultFdCalculator;
+		case 'recurring-deposit':
+			return defaultRdCalculator;
 		case 'sip':
 			return defaultSipCalculator;
 		case 'swp':
 			return defaultSwpCalculator;
 		case 'sip-swp':
 			return defaultSipSwpCalculator;
-		case 'recurring-deposit':
-			return defaultRdCalculator;
 	}
 }
