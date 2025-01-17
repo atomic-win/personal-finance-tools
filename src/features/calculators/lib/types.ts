@@ -27,6 +27,23 @@ export const FdCalculatorSchema = z.object({
 		}),
 });
 
+export const RdCalculatorSchema = z.object({
+	monthlyDepositAmount: z.coerce.number().min(0, {
+		message: 'Monthly Deposit Amount must be greater than or equal to 0',
+	}),
+	annualInterestRate: z.coerce.number().min(0, {
+		message: 'Annual Interest Rate must be greater than or equal to 0',
+	}),
+	numberOfYears: z.coerce
+		.number()
+		.min(0, {
+			message: 'Time Period must be greater than or equal to 0 years',
+		})
+		.int({
+			message: 'Time Period must be an integer',
+		}),
+});
+
 export const sipCalculatorSchema = z.object({
 	lumpsumAmount: z.coerce.number().min(0, {
 		message: 'Lumpsum Amount cannot be less than 0',
@@ -84,23 +101,6 @@ export const sipSwpCalculatorSchema = z.object({
 	}),
 });
 
-export const RdCalculatorSchema = z.object({
-	monthlyDepositAmount: z.coerce.number().min(0, {
-		message: 'Monthly Deposit Amount must be greater than or equal to 0',
-	}),
-	annualInterestRate: z.coerce.number().min(0, {
-		message: 'Annual Interest Rate must be greater than or equal to 0',
-	}),
-	numberOfYears: z.coerce
-		.number()
-		.min(0, {
-			message: 'Time Period must be greater than or equal to 0 years',
-		})
-		.int({
-			message: 'Time Period must be an integer',
-		}),
-});
-
 export type Calculator = {
 	id: string;
 	type: CalculatorType;
@@ -109,6 +109,10 @@ export type Calculator = {
 export type FdCalculator = Calculator & {
 	type: 'fixed-deposit';
 } & z.infer<typeof FdCalculatorSchema>;
+
+export type RdCalculator = Calculator & {
+	type: 'recurring-deposit';
+} & z.infer<typeof RdCalculatorSchema>;
 
 export type SipCalculator = Calculator & {
 	type: 'sip';
@@ -121,7 +125,3 @@ export type SwpCalculator = Calculator & {
 export type SipSwpCalculator = Calculator & {
 	type: 'sip-swp';
 } & z.infer<typeof sipSwpCalculatorSchema>;
-
-export type RdCalculator = Calculator & {
-	type: 'recurring-deposit';
-} & z.infer<typeof RdCalculatorSchema>;
