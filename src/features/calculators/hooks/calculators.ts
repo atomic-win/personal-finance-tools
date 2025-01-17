@@ -21,8 +21,8 @@ const defaultFdCalculator: FdCalculator = {
 const defaultRdCalculator: RdCalculator = {
 	id: NIL,
 	type: 'recurring-deposit',
-	monthlyDepositAmount: 1000,
-	annualInterestRate: 7,
+	monthlyDepositAmount: 500,
+	annualInterestRate: 5,
 	numberOfYears: 1,
 };
 
