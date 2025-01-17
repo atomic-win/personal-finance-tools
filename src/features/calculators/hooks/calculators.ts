@@ -1,10 +1,10 @@
 import { NIL, v7 } from 'uuid';
 import {
 	FdCalculator,
+	RdCalculator,
 	SipCalculator,
 	SipSwpCalculator,
 	SwpCalculator,
-	RdCalculator,
 	Calculator,
 } from '@/features/calculators/lib/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';

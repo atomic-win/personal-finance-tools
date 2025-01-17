@@ -9,11 +9,12 @@ export default function RdCalculatorResult({
 }: {
 	calculator: RdCalculator;
 }) {
-	const { maturityAmount, interestEarned, totalInvestment } = calculateRdResult(
-		calculator.monthlyDepositAmount,
-		calculator.annualInterestRate,
-		calculator.numberOfYears * 12
-	);
+	const { maturityAmount, interestEarned, totalInvestedAmount } =
+		calculateRdResult(
+			calculator.monthlyDepositAmount,
+			calculator.annualInterestRate,
+			calculator.numberOfYears
+		);
 
 	return (
 		<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
@@ -21,10 +22,10 @@ export default function RdCalculatorResult({
 				<tbody>
 					<tr>
 						<td className='text-sm text-green-700 font-semibold'>
-							Total Investment:
+							Amount deposited
 						</td>
 						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(totalInvestment, 2, 'standard')}
+							{displayCurrencyAmount(totalInvestedAmount, 2, 'standard')}
 						</td>
 					</tr>
 					<tr>

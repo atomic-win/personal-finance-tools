@@ -54,22 +54,27 @@ export function calculateFdResult(
 export function calculateRdResult(
 	monthlyInvestment: number,
 	annualInterestRate: number,
-	numberOfMonths: number
+	numberOfYears: number
 ) {
 	const monthlyInterestRate = annualInterestRate / 12 / 100;
+
+	let totalInvestedAmount = 0;
 	let maturityAmount = 0;
 
-	for (let month = 1; month <= numberOfMonths; month++) {
-		maturityAmount += monthlyInvestment * Math.pow(1 + monthlyInterestRate, numberOfMonths - month + 1);
+	for (let year = 1; year <= numberOfYears; year++) {
+		for (let month = 1; month <= 12; month++) {
+			totalInvestedAmount += monthlyInvestment;
+			maturityAmount += monthlyInvestment;
+			maturityAmount *= 1 + monthlyInterestRate;
+		}
 	}
 
-	const totalInvestment = monthlyInvestment * numberOfMonths;
-	const interestEarned = maturityAmount - totalInvestment;
+	const interestEarned = maturityAmount - totalInvestedAmount;
 
 	return {
-		maturityAmount,
+		totalInvestedAmount,
 		interestEarned,
-		totalInvestment,
+		maturityAmount,
 	};
 }
 
