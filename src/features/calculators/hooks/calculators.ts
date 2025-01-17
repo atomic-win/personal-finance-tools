@@ -4,8 +4,18 @@ import {
 	SipSwpCalculator,
 	SwpCalculator,
 	Calculator,
+	FdCalculator,
 } from '@/features/calculators/lib/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+const defaultFdCalculator: FdCalculator = {
+	id: NIL,
+	type: 'fixed-deposit',
+	principalAmount: 1000,
+	annualInterestRate: 7,
+	numberOfYears: 1,
+	compoundingFrequency: 4,
+};
 
 const defaultSipCalculator: SipCalculator = {
 	id: NIL,
@@ -147,6 +157,8 @@ export function useRemoveCalculatorMutation<T extends Calculator>(
 
 function getDefaultCalculator(type: Calculator['type']) {
 	switch (type) {
+		case 'fixed-deposit':
+			return defaultFdCalculator;
 		case 'sip':
 			return defaultSipCalculator;
 		case 'swp':

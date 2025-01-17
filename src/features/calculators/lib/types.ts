@@ -1,6 +1,31 @@
 import { z } from 'zod';
 
-export type CalculatorType = 'sip' | 'swp' | 'sip-swp';
+export type CalculatorType = 'sip' | 'swp' | 'sip-swp' | 'fixed-deposit';
+
+export const FdCalculatorSchema = z.object({
+	principalAmount: z.coerce.number().positive({
+		message: 'Principal Amount must be greater than or equal to 0',
+	}),
+	annualInterestRate: z.coerce.number().positive({
+		message: 'Annual Interest Rate must be greater than or equal to 0',
+	}),
+	numberOfYears: z.coerce
+		.number()
+		.positive({
+			message: 'Time Period must be greater than or equal to 0 years',
+		})
+		.int({
+			message: 'Time Period must be an integer',
+		}),
+	compoundingFrequency: z.coerce
+		.number()
+		.positive({
+			message: 'Compounding Frequency must be greater than or equal to 1',
+		})
+		.int({
+			message: 'Compounding Frequency must be an integer',
+		}),
+});
 
 export const sipCalculatorSchema = z.object({
 	lumpsumAmount: z.coerce.number().min(0, {
@@ -63,6 +88,10 @@ export type Calculator = {
 	id: string;
 	type: CalculatorType;
 };
+
+export type FdCalculator = Calculator & {
+	type: 'fixed-deposit';
+} & z.infer<typeof FdCalculatorSchema>;
 
 export type SipCalculator = Calculator & {
 	type: 'sip';

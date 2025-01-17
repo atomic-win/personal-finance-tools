@@ -33,6 +33,10 @@ const data = [
 		auth: false,
 		items: [
 			{
+				title: 'FD Interest Calculator',
+				url: '/calculators/fixed-deposit',
+			},
+			{
 				title: 'SIP Calculator',
 				url: '/calculators/sip',
 			},

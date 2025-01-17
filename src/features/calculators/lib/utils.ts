@@ -1,10 +1,3 @@
-const currencyFormat = Intl.NumberFormat('en-IN', {
-	style: 'currency',
-	currency: 'INR',
-	currencyDisplay: 'symbol',
-	maximumFractionDigits: 2,
-	notation: 'compact',
-});
 const yearlyTimeDurationFormat = new Intl.NumberFormat('en-IN', {
 	style: 'unit',
 	unit: 'year',
@@ -12,12 +5,50 @@ const yearlyTimeDurationFormat = new Intl.NumberFormat('en-IN', {
 	maximumFractionDigits: 1,
 });
 
-export function displayCurrencyAmount(amount: number) {
-	return currencyFormat.format(amount);
+export function displayCurrencyAmount(
+	amount: number,
+	maximumFractionDigits: number = 2,
+	notation: 'standard' | 'compact' = 'compact'
+) {
+	return Intl.NumberFormat('en-IN', {
+		style: 'currency',
+		currency: 'INR',
+		currencyDisplay: 'symbol',
+		maximumFractionDigits,
+		notation,
+	}).format(amount);
 }
 
 export function displayYearlyTimeDuration(years: number): string {
 	return yearlyTimeDurationFormat.format(years);
+}
+
+export function calculateFdResult(
+	principalAmount: number,
+	annualInterestRate: number,
+	numberOfYears: number,
+	compoundingFrequency: number
+) {
+	const compoundInterest =
+		principalAmount *
+		Math.pow(
+			1 + annualInterestRate / (100 * compoundingFrequency),
+			compoundingFrequency * numberOfYears
+		);
+	const maturityAmount = compoundInterest;
+
+	const interestEarned = maturityAmount - principalAmount;
+	const principalAmountPercent =
+		(principalAmount / Math.max(1, maturityAmount)) * 100;
+	const interestEarnedPercent =
+		(interestEarned / Math.max(1, maturityAmount)) * 100;
+
+	return {
+		maturityAmount,
+		interestEarned,
+		principalAmountPercent,
+		interestEarnedPercent,
+	};
 }
 
 export function calculateSipResult(
