@@ -31,7 +31,7 @@ export default function SidebarTriggerWithBreadcrumb({
 						{breadcrumbs.map(({ title, href, disabled }, index) => (
 							<div key={index} className='flex items-center gap-2'>
 								{index > 0 && (
-									<BreadcrumbSeparator className='hidden md:block' />
+									<BreadcrumbSeparator className='block' />
 								)}
 								<BreadcrumbItem>
 									{index === breadcrumbs.length - 1 ? (
