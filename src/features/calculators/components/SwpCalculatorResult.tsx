@@ -1,9 +1,6 @@
 import { SwpCalculator } from '@/features/calculators/lib/types';
-import {
-	calculateSwpResult,
-	displayCurrencyAmount,
-	displayYearlyTimeDuration,
-} from '@/features/calculators/lib/utils';
+import { calculateSwpResult } from '@/features/calculators/lib/utils';
+import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
 
 export default function SwpCalculatorResult({
 	calculator,
@@ -18,39 +15,26 @@ export default function SwpCalculatorResult({
 	);
 
 	return (
-		<>
-			{calculator.totalInvestmentAmount !== 0 && (
-				<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
-					<table className='w-full'>
-						<tbody>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Total Investment:
-								</td>
-								<td className='text-sm text-green-700 font-semibold text-right'>
-									{displayCurrencyAmount(calculator.totalInvestmentAmount)}
-								</td>
-							</tr>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Estimated Total Withdrawal:
-								</td>
-								<td className='text-sm text-green-700 font-semibold text-right'>
-									{displayCurrencyAmount(result.estimatedWithdrawalAmount)}
-								</td>
-							</tr>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Estimated SWP will last for:
-								</td>
-								<td className='text-sm text-green-700 font-semibold text-right'>
-									{displayYearlyTimeDuration(result.estimatedNumberOfYears)}
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			)}
-		</>
+		<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
+			<table className='w-full'>
+				<tbody>
+					<CalculatorResultTableRow
+						label='Total Investment Amount'
+						value={calculator.totalInvestmentAmount}
+						type='amount'
+					/>
+					<CalculatorResultTableRow
+						label='Estimated Total Withdrawal'
+						value={result.estimatedWithdrawalAmount}
+						type='amount'
+					/>
+					<CalculatorResultTableRow
+						label='Estimated SWP will last for'
+						value={result.estimatedNumberOfYears}
+						type='year'
+					/>
+				</tbody>
+			</table>
+		</div>
 	);
 }

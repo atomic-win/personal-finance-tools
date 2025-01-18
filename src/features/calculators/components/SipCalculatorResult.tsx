@@ -1,8 +1,6 @@
 import { SipCalculator } from '@/features/calculators/lib/types';
-import {
-	calculateSipResult,
-	displayCurrencyAmount,
-} from '@/features/calculators/lib/utils';
+import { calculateSipResult } from '@/features/calculators/lib/utils';
+import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
 
 export default function SipCalculatorResult({
 	calculator,
@@ -18,39 +16,26 @@ export default function SipCalculatorResult({
 	);
 
 	return (
-		<>
-			{result.totalInvestedAmount !== 0 && (
-				<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
-					<table className='w-full'>
-						<tbody>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Total Invested Amount:
-								</td>
-								<td className='text-sm text-green-700 font-semibold text-right'>
-									{displayCurrencyAmount(result.totalInvestedAmount)}
-								</td>
-							</tr>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Estimated Returns:
-								</td>
-								<td className='text-sm text-green-700 font-semibold text-right'>
-									{displayCurrencyAmount(result.estimatedReturns)}
-								</td>
-							</tr>
-							<tr>
-								<td className='text-sm text-green-700 font-semibold'>
-									Estimated Total Value:
-								</td>
-								<td className='text-sm text-green-700 font-semibold text-right'>
-									{displayCurrencyAmount(result.estimatedTotalValue)}
-								</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			)}
-		</>
+		<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
+			<table className='w-full'>
+				<tbody>
+					<CalculatorResultTableRow
+						label='Total Invested Amount'
+						value={result.totalInvestedAmount}
+						type='amount'
+					/>
+					<CalculatorResultTableRow
+						label='Estimated Returns'
+						value={result.estimatedReturns}
+						type='amount'
+					/>
+					<CalculatorResultTableRow
+						label='Estimated Total Value'
+						value={result.estimatedTotalValue}
+						type='amount'
+					/>
+				</tbody>
+			</table>
+		</div>
 	);
 }

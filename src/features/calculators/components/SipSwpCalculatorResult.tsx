@@ -2,9 +2,8 @@ import { SipSwpCalculator } from '@/features/calculators/lib/types';
 import {
 	calculateSipResult,
 	calculateSwpResult,
-	displayCurrencyAmount,
-	displayYearlyTimeDuration,
 } from '@/features/calculators/lib/utils';
+import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
 
 export default function SipSwpCalculatorResult({
 	calculator,
@@ -37,38 +36,26 @@ export default function SipSwpCalculatorResult({
 		<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
 			<table className='w-full'>
 				<tbody>
-					<tr>
-						<td className='text-sm text-green-700 font-semibold'>
-							Total Invested Amount:
-						</td>
-						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(totalInvestedAmount)}
-						</td>
-					</tr>
-					<tr>
-						<td className='text-sm text-green-700 font-semibold'>
-							Estimated Total Value after SIP:
-						</td>
-						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(estimatedTotalValueAfterSip)}
-						</td>
-					</tr>
-					<tr>
-						<td className='text-sm text-green-700 font-semibold'>
-							Estimated Total Withdrawal during SWP:
-						</td>
-						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(estimatedWithdrawalAmount)}
-						</td>
-					</tr>
-					<tr>
-						<td className='text-sm text-green-700 font-semibold'>
-							Estimated SWP will last for:
-						</td>
-						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayYearlyTimeDuration(estimatedNumberOfYears)}
-						</td>
-					</tr>
+					<CalculatorResultTableRow
+						label='Total Invested Amount'
+						value={totalInvestedAmount}
+						type='amount'
+					/>
+					<CalculatorResultTableRow
+						label='Estimated Total Value after SIP'
+						value={estimatedTotalValueAfterSip}
+						type='amount'
+					/>
+					<CalculatorResultTableRow
+						label='Estimated Total Withdrawal during SWP'
+						value={estimatedWithdrawalAmount}
+						type='amount'
+					/>
+					<CalculatorResultTableRow
+						label='Estimated SWP will last for'
+						value={estimatedNumberOfYears}
+						type='year'
+					/>
 				</tbody>
 			</table>
 		</div>
