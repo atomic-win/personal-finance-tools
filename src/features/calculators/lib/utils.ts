@@ -29,13 +29,12 @@ export function calculateFdResult(
 	numberOfYears: number,
 	compoundingFrequency: number
 ) {
-	const compoundInterest =
+	const maturityAmount =
 		principalAmount *
 		Math.pow(
 			1 + annualInterestRate / (100 * compoundingFrequency),
 			compoundingFrequency * numberOfYears
 		);
-	const maturityAmount = compoundInterest;
 
 	const interestEarned = maturityAmount - principalAmount;
 	const principalAmountPercent =
@@ -52,29 +51,41 @@ export function calculateFdResult(
 }
 
 export function calculateRdResult(
-	monthlyInvestment: number,
+	monthlyDepositAmount: number,
 	annualInterestRate: number,
 	numberOfYears: number
 ) {
-	const monthlyInterestRate = annualInterestRate / 12 / 100;
+	const quarterlyInterestRate = annualInterestRate / 4 / 100;
+	const monthsInQuarter = 3;
 
-	let totalInvestedAmount = 0;
+	let totalDepositAmount = 0;
 	let maturityAmount = 0;
 
 	for (let year = 1; year <= numberOfYears; year++) {
 		for (let month = 1; month <= 12; month++) {
-			totalInvestedAmount += monthlyInvestment;
-			maturityAmount += monthlyInvestment;
-			maturityAmount *= 1 + monthlyInterestRate;
+			totalDepositAmount += monthlyDepositAmount;
+
+			if (month % monthsInQuarter === 0) {
+				maturityAmount *= 1 + quarterlyInterestRate;
+			}
+
+			maturityAmount += monthlyDepositAmount;
 		}
 	}
 
-	const interestEarned = maturityAmount - totalInvestedAmount;
+	const interestEarned = maturityAmount - totalDepositAmount;
+
+	const totalDepositAmountPercent =
+		(totalDepositAmount / Math.max(1, maturityAmount)) * 100;
+	const interestEarnedPercent =
+		(interestEarned / Math.max(1, maturityAmount)) * 100;
 
 	return {
-		totalInvestedAmount,
-		interestEarned,
 		maturityAmount,
+		totalDepositAmount,
+		interestEarned,
+		totalDepositAmountPercent,
+		interestEarnedPercent,
 	};
 }
 

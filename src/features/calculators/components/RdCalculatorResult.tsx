@@ -1,15 +1,13 @@
 import { RdCalculator } from '@/features/calculators/lib/types';
-import {
-	calculateRdResult,
-	displayCurrencyAmount,
-} from '@/features/calculators/lib/utils';
+import { calculateRdResult } from '@/features/calculators/lib/utils';
+import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
 
 export default function RdCalculatorResult({
 	calculator,
 }: {
 	calculator: RdCalculator;
 }) {
-	const { maturityAmount, interestEarned, totalInvestedAmount } =
+	const { maturityAmount, totalDepositAmount, interestEarned } =
 		calculateRdResult(
 			calculator.monthlyDepositAmount,
 			calculator.annualInterestRate,
@@ -20,28 +18,21 @@ export default function RdCalculatorResult({
 		<div className='mt-4 p-2 bg-green-100 rounded-md w-auto'>
 			<table className='w-full'>
 				<tbody>
-					<tr>
-						<td className='text-sm text-green-700 font-semibold'>
-							Amount deposited
-						</td>
-						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(totalInvestedAmount, 2, 'standard')}
-						</td>
-					</tr>
-					<tr>
-						<td className='text-sm text-green-700 font-semibold'>
-							Interest Earned:
-						</td>
-						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(interestEarned, 2, 'standard')}
-						</td>
-					</tr>
-					<tr>
-						<td className='text-green-700 font-semibold'>Maturity Amount:</td>
-						<td className='text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(maturityAmount, 2, 'standard')}
-						</td>
-					</tr>
+					<CalculatorResultTableRow
+						label='Total Deposit Amount'
+						value={totalDepositAmount}
+						type='amount'
+					/>
+					<CalculatorResultTableRow
+						label='Interest Earned'
+						value={interestEarned}
+						type='amount'
+					/>
+					<CalculatorResultTableRow
+						label='Maturity Amount'
+						value={maturityAmount}
+						type='amount'
+					/>
 				</tbody>
 			</table>
 		</div>
