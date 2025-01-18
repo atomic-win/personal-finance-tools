@@ -51,7 +51,7 @@ export function calculateFdResult(
 }
 
 export function calculateRdResult(
-	monthlyDeposit: number,
+	monthlyDepositAmount: number,
 	annualInterestRate: number,
 	numberOfYears: number
 ) {
@@ -62,8 +62,8 @@ export function calculateRdResult(
 
 	for (let year = 1; year <= numberOfYears; year++) {
 		for (let month = 1; month <= 12; month++) {
-			totalDepositAmount += monthlyDeposit;
-			maturityAmount += monthlyDeposit;
+			totalDepositAmount += monthlyDepositAmount;
+			maturityAmount += monthlyDepositAmount;
 			maturityAmount *= 1 + monthlyInterestRate;
 		}
 	}
