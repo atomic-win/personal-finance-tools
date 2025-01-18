@@ -14,7 +14,7 @@ export default function Page() {
 
 	return (
 		<>
-			 <title>Assets</title>
+			<title>Assets</title>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{ title: 'Investments', href: '#' },

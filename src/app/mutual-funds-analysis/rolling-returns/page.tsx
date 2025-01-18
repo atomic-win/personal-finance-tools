@@ -6,7 +6,7 @@ import { Suspense } from 'react';
 export default function Page() {
 	return (
 		<>
-			 <title>Rolling Returns</title>
+			<title>Mutual Funds Rolling Returns</title>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{ title: 'Mutual Funds Analysis', href: '', disabled: true },

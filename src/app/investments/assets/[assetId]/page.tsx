@@ -34,6 +34,7 @@ function AssetWrapper({
 
 	return (
 		<>
+			<title>{asset.assetName}</title>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{ title: 'Investments', href: '#', disabled: true },

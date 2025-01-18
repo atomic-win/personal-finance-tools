@@ -29,7 +29,7 @@ export default function Page() {
 	const pageDescription = `A Systematic Withdrawal Plan (SWP) is a facility provided by mutual funds that allows investors to withdraw a fixed amount from their investment at regular intervals. SWP is a popular option for retirees who want to generate a regular income stream from their mutual fund investments. With our SWP calculator, you can estimate the amount you can withdraw regularly based on your investment amount, tenure, and expected returns.`;
 
 	return (
-		 <>
+		<>
 			<title>SWP Calculator</title>
 			<CalculatorPage<SwpCalculator>
 				calculatorName='SWP'
