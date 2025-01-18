@@ -19,7 +19,7 @@ export default function SwpCalculatorResult({
 			<table className='w-full'>
 				<tbody>
 					<CalculatorResultTableRow
-						label='Total Investment Amount'
+						label='Total Invested Amount'
 						value={calculator.totalInvestmentAmount}
 						type='amount'
 					/>
