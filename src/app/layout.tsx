@@ -15,6 +15,9 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang='en'>
+			<head>
+				<title>Personal Finance Tools</title>
+			</head>
 			<body
 				className={cn(
 					'min-h-screen, bg-background font-sans antialiased',

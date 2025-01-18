@@ -41,13 +41,16 @@ export default function Page() {
 	const pageDescription = `The SIP + SWP Calculator helps you plan your investments and withdrawals. Systematic Investment Plan (SIP) allows you to invest a fixed amount regularly, while Systematic Withdrawal Plan (SWP) enables you to withdraw a fixed amount periodically. Use this tool to simulate and manage your financial goals effectively.`;
 
 	return (
-		<CalculatorPage<SipSwpCalculator>
-			calculatorName='SIP+SWP'
-			pageDescription={pageDescription}
-			type='sip-swp'
-			calculatorSchema={sipSwpCalculatorSchema}
-			formFields={formFields}
-			CalculatorResult={SipSwpCalculatorResult}
-		/>
+		 <>
+			<title>SIP + SWP Calculator</title>
+			<CalculatorPage<SipSwpCalculator>
+				calculatorName='SIP+SWP'
+				pageDescription={pageDescription}
+				type='sip-swp'
+				calculatorSchema={sipSwpCalculatorSchema}
+				formFields={formFields}
+				CalculatorResult={SipSwpCalculatorResult}
+			/>
+		</>
 	);
 }
