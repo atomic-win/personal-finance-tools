@@ -55,7 +55,8 @@ export function calculateRdResult(
 	annualInterestRate: number,
 	numberOfYears: number
 ) {
-	const monthlyInterestRate = annualInterestRate / 12 / 100;
+	const quarterlyInterestRate = annualInterestRate / 4 / 100;
+	const monthsInQuarter = 3;
 
 	let totalDepositAmount = 0;
 	let maturityAmount = 0;
@@ -63,8 +64,12 @@ export function calculateRdResult(
 	for (let year = 1; year <= numberOfYears; year++) {
 		for (let month = 1; month <= 12; month++) {
 			totalDepositAmount += monthlyDepositAmount;
+
+			if (month % monthsInQuarter === 0) {
+				maturityAmount *= 1 + quarterlyInterestRate;
+			}
+
 			maturityAmount += monthlyDepositAmount;
-			maturityAmount *= 1 + monthlyInterestRate;
 		}
 	}
 
