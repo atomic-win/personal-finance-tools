@@ -37,8 +37,10 @@ export default function FdCalculatorResult({
 						</td>
 					</tr>
 					<tr>
-						<td className='text-green-700 font-semibold'>Maturity Amount:</td>
-						<td className='text-green-700 font-semibold text-right'>
+						<td className='text-sm text-green-700 font-semibold'>
+							Maturity Amount:
+						</td>
+						<td className='text-sm text-green-700 font-semibold text-right'>
 							{displayCurrencyAmount(maturityAmount, 2, 'standard')}
 						</td>
 					</tr>

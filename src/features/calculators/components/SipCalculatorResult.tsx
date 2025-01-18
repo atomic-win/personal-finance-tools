@@ -24,29 +24,27 @@ export default function SipCalculatorResult({
 					<table className='w-full'>
 						<tbody>
 							<tr>
-								<td className='text-green-700 font-semibold'>
-									Estimated Total Value:
-								</td>
-								<td className='text-green-700 font-semibold'>
-									{displayCurrencyAmount(result.estimatedTotalValue)}
-								</td>
-							</tr>
-							<tr>
 								<td className='text-sm text-green-700 font-semibold'>
 									Total Invested Amount:
 								</td>
-								<td className='text-sm text-green-700 font-semibold'>
-									{displayCurrencyAmount(result.totalInvestedAmount)} (
-									{result.investedAmountPercent.toFixed(2)}%)
+								<td className='text-sm text-green-700 font-semibold text-right'>
+									{displayCurrencyAmount(result.totalInvestedAmount)}
 								</td>
 							</tr>
 							<tr>
 								<td className='text-sm text-green-700 font-semibold'>
 									Estimated Returns:
 								</td>
+								<td className='text-sm text-green-700 font-semibold text-right'>
+									{displayCurrencyAmount(result.estimatedReturns)}
+								</td>
+							</tr>
+							<tr>
 								<td className='text-sm text-green-700 font-semibold'>
-									{displayCurrencyAmount(result.estimatedReturns)} (
-									{result.estimatedReturnsPercent.toFixed(2)}%)
+									Estimated Total Value:
+								</td>
+								<td className='text-sm text-green-700 font-semibold text-right'>
+									{displayCurrencyAmount(result.estimatedTotalValue)}
 								</td>
 							</tr>
 						</tbody>

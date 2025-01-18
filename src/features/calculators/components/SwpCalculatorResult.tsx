@@ -27,7 +27,7 @@ export default function SwpCalculatorResult({
 								<td className='text-sm text-green-700 font-semibold'>
 									Total Investment:
 								</td>
-								<td className='text-sm text-green-700 font-semibold'>
+								<td className='text-sm text-green-700 font-semibold text-right'>
 									{displayCurrencyAmount(calculator.totalInvestmentAmount)}
 								</td>
 							</tr>
@@ -35,15 +35,15 @@ export default function SwpCalculatorResult({
 								<td className='text-sm text-green-700 font-semibold'>
 									Estimated Total Withdrawal:
 								</td>
-								<td className='text-sm text-green-700 font-semibold'>
+								<td className='text-sm text-green-700 font-semibold text-right'>
 									{displayCurrencyAmount(result.estimatedWithdrawalAmount)}
 								</td>
 							</tr>
 							<tr>
 								<td className='text-sm text-green-700 font-semibold'>
-									Estimated Corpus Lasted:
+									Estimated SWP will last for:
 								</td>
-								<td className='text-sm text-green-700 font-semibold'>
+								<td className='text-sm text-green-700 font-semibold text-right'>
 									{displayYearlyTimeDuration(result.estimatedNumberOfYears)}
 								</td>
 							</tr>

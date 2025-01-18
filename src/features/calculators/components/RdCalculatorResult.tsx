@@ -9,7 +9,7 @@ export default function RdCalculatorResult({
 }: {
 	calculator: RdCalculator;
 }) {
-	const { maturityAmount, interestEarned, totalInvestedAmount } =
+	const { maturityAmount, totalDepositAmount, interestEarned } =
 		calculateRdResult(
 			calculator.monthlyDepositAmount,
 			calculator.annualInterestRate,
@@ -22,10 +22,10 @@ export default function RdCalculatorResult({
 				<tbody>
 					<tr>
 						<td className='text-sm text-green-700 font-semibold'>
-							Amount deposited
+							Total Deposit Amount:
 						</td>
 						<td className='text-sm text-green-700 font-semibold text-right'>
-							{displayCurrencyAmount(totalInvestedAmount, 2, 'standard')}
+							{displayCurrencyAmount(totalDepositAmount, 2, 'standard')}
 						</td>
 					</tr>
 					<tr>
@@ -37,8 +37,10 @@ export default function RdCalculatorResult({
 						</td>
 					</tr>
 					<tr>
-						<td className='text-green-700 font-semibold'>Maturity Amount:</td>
-						<td className='text-green-700 font-semibold text-right'>
+						<td className='text-sm text-green-700 font-semibold'>
+							Maturity Amount:
+						</td>
+						<td className='text-sm text-green-700 font-semibold text-right'>
 							{displayCurrencyAmount(maturityAmount, 2, 'standard')}
 						</td>
 					</tr>

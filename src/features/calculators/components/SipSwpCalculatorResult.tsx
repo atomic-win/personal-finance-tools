@@ -41,31 +41,31 @@ export default function SipSwpCalculatorResult({
 						<td className='text-sm text-green-700 font-semibold'>
 							Total Invested Amount:
 						</td>
-						<td className='text-sm text-green-700 font-semibold'>
+						<td className='text-sm text-green-700 font-semibold text-right'>
 							{displayCurrencyAmount(totalInvestedAmount)}
 						</td>
 					</tr>
 					<tr>
 						<td className='text-sm text-green-700 font-semibold'>
-							Estimated Total Value After SIP:
+							Estimated Total Value after SIP:
 						</td>
-						<td className='text-sm text-green-700 font-semibold'>
+						<td className='text-sm text-green-700 font-semibold text-right'>
 							{displayCurrencyAmount(estimatedTotalValueAfterSip)}
 						</td>
 					</tr>
 					<tr>
 						<td className='text-sm text-green-700 font-semibold'>
-							Estimated Total Withdrawal:
+							Estimated Total Withdrawal during SWP:
 						</td>
-						<td className='text-sm text-green-700 font-semibold'>
+						<td className='text-sm text-green-700 font-semibold text-right'>
 							{displayCurrencyAmount(estimatedWithdrawalAmount)}
 						</td>
 					</tr>
 					<tr>
 						<td className='text-sm text-green-700 font-semibold'>
-							Estimated Corpus Lasted:
+							Estimated SWP will last for:
 						</td>
-						<td className='text-sm text-green-700 font-semibold'>
+						<td className='text-sm text-green-700 font-semibold text-right'>
 							{displayYearlyTimeDuration(estimatedNumberOfYears)}
 						</td>
 					</tr>
