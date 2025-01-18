@@ -23,6 +23,7 @@ export default function Page() {
 
 	return (
 		<>
+			<title>Portfolio</title>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{ title: 'Investments', href: '#' },

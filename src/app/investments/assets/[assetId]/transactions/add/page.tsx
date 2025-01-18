@@ -32,6 +32,7 @@ function AddTransactionFormWrapper({
 
 	return (
 		<>
+			<title>Add Transaction</title>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{ title: 'Investments', href: '#', disabled: true },

@@ -3,6 +3,7 @@ import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcr
 export default function HomePage() {
 	return (
 		<>
+			<title>Personal Finance Tools</title>
 			<SidebarTriggerWithBreadcrumb breadcrumbs={[]} />
 			<div className='text-center px-4 space-y-4'>
 				<h1 className='text-3xl'>Personal Finance Tools</h1>
