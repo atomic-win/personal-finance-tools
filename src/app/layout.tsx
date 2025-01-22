@@ -22,14 +22,6 @@ export default function RootLayout({
 					inter.variable
 				)}>
 				<Providers>{children}</Providers>
-				<footer className="mt-8 p-4 bg-gray-100 text-center">
-					<a
-						href="https://forms.gle/hkvX3nzQcsBVn4xp7"
-						className="text-blue-500 hover:underline"
-					>
-						Feedback
-					</a>
-				</footer>
 			</body>
 			<GoogleAnalytics gaId='G-NL8V8WZQN1' />
 		</html>
