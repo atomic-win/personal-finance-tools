@@ -17,6 +17,10 @@ export default function RootLayout({
 	return (
 		<html lang='en'>
 			<head>
+				<meta
+					name='google-site-verification'
+					content='ZQlI6Wndfdb4ajaLwhp7Z2rC2KdpKeoJuKYG9WWvI-Q'
+				/>
 				<script
 					async
 					src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7570289096550601'
