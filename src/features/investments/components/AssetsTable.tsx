@@ -6,11 +6,9 @@ import {
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import DeleteAssetDialog from '@/features/investments/components/DeleteAssetDialog';
-import { displayCurrencyAmount } from '@/lib/utils';
+import CurrencyAmount from '@/components/CurrencyAmount';
 
-type TableItem = AssetPortfolio & { currency: string };
-
-const columns: ColumnDef<TableItem>[] = [
+const columns: ColumnDef<AssetPortfolio>[] = [
 	createColumnDef({
 		accessorKey: 'asset',
 		headerText: 'Asset',
@@ -38,8 +36,7 @@ const columns: ColumnDef<TableItem>[] = [
 		accessorKey: 'investedValue',
 		id: 'Invested Value',
 		headerText: 'Invested Value',
-		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.investedValue),
+		cellTextFn: (data) => <CurrencyAmount amount={data.investedValue} />,
 		sortingFnCompare: (data) => data.investedValue,
 		enableHiding: false,
 	}),
@@ -54,8 +51,7 @@ const columns: ColumnDef<TableItem>[] = [
 		accessorKey: 'currentValue',
 		id: 'Current Value',
 		headerText: 'Current Value',
-		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.currentValue),
+		cellTextFn: (data) => <CurrencyAmount amount={data.currentValue} />,
 		sortingFnCompare: (data) => data.currentValue,
 		enableHiding: false,
 	}),
@@ -77,28 +73,22 @@ const columns: ColumnDef<TableItem>[] = [
 		id: 'actions',
 		cell: ({ row }) => {
 			const item = row.original;
-			return <DeleteAssetDialog asset={item} currency={item.currency} />;
+			return <DeleteAssetDialog asset={item} />;
 		},
 	},
 ];
 
 export default function AssetsTable({
 	portfolios,
-	currency,
 }: {
 	portfolios: AssetPortfolio[];
 	currency: string;
 }) {
-	const items = portfolios.map((portfolio) => ({
-		...portfolio,
-		currency,
-	}));
-
 	return (
 		<div className='mx-auto'>
 			<DataTable
 				columns={columns}
-				data={items}
+				data={portfolios}
 				initialSorting={[
 					{
 						id: 'investedValuePercent',

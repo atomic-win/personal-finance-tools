@@ -2,24 +2,20 @@ import { ColumnDef } from '@tanstack/react-table';
 import { OverallPortfolio } from '@/features/investments/lib/types';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
 import { displayPercentage } from '@/features/investments/lib/utils';
-import { displayCurrencyAmount } from '@/lib/utils';
+import CurrencyAmount from '@/components/CurrencyAmount';
 
-type TableItem = OverallPortfolio & { currency: string };
-
-const columns: ColumnDef<TableItem>[] = [
+const columns: ColumnDef<OverallPortfolio>[] = [
 	createColumnDef({
 		accessorKey: 'investedValue',
 		headerText: 'Initial Value',
-		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.investedValue),
+		cellTextFn: (data) => <CurrencyAmount amount={data.investedValue} />,
 		align: 'left',
 		enableHiding: false,
 	}),
 	createColumnDef({
 		accessorKey: 'currentValue',
 		headerText: 'Current Value',
-		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.currentValue),
+		cellTextFn: (data) => <CurrencyAmount amount={data.currentValue} />,
 		align: 'left',
 		enableHiding: false,
 	}),
@@ -34,19 +30,12 @@ const columns: ColumnDef<TableItem>[] = [
 
 export default function PortfolioOverallSection({
 	portfolios,
-	currency,
 }: {
 	portfolios: OverallPortfolio[];
-	currency: string;
 }) {
-	const items = portfolios.map((portfolio) => ({
-		...portfolio,
-		currency,
-	}));
-
 	return (
 		<div className='mx-auto'>
-			<DataTable columns={columns} data={items} />
+			<DataTable columns={columns} data={portfolios} />
 		</div>
 	);
 }

@@ -6,11 +6,10 @@ import DeleteTransactionDialog from '@/features/investments/components/DeleteTra
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PlusIcon } from 'lucide-react';
-import { displayCurrencyAmount } from '@/lib/utils';
+import CurrencyAmount from '@/components/CurrencyAmount';
 
 type TableItem = Transaction & {
 	asset: AssetPortfolio;
-	currency: string;
 };
 
 const columns: ColumnDef<TableItem>[] = [
@@ -47,7 +46,7 @@ const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
 		accessorKey: 'transactionAmount',
 		headerText: 'Transaction Amount',
-		cellTextFn: (item) => displayCurrencyAmount(item.currency, item.amount),
+		cellTextFn: (item) => <CurrencyAmount amount={item.amount} />,
 		align: 'right',
 		enableHiding: false,
 	}),
@@ -55,13 +54,7 @@ const columns: ColumnDef<TableItem>[] = [
 		id: 'actions',
 		cell: ({ row }) => {
 			const item = row.original;
-			return (
-				<DeleteTransactionDialog
-					asset={item.asset}
-					transaction={item}
-					currency={item.currency}
-				/>
-			);
+			return <DeleteTransactionDialog asset={item.asset} transaction={item} />;
 		},
 	},
 ];
@@ -69,7 +62,6 @@ const columns: ColumnDef<TableItem>[] = [
 export default function TransactionsTable({
 	asset,
 	transactions,
-	currency,
 }: {
 	asset: AssetPortfolio;
 	transactions: Transaction[];
@@ -78,7 +70,6 @@ export default function TransactionsTable({
 	const items = transactions.map((transaction) => ({
 		...transaction,
 		asset,
-		currency,
 	}));
 
 	return (

@@ -6,7 +6,8 @@ import {
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
-import { displayCurrencyAmount } from '@/lib/utils';
+import React from 'react';
+import CurrencyAmount from '@/components/CurrencyAmount';
 
 export default function Asset({
 	asset,
@@ -29,11 +30,11 @@ export default function Asset({
 					/>
 					<InfoLine
 						label='Invested Value'
-						value={displayCurrencyAmount(currency, asset.investedValue)}
+						value={<CurrencyAmount amount={asset.investedValue} />}
 					/>
 					<InfoLine
 						label='Current Value'
-						value={displayCurrencyAmount(currency, asset.currentValue)}
+						value={<CurrencyAmount amount={asset.currentValue} />}
 					/>
 					<InfoLine label='XIRR' value={displayPercentage(asset.xirrPercent)} />
 				</div>
@@ -50,7 +51,7 @@ export default function Asset({
 	);
 }
 
-function InfoLine({ label, value }: { label: string; value: string }) {
+function InfoLine({ label, value }: { label: string; value: React.ReactNode }) {
 	return (
 		<div className='flex'>
 			<div className='text-lg font-semibold mr-2'>{label}:</div>
