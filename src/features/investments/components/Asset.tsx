@@ -12,11 +12,9 @@ import CurrencyAmount from '@/components/CurrencyAmount';
 export default function Asset({
 	asset,
 	transactions,
-	currency,
 }: {
 	asset: AssetPortfolio;
 	transactions: Transaction[];
-	currency: string;
 }) {
 	return (
 		<Card className='mx-auto my-2 rounded-lg shadow-md w-full'>
@@ -41,11 +39,7 @@ export default function Asset({
 				<Separator />
 			</CardHeader>
 			<CardContent className='mt-0 space-y-4'>
-				<TransactionsTable
-					asset={asset}
-					transactions={transactions}
-					currency={currency}
-				/>
+				<TransactionsTable asset={asset} transactions={transactions} />
 			</CardContent>
 		</Card>
 	);

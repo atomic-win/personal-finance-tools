@@ -82,7 +82,6 @@ export default function AssetsTable({
 	portfolios,
 }: {
 	portfolios: AssetPortfolio[];
-	currency: string;
 }) {
 	return (
 		<div className='mx-auto'>

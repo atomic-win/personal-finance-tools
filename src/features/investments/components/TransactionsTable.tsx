@@ -65,7 +65,6 @@ export default function TransactionsTable({
 }: {
 	asset: AssetPortfolio;
 	transactions: Transaction[];
-	currency: string;
 }) {
 	const items = transactions.map((transaction) => ({
 		...transaction,

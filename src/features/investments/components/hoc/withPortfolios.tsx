@@ -32,19 +32,15 @@ import withTransactions from '@/features/investments/components/hoc/withTransact
 export default function withPortfolios(
 	OverallSection: React.ComponentType<{
 		portfolios: OverallPortfolio[];
-		currency: string;
 	}>,
 	InstrumentTypeSection: React.ComponentType<{
 		portfolios: InstrumentTypePortfolio[];
-		currency: string;
 	}>,
 	InstrumentSection: React.ComponentType<{
 		portfolios: InstrumentPortfolio[];
-		currency: string;
 	}>,
 	AssetSection: React.ComponentType<{
 		portfolios: AssetPortfolio[];
-		currency: string;
 	}>
 ) {
 	return function WithPortfolios({ latest }: { latest: boolean }) {
@@ -84,19 +80,15 @@ function Page({
 	latest: boolean;
 	OverallSection: React.ComponentType<{
 		portfolios: OverallPortfolio[];
-		currency: string;
 	}>;
 	InstrumentTypeSection: React.ComponentType<{
 		portfolios: InstrumentTypePortfolio[];
-		currency: string;
 	}>;
 	InstrumentSection: React.ComponentType<{
 		portfolios: InstrumentPortfolio[];
-		currency: string;
 	}>;
 	AssetSection: React.ComponentType<{
 		portfolios: AssetPortfolio[];
-		currency: string;
 	}>;
 }) {
 	const searchParams = useSearchParams();

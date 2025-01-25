@@ -23,11 +23,9 @@ export default function Page({ params }: { params: { assetId: string } }) {
 function AssetWrapper({
 	portfolios,
 	transactions,
-	currency,
 }: {
 	portfolios: AssetPortfolio[];
 	transactions: Transaction[];
-	currency: string;
 }) {
 	const asset = portfolios[0];
 
@@ -42,7 +40,7 @@ function AssetWrapper({
 				]}
 			/>
 			<div className='container mx-auto p-2'>
-				<Asset asset={asset} transactions={transactions} currency={currency} />
+				<Asset asset={asset} transactions={transactions} />
 			</div>
 		</>
 	);
