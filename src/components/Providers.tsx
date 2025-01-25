@@ -39,17 +39,7 @@ export default function Providers({
 				<SidebarProvider>
 					<AppSidebar />
 					<main className='container'>
-						<div className='flex flex-col min-h-screen'>
-							<div className='flex-grow'>{children}</div>
-							<footer className='text-center w-full p-4'>
-								<a
-									target='_blank'
-									href='https://forms.gle/hkvX3nzQcsBVn4xp7'
-									className='underline'>
-									Feedback
-								</a>
-							</footer>
-						</div>
+						{children}
 						<ReactQueryDevtools />
 					</main>
 				</SidebarProvider>
