@@ -2,20 +2,19 @@ import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
 	useSidebar,
 } from '@/components/ui/sidebar';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Check, MoreHorizontal } from 'lucide-react';
 import useCurrencyQuery from '@/hooks/useCurrencyQuery';
-import { Currency } from '@/lib/types';
 import useUpdateSettingMutation from '@/hooks/useUpdateSettingMutation';
+import {
+	Select,
+	SelectContent,
+	SelectIcon,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { ChevronRight } from 'lucide-react';
 
 export default function SettingsSidebarGroup() {
 	const { isMobile } = useSidebar();
@@ -31,7 +30,7 @@ export default function SettingsSidebarGroup() {
 			name: 'currency',
 			title: 'Currency',
 			value: currency,
-			options: Object.values(Currency).filter((x) => x !== Currency.Unknown),
+			options: Intl.supportedValuesOf('currency'),
 		},
 	];
 
@@ -40,43 +39,33 @@ export default function SettingsSidebarGroup() {
 			<SidebarGroupLabel>Settings</SidebarGroupLabel>
 			<SidebarMenu>
 				{settings.map((setting) => (
-					<DropdownMenu key={setting.title}>
-						<SidebarMenuItem>
-							<DropdownMenuTrigger asChild>
-								<SidebarMenuButton className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'>
-									{setting.title} - {setting.value}{' '}
-									<MoreHorizontal className='ml-auto' />
-								</SidebarMenuButton>
-							</DropdownMenuTrigger>
-							{setting.options.length ? (
-								<DropdownMenuContent
-									side={isMobile ? 'bottom' : 'right'}
-									align={isMobile ? 'end' : 'start'}
-									className='min-w-56 rounded-lg'>
-									{setting.options.map((option) => (
-										<DropdownMenuItem
-											asChild
-											key={option}
-											onClick={() =>
-												updateSetting({
-													settingName: setting.name,
-													setttingValue: option,
-												})
-											}>
-											<div className='flex items-center gap-2'>
-												{option === setting.value ? (
-													<Check className='size-4' />
-												) : (
-													<span className='size-4' />
-												)}
-												<text>{option}</text>
-											</div>
-										</DropdownMenuItem>
-									))}
-								</DropdownMenuContent>
-							) : null}
-						</SidebarMenuItem>
-					</DropdownMenu>
+					<Select
+						key={setting.name}
+						onValueChange={(x) =>
+							updateSetting({ settingName: setting.name, setttingValue: x })
+						}
+						value={setting.value}>
+						<SelectTrigger
+							className='w-full rounded-lg sm:ml-auto'
+							aria-label='Select a value'>
+							<SelectValue>
+								{setting.title} - {setting.value}
+							</SelectValue>
+							<SelectIcon>
+								<ChevronRight className='h-4 w-4 opacity-50' />
+							</SelectIcon>
+						</SelectTrigger>
+						<SelectContent
+							className='rounded-xl'
+							side={isMobile ? 'bottom' : 'right'}
+							align={isMobile ? 'end' : 'start'}>
+							{setting.options.map((option) => (
+								<SelectItem key={option} value={option} className='rounded-lg'>
+									{option}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 				))}
 			</SidebarMenu>
 		</SidebarGroup>
