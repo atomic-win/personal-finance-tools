@@ -1,10 +1,6 @@
 import { Currency } from '@/lib/types';
-import { useQuery } from '@tanstack/react-query';
+import useSettingQuery from '@/hooks/useSettingQuery';
 
 export default function useCurrencyQuery() {
-	return useQuery({
-		queryKey: ['currency'],
-		queryFn: () =>
-			(localStorage.getItem('currency') as Currency) ?? Currency.INR,
-	});
+	return useSettingQuery('currency', Currency.INR);
 }

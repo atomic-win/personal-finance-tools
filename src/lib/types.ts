@@ -9,4 +9,5 @@ export type UserProfile = {
 export enum Currency {
 	Unknown = 'Unknown',
 	INR = 'INR',
+	USD = 'USD',
 }

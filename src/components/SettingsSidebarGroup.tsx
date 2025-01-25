@@ -15,9 +15,11 @@ import {
 import { Check, MoreHorizontal } from 'lucide-react';
 import useCurrencyQuery from '@/hooks/useCurrencyQuery';
 import { Currency } from '@/lib/types';
+import useUpdateSettingMutation from '@/hooks/useUpdateSettingMutation';
 
 export default function SettingsSidebarGroup() {
 	const { isMobile } = useSidebar();
+	const { mutate: updateSetting } = useUpdateSettingMutation();
 	const { data: currency, isLoading } = useCurrencyQuery();
 
 	if (isLoading || !currency) {
@@ -26,6 +28,7 @@ export default function SettingsSidebarGroup() {
 
 	const settings = [
 		{
+			name: 'currency',
 			title: 'Currency',
 			value: currency,
 			options: Object.values(Currency).filter((x) => x !== Currency.Unknown),
@@ -51,7 +54,15 @@ export default function SettingsSidebarGroup() {
 									align={isMobile ? 'end' : 'start'}
 									className='min-w-56 rounded-lg'>
 									{setting.options.map((option) => (
-										<DropdownMenuItem asChild key={option}>
+										<DropdownMenuItem
+											asChild
+											key={option}
+											onClick={() =>
+												updateSetting({
+													settingName: setting.name,
+													setttingValue: option,
+												})
+											}>
 											<div className='flex items-center gap-2'>
 												{option === setting.value && (
 													<Check className='size-4' />
