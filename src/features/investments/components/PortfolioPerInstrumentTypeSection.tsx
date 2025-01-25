@@ -4,13 +4,13 @@ import {
 } from '@/features/investments/lib/types';
 import { ColumnDef } from '@tanstack/react-table';
 import {
-	displayCurrencyAmount,
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
 import PortfolioCharts from '@/features/investments/components/PortfolioCharts';
 import { Currency } from '@/lib/types';
+import { displayCurrencyAmount } from '@/lib/utils';
 
 type TableItem = InstrumentTypePortfolio & { currency: Currency };
 

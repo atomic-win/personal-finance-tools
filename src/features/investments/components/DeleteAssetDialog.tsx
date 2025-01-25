@@ -12,12 +12,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { AssetPortfolio } from '@/features/investments/lib/types';
 import {
-	displayCurrencyAmount,
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import { useDeleteAssetMutation } from '@/features/investments/hooks/assets';
 import { Currency } from '@/lib/types';
+import { displayCurrencyAmount } from '@/lib/utils';
 
 export default function DeleteAssetDialog({
 	asset,

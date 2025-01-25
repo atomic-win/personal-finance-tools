@@ -1,15 +1,13 @@
 import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
 import { ColumnDef } from '@tanstack/react-table';
-import {
-	displayTransactionAmount,
-	displayTransactionType,
-} from '@/features/investments/lib/utils';
+import { displayTransactionType } from '@/features/investments/lib/utils';
 import DeleteTransactionDialog from '@/features/investments/components/DeleteTransactionDialog';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Currency } from '@/lib/types';
 import { PlusIcon } from 'lucide-react';
+import { displayCurrencyAmount } from '@/lib/utils';
 
 type TableItem = Transaction & {
 	asset: AssetPortfolio;
@@ -50,7 +48,7 @@ const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
 		accessorKey: 'transactionAmount',
 		headerText: 'Transaction Amount',
-		cellTextFn: (item) => displayTransactionAmount(item.currency, item.amount),
+		cellTextFn: (item) => displayCurrencyAmount(item.currency, item.amount),
 		align: 'right',
 		enableHiding: false,
 	}),

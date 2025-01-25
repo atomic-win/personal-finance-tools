@@ -2,12 +2,12 @@ import { createColumnDef, DataTable } from '@/components/ui/data-table';
 import { AssetPortfolio } from '@/features/investments/lib/types';
 import { ColumnDef } from '@tanstack/react-table';
 import {
-	displayCurrencyAmount,
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import PortfolioCharts from '@/features/investments/components/PortfolioCharts';
 import { Currency } from '@/lib/types';
+import { displayCurrencyAmount } from '@/lib/utils';
 
 type TableItem = AssetPortfolio & { currency: Currency };
 

@@ -1,4 +1,3 @@
-import { Currency } from '@/lib/types';
 import {
 	Instrument,
 	InstrumentType,
@@ -16,20 +15,6 @@ export function findInstrumentById(
 
 export function findAssetById(assets: Asset[], id: string): Asset | undefined {
 	return (assets || []).find((asset) => asset.id === id);
-}
-
-export function displayCurrencyAmount(
-	currency: Currency,
-	amount: number,
-	notation: 'standard' | 'compact' = 'compact'
-) {
-	return Intl.NumberFormat('en-IN', {
-		style: 'currency',
-		currency: currency,
-		currencyDisplay: 'symbol',
-		maximumFractionDigits: 2,
-		notation: notation,
-	}).format(amount);
 }
 
 export function displayPercentage(percent: number) {
@@ -100,12 +85,4 @@ export function displayTransactionType(transactionType: TransactionType) {
 		default:
 			throw new Error(`Unknown transaction type: ${transactionType}`);
 	}
-}
-
-export function displayTransactionAmount(currency: Currency, amount: number) {
-	return Intl.NumberFormat('en-IN', {
-		style: 'currency',
-		currency: currency,
-		currencyDisplay: 'symbol',
-	}).format(amount);
 }

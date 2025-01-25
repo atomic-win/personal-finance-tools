@@ -1,11 +1,9 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { OverallPortfolio } from '@/features/investments/lib/types';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
-import {
-	displayCurrencyAmount,
-	displayPercentage,
-} from '@/features/investments/lib/utils';
+import { displayPercentage } from '@/features/investments/lib/utils';
 import { Currency } from '@/lib/types';
+import { displayCurrencyAmount } from '@/lib/utils';
 
 type TableItem = OverallPortfolio & { currency: Currency };
 

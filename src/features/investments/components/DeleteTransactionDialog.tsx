@@ -11,9 +11,9 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
-import { displayTransactionAmount } from '@/features/investments/lib/utils';
 import { useDeleteTransactionMutation } from '@/features/investments/hooks/transactions';
 import { Currency } from '@/lib/types';
+import { displayCurrencyAmount } from '@/lib/utils';
 
 export default function DeleteTransactionDialog({
 	asset,
@@ -48,7 +48,7 @@ export default function DeleteTransactionDialog({
 					<InfoLine label='Units' value={transaction.units.toString()} />
 					<InfoLine
 						label='Transaction Amount'
-						value={displayTransactionAmount(currency, transaction.amount)}
+						value={displayCurrencyAmount(currency, transaction.amount)}
 					/>
 				</div>
 				<AlertDialogFooter>

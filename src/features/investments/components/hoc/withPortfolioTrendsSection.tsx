@@ -11,13 +11,13 @@ import {
 } from '@/components/ui/chart';
 import { CartesianGrid, XAxis, YAxis, Line, LineChart } from 'recharts';
 import {
-	displayCurrencyAmount,
 	displayNumber,
 	displayPercentage,
 	displayPortfolioType,
 } from '@/features/investments/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Currency } from '@/lib/types';
+import { displayCurrencyAmount } from '@/lib/utils';
 
 enum TrendType {
 	InvestedValue = 'InvestedValue',

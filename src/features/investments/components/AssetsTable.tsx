@@ -2,12 +2,12 @@ import { createColumnDef, DataTable } from '@/components/ui/data-table';
 import { AssetPortfolio } from '@/features/investments/lib/types';
 import { ColumnDef } from '@tanstack/react-table';
 import {
-	displayCurrencyAmount,
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import DeleteAssetDialog from '@/features/investments/components/DeleteAssetDialog';
 import { Currency } from '@/lib/types';
+import { displayCurrencyAmount } from '@/lib/utils';
 
 type TableItem = AssetPortfolio & { currency: Currency };
 
@@ -40,7 +40,7 @@ const columns: ColumnDef<TableItem>[] = [
 		id: 'Invested Value',
 		headerText: 'Invested Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.investedValue, 'standard'),
+			displayCurrencyAmount(data.currency, data.investedValue),
 		sortingFnCompare: (data) => data.investedValue,
 		enableHiding: false,
 	}),
@@ -56,7 +56,7 @@ const columns: ColumnDef<TableItem>[] = [
 		id: 'Current Value',
 		headerText: 'Current Value',
 		cellTextFn: (data) =>
-			displayCurrencyAmount(data.currency, data.currentValue, 'standard'),
+			displayCurrencyAmount(data.currency, data.currentValue),
 		sortingFnCompare: (data) => data.currentValue,
 		enableHiding: false,
 	}),

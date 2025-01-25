@@ -3,11 +3,11 @@ import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
 import TransactionsTable from '@/features/investments/components/TransactionsTable';
 import { Separator } from '@/components/ui/separator';
 import {
-	displayCurrencyAmount,
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import { Currency } from '@/lib/types';
+import { displayCurrencyAmount } from '@/lib/utils';
 
 export default function Asset({
 	asset,
@@ -30,19 +30,11 @@ export default function Asset({
 					/>
 					<InfoLine
 						label='Invested Value'
-						value={displayCurrencyAmount(
-							currency,
-							asset.investedValue,
-							'standard'
-						)}
+						value={displayCurrencyAmount(currency, asset.investedValue)}
 					/>
 					<InfoLine
 						label='Current Value'
-						value={displayCurrencyAmount(
-							currency,
-							asset.currentValue,
-							'standard'
-						)}
+						value={displayCurrencyAmount(currency, asset.currentValue)}
 					/>
 					<InfoLine label='XIRR' value={displayPercentage(asset.xirrPercent)} />
 				</div>
