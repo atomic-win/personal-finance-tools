@@ -37,7 +37,7 @@ export default function SettingsSidebarGroup() {
 		!locale ||
 		!ipData
 	) {
-		return null;
+		return <SidebarGroup className='mt-auto' />;
 	}
 
 	const settings = [
