@@ -1,6 +1,5 @@
 import CurrencyAmount from '@/components/CurrencyAmount';
 import { displayYearlyTimeDuration } from '@/features/calculators/lib/utils';
-import useCurrencyQuery from '@/hooks/useCurrencyQuery';
 
 export default function CalculatorResultTableRow({
 	label,
@@ -11,12 +10,6 @@ export default function CalculatorResultTableRow({
 	value: number;
 	type: 'amount' | 'year';
 }) {
-	const { data: currency, isLoading } = useCurrencyQuery();
-
-	if (isLoading || !currency) {
-		return null;
-	}
-
 	return (
 		<tr className='border-y border-green-700 w-full'>
 			<td className='text-sm text-green-700 font-semibold w-1/2'>{label}:</td>

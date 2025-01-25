@@ -1,4 +1,4 @@
-import useCurrencyQuery from '@/hooks/useCurrencyQuery';
+import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
 import { displayCurrencyAmountText } from '@/lib/utils';
 
 export default function CurrencyAmount({

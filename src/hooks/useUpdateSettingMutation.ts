@@ -8,12 +8,12 @@ export default function useUpdateSettingMutation() {
 	return useMutation({
 		mutationFn: async ({
 			settingName,
-			setttingValue,
+			settingValue,
 		}: {
 			settingName: string;
-			setttingValue: string;
+			settingValue: string;
 		}) => {
-			localStorage.setItem(`settings/${settingName}`, setttingValue);
+			localStorage.setItem(`settings/${settingName}`, settingValue);
 
 			queryClient.invalidateQueries({
 				queryKey: ['settings', settingName],

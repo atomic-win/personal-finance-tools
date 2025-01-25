@@ -16,8 +16,8 @@ import {
 	displayPortfolioType,
 } from '@/features/investments/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import useCurrencyQuery from '@/hooks/useCurrencyQuery';
-import useLocaleQuery from '@/hooks/useLocaleQuery';
+import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
+import { useLocaleQuery } from '@/hooks/useLocaleQuery';
 import { displayCurrencyAmountText } from '@/lib/utils';
 
 enum TrendType {

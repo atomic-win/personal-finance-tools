@@ -5,10 +5,22 @@ export default function useSettingQuery(
 	defaultValue: string
 ) {
 	return useQuery({
-		queryKey: ['settings', settingName],
+		queryKey: [
+			'settings',
+			settingName,
+			{
+				defaultValue,
+			},
+		],
 		initialData: defaultValue,
 		queryFn: () =>
-			localStorage.getItem(`settings/${settingName}`) ?? defaultValue,
+			localStorage.getItem(`settings/${settingName}`) || defaultValue,
 		refetchIntervalInBackground: true,
 	});
+}
+
+export function useSetting(settingName: string) {
+	return typeof window === 'undefined'
+		? null
+		: localStorage.getItem(`settings/${settingName}`);
 }
