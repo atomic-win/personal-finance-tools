@@ -2,10 +2,9 @@ import { ColumnDef } from '@tanstack/react-table';
 import { OverallPortfolio } from '@/features/investments/lib/types';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
 import { displayPercentage } from '@/features/investments/lib/utils';
-import { Currency } from '@/lib/types';
 import { displayCurrencyAmount } from '@/lib/utils';
 
-type TableItem = OverallPortfolio & { currency: Currency };
+type TableItem = OverallPortfolio & { currency: string };
 
 const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
@@ -38,7 +37,7 @@ export default function PortfolioOverallSection({
 	currency,
 }: {
 	portfolios: OverallPortfolio[];
-	currency: Currency;
+	currency: string;
 }) {
 	const items = portfolios.map((portfolio) => ({
 		...portfolio,

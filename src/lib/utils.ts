@@ -1,13 +1,12 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Currency } from '@/lib/types';
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
 export function displayCurrencyAmount(
-	currency: Currency,
+	currency: string,
 	amount: number,
 	notation: 'standard' | 'compact' = 'standard',
 	maximumFractionDigits: number = 2

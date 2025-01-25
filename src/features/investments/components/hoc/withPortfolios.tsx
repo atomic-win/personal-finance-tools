@@ -27,25 +27,24 @@ import withCurrency from '@/features/investments/components/hoc/withCurrency';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { displayPortfolioType } from '@/features/investments/lib/utils';
-import { Currency } from '@/lib/types';
 import withTransactions from '@/features/investments/components/hoc/withTransactions';
 
 export default function withPortfolios(
 	OverallSection: React.ComponentType<{
 		portfolios: OverallPortfolio[];
-		currency: Currency;
+		currency: string;
 	}>,
 	InstrumentTypeSection: React.ComponentType<{
 		portfolios: InstrumentTypePortfolio[];
-		currency: Currency;
+		currency: string;
 	}>,
 	InstrumentSection: React.ComponentType<{
 		portfolios: InstrumentPortfolio[];
-		currency: Currency;
+		currency: string;
 	}>,
 	AssetSection: React.ComponentType<{
 		portfolios: AssetPortfolio[];
-		currency: Currency;
+		currency: string;
 	}>
 ) {
 	return function WithPortfolios({ latest }: { latest: boolean }) {
@@ -85,19 +84,19 @@ function Page({
 	latest: boolean;
 	OverallSection: React.ComponentType<{
 		portfolios: OverallPortfolio[];
-		currency: Currency;
+		currency: string;
 	}>;
 	InstrumentTypeSection: React.ComponentType<{
 		portfolios: InstrumentTypePortfolio[];
-		currency: Currency;
+		currency: string;
 	}>;
 	InstrumentSection: React.ComponentType<{
 		portfolios: InstrumentPortfolio[];
-		currency: Currency;
+		currency: string;
 	}>;
 	AssetSection: React.ComponentType<{
 		portfolios: AssetPortfolio[];
-		currency: Currency;
+		currency: string;
 	}>;
 }) {
 	const searchParams = useSearchParams();

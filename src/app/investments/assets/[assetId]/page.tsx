@@ -7,7 +7,6 @@ import withCurrency from '@/features/investments/components/hoc/withCurrency';
 import withInstruments from '@/features/investments/components/hoc/withInstruments';
 import withTransactions from '@/features/investments/components/hoc/withTransactions';
 import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
-import { Currency } from '@/lib/types';
 
 export default function Page({ params }: { params: { assetId: string } }) {
 	const assetId = params.assetId;
@@ -28,7 +27,7 @@ function AssetWrapper({
 }: {
 	portfolios: AssetPortfolio[];
 	transactions: Transaction[];
-	currency: Currency;
+	currency: string;
 }) {
 	const asset = portfolios[0];
 

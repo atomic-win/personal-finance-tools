@@ -12,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
 import { useDeleteTransactionMutation } from '@/features/investments/hooks/transactions';
-import { Currency } from '@/lib/types';
 import { displayCurrencyAmount } from '@/lib/utils';
 
 export default function DeleteTransactionDialog({
@@ -22,7 +21,7 @@ export default function DeleteTransactionDialog({
 }: {
 	asset: AssetPortfolio;
 	transaction: Transaction;
-	currency: Currency;
+	currency: string;
 }) {
 	const { mutateAsync: deleteTransactionAsync } =
 		useDeleteTransactionMutation();

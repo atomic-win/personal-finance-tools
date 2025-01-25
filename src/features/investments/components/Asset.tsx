@@ -6,7 +6,6 @@ import {
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
-import { Currency } from '@/lib/types';
 import { displayCurrencyAmount } from '@/lib/utils';
 
 export default function Asset({
@@ -16,7 +15,7 @@ export default function Asset({
 }: {
 	asset: AssetPortfolio;
 	transactions: Transaction[];
-	currency: Currency;
+	currency: string;
 }) {
 	return (
 		<Card className='mx-auto my-2 rounded-lg shadow-md w-full'>

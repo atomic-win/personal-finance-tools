@@ -5,13 +5,12 @@ import { displayTransactionType } from '@/features/investments/lib/utils';
 import DeleteTransactionDialog from '@/features/investments/components/DeleteTransactionDialog';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Currency } from '@/lib/types';
 import { PlusIcon } from 'lucide-react';
 import { displayCurrencyAmount } from '@/lib/utils';
 
 type TableItem = Transaction & {
 	asset: AssetPortfolio;
-	currency: Currency;
+	currency: string;
 };
 
 const columns: ColumnDef<TableItem>[] = [
@@ -74,7 +73,7 @@ export default function TransactionsTable({
 }: {
 	asset: AssetPortfolio;
 	transactions: Transaction[];
-	currency: Currency;
+	currency: string;
 }) {
 	const items = transactions.map((transaction) => ({
 		...transaction,

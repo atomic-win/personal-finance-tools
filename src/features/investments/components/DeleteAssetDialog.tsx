@@ -16,7 +16,6 @@ import {
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import { useDeleteAssetMutation } from '@/features/investments/hooks/assets';
-import { Currency } from '@/lib/types';
 import { displayCurrencyAmount } from '@/lib/utils';
 
 export default function DeleteAssetDialog({
@@ -24,7 +23,7 @@ export default function DeleteAssetDialog({
 	currency,
 }: {
 	asset: AssetPortfolio;
-	currency: Currency;
+	currency: string;
 }) {
 	const { mutateAsync: deleteAssetAsync } = useDeleteAssetMutation();
 

@@ -6,10 +6,9 @@ import {
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import PortfolioCharts from '@/features/investments/components/PortfolioCharts';
-import { Currency } from '@/lib/types';
 import { displayCurrencyAmount } from '@/lib/utils';
 
-type TableItem = AssetPortfolio & { currency: Currency };
+type TableItem = AssetPortfolio & { currency: string };
 
 const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
@@ -80,7 +79,7 @@ export default function PortfolioPerAssetSection({
 	currency,
 }: {
 	portfolios: AssetPortfolio[];
-	currency: Currency;
+	currency: string;
 }) {
 	const items = portfolios.map((portfolio) => ({
 		...portfolio,

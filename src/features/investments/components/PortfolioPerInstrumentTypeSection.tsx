@@ -9,10 +9,9 @@ import {
 } from '@/features/investments/lib/utils';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
 import PortfolioCharts from '@/features/investments/components/PortfolioCharts';
-import { Currency } from '@/lib/types';
 import { displayCurrencyAmount } from '@/lib/utils';
 
-type TableItem = InstrumentTypePortfolio & { currency: Currency };
+type TableItem = InstrumentTypePortfolio & { currency: string };
 
 const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
@@ -68,7 +67,7 @@ export default function PortfolioPerInstrumentTypeSection({
 	currency,
 }: {
 	portfolios: InstrumentTypePortfolio[];
-	currency: Currency;
+	currency: string;
 }) {
 	const items = portfolios.map((portfolio) => ({
 		...portfolio,

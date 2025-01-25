@@ -16,7 +16,6 @@ import {
 	displayPortfolioType,
 } from '@/features/investments/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Currency } from '@/lib/types';
 import { displayCurrencyAmount } from '@/lib/utils';
 
 enum TrendType {
@@ -34,7 +33,7 @@ export default function withPortfolioTrendsSection<
 		currency,
 	}: {
 		portfolios: TPortfolio[];
-		currency: Currency;
+		currency: string;
 	}) {
 		const searchParams = useSearchParams();
 		const pathname = usePathname();
