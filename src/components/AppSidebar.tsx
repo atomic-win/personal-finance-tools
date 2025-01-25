@@ -16,6 +16,7 @@ import {
 	SidebarRail,
 } from '@/components/ui/sidebar';
 import AccountMenu from '@/components/AccountMenu';
+import SettingsSidebarGroup from '@/components/SettingsSidebarGroup';
 
 const data = [
 	{
@@ -112,7 +113,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 							))}
 					</SidebarMenu>
 				</SidebarGroup>
-				<SidebarGroup className='mt-auto'>
+				<SettingsSidebarGroup />
+				<SidebarGroup className='mt-8'>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							<SidebarMenuItem>
