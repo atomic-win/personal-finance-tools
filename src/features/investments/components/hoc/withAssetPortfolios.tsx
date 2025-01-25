@@ -1,4 +1,3 @@
-import { Currency } from '@/lib/types';
 import {
 	AssetPortfolio,
 	Asset,
@@ -20,7 +19,7 @@ export function withAssetPortfolios<
 >(Component: React.ComponentType<T>) {
 	return function WithAssetPortfolios(
 		props: Omit<T, 'portfolios'> & {
-			currency: Currency;
+			currency: string;
 			assetIds: string[];
 			assets: Asset[];
 			instruments: Instrument[];

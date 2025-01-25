@@ -1,6 +1,5 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
 import { useQueries } from '@tanstack/react-query';
-import { Currency } from '@/lib/types';
 import {
 	Asset,
 	Instrument,
@@ -10,7 +9,7 @@ import {
 import { DateTime } from 'luxon';
 
 export default function useValuationQueries(
-	currency: Currency | undefined,
+	currency: string | undefined,
 	assetIds: string[] | undefined,
 	assets: Asset[],
 	instruments: Instrument[],

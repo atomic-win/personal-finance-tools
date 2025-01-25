@@ -12,19 +12,17 @@ import {
 import { Button } from '@/components/ui/button';
 import { AssetPortfolio } from '@/features/investments/lib/types';
 import {
-	displayCurrencyAmount,
 	displayInstrumentType,
 	displayPercentage,
 } from '@/features/investments/lib/utils';
 import { useDeleteAssetMutation } from '@/features/investments/hooks/assets';
-import { Currency } from '@/lib/types';
+import React from 'react';
+import CurrencyAmount from '@/components/CurrencyAmount';
 
 export default function DeleteAssetDialog({
 	asset,
-	currency,
 }: {
 	asset: AssetPortfolio;
-	currency: Currency;
 }) {
 	const { mutateAsync: deleteAssetAsync } = useDeleteAssetMutation();
 
@@ -50,11 +48,11 @@ export default function DeleteAssetDialog({
 					/>
 					<InfoLine
 						label='Invested Value'
-						value={displayCurrencyAmount(currency, asset.investedValue)}
+						value={<CurrencyAmount amount={asset.investedValue} />}
 					/>
 					<InfoLine
 						label='Current Value'
-						value={displayCurrencyAmount(currency, asset.currentValue)}
+						value={<CurrencyAmount amount={asset.currentValue} />}
 					/>
 					<InfoLine label='XIRR' value={displayPercentage(asset.xirrPercent)} />
 				</div>
@@ -74,7 +72,7 @@ export default function DeleteAssetDialog({
 	);
 }
 
-function InfoLine({ label, value }: { label: string; value: string }) {
+function InfoLine({ label, value }: { label: string; value: React.ReactNode }) {
 	return (
 		<div className='flex'>
 			<div className='text-sm font-semibold mr-2'>{label}:</div>

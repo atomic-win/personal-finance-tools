@@ -11,18 +11,16 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
-import { displayTransactionAmount } from '@/features/investments/lib/utils';
 import { useDeleteTransactionMutation } from '@/features/investments/hooks/transactions';
-import { Currency } from '@/lib/types';
+import React from 'react';
+import CurrencyAmount from '@/components/CurrencyAmount';
 
 export default function DeleteTransactionDialog({
 	asset,
 	transaction,
-	currency,
 }: {
 	asset: AssetPortfolio;
 	transaction: Transaction;
-	currency: Currency;
 }) {
 	const { mutateAsync: deleteTransactionAsync } =
 		useDeleteTransactionMutation();
@@ -48,7 +46,7 @@ export default function DeleteTransactionDialog({
 					<InfoLine label='Units' value={transaction.units.toString()} />
 					<InfoLine
 						label='Transaction Amount'
-						value={displayTransactionAmount(currency, transaction.amount)}
+						value={<CurrencyAmount amount={transaction.amount} />}
 					/>
 				</div>
 				<AlertDialogFooter>
@@ -71,7 +69,7 @@ export default function DeleteTransactionDialog({
 	);
 }
 
-function InfoLine({ label, value }: { label: string; value: string }) {
+function InfoLine({ label, value }: { label: string; value: React.ReactNode }) {
 	return (
 		<div className='flex'>
 			<div className='text-sm font-semibold mr-2'>{label}:</div>

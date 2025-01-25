@@ -1,6 +1,5 @@
 import ErrorComponent from '@/components/ErrorComponent';
 import LoadingComponent from '@/components/LoadingComponent';
-import { Currency } from '@/lib/types';
 import useValuationQueries from '@/features/investments/hooks/valuation';
 import {
 	Asset,
@@ -19,7 +18,7 @@ export function withValuations<
 >(Component: React.ComponentType<T>) {
 	return function WithValuations(
 		props: Omit<T, 'portfolios'> & {
-			currency: Currency;
+			currency: string;
 			assetIds: string[];
 			assets: Asset[];
 			instruments: Instrument[];

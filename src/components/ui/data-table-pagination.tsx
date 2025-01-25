@@ -1,4 +1,5 @@
 import {
+	ChevronDown,
 	ChevronLeftIcon,
 	ChevronRightIcon,
 	ChevronsLeftIcon,
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import {
 	Select,
 	SelectContent,
+	SelectIcon,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
@@ -34,6 +36,9 @@ export function DataTablePagination<TData>({
 						}}>
 						<SelectTrigger className='h-8 w-[70px]'>
 							<SelectValue placeholder={table.getState().pagination.pageSize} />
+							<SelectIcon>
+								<ChevronDown className='h-4 w-4 opacity-50' />
+							</SelectIcon>
 						</SelectTrigger>
 						<SelectContent side='top'>
 							{[5, 8, 10, 20, 30, 40, 50].map((pageSize) => (

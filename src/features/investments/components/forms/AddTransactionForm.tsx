@@ -22,6 +22,7 @@ import { DatePicker } from '@/components/ui/date-picker';
 import {
 	Select,
 	SelectContent,
+	SelectIcon,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
@@ -31,6 +32,7 @@ import { Input } from '@/components/ui/input';
 import { useAddTransactionMutation } from '@/features/investments/hooks/transactions';
 import { useRouter } from 'next/navigation';
 import { DateTime } from 'luxon';
+import { ChevronDown } from 'lucide-react';
 
 const schema = z.object({
 	date: z.date({
@@ -127,6 +129,9 @@ export default function AddTransactionForm({
 											className='w-full rounded-lg sm:ml-auto'
 											aria-label='Select a value'>
 											<SelectValue placeholder='Select a transaction type' />
+											<SelectIcon>
+												<ChevronDown className='h-4 w-4 opacity-50' />
+											</SelectIcon>
 										</SelectTrigger>
 										<SelectContent className='rounded-xl'>
 											{getApplicableTransactionTypes(asset.instrumentType)

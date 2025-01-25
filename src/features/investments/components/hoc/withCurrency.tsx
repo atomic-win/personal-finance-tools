@@ -1,6 +1,6 @@
 import ErrorComponent from '@/components/ErrorComponent';
 import LoadingComponent from '@/components/LoadingComponent';
-import useCurrencyQuery from '@/hooks/useCurrencyQuery';
+import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
 
 export default function withCurrency<T extends { currency: string }>(
 	Component: React.ComponentType<T>

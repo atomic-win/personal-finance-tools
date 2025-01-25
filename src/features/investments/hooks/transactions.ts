@@ -1,5 +1,4 @@
 import { usePrimalApiClient } from '@/hooks/usePrimalApiClient';
-import { Currency } from '@/lib/types';
 import {
 	QueryClient,
 	useMutation,
@@ -23,7 +22,7 @@ export type DeleteTransactionRequest = {
 };
 
 export function useAssetTransactionsQueries(
-	currency: Currency | undefined,
+	currency: string | undefined,
 	assetIds: string[] | undefined
 ) {
 	const primalApiClient = usePrimalApiClient();

@@ -5,20 +5,6 @@ const yearlyTimeDurationFormat = new Intl.NumberFormat('en-IN', {
 	maximumFractionDigits: 1,
 });
 
-export function displayCurrencyAmount(
-	amount: number,
-	maximumFractionDigits: number = 2,
-	notation: 'standard' | 'compact' = 'compact'
-) {
-	return Intl.NumberFormat('en-IN', {
-		style: 'currency',
-		currency: 'INR',
-		currencyDisplay: 'symbol',
-		maximumFractionDigits,
-		notation,
-	}).format(amount);
-}
-
 export function displayYearlyTimeDuration(years: number): string {
 	return yearlyTimeDurationFormat.format(years);
 }

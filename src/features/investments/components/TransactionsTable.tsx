@@ -1,19 +1,15 @@
 import { AssetPortfolio, Transaction } from '@/features/investments/lib/types';
 import { createColumnDef, DataTable } from '@/components/ui/data-table';
 import { ColumnDef } from '@tanstack/react-table';
-import {
-	displayTransactionAmount,
-	displayTransactionType,
-} from '@/features/investments/lib/utils';
+import { displayTransactionType } from '@/features/investments/lib/utils';
 import DeleteTransactionDialog from '@/features/investments/components/DeleteTransactionDialog';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Currency } from '@/lib/types';
 import { PlusIcon } from 'lucide-react';
+import CurrencyAmount from '@/components/CurrencyAmount';
 
 type TableItem = Transaction & {
 	asset: AssetPortfolio;
-	currency: Currency;
 };
 
 const columns: ColumnDef<TableItem>[] = [
@@ -50,7 +46,7 @@ const columns: ColumnDef<TableItem>[] = [
 	createColumnDef({
 		accessorKey: 'transactionAmount',
 		headerText: 'Transaction Amount',
-		cellTextFn: (item) => displayTransactionAmount(item.currency, item.amount),
+		cellTextFn: (item) => <CurrencyAmount amount={item.amount} />,
 		align: 'right',
 		enableHiding: false,
 	}),
@@ -58,13 +54,7 @@ const columns: ColumnDef<TableItem>[] = [
 		id: 'actions',
 		cell: ({ row }) => {
 			const item = row.original;
-			return (
-				<DeleteTransactionDialog
-					asset={item.asset}
-					transaction={item}
-					currency={item.currency}
-				/>
-			);
+			return <DeleteTransactionDialog asset={item.asset} transaction={item} />;
 		},
 	},
 ];
@@ -72,16 +62,13 @@ const columns: ColumnDef<TableItem>[] = [
 export default function TransactionsTable({
 	asset,
 	transactions,
-	currency,
 }: {
 	asset: AssetPortfolio;
 	transactions: Transaction[];
-	currency: Currency;
 }) {
 	const items = transactions.map((transaction) => ({
 		...transaction,
 		asset,
-		currency,
 	}));
 
 	return (

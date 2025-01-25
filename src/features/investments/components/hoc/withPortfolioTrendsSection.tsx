@@ -11,13 +11,14 @@ import {
 } from '@/components/ui/chart';
 import { CartesianGrid, XAxis, YAxis, Line, LineChart } from 'recharts';
 import {
-	displayCurrencyAmount,
 	displayNumber,
 	displayPercentage,
 	displayPortfolioType,
 } from '@/features/investments/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { Currency } from '@/lib/types';
+import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
+import { useLocaleQuery } from '@/hooks/useLocaleQuery';
+import { displayCurrencyAmountText } from '@/lib/utils';
 
 enum TrendType {
 	InvestedValue = 'InvestedValue',
@@ -31,14 +32,19 @@ export default function withPortfolioTrendsSection<
 >({ labelFn }: { labelFn: (portfolio: TPortfolio) => string }) {
 	return function PortfolioTrendsSection({
 		portfolios,
-		currency,
 	}: {
 		portfolios: TPortfolio[];
-		currency: Currency;
 	}) {
+		const { data: currency, isLoading: isCurrencyLoading } = useCurrencyQuery();
+		const { data: locale, isLoading: isLocaleLoading } = useLocaleQuery();
+
 		const searchParams = useSearchParams();
 		const pathname = usePathname();
 		const { replace } = useRouter();
+
+		if (isCurrencyLoading || isLocaleLoading || !currency || !locale) {
+			return null;
+		}
 
 		const activeTrendType =
 			(searchParams.get('trendType') as TrendType) || TrendType.InvestedValue;
@@ -93,7 +99,9 @@ export default function withPortfolioTrendsSection<
 						chartConfig={chartConfig}
 						chartTitle='Invested Value Trend'
 						valueFn={(portfolio) => portfolio.investedValue}
-						yAxisFormat={(value) => displayCurrencyAmount(currency, value)}
+						yAxisFormat={(value) =>
+							displayCurrencyAmountText(locale, currency, value, 'compact', 2)
+						}
 						showTotalInTooltip={!isOverallPortfolioType}
 					/>
 				</TabsContent>
@@ -104,7 +112,9 @@ export default function withPortfolioTrendsSection<
 						chartConfig={chartConfig}
 						chartTitle='Current Value Trend'
 						valueFn={(portfolio) => portfolio.currentValue}
-						yAxisFormat={(value) => displayCurrencyAmount(currency, value)}
+						yAxisFormat={(value) =>
+							displayCurrencyAmountText(locale, currency, value, 'compact', 2)
+						}
 						showTotalInTooltip={!isOverallPortfolioType}
 					/>
 				</TabsContent>

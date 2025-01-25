@@ -19,7 +19,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowDown, ArrowUp, ArrowUpDown, ExternalLink } from 'lucide-react';
 import { DataTableToolbar } from '@/components/ui/data-table-toolbar';
@@ -46,7 +46,7 @@ export function createColumnDef<TData>({
 	id?: string;
 	headerText: string;
 	linkFn?: (data: TData) => string;
-	cellTextFn: (data: TData) => string;
+	cellTextFn: (data: TData) => React.ReactNode;
 	sortingFnCompare?: (data: TData) => string | number;
 	align?: 'left' | 'right';
 	enableHiding?: boolean;

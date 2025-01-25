@@ -1,6 +1,5 @@
 import ErrorComponent from '@/components/ErrorComponent';
 import LoadingComponent from '@/components/LoadingComponent';
-import { Currency } from '@/lib/types';
 import { Transaction } from '@/features/investments/lib/types';
 import { useAssetTransactionsQueries } from '@/features/investments/hooks/transactions';
 
@@ -9,7 +8,7 @@ export default function withTransactions<
 >(Component: React.ComponentType<T>) {
 	return function WithTransactions(
 		props: Omit<T, 'transactions'> & {
-			currency: Currency;
+			currency: string;
 			assetIds: string[];
 		}
 	) {

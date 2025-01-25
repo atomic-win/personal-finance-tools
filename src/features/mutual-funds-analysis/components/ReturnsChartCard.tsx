@@ -25,12 +25,14 @@ import { useState } from 'react';
 import {
 	Select,
 	SelectContent,
+	SelectIcon,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { displayPresetTimeDuration } from '@/features/mutual-funds-analysis/lib/utils';
+import { ChevronDown } from 'lucide-react';
 
 export default function ReturnsChartCard({
 	mutualfunds,
@@ -69,6 +71,9 @@ export default function ReturnsChartCard({
 							<SelectValue
 								placeholder={`Last ${displayPresetTimeDuration(returnWindow)}`}
 							/>
+							<SelectIcon>
+								<ChevronDown className='h-4 w-4 opacity-50' />
+							</SelectIcon>
 						</SelectTrigger>
 						<SelectContent className='rounded-xl'>
 							{Object.values(PresetTimeDurations).map((duration) => (
@@ -95,6 +100,9 @@ export default function ReturnsChartCard({
 									lookbackDuration
 								)}`}
 							/>
+							<SelectIcon>
+								<ChevronDown className='h-4 w-4 opacity-50' />
+							</SelectIcon>
 						</SelectTrigger>
 						<SelectContent className='rounded-xl'>
 							{Object.values(PresetTimeDurations).map((duration) => (

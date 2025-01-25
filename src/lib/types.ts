@@ -5,8 +5,3 @@ export type UserProfile = {
 	fullName: string;
 	profilePictureUrl: string;
 };
-
-export enum Currency {
-	Unknown = 'Unknown',
-	INR = 'INR',
-}
