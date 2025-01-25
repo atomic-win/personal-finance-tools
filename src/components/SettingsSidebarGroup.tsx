@@ -64,8 +64,10 @@ export default function SettingsSidebarGroup() {
 												})
 											}>
 											<div className='flex items-center gap-2'>
-												{option === setting.value && (
+												{option === setting.value ? (
 													<Check className='size-4' />
+												) : (
+													<span className='size-4' />
 												)}
 												<text>{option}</text>
 											</div>
