@@ -1,6 +1,6 @@
 'use client';
+import { calculateLocaleOptions } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
-import _ from 'lodash';
 
 export function useLocaleQuery() {
 	return useQuery({
@@ -14,22 +14,11 @@ export function useLocaleQuery() {
 			const response = await fetch('https://ipapi.co/json/');
 			const data = await response.json();
 
-			const locales = (data.languages as string).split(',');
-
-			const uniqLocales = _.uniq([...(locales || []), 'en', 'en-US']).filter(
-				(locale) => locale === 'en' || locale.startsWith('en-')
+			const locales = calculateLocaleOptions(
+				(data.languages as string).split(',') || []
 			);
 
-			const supportedLocales = Intl.NumberFormat.supportedLocalesOf(
-				uniqLocales,
-				{
-					localeMatcher: 'best fit',
-				}
-			);
-
-			supportedLocales.sort((a, b) => b.length - a.length);
-
-			return supportedLocales[0];
+			return locales[0];
 		},
 		refetchIntervalInBackground: true,
 	});

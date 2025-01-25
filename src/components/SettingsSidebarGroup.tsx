@@ -17,8 +17,8 @@ import {
 } from '@/components/ui/select';
 import { ChevronRight } from 'lucide-react';
 import { useIpQuery } from '@/hooks/useIpQuery';
-import _ from 'lodash';
 import { useLocaleQuery } from '@/hooks/useLocaleQuery';
+import { calculateLocaleOptions } from '@/lib/utils';
 
 export default function SettingsSidebarGroup() {
 	const { isMobile } = useSidebar();
@@ -91,17 +91,4 @@ export default function SettingsSidebarGroup() {
 			</SidebarMenu>
 		</SidebarGroup>
 	);
-}
-
-function calculateLocaleOptions(ipDataLocales: string[]) {
-	const locales = _.uniq([...ipDataLocales, 'en', 'en-US']).filter(
-		(locale) => locale === 'en' || locale.startsWith('en-')
-	);
-
-	const supportedLocales = Intl.NumberFormat.supportedLocalesOf(locales, {
-		localeMatcher: 'best fit',
-	});
-
-	supportedLocales.sort((a, b) => b.length - a.length);
-	return supportedLocales;
 }
