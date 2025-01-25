@@ -13,10 +13,11 @@ export default function useUpdateSettingMutation() {
 			settingName: string;
 			settingValue: string;
 		}) => {
-			localStorage.setItem(`settings/${settingName}`, settingValue);
-
-			queryClient.invalidateQueries({
-				queryKey: ['settings', settingName],
+			localStorage.setItem(`settings.${settingName}`, settingValue);
+		},
+		async onSuccess(_, variables) {
+			await queryClient.invalidateQueries({
+				queryKey: ['settings', variables.settingName],
 			});
 		},
 	});

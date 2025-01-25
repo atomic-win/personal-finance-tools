@@ -5,7 +5,7 @@ import {
 	SidebarMenu,
 	useSidebar,
 } from '@/components/ui/sidebar';
-import { useCurrency, useCurrencyQuery } from '@/hooks/useCurrencyQuery';
+import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
 import useUpdateSettingMutation from '@/hooks/useUpdateSettingMutation';
 import {
 	Select,
@@ -18,40 +18,16 @@ import {
 import { ChevronRight } from 'lucide-react';
 import { useIpQuery } from '@/hooks/useIpQuery';
 import _ from 'lodash';
-import { useLocale, useLocaleQuery } from '@/hooks/useLocaleQuery';
-import { useEffect } from 'react';
+import { useLocaleQuery } from '@/hooks/useLocaleQuery';
 
 export default function SettingsSidebarGroup() {
 	const { isMobile } = useSidebar();
 
-	const storedCurrency = useCurrency();
-	const storedLocale = useLocale();
-
 	const { data: ipData, isLoading: isIpDataLoading } = useIpQuery();
-	const localeOptions = calculateLocaleOptions(
-		!!!ipData ? [] : ipData.languages
-	);
 
-	const bestLocaleOption = localeOptions[0];
-
-	const { data: currency, isLoading: isCurrencyLoading } = useCurrencyQuery(
-		!!!ipData ? '' : ipData.currency
-	);
-	const { data: locale, isLoading: isLocaleLoading } =
-		useLocaleQuery(bestLocaleOption);
+	const { data: currency, isLoading: isCurrencyLoading } = useCurrencyQuery();
+	const { data: locale, isLoading: isLocaleLoading } = useLocaleQuery();
 	const { mutate: updateSetting } = useUpdateSettingMutation();
-
-	useEffect(() => {
-		if (!!!storedCurrency && !!currency) {
-			updateSetting({ settingName: 'currency', settingValue: currency });
-		}
-	}, [currency, storedCurrency, updateSetting]);
-
-	useEffect(() => {
-		if (!!!storedLocale && !!locale) {
-			updateSetting({ settingName: 'locale', settingValue: locale });
-		}
-	}, [locale, storedLocale, updateSetting]);
 
 	if (
 		isCurrencyLoading ||
@@ -73,9 +49,9 @@ export default function SettingsSidebarGroup() {
 		},
 		{
 			name: 'locale',
-			title: 'Locale',
+			title: 'Language',
 			value: locale,
-			options: localeOptions,
+			options: calculateLocaleOptions(!!!ipData ? [] : ipData.languages),
 		},
 	];
 

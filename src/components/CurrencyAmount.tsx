@@ -1,4 +1,5 @@
 import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
+import { useLocaleQuery } from '@/hooks/useLocaleQuery';
 import { displayCurrencyAmountText } from '@/lib/utils';
 
 export default function CurrencyAmount({
@@ -10,14 +11,15 @@ export default function CurrencyAmount({
 	notation?: 'standard' | 'compact';
 	numberOfFractionDigits?: number;
 }) {
-	const { data: currency, isLoading } = useCurrencyQuery();
+	const { data: currency, isLoading: isLoadingCurrency } = useCurrencyQuery();
+	const { data: locale, isLoading: isLoadingLocale } = useLocaleQuery();
 
-	if (isLoading || !currency) {
+	if (isLoadingCurrency || isLoadingLocale || !currency || !locale) {
 		return '';
 	}
 
 	return displayCurrencyAmountText(
-		navigator.language,
+		locale,
 		currency,
 		amount,
 		notation,
