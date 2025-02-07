@@ -43,6 +43,11 @@ export default function Page() {
 	return (
 		<>
 			<title>SIP + SWP Calculator</title>
+			<meta name='description' content={pageDescription} />
+			<meta
+				name='keywords'
+				content='SIP, SWP, Systematic Investment Plan, Systematic Withdrawal Plan, Mutual Funds, Investment, Financial Planning'
+			/>
 			<CalculatorPage<SipSwpCalculator>
 				calculatorName='SIP+SWP'
 				pageDescription={pageDescription}

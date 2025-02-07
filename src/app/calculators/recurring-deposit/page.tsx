@@ -27,6 +27,11 @@ export default function Page() {
 	return (
 		<>
 			<title>RD Interest Calculator</title>
+			<meta name='description' content={pageDescription} />
+			<meta
+				name='keywords'
+				content='Recurring Deposit, RD, Interest Calculator, Investment, Financial Planning'
+			/>
 			<CalculatorPage<RdCalculator>
 				calculatorName='RD Interest'
 				pageDescription={pageDescription}

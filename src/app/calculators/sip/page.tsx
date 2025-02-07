@@ -35,6 +35,11 @@ export default function Page() {
 	return (
 		<>
 			<title>SIP Calculator</title>
+			<meta name='description' content={pageDescription} />
+			<meta
+				name='keywords'
+				content='SIP, Systematic Investment Plan, Mutual Funds, Investment, Financial Planning'
+			/>
 			<CalculatorPage<SipCalculator>
 				calculatorName='SIP'
 				pageDescription={pageDescription}
