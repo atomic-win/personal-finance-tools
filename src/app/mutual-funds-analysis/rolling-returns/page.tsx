@@ -7,6 +7,10 @@ export default function Page() {
 	return (
 		<>
 			<title>Mutual Funds Rolling Returns</title>
+			<meta
+				name='keywords'
+				content='Mutual Funds, Rolling Returns, CAGR, Investment Analysis, Financial Planning'
+			/>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{ title: 'Mutual Funds Analysis', href: '', disabled: true },

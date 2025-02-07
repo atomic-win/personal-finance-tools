@@ -31,6 +31,16 @@ export default function Page() {
 	return (
 		<>
 			<title>FD Interest Calculator</title>
+			<meta name='description' content={pageDescription} />
+			<meta
+				name='keywords'
+				content='Fixed Deposit, FD, Interest Calculator, Investment, Financial Planning'
+			/>
+			<meta name='description' content={pageDescription} />
+			<meta
+				name='keywords'
+				content='Fixed Deposit, FD, Interest Calculator, Investment, Financial Planning'
+			/>
 			<CalculatorPage<FdCalculator>
 				calculatorName='FD Interest'
 				pageDescription={pageDescription}
