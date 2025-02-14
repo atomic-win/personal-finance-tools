@@ -25,6 +25,7 @@ export default function CalculatorCard<T extends Calculator>({
 	type,
 	calculatorSchema,
 	formFields,
+	canRemove,
 	index,
 	calculator,
 	CalculatorResult,
@@ -36,6 +37,7 @@ export default function CalculatorCard<T extends Calculator>({
 		name: string;
 		label: string;
 	}[];
+	canRemove: boolean;
 	index: number;
 	calculator: T;
 	CalculatorResult: React.ComponentType<{ calculator: T }>;
@@ -57,11 +59,13 @@ export default function CalculatorCard<T extends Calculator>({
 			<CardHeader>
 				<div className='flex items-center justify-between'>
 					<CardTitle>
-						{calculatorName} {index + 1}
+						{calculatorName} Calculator {index + 1}
 					</CardTitle>
-					<Button onClick={() => removeCalculator(calculator.id)}>
-						<Trash2 className='size-4' />
-					</Button>
+					{canRemove && (
+						<Button onClick={() => removeCalculator(calculator.id)}>
+							<Trash2 className='size-4' />
+						</Button>
+					)}
 				</div>
 			</CardHeader>
 			<CardContent>

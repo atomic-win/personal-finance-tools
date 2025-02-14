@@ -58,9 +58,21 @@ const defaultSipSwpCalculator: SipSwpCalculator = {
 };
 
 export function useCalculatorsQuery<T extends Calculator>(type: T['type']) {
+	const queryClient = useQueryClient();
+
 	return useQuery({
 		queryKey: ['calculators', type],
-		initialData: [] as T[],
+		queryFn: async () => {
+			const data = queryClient.getQueryData<T[]>(['calculators', type]);
+
+			if (data) {
+				return data;
+			}
+
+			queryClient.setQueryData<T[]>(['calculators', type], []);
+
+			return [];
+		},
 		staleTime: Infinity,
 	});
 }

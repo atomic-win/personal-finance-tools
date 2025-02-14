@@ -9,6 +9,7 @@ import { Calculator } from '@/features/calculators/lib/types';
 import CalculatorCard from '@/features/calculators/components/CalculatorCard';
 import { z } from 'zod';
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
+import { useEffect } from 'react';
 
 export default function CalculatorPage<T extends Calculator>({
 	calculatorName,
@@ -28,8 +29,20 @@ export default function CalculatorPage<T extends Calculator>({
 	}[];
 	CalculatorResult: React.ComponentType<{ calculator: T }>;
 }) {
-	const { data: calculators } = useCalculatorsQuery<T>(type);
+	const { data: calculators, isFetching } = useCalculatorsQuery<T>(type);
 	const { mutate: addCalculator } = useAddCalculatorMutation<T>(type);
+
+	const calculatorsCount = (calculators || []).length;
+
+	useEffect(() => {
+		if (isFetching) {
+			return;
+		}
+
+		if (calculatorsCount === 0) {
+			addCalculator();
+		}
+	}, [isFetching, calculatorsCount, addCalculator]);
 
 	return (
 		<>
@@ -56,6 +69,7 @@ export default function CalculatorPage<T extends Calculator>({
 							type={type}
 							calculatorSchema={calculatorSchema}
 							formFields={formFields}
+							canRemove={calculatorsCount > 1}
 							index={index}
 							calculator={calculator}
 							CalculatorResult={CalculatorResult}
