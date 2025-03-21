@@ -98,10 +98,6 @@ function MutualFundSearchForm({
 		);
 
 	function addSchemeCode() {
-		if (!form.formState.isValid) {
-			return;
-		}
-
 		const params = new URLSearchParams(searchParams);
 		const schemeCodes = params.getAll('mfSchemeCode');
 		const selectedSchemeCode = form.getValues('mfSchemeCode').toString();

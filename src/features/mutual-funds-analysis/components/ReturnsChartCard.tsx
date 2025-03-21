@@ -178,7 +178,7 @@ function ReturnsChart({
 			...acc,
 			[mutualfund.schemeCode.toString()]: {
 				label: mutualfund.schemeName,
-				color: `hsl(var(--chart-${i + 1}))`,
+				color: `var(--chart-${i + 1})`,
 			},
 		}),
 		{}
@@ -235,10 +235,7 @@ function ReturnsChart({
 						style: { textAnchor: 'middle' },
 					}}
 				/>
-				<ChartTooltip
-					cursor={true}
-					content={<ChartTooltipContent unit='%' />}
-				/>
+				<ChartTooltip cursor={true} content={<ChartTooltipContent />} />
 				{mutualfunds.map((mutualfund) => (
 					<Line
 						key={mutualfund.schemeCode}
