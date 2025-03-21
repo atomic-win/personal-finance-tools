@@ -1,5 +1,4 @@
 'use client';
-import { GoogleOAuthProvider } from '@react-oauth/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { AppSidebar } from '@/components/AppSidebar';
@@ -35,15 +34,13 @@ export default function Providers({
 }: Readonly<{ children: React.ReactNode }>) {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<GoogleOAuthProvider clientId='73478229232-4shu2tigpasb0drjlsn39g4isdm6kuv3.apps.googleusercontent.com'>
-				<SidebarProvider>
-					<AppSidebar />
-					<main className='container'>
-						{children}
-						<ReactQueryDevtools />
-					</main>
-				</SidebarProvider>
-			</GoogleOAuthProvider>
+			<SidebarProvider>
+				<AppSidebar />
+				<main className='container'>
+					{children}
+					<ReactQueryDevtools />
+				</main>
+			</SidebarProvider>
 		</QueryClientProvider>
 	);
 }

@@ -15,6 +15,7 @@ import {
 	SidebarRail,
 } from '@/components/ui/sidebar';
 import SettingsSidebarGroup from '@/components/SettingsSidebarGroup';
+import Link from 'next/link';
 
 const data = [
 	{
@@ -62,14 +63,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton size='lg' asChild>
-							<a href='/'>
+							<Link href='/'>
 								<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
 									<DollarSignIcon className='size-4' />
 								</div>
 								<div className='flex flex-col gap-0.5 leading-none'>
 									<span className='font-semibold'>Personal Finance Tools</span>
 								</div>
-							</a>
+							</Link>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
 				</SidebarMenu>
