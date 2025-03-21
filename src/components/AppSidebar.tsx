@@ -3,7 +3,6 @@ import { DollarSignIcon, Send } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
-	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarHeader,
@@ -15,24 +14,12 @@ import {
 	SidebarMenuSubItem,
 	SidebarRail,
 } from '@/components/ui/sidebar';
-import AccountMenu from '@/components/AccountMenu';
 import SettingsSidebarGroup from '@/components/SettingsSidebarGroup';
 
 const data = [
 	{
-		title: 'Investments',
-		url: '#',
-		auth: true,
-		items: [
-			{ title: 'Portfolio', url: '/investments/portfolio' },
-			{ title: 'Assets', url: '/investments/assets' },
-			{ title: 'Portfolio Trends', url: '/investments/portfolio-trends' },
-		],
-	},
-	{
 		title: 'Calculators',
 		url: '#',
-		auth: false,
 		items: [
 			{
 				title: 'FD Interest Calculator',
@@ -59,7 +46,6 @@ const data = [
 	{
 		title: 'Mutual Funds Analysis',
 		url: '#',
-		auth: false,
 		items: [
 			{
 				title: 'Rolling Returns',
@@ -70,8 +56,6 @@ const data = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-	const showAuthenticatedComponents = process.env.NODE_ENV === 'development';
-
 	return (
 		<Sidebar {...props}>
 			<SidebarHeader>
@@ -93,24 +77,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarContent>
 				<SidebarGroup>
 					<SidebarMenu>
-						{data
-							.filter((item) => showAuthenticatedComponents || !item.auth)
-							.map((item) => (
-								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton className='font-medium'>
-										{item.title}
-									</SidebarMenuButton>
-									<SidebarMenuSub>
-										{item.items.map((item) => (
-											<SidebarMenuSubItem key={item.title}>
-												<SidebarMenuSubButton asChild>
-													<a href={item.url}>{item.title}</a>
-												</SidebarMenuSubButton>
-											</SidebarMenuSubItem>
-										))}
-									</SidebarMenuSub>
-								</SidebarMenuItem>
-							))}
+						{data.map((item) => (
+							<SidebarMenuItem key={item.title}>
+								<SidebarMenuButton className='font-medium'>
+									{item.title}
+								</SidebarMenuButton>
+								<SidebarMenuSub>
+									{item.items.map((item) => (
+										<SidebarMenuSubItem key={item.title}>
+											<SidebarMenuSubButton asChild>
+												<a href={item.url}>{item.title}</a>
+											</SidebarMenuSubButton>
+										</SidebarMenuSubItem>
+									))}
+								</SidebarMenuSub>
+							</SidebarMenuItem>
+						))}
 					</SidebarMenu>
 				</SidebarGroup>
 				<SettingsSidebarGroup />
@@ -129,15 +111,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					</SidebarGroupContent>
 				</SidebarGroup>
 			</SidebarContent>
-			{showAuthenticatedComponents && (
-				<SidebarFooter>
-					<SidebarMenu>
-						<SidebarMenuItem>
-							<AccountMenu />
-						</SidebarMenuItem>
-					</SidebarMenu>
-				</SidebarFooter>
-			)}
 			<SidebarRail />
 		</Sidebar>
 	);
