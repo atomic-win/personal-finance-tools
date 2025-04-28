@@ -61,7 +61,7 @@ export default function ReturnsChartCard({
 					</CardDescription>
 				</div>
 				<div className='w-1/2'>
-					<Label>CAGR Window</Label>
+					<Label className='pb-2'>CAGR Window</Label>
 					<Select
 						onValueChange={(x) => setReturnWindow(x as PresetTimeDurations)}
 						value={returnWindow.toString()}>
@@ -88,7 +88,7 @@ export default function ReturnsChartCard({
 					</Select>
 				</div>
 				<div className='w-1/2'>
-					<Label>Last</Label>
+					<Label className='pb-2'>Lookback Duration</Label>
 					<Select
 						onValueChange={(x) => setLookbackDuration(x as PresetTimeDurations)}
 						value={lookbackDuration.toString()}>

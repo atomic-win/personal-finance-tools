@@ -119,17 +119,17 @@ function MutualFundSearchForm({
 					render={({ field }) => (
 						<FormItem className='flex flex-col'>
 							<Popover>
-								<div className='flex justify-between gap-2 items-center'>
-									<PopoverTrigger asChild>
+								<div className='flex items-center gap-2'>
+									<PopoverTrigger asChild className='flex-1'>
 										<FormControl>
 											<Button
 												variant='outline'
 												role='combobox'
 												className={cn(
-													'w-full justify-between h-full',
+													'w-full justify-between h-10',
 													!field.value && 'text-muted-foreground'
 												)}>
-												<span className='text-wrap'>
+												<span className='text-wrap truncate max-w-[80%]'>
 													{field.value
 														? searchResults.find(
 																(mutualfund) =>
@@ -144,12 +144,12 @@ function MutualFundSearchForm({
 									<Button
 										type='button'
 										onClick={addSchemeCode}
-										className='h-full'
+										className='h-10 w-20'
 										disabled={field.value === 0}>
 										Add
 									</Button>
 								</div>
-								<PopoverContent className='w-full p-0'>
+								<PopoverContent className='p-0 w-[var(--radix-popover-trigger-width)]'>
 									<Command>
 										<CommandInput
 											placeholder='Search Mutual Fund'
