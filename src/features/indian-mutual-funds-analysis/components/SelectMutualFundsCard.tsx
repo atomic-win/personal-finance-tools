@@ -149,7 +149,7 @@ function MutualFundSearchForm({
 										Add
 									</Button>
 								</div>
-								<PopoverContent className='w-full p-0'>
+								<PopoverContent className='p-0 w-[var(--radix-popover-trigger-width)]'>
 									<Command>
 										<CommandInput
 											placeholder='Search Mutual Fund'
