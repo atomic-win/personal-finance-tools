@@ -1,4 +1,4 @@
-import { PresetTimeDurations } from '@/features/mutual-funds-analysis/lib/types';
+import { PresetTimeDurations } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { DurationLike } from 'luxon';
 
 export function displayPresetTimeDuration(

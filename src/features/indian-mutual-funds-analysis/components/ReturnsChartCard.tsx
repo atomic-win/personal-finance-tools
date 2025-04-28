@@ -1,5 +1,5 @@
 'use client';
-import { useReturnQueries } from '@/features/mutual-funds-analysis/hooks/mutualfunds';
+import { useReturnQueries } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
 import {
 	Card,
 	CardContent,
@@ -19,7 +19,7 @@ import {
 	MutualFund,
 	MutualFundReturn,
 	PresetTimeDurations,
-} from '@/features/mutual-funds-analysis/lib/types';
+} from '@/features/indian-mutual-funds-analysis/lib/types';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { useState } from 'react';
 import {
@@ -31,7 +31,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { displayPresetTimeDuration } from '@/features/mutual-funds-analysis/lib/utils';
+import { displayPresetTimeDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { ChevronDown } from 'lucide-react';
 
 export default function ReturnsChartCard({

@@ -1,4 +1,4 @@
-import { useRollingReturnQuery } from '@/features/mutual-funds-analysis/hooks/mutualfunds';
+import { useRollingReturnQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import {
@@ -12,9 +12,9 @@ import {
 import {
 	MutualFund,
 	PresetTimeDurations,
-} from '@/features/mutual-funds-analysis/lib/types';
+} from '@/features/indian-mutual-funds-analysis/lib/types';
 import { cn } from '@/lib/utils';
-import { displayPresetTimeDuration } from '@/features/mutual-funds-analysis/lib/utils';
+import { displayPresetTimeDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
 
 export default function RollingReturnsTableCard({
 	mutualfunds,
