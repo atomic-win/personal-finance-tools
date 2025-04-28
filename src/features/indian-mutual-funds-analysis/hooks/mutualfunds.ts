@@ -3,8 +3,8 @@ import {
 	MutualFundReturn,
 	MutualFundRollingReturn,
 	PresetTimeDurations,
-} from '@/features/mutual-funds-analysis/lib/types';
-import { getLuxonDuration } from '@/features/mutual-funds-analysis/lib/utils';
+} from '@/features/indian-mutual-funds-analysis/lib/types';
+import { getLuxonDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateTime } from 'luxon';

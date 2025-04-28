@@ -2,10 +2,10 @@
 import {
 	useMutualFundListQuery,
 	useMutualFundQueries,
-} from '@/features/mutual-funds-analysis/hooks/mutualfunds';
-import MutualFundsReturnsChart from '@/features/mutual-funds-analysis/components/ReturnsChartCard';
-import MutualFundsRollingReturnsTable from '@/features/mutual-funds-analysis/components/RollingReturnsTableCard';
-import SelectMutualFundsCard from '@/features/mutual-funds-analysis/components/SelectMutualFundsCard';
+} from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import MutualFundsReturnsChart from '@/features/indian-mutual-funds-analysis/components/ReturnsChartCard';
+import MutualFundsRollingReturnsTable from '@/features/indian-mutual-funds-analysis/components/RollingReturnsTableCard';
+import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
 import { useSearchParams } from 'next/navigation';
 
 export default function RollingReturns() {

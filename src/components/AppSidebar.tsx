@@ -45,12 +45,12 @@ const data = [
 		],
 	},
 	{
-		title: 'Mutual Funds Analysis',
+		title: 'Indian Mutual Funds Analysis',
 		url: '#',
 		items: [
 			{
 				title: 'Rolling Returns',
-				url: '/mutual-funds-analysis/rolling-returns',
+				url: '/indian-mutual-funds-analysis/rolling-returns',
 			},
 		],
 	},
