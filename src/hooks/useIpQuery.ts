@@ -12,6 +12,18 @@ export function useIpQuery() {
 		queryKey: ['ip', 'api', 'query'],
 		queryFn: async () => {
 			const response = await fetch('https://ipapi.co/json/');
+			if (!response.ok) {
+				console.error(
+					'Failed to fetch ip data from ipapi.co',
+					response.statusText
+				);
+
+				return {
+					currency: 'USD',
+					languages: ['en'],
+				};
+			}
+
 			const data = await response.json();
 			return {
 				currency: data.currency,
