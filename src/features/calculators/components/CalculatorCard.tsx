@@ -55,7 +55,7 @@ export default function CalculatorCard<T extends Calculator>({
 	}
 
 	return (
-		<Card className='rounded-lg shadow-md w-full'>
+		<Card className='rounded-lg shadow-md max-w-md'>
 			<CardHeader>
 				<div className='flex items-center justify-between'>
 					<CardTitle>

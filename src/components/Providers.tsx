@@ -36,7 +36,7 @@ export default function Providers({
 		<QueryClientProvider client={queryClient}>
 			<SidebarProvider>
 				<AppSidebar />
-				<main className='flex flex-1 flex-col gap-4 p-4 pt-0'>
+				<main className='flex flex-1 flex-col gap-4 pt-0 px-4 md:px-8 lg:px-16 xl:px-24 2xl:px-32'>
 					{children}
 					<ReactQueryDevtools />
 				</main>
