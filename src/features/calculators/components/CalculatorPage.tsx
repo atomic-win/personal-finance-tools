@@ -61,7 +61,7 @@ export default function CalculatorPage<T extends Calculator>({
 						{`Add ${calculatorName} Calculator`}
 					</Button>
 				</div>
-				<div className='gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
+				<div className='grid grid-cols-[repeat(auto-fit,_minmax(12rem,_1fr))] gap-4'>
 					{(calculators || []).map((calculator, index) => (
 						<CalculatorCard<T>
 							key={calculator.id}
