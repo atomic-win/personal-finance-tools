@@ -12,6 +12,15 @@ export function useLocaleQuery() {
 			}
 
 			const response = await fetch('https://ipapi.co/json/');
+			if (!response.ok) {
+				console.error(
+					'Failed to fetch locale data from ipapi.co',
+					response.statusText
+				);
+
+				return 'en-US';
+			}
+
 			const data = await response.json();
 
 			const locales = calculateLocaleOptions(

@@ -13,8 +13,16 @@ export function useCurrencyQuery() {
 			}
 
 			const response = await fetch('https://ipapi.co/json/');
-			const data = await response.json();
+			if (!response.ok) {
+				console.error(
+					'Failed to fetch currency data from ipapi.co:',
+					response.statusText
+				);
 
+				return 'USD';
+			}
+
+			const data = await response.json();
 			const currencyFromApi = data.currency as string;
 			if (currencyFromApi) {
 				return currencyFromApi;
