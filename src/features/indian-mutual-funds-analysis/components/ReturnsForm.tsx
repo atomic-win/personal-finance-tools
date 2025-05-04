@@ -84,17 +84,22 @@ export default function ReturnsForm({
 		<Form {...form}>
 			<form
 				className='flex flex-col gap-4'
-				onChange={form.handleSubmit(onFormChange)}>
+				onSubmit={(e) => e.preventDefault()}>
 				<FormField
 					control={form.control}
 					name='frequency'
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Frequency</FormLabel>
-							<Select onValueChange={field.onChange} defaultValue={field.value}>
+							<Select
+								onValueChange={(value) => {
+									field.onChange(value);
+									form.handleSubmit(onFormChange)();
+								}}
+								defaultValue={field.value}>
 								<FormControl>
 									<SelectTrigger>
-										<SelectValue placeholder='Select a verified email to display' />
+										<SelectValue placeholder='Select Frequency' />
 									</SelectTrigger>
 								</FormControl>
 								<SelectContent>
@@ -115,10 +120,15 @@ export default function ReturnsForm({
 					render={({ field }) => (
 						<FormItem>
 							<FormLabel>Step Up Frequency</FormLabel>
-							<Select onValueChange={field.onChange} defaultValue={field.value}>
+							<Select
+								onValueChange={(value) => {
+									field.onChange(value);
+									form.handleSubmit(onFormChange)();
+								}}
+								defaultValue={field.value}>
 								<FormControl>
 									<SelectTrigger>
-										<SelectValue placeholder='Select a verified email to display' />
+										<SelectValue placeholder='Select Step Up Frequency' />
 									</SelectTrigger>
 								</FormControl>
 								<SelectContent>
@@ -148,7 +158,9 @@ export default function ReturnsForm({
 									placeholder='Step Up Ratio'
 									value={field.value}
 									onChange={(e) => {
-										field.onChange(Number(e.target.value));
+										const value = Number(e.target.value);
+										field.onChange(value);
+										form.handleSubmit(onFormChange)();
 									}}
 								/>
 							</FormControl>
