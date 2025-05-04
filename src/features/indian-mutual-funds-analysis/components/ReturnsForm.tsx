@@ -84,7 +84,9 @@ export default function ReturnsForm({
 	return (
 		<Card className='rounded-lg shadow-md w-full p-4'>
 			<Form {...form}>
-				<form className='flex flex-row' onSubmit={(e) => e.preventDefault()}>
+				<form
+					className='grid grid-cols-3 gap-4'
+					onSubmit={(e) => e.preventDefault()}>
 					<FormField
 						control={form.control}
 						name='frequency'
