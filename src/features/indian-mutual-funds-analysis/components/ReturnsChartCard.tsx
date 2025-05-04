@@ -52,17 +52,17 @@ export default function ReturnsChartCard(
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex items-center gap-4 space-y-0 border-b py-4 sm:flex-row'>
 				<div className='grid text-center sm:text-left w-full gap-2'>
-					<CardTitle>CAGR (%)</CardTitle>
+					<CardTitle>
+						{props.returnType === 'simple' ? 'CAGR (%)' : 'XIRR (%)'}
+					</CardTitle>
 					<CardDescription>
-						{`Showing ${displayPresetTimeDuration(
-							returnWindow
-						)} CAGR % for the last ${displayPresetTimeDuration(
-							lookbackDuration
-						)}`}
+						{`Showing ${displayPresetTimeDuration(returnWindow)} ${
+							props.returnType === 'simple' ? 'CAGR' : 'XIRR'
+						} % for the last ${displayPresetTimeDuration(lookbackDuration)}`}
 					</CardDescription>
 				</div>
 				<div className='w-1/2'>
-					<Label className='pb-2'>CAGR Window</Label>
+					<Label className='pb-2'>Investment Duration</Label>
 					<Select
 						onValueChange={(x) => setReturnWindow(x as PresetTimeDurations)}
 						value={returnWindow.toString()}>
