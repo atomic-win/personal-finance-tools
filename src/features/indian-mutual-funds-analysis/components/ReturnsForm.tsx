@@ -1,0 +1,162 @@
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from '@/components/ui/form';
+import {
+	ReturnType,
+	Frequency,
+} from '@/features/indian-mutual-funds-analysis/lib/types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+	Select,
+	SelectTrigger,
+	SelectValue,
+	SelectContent,
+	SelectItem,
+} from '@/components/ui/select';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { displayFrequency } from '@/features/indian-mutual-funds-analysis/lib/utils';
+import { Input } from '@/components/ui/input';
+
+const schema = z.object({
+	frequency: z.nativeEnum(Frequency),
+	stepUpFrequency: z.nativeEnum(Frequency),
+	stepUpRatio: z.number().min(0).max(1),
+});
+
+export default function ReturnsForm({
+	returnType,
+}: {
+	returnType: ReturnType;
+}) {
+	const searchParams = useSearchParams();
+	const pathname = usePathname();
+	const { replace } = useRouter();
+
+	const form = useForm<z.infer<typeof schema>>({
+		resolver: zodResolver(schema),
+		defaultValues: {
+			frequency: searchParams.get('frequency')
+				? (searchParams.get('frequency') as Frequency)
+				: Frequency.Monthly,
+			stepUpFrequency: searchParams.get('stepUpFrequency')
+				? (searchParams.get('stepUpFrequency') as Frequency)
+				: Frequency.Yearly,
+			stepUpRatio: searchParams.get('stepUpRatio')
+				? Number(searchParams.get('stepUpRatio'))
+				: 0.1,
+		},
+	});
+
+	function onFormChange(data: z.infer<typeof schema>) {
+		const params = new URLSearchParams(searchParams.toString());
+
+		params.delete('frequency');
+		params.delete('stepUpFrequency');
+		params.delete('stepUpRatio');
+
+		if (data.frequency !== Frequency.Monthly) {
+			params.set('frequency', data.frequency);
+		}
+
+		if (data.stepUpFrequency !== Frequency.Yearly) {
+			params.set('stepUpFrequency', data.stepUpFrequency);
+		}
+
+		if (data.stepUpRatio !== 0.1) {
+			params.set('stepUpRatio', data.stepUpRatio.toString());
+		}
+
+		replace(`${pathname}?${params}`);
+	}
+
+	if (returnType === 'simple') {
+		return null;
+	}
+
+	return (
+		<Form {...form}>
+			<form
+				className='flex flex-col gap-4'
+				onChange={form.handleSubmit(onFormChange)}>
+				<FormField
+					control={form.control}
+					name='frequency'
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Frequency</FormLabel>
+							<Select onValueChange={field.onChange} defaultValue={field.value}>
+								<FormControl>
+									<SelectTrigger>
+										<SelectValue placeholder='Select a verified email to display' />
+									</SelectTrigger>
+								</FormControl>
+								<SelectContent>
+									{Object.values(Frequency).map((frequency) => (
+										<SelectItem key={frequency} value={frequency}>
+											{displayFrequency(frequency)}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name='stepUpFrequency'
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Step Up Frequency</FormLabel>
+							<Select onValueChange={field.onChange} defaultValue={field.value}>
+								<FormControl>
+									<SelectTrigger>
+										<SelectValue placeholder='Select a verified email to display' />
+									</SelectTrigger>
+								</FormControl>
+								<SelectContent>
+									{Object.values(Frequency).map((frequency) => (
+										<SelectItem key={frequency} value={frequency}>
+											{displayFrequency(frequency)}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name='stepUpRatio'
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Step Up Ratio</FormLabel>
+							<FormControl>
+								<Input
+									type='number'
+									step={0.01}
+									min={0}
+									max={1}
+									placeholder='Step Up Ratio'
+									value={field.value}
+									onChange={(e) => {
+										field.onChange(Number(e.target.value));
+									}}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+			</form>
+		</Form>
+	);
+}

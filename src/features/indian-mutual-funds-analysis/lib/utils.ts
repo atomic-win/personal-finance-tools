@@ -1,5 +1,25 @@
-import { PresetTimeDurations } from '@/features/indian-mutual-funds-analysis/lib/types';
+import {
+	Frequency,
+	PresetTimeDurations,
+} from '@/features/indian-mutual-funds-analysis/lib/types';
 import { DurationLike } from 'luxon';
+
+export function displayFrequency(frequency: Frequency) {
+	switch (frequency) {
+		case Frequency.Weekly:
+			return 'Weekly';
+		case Frequency.Biweekly:
+			return 'Bi-Weekly';
+		case Frequency.Monthly:
+			return 'Monthly';
+		case Frequency.Quarterly:
+			return 'Quarterly';
+		case Frequency.Yearly:
+			return 'Yearly';
+		default:
+			throw new Error('Invalid frequency');
+	}
+}
 
 export function displayPresetTimeDuration(
 	duration: PresetTimeDurations

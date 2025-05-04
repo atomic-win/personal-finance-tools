@@ -16,12 +16,13 @@ export type ReturnRequest = {
 	stepUpRatio?: number;
 };
 
-export type Frequency =
-	| 'weekly'
-	| 'biweekly'
-	| 'monthly'
-	| 'quarterly'
-	| 'yearly';
+export enum Frequency {
+	Weekly = 'weekly',
+	Biweekly = 'biweekly',
+	Monthly = 'monthly',
+	Quarterly = 'quarterly',
+	Yearly = 'yearly',
+}
 
 export type RollingReturn = {
 	noData: boolean;

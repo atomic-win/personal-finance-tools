@@ -10,6 +10,7 @@ import { useSearchParams } from 'next/navigation';
 import { ReturnType } from '@/features/indian-mutual-funds-analysis/lib/types';
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
 import { Suspense } from 'react';
+import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
 
 export default function ReturnsPage({
 	title,
@@ -70,6 +71,7 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 	return (
 		<div className='grid grid-cols-3 gap-4'>
 			<div className='col-span-2 space-y-4'>
+				<ReturnsForm returnType={returnType} />
 				<ReturnsChartCard
 					mutualfunds={addedMutualfunds}
 					returnType={returnType}
