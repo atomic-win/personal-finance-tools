@@ -25,7 +25,9 @@ export default function RollingReturnsTableCard(
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
-				<CardTitle>Latest Rolling CAGR (%)</CardTitle>
+				<CardTitle>
+					Latest Rolling {props.returnType === 'simple' ? 'CAGR' : 'XIRR'} (%)
+				</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<RollingReturnsTable {...props} />
