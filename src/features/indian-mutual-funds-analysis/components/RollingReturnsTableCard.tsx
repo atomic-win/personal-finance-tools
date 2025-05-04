@@ -20,7 +20,7 @@ import { displayPresetTimeDuration } from '@/features/indian-mutual-funds-analys
 export default function RollingReturnsTableCard(
 	props: {
 		mutualfunds: MutualFund[];
-	} & Omit<ReturnRequest, 'returnWindow'>
+	} & Omit<ReturnRequest, 'investmentDuration'>
 ) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
@@ -39,7 +39,7 @@ export default function RollingReturnsTableCard(
 function RollingReturnsTable(
 	props: {
 		mutualfunds: MutualFund[];
-	} & Omit<ReturnRequest, 'returnWindow'>
+	} & Omit<ReturnRequest, 'investmentDuration'>
 ) {
 	const { mutualfunds } = props;
 
@@ -74,7 +74,7 @@ function RollingReturnsTable(
 								key={mf.schemeCode}
 								{...props}
 								mutualfund={mf}
-								returnWindow={duration as PresetTimeDurations}
+								investmentDuration={duration as PresetTimeDurations}
 							/>
 						))}
 					</TableRow>

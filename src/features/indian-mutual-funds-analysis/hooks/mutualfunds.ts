@@ -5,7 +5,10 @@ import {
 	PresetTimeDurations,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import { getLuxonDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
+import {
+	evaluateMutualFund,
+	getLuxonDuration,
+} from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateTime } from 'luxon';
@@ -125,12 +128,12 @@ export function useRollingReturnQuery(
 		mutualfund: MutualFund;
 	}
 ) {
-	const { mutualfund, returnWindow } = request;
+	const { mutualfund, investmentDuration: returnWindow } = request;
 
 	return useQuery({
 		...createReturnsQuery({
 			...request,
-			lookbackDuration: request.returnWindow,
+			lookbackDuration: request.investmentDuration,
 		}),
 		select: (returns: Return[]) => {
 			const startDate = DateTime.fromISO(mutualfund.lastDate)
@@ -160,7 +163,7 @@ function createReturnsQuery(
 	const {
 		mutualfund,
 		lookbackDuration,
-		returnWindow,
+		investmentDuration: returnWindow,
 		returnType,
 		frequency,
 		stepUpFrequency,
@@ -216,7 +219,7 @@ function createReturnsQuery(
 			) {
 				returns.push({
 					date: date.plus(getLuxonDuration(returnWindow)).toISODate()!,
-					return: evaluateMutualFund(mutualfund.navs, returnWindow, date),
+					return: evaluateMutualFund(mutualfund.navs, request, date),
 				});
 			}
 
@@ -231,23 +234,4 @@ function createReturnsQuery(
 		refetchInterval: 1000 * 60 * 60, // 1 hour
 		refetchIntervalInBackground: true,
 	};
-}
-
-function evaluateMutualFund(
-	navs: Map<string, number>,
-	investmentDuration: PresetTimeDurations,
-	date: DateTime
-): number {
-	const endDate = date
-		.plus(getLuxonDuration(investmentDuration))
-		.minus({ days: 1 });
-
-	return (
-		100 *
-		(Math.pow(
-			navs.get(endDate.toISODate()!)! / navs.get(date.toISODate()!)!,
-			1 / Math.max(1, endDate.diff(date, 'years')!.years)
-		) -
-			1)
-	);
 }

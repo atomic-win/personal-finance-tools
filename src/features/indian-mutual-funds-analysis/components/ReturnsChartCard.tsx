@@ -38,7 +38,7 @@ import { ChevronDown } from 'lucide-react';
 export default function ReturnsChartCard(
 	props: {
 		mutualfunds: MutualFund[];
-	} & Omit<ReturnRequest, 'returnWindow'>
+	} & Omit<ReturnRequest, 'investmentDuration'>
 ) {
 	const [returnWindow, setReturnWindow] = useState<PresetTimeDurations>(
 		PresetTimeDurations.OneYear
@@ -122,7 +122,7 @@ export default function ReturnsChartCard(
 				<ReturnsChart
 					{...props}
 					lookbackDuration={lookbackDuration}
-					returnWindow={returnWindow}
+					investmentDuration={returnWindow}
 				/>
 			</CardContent>
 		</Card>
@@ -135,7 +135,7 @@ function ReturnsChart(
 		lookbackDuration: PresetTimeDurations;
 	} & ReturnRequest
 ) {
-	const { mutualfunds, returnWindow } = props;
+	const { mutualfunds, investmentDuration: returnWindow } = props;
 
 	const mutualFundReturnResults = useReturnQueries(props);
 

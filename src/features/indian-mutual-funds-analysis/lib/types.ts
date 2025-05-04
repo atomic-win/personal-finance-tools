@@ -9,7 +9,7 @@ export type MutualFund = {
 export type ReturnType = 'simple' | 'swp';
 
 export type ReturnRequest = {
-	returnWindow: PresetTimeDurations;
+	investmentDuration: PresetTimeDurations;
 	returnType: ReturnType;
 	frequency: Frequency;
 	stepUpFrequency: Frequency;

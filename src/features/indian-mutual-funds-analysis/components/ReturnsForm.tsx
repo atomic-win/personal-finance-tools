@@ -34,7 +34,7 @@ const schema = z.object({
 });
 
 export default function ReturnsForm(
-	props: Omit<ReturnRequest, 'returnWindow'>
+	props: Omit<ReturnRequest, 'investmentDuration'>
 ) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();

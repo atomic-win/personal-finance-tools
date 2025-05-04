@@ -1,8 +1,29 @@
 import {
 	Frequency,
 	PresetTimeDurations,
+	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import { DurationLike } from 'luxon';
+import { DateTime, DurationLike } from 'luxon';
+
+export function evaluateMutualFund(
+	navs: Map<string, number>,
+	returnRequest: ReturnRequest,
+	date: DateTime
+): number {
+	const { investmentDuration } = returnRequest;
+	const endDate = date
+		.plus(getLuxonDuration(investmentDuration))
+		.minus({ days: 1 });
+
+	return (
+		100 *
+		(Math.pow(
+			navs.get(endDate.toISODate()!)! / navs.get(date.toISODate()!)!,
+			1 / Math.max(1, endDate.diff(date, 'years')!.years)
+		) -
+			1)
+	);
+}
 
 export function displayFrequency(frequency: Frequency) {
 	switch (frequency) {
