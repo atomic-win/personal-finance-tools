@@ -17,6 +17,7 @@ import {
 	SelectValue,
 	SelectContent,
 	SelectItem,
+	SelectIcon,
 } from '@/components/ui/select';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -24,6 +25,7 @@ import { z } from 'zod';
 import { displayFrequency } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { ChevronDown } from 'lucide-react';
 
 const schema = z.object({
 	frequency: z.nativeEnum(Frequency),
@@ -100,8 +102,11 @@ export default function ReturnsForm({
 									}}
 									defaultValue={field.value}>
 									<FormControl>
-										<SelectTrigger>
+										<SelectTrigger className='w-full rounded-lg sm:ml-auto'>
 											<SelectValue placeholder='Select Frequency' />
+											<SelectIcon>
+												<ChevronDown className='h-4 w-4 opacity-50' />
+											</SelectIcon>
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
@@ -129,8 +134,11 @@ export default function ReturnsForm({
 									}}
 									defaultValue={field.value}>
 									<FormControl>
-										<SelectTrigger>
+										<SelectTrigger className='w-full rounded-lg sm:ml-auto'>
 											<SelectValue placeholder='Select Step Up Frequency' />
+											<SelectIcon>
+												<ChevronDown className='h-4 w-4 opacity-50' />
+											</SelectIcon>
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
