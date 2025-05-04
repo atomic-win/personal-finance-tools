@@ -52,6 +52,10 @@ const data = [
 				title: 'Rolling Returns',
 				url: '/indian-mutual-funds-analysis/rolling-returns',
 			},
+			{
+				title: 'SWP Returns',
+				url: '/indian-mutual-funds-analysis/swp',
+			},
 		],
 	},
 ];
