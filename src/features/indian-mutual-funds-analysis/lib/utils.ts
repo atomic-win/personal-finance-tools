@@ -119,5 +119,102 @@ function swpReturn(
 	returnRequest: ReturnRequest,
 	date: DateTime
 ) {
-	return 5;
+	const { investmentDuration, frequency, stepUpFrequency, stepUpRatio } =
+		returnRequest;
+
+	const startDate = date;
+	const endDate = date.plus(getLuxonDuration(investmentDuration));
+	const frequencyDuration = getLuxonDurationForFrequency(frequency);
+
+	const xirrInputs: { years: number; amount: number }[] = [];
+
+	let totalUnits = 0;
+	let investmentAmount = 1;
+	let stepUpDate = startDate.plus(
+		getLuxonDurationForFrequency(stepUpFrequency)
+	);
+
+	for (
+		let currentDate = startDate.plus(frequencyDuration);
+		currentDate <= endDate;
+		currentDate = currentDate.plus(frequencyDuration)
+	) {
+		if (currentDate > stepUpDate) {
+			investmentAmount *= 1 + stepUpRatio;
+			stepUpDate = stepUpDate.plus(
+				getLuxonDurationForFrequency(stepUpFrequency)
+			);
+		}
+
+		totalUnits += investmentAmount / navs.get(currentDate.toISODate()!)!;
+
+		xirrInputs.push({
+			years: endDate.diff(currentDate, 'years')!.years,
+			amount: -investmentAmount,
+		});
+	}
+
+	xirrInputs.push({
+		years: endDate.diff(startDate, 'years')!.years,
+		amount: totalUnits * navs.get(startDate.toISODate()!)!,
+	});
+
+	return calculateXIRR(xirrInputs);
+}
+
+function calculateXIRR(
+	xirrInputs: { years: number; amount: number }[]
+): number {
+	if (
+		xirrInputs.length === 0 ||
+		xirrInputs.every((input) => input.amount === 0)
+	) {
+		return 0;
+	}
+
+	if (xirrInputs.every((input) => input.years <= 1)) {
+		const inflow = xirrInputs
+			.filter((input) => input.amount > 0)
+			.reduce((acc, input) => acc + input.amount, 0);
+
+		const outflow = -xirrInputs
+			.filter((input) => input.amount < 0)
+			.reduce((acc, input) => acc + input.amount, 0);
+
+		return 100 * (outflow / inflow - 1);
+	}
+
+	let xirrLow = -1;
+	let xirrHigh = 1;
+
+	while (xirrHigh - xirrLow > 1e-6) {
+		const xirrGuess = (xirrLow + xirrHigh) / 2;
+		const npv = xirrInputs.reduce(
+			(acc, input) => acc + input.amount * Math.pow(1 + xirrGuess, input.years),
+			0
+		);
+
+		if (npv >= 0) {
+			xirrHigh = xirrGuess;
+		} else {
+			xirrLow = xirrGuess;
+		}
+	}
+
+	return (100 * (xirrLow + xirrHigh)) / 2;
+}
+
+function getLuxonDurationForFrequency(frequency: Frequency): DurationLike {
+	switch (frequency) {
+		case Frequency.Weekly:
+			return { weeks: 1 };
+		case Frequency.Biweekly:
+			return { weeks: 2 };
+		case Frequency.Monthly:
+			return { months: 1 };
+		case Frequency.Quarterly:
+			return { months: 3 };
+		case Frequency.Yearly:
+			return { years: 1 };
+	}
 }

@@ -176,7 +176,7 @@ function createReturnsQuery(
 
 	if (
 		returnType === 'swp' &&
-		(!frequency || !stepUpFrequency || !stepUpRatio)
+		(!frequency || !stepUpFrequency || stepUpRatio < 0)
 	) {
 		throw new Error(
 			'Frequency and step up frequency/ratio are required for SWP returns'
