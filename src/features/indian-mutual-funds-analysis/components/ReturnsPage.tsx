@@ -7,7 +7,10 @@ import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components
 import RollingReturnsTableCard from '@/features/indian-mutual-funds-analysis/components/RollingReturnsTableCard';
 import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
 import { useSearchParams } from 'next/navigation';
-import { ReturnType } from '@/features/indian-mutual-funds-analysis/lib/types';
+import {
+	Frequency,
+	ReturnType,
+} from '@/features/indian-mutual-funds-analysis/lib/types';
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
 import { Suspense } from 'react';
 import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
@@ -59,6 +62,18 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		searchParams.getAll('mfSchemeCode').map(Number)
 	);
 
+	const frequency = searchParams.get('frequency')
+		? (searchParams.get('frequency') as Frequency)
+		: Frequency.Monthly;
+
+	const stepUpFrequency = searchParams.get('stepUpFrequency')
+		? (searchParams.get('stepUpFrequency') as Frequency)
+		: Frequency.Yearly;
+
+	const stepUpRatio = searchParams.get('stepUpRatio')
+		? Number(searchParams.get('stepUpRatio'))
+		: 0.1;
+
 	if (!mutualFundList || !mutualFundList.length) {
 		return null;
 	}
@@ -71,7 +86,12 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 	return (
 		<div className='grid grid-cols-3 gap-4'>
 			<div className='col-span-2 space-y-4'>
-				<ReturnsForm returnType={returnType} />
+				<ReturnsForm
+					returnType={returnType}
+					frequency={frequency}
+					stepUpFrequency={stepUpFrequency}
+					stepUpRatio={stepUpRatio}
+				/>
 				<ReturnsChartCard
 					mutualfunds={addedMutualfunds}
 					returnType={returnType}

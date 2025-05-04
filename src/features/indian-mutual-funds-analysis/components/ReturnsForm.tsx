@@ -33,10 +33,11 @@ const schema = z.object({
 	stepUpRatio: z.number().min(0).max(1),
 });
 
-export default function ReturnsForm({
-	returnType,
-}: {
+export default function ReturnsForm(props: {
 	returnType: ReturnType;
+	frequency: Frequency;
+	stepUpFrequency: Frequency;
+	stepUpRatio: number;
 }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -44,17 +45,7 @@ export default function ReturnsForm({
 
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
-		defaultValues: {
-			frequency: searchParams.get('frequency')
-				? (searchParams.get('frequency') as Frequency)
-				: Frequency.Monthly,
-			stepUpFrequency: searchParams.get('stepUpFrequency')
-				? (searchParams.get('stepUpFrequency') as Frequency)
-				: Frequency.Yearly,
-			stepUpRatio: searchParams.get('stepUpRatio')
-				? Number(searchParams.get('stepUpRatio'))
-				: 0.1,
-		},
+		defaultValues: props,
 	});
 
 	function onFormChange(data: z.infer<typeof schema>) {
@@ -79,7 +70,7 @@ export default function ReturnsForm({
 		replace(`${pathname}?${params}`);
 	}
 
-	if (returnType === 'simple') {
+	if (props.returnType === 'simple') {
 		return null;
 	}
 
