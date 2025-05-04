@@ -20,6 +20,7 @@ import {
 	Return,
 	PresetTimeDurations,
 	ReturnType,
+	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { useState } from 'react';
@@ -132,23 +133,15 @@ export default function ReturnsChartCard({
 	);
 }
 
-function ReturnsChart({
-	mutualfunds,
-	lookbackDuration,
-	returnWindow,
-	returnType,
-}: {
-	mutualfunds: MutualFund[];
-	lookbackDuration: PresetTimeDurations;
-	returnWindow: PresetTimeDurations;
-	returnType: ReturnType;
-}) {
-	const mutualFundReturnResults = useReturnQueries(
-		mutualfunds,
-		lookbackDuration,
-		returnWindow,
-		returnType
-	);
+function ReturnsChart(
+	props: {
+		mutualfunds: MutualFund[];
+		lookbackDuration: PresetTimeDurations;
+	} & ReturnRequest
+) {
+	const { mutualfunds, returnWindow } = props;
+
+	const mutualFundReturnResults = useReturnQueries(props);
 
 	if (mutualfunds.length === 0) {
 		return (

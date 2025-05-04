@@ -8,6 +8,14 @@ export type MutualFund = {
 
 export type ReturnType = 'simple' | 'swp';
 
+export type ReturnRequest = {
+	returnWindow: PresetTimeDurations;
+	returnType: ReturnType;
+	frequency?: Frequency;
+	stepUpFrequency?: Frequency;
+	stepUpRatio?: number;
+};
+
 export type Frequency =
 	| 'weekly'
 	| 'biweekly'

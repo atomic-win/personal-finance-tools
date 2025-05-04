@@ -87,20 +87,22 @@ function RollingReturnsTable({
 	);
 }
 
-function RollingReturnsTableCell({
-	mutualfund,
-	returnWindow,
-	returnType,
-}: {
+function RollingReturnsTableCell(props: {
 	mutualfund: MutualFund;
 	returnWindow: PresetTimeDurations;
 	returnType: ReturnType;
 }) {
+	const { mutualfund, returnWindow, returnType } = props;
+
 	const {
 		data: returns,
 		isLoading,
 		isError,
-	} = useRollingReturnQuery(mutualfund, returnWindow, returnType);
+	} = useRollingReturnQuery({
+		mutualfund,
+		returnWindow,
+		returnType,
+	});
 
 	if (isLoading) {
 		return <TableCell className='text-center'>Loading...</TableCell>;

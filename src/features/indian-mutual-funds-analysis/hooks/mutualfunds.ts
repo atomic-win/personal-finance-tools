@@ -3,8 +3,7 @@ import {
 	Return,
 	RollingReturn,
 	PresetTimeDurations,
-	ReturnType,
-	Frequency,
+	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { getLuxonDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
@@ -91,14 +90,12 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 }
 
 export function useReturnQueries(
-	mutualfunds: MutualFund[],
-	lookbackDuration: PresetTimeDurations,
-	returnWindow: PresetTimeDurations,
-	returnType: ReturnType,
-	frequency?: Frequency,
-	stepUpFrequency?: Frequency,
-	stepUpRatio?: number
+	request: ReturnRequest & {
+		mutualfunds: MutualFund[];
+		lookbackDuration: PresetTimeDurations;
+	}
 ) {
+	const { mutualfunds, lookbackDuration } = request;
 	const earliestDate = DateTime.min(
 		...mutualfunds.map((mf) => DateTime.fromISO(mf.lastDate)),
 		DateTime.local()
@@ -108,15 +105,10 @@ export function useReturnQueries(
 
 	return useQueries({
 		queries: mutualfunds.map((mutualfund) => ({
-			...createReturnsQuery(
+			...createReturnsQuery({
+				...request,
 				mutualfund,
-				lookbackDuration,
-				returnWindow,
-				returnType,
-				frequency,
-				stepUpFrequency,
-				stepUpRatio
-			),
+			}),
 			select: (returns: Return[]) =>
 				returns
 					.filter((r) => DateTime.fromISO(r.date) >= earliestDate)
@@ -129,23 +121,17 @@ export function useReturnQueries(
 }
 
 export function useRollingReturnQuery(
-	mutualfund: MutualFund,
-	returnWindow: PresetTimeDurations,
-	returnType: ReturnType,
-	frequency?: Frequency,
-	stepUpFrequency?: Frequency,
-	stepUpRatio?: number
+	request: ReturnRequest & {
+		mutualfund: MutualFund;
+	}
 ) {
+	const { mutualfund, returnWindow } = request;
+
 	return useQuery({
-		...createReturnsQuery(
-			mutualfund,
-			returnWindow, // lookbackDuration
-			returnWindow,
-			returnType,
-			frequency,
-			stepUpFrequency,
-			stepUpRatio
-		),
+		...createReturnsQuery({
+			...request,
+			lookbackDuration: request.returnWindow,
+		}),
 		select: (returns: Return[]) => {
 			const startDate = DateTime.fromISO(mutualfund.lastDate)
 				.minus(getLuxonDuration(returnWindow))
@@ -166,14 +152,21 @@ export function useRollingReturnQuery(
 }
 
 function createReturnsQuery(
-	mutualfund: MutualFund,
-	lookbackDuration: PresetTimeDurations,
-	returnWindow: PresetTimeDurations,
-	returnType: ReturnType,
-	frequency?: Frequency,
-	stepUpFrequency?: Frequency,
-	stepUpRatio?: number
+	request: ReturnRequest & {
+		mutualfund: MutualFund;
+		lookbackDuration: PresetTimeDurations;
+	}
 ) {
+	const {
+		mutualfund,
+		lookbackDuration,
+		returnWindow,
+		returnType,
+		frequency,
+		stepUpFrequency,
+		stepUpRatio,
+	} = request;
+
 	if (!!!returnType) {
 		throw new Error('Return type is required');
 	}
