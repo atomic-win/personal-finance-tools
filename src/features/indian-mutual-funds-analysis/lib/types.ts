@@ -6,14 +6,23 @@ export type MutualFund = {
 	navs: Map<string, number>;
 };
 
-export type MutualFundRollingReturn = {
+export type ReturnType = 'simple' | 'swp';
+
+export type Frequency =
+	| 'weekly'
+	| 'biweekly'
+	| 'monthly'
+	| 'quarterly'
+	| 'yearly';
+
+export type RollingReturn = {
 	noData: boolean;
 	avgReturn: number;
 	minReturn: number;
 	maxReturn: number;
 };
 
-export type MutualFundReturn = {
+export type Return = {
 	schemeCode: number;
 	date: string;
 	return: number;

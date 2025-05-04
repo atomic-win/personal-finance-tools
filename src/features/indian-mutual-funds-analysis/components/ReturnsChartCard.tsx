@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/chart';
 import {
 	MutualFund,
-	MutualFundReturn,
+	Return,
 	PresetTimeDurations,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
@@ -139,8 +139,9 @@ function ReturnsChart({
 }) {
 	const mutualFundReturnResults = useReturnQueries(
 		mutualfunds,
+		lookbackDuration,
 		returnWindow,
-		lookbackDuration
+		'simple'
 	);
 
 	if (mutualfunds.length === 0) {
@@ -167,7 +168,7 @@ function ReturnsChart({
 		);
 	}
 
-	const mutualFundReturns: MutualFundReturn[] = mutualFundReturnResults
+	const mutualFundReturns: Return[] = mutualFundReturnResults
 		.map((r) => r.data)
 		.filter((r) => !!r)
 		.map((r) => r!)

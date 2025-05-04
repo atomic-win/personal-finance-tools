@@ -1,8 +1,10 @@
 import {
 	MutualFund,
-	MutualFundReturn,
-	MutualFundRollingReturn,
+	Return,
+	RollingReturn,
 	PresetTimeDurations,
+	ReturnType,
+	Frequency,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { getLuxonDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
@@ -90,8 +92,12 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 
 export function useReturnQueries(
 	mutualfunds: MutualFund[],
+	lookbackDuration: PresetTimeDurations,
 	returnWindow: PresetTimeDurations,
-	lookbackDuration: PresetTimeDurations
+	returnType: ReturnType,
+	frequency?: Frequency,
+	stepUpFrequency?: Frequency,
+	stepUpRatio?: number
 ) {
 	const earliestDate = DateTime.min(
 		...mutualfunds.map((mf) => DateTime.fromISO(mf.lastDate)),
@@ -102,8 +108,16 @@ export function useReturnQueries(
 
 	return useQueries({
 		queries: mutualfunds.map((mutualfund) => ({
-			...createReturnsQuery(mutualfund, returnWindow),
-			select: (returns: MutualFundReturn[]) =>
+			...createReturnsQuery(
+				mutualfund,
+				lookbackDuration,
+				returnWindow,
+				returnType,
+				frequency,
+				stepUpFrequency,
+				stepUpRatio
+			),
+			select: (returns: Return[]) =>
 				returns
 					.filter((r) => DateTime.fromISO(r.date) >= earliestDate)
 					.map((r) => ({
@@ -116,11 +130,23 @@ export function useReturnQueries(
 
 export function useRollingReturnQuery(
 	mutualfund: MutualFund,
-	returnWindow: PresetTimeDurations
+	returnWindow: PresetTimeDurations,
+	returnType: ReturnType,
+	frequency?: Frequency,
+	stepUpFrequency?: Frequency,
+	stepUpRatio?: number
 ) {
 	return useQuery({
-		...createReturnsQuery(mutualfund, returnWindow),
-		select: (returns: MutualFundReturn[]) => {
+		...createReturnsQuery(
+			mutualfund,
+			returnWindow, // lookbackDuration
+			returnWindow,
+			returnType,
+			frequency,
+			stepUpFrequency,
+			stepUpRatio
+		),
+		select: (returns: Return[]) => {
 			const startDate = DateTime.fromISO(mutualfund.lastDate)
 				.minus(getLuxonDuration(returnWindow))
 				.plus({ days: 1 });
@@ -134,21 +160,55 @@ export function useRollingReturnQuery(
 				avgReturn: a.reduce((x, y) => x + y, 0) / Math.max(1, a.length),
 				minReturn: a.reduce((x, y) => Math.min(x, y), Infinity),
 				maxReturn: a.reduce((x, y) => Math.max(x, y), -Infinity),
-			} as MutualFundRollingReturn;
+			} as RollingReturn;
 		},
 	});
 }
 
 function createReturnsQuery(
 	mutualfund: MutualFund,
-	returnWindow: PresetTimeDurations
+	lookbackDuration: PresetTimeDurations,
+	returnWindow: PresetTimeDurations,
+	returnType: ReturnType,
+	frequency?: Frequency,
+	stepUpFrequency?: Frequency,
+	stepUpRatio?: number
 ) {
+	if (!!!returnType) {
+		throw new Error('Return type is required');
+	}
+
+	if (
+		returnType === 'simple' &&
+		(frequency || stepUpFrequency || stepUpRatio)
+	) {
+		throw new Error(
+			'Frequency and step up frequency/ratio are not applicable for simple returns'
+		);
+	}
+
+	if (
+		returnType === 'swp' &&
+		(!frequency || !stepUpFrequency || !stepUpRatio)
+	) {
+		throw new Error(
+			'Frequency and step up frequency/ratio are required for SWP returns'
+		);
+	}
+
 	return {
 		queryKey: [
 			'mutualfunds',
 			mutualfund.schemeCode,
 			'returns',
-			{ returnWindow },
+			{
+				lookbackDuration,
+				returnWindow,
+				returnType,
+				frequency,
+				stepUpFrequency,
+				stepUpRatio,
+			},
 		],
 		queryFn: async () => {
 			const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
@@ -159,9 +219,14 @@ function createReturnsQuery(
 				return [];
 			}
 
+			const startDate = DateTime.max(
+				DateTime.fromISO(mutualfund.earliestDate),
+				endDate.minus(getLuxonDuration(lookbackDuration)).plus({ days: 1 })
+			);
+
 			const returns = [];
 			for (
-				let date = DateTime.fromISO(mutualfund.earliestDate);
+				let date = startDate;
 				date <= endDate;
 				date = date.plus({ days: 1 })
 			) {
@@ -171,9 +236,9 @@ function createReturnsQuery(
 				});
 			}
 
-			return returns as MutualFundReturn[];
+			return returns as Return[];
 		},
-		select: (returns: MutualFundReturn[]) =>
+		select: (returns: Return[]) =>
 			returns.map((r) => ({
 				...r,
 				schemeCode: mutualfund.schemeCode,

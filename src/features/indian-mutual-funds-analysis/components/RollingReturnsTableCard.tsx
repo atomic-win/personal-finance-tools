@@ -85,7 +85,7 @@ function RollingReturnsTableCell({
 		data: returns,
 		isLoading,
 		isError,
-	} = useRollingReturnQuery(mutualfund, returnWindow);
+	} = useRollingReturnQuery(mutualfund, returnWindow, 'simple');
 
 	if (isLoading) {
 		return <TableCell className='text-center'>Loading...</TableCell>;
