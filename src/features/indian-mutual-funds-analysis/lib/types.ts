@@ -11,9 +11,9 @@ export type ReturnType = 'simple' | 'swp';
 export type ReturnRequest = {
 	returnWindow: PresetTimeDurations;
 	returnType: ReturnType;
-	frequency?: Frequency;
-	stepUpFrequency?: Frequency;
-	stepUpRatio?: number;
+	frequency: Frequency;
+	stepUpFrequency: Frequency;
+	stepUpRatio: number;
 };
 
 export enum Frequency {
