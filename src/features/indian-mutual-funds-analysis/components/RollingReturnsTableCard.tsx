@@ -15,11 +15,14 @@ import {
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { cn } from '@/lib/utils';
 import { displayPresetTimeDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
+import { ReturnType } from '@/features/indian-mutual-funds-analysis/lib/types';
 
 export default function RollingReturnsTableCard({
 	mutualfunds,
+	returnType,
 }: {
 	mutualfunds: MutualFund[];
+	returnType: ReturnType;
 }) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
@@ -27,13 +30,22 @@ export default function RollingReturnsTableCard({
 				<CardTitle>Latest Rolling CAGR (%)</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<RollingReturnsTable mutualfunds={mutualfunds} />
+				<RollingReturnsTable
+					mutualfunds={mutualfunds}
+					returnType={returnType}
+				/>
 			</CardContent>
 		</Card>
 	);
 }
 
-function RollingReturnsTable({ mutualfunds }: { mutualfunds: MutualFund[] }) {
+function RollingReturnsTable({
+	mutualfunds,
+	returnType,
+}: {
+	mutualfunds: MutualFund[];
+	returnType: ReturnType;
+}) {
 	if (mutualfunds.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
@@ -65,6 +77,7 @@ function RollingReturnsTable({ mutualfunds }: { mutualfunds: MutualFund[] }) {
 								key={mf.schemeCode}
 								mutualfund={mf}
 								returnWindow={duration as PresetTimeDurations}
+								returnType={returnType}
 							/>
 						))}
 					</TableRow>
@@ -77,15 +90,17 @@ function RollingReturnsTable({ mutualfunds }: { mutualfunds: MutualFund[] }) {
 function RollingReturnsTableCell({
 	mutualfund,
 	returnWindow,
+	returnType,
 }: {
 	mutualfund: MutualFund;
 	returnWindow: PresetTimeDurations;
+	returnType: ReturnType;
 }) {
 	const {
 		data: returns,
 		isLoading,
 		isError,
-	} = useRollingReturnQuery(mutualfund, returnWindow, 'simple');
+	} = useRollingReturnQuery(mutualfund, returnWindow, returnType);
 
 	if (isLoading) {
 		return <TableCell className='text-center'>Loading...</TableCell>;

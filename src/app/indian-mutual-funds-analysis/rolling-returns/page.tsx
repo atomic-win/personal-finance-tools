@@ -1,6 +1,6 @@
 'use client';
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
-import RollingReturns from '@/features/indian-mutual-funds-analysis/components/RollingReturns';
+import ReturnsPageContainer from '@/features/indian-mutual-funds-analysis/components/ReturnsPageContainer';
 import { Suspense } from 'react';
 
 export default function Page() {
@@ -31,7 +31,7 @@ export default function Page() {
 					with your financial goals.
 				</p>
 				<Suspense>
-					<RollingReturns />
+					<ReturnsPageContainer returnType='simple' />
 				</Suspense>
 			</div>
 		</>
