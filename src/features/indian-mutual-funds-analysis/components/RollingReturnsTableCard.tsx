@@ -12,40 +12,35 @@ import {
 import {
 	MutualFund,
 	PresetTimeDurations,
+	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { cn } from '@/lib/utils';
 import { displayPresetTimeDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
-import { ReturnType } from '@/features/indian-mutual-funds-analysis/lib/types';
 
-export default function RollingReturnsTableCard({
-	mutualfunds,
-	returnType,
-}: {
-	mutualfunds: MutualFund[];
-	returnType: ReturnType;
-}) {
+export default function RollingReturnsTableCard(
+	props: {
+		mutualfunds: MutualFund[];
+	} & Omit<ReturnRequest, 'returnWindow'>
+) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>Latest Rolling CAGR (%)</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<RollingReturnsTable
-					mutualfunds={mutualfunds}
-					returnType={returnType}
-				/>
+				<RollingReturnsTable {...props} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function RollingReturnsTable({
-	mutualfunds,
-	returnType,
-}: {
-	mutualfunds: MutualFund[];
-	returnType: ReturnType;
-}) {
+function RollingReturnsTable(
+	props: {
+		mutualfunds: MutualFund[];
+	} & Omit<ReturnRequest, 'returnWindow'>
+) {
+	const { mutualfunds } = props;
+
 	if (mutualfunds.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
@@ -75,9 +70,9 @@ function RollingReturnsTable({
 						{mutualfunds.map((mf) => (
 							<RollingReturnsTableCell
 								key={mf.schemeCode}
+								{...props}
 								mutualfund={mf}
 								returnWindow={duration as PresetTimeDurations}
-								returnType={returnType}
 							/>
 						))}
 					</TableRow>
@@ -87,22 +82,12 @@ function RollingReturnsTable({
 	);
 }
 
-function RollingReturnsTableCell(props: {
-	mutualfund: MutualFund;
-	returnWindow: PresetTimeDurations;
-	returnType: ReturnType;
-}) {
-	const { mutualfund, returnWindow, returnType } = props;
-
-	const {
-		data: returns,
-		isLoading,
-		isError,
-	} = useRollingReturnQuery({
-		mutualfund,
-		returnWindow,
-		returnType,
-	});
+function RollingReturnsTableCell(
+	props: {
+		mutualfund: MutualFund;
+	} & ReturnRequest
+) {
+	const { data: returns, isLoading, isError } = useRollingReturnQuery(props);
 
 	if (isLoading) {
 		return <TableCell className='text-center'>Loading...</TableCell>;

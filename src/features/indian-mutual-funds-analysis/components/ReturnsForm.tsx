@@ -7,8 +7,8 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import {
-	ReturnType,
 	Frequency,
+	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -33,12 +33,9 @@ const schema = z.object({
 	stepUpRatio: z.number().min(0).max(1),
 });
 
-export default function ReturnsForm(props: {
-	returnType: ReturnType;
-	frequency: Frequency;
-	stepUpFrequency: Frequency;
-	stepUpRatio: number;
-}) {
+export default function ReturnsForm(
+	props: Omit<ReturnRequest, 'returnWindow'>
+) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const { replace } = useRouter();

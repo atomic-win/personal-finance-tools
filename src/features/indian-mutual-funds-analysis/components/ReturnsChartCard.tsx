@@ -19,7 +19,6 @@ import {
 	MutualFund,
 	Return,
 	PresetTimeDurations,
-	ReturnType,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
@@ -36,13 +35,11 @@ import { Label } from '@/components/ui/label';
 import { displayPresetTimeDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { ChevronDown } from 'lucide-react';
 
-export default function ReturnsChartCard({
-	mutualfunds,
-	returnType,
-}: {
-	mutualfunds: MutualFund[];
-	returnType: ReturnType;
-}) {
+export default function ReturnsChartCard(
+	props: {
+		mutualfunds: MutualFund[];
+	} & Omit<ReturnRequest, 'returnWindow'>
+) {
 	const [returnWindow, setReturnWindow] = useState<PresetTimeDurations>(
 		PresetTimeDurations.OneYear
 	);
@@ -123,10 +120,9 @@ export default function ReturnsChartCard({
 			</CardHeader>
 			<CardContent className='p-6'>
 				<ReturnsChart
-					mutualfunds={mutualfunds}
+					{...props}
 					lookbackDuration={lookbackDuration}
 					returnWindow={returnWindow}
-					returnType={returnType}
 				/>
 			</CardContent>
 		</Card>

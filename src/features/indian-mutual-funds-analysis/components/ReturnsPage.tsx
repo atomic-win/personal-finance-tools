@@ -95,10 +95,16 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 				<ReturnsChartCard
 					mutualfunds={addedMutualfunds}
 					returnType={returnType}
+					frequency={frequency}
+					stepUpFrequency={stepUpFrequency}
+					stepUpRatio={stepUpRatio}
 				/>
 				<RollingReturnsTableCard
 					mutualfunds={addedMutualfunds}
 					returnType={returnType}
+					frequency={frequency}
+					stepUpFrequency={stepUpFrequency}
+					stepUpRatio={stepUpRatio}
 				/>
 			</div>
 			<div>

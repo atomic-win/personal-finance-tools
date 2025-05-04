@@ -172,15 +172,6 @@ function createReturnsQuery(
 	}
 
 	if (
-		returnType === 'simple' &&
-		(frequency || stepUpFrequency || stepUpRatio)
-	) {
-		throw new Error(
-			'Frequency and step up frequency/ratio are not applicable for simple returns'
-		);
-	}
-
-	if (
 		returnType === 'swp' &&
 		(!frequency || !stepUpFrequency || !stepUpRatio)
 	) {
