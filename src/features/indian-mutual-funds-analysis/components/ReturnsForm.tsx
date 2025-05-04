@@ -23,6 +23,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { displayFrequency } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { Input } from '@/components/ui/input';
+import { Card } from '@/components/ui/card';
 
 const schema = z.object({
 	frequency: z.nativeEnum(Frequency),
@@ -81,94 +82,94 @@ export default function ReturnsForm({
 	}
 
 	return (
-		<Form {...form}>
-			<form
-				className='flex flex-col gap-4'
-				onSubmit={(e) => e.preventDefault()}>
-				<FormField
-					control={form.control}
-					name='frequency'
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Frequency</FormLabel>
-							<Select
-								onValueChange={(value) => {
-									field.onChange(value);
-									form.handleSubmit(onFormChange)();
-								}}
-								defaultValue={field.value}>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder='Select Frequency' />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									{Object.values(Frequency).map((frequency) => (
-										<SelectItem key={frequency} value={frequency}>
-											{displayFrequency(frequency)}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name='stepUpFrequency'
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Step Up Frequency</FormLabel>
-							<Select
-								onValueChange={(value) => {
-									field.onChange(value);
-									form.handleSubmit(onFormChange)();
-								}}
-								defaultValue={field.value}>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder='Select Step Up Frequency' />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									{Object.values(Frequency).map((frequency) => (
-										<SelectItem key={frequency} value={frequency}>
-											{displayFrequency(frequency)}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				<FormField
-					control={form.control}
-					name='stepUpRatio'
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Step Up Ratio</FormLabel>
-							<FormControl>
-								<Input
-									type='number'
-									step={0.01}
-									min={0}
-									max={1}
-									placeholder='Step Up Ratio'
-									value={field.value}
-									onChange={(e) => {
-										const value = Number(e.target.value);
+		<Card className='rounded-lg shadow-md w-full p-4'>
+			<Form {...form}>
+				<form className='flex flex-row' onSubmit={(e) => e.preventDefault()}>
+					<FormField
+						control={form.control}
+						name='frequency'
+						render={({ field }) => (
+							<FormItem className='flex flex-col items-start'>
+								<FormLabel>Frequency</FormLabel>
+								<Select
+									onValueChange={(value) => {
 										field.onChange(value);
 										form.handleSubmit(onFormChange)();
 									}}
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-			</form>
-		</Form>
+									defaultValue={field.value}>
+									<FormControl>
+										<SelectTrigger>
+											<SelectValue placeholder='Select Frequency' />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										{Object.values(Frequency).map((frequency) => (
+											<SelectItem key={frequency} value={frequency}>
+												{displayFrequency(frequency)}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name='stepUpFrequency'
+						render={({ field }) => (
+							<FormItem className='flex flex-col items-start'>
+								<FormLabel>Step Up Frequency</FormLabel>
+								<Select
+									onValueChange={(value) => {
+										field.onChange(value);
+										form.handleSubmit(onFormChange)();
+									}}
+									defaultValue={field.value}>
+									<FormControl>
+										<SelectTrigger>
+											<SelectValue placeholder='Select Step Up Frequency' />
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										{Object.values(Frequency).map((frequency) => (
+											<SelectItem key={frequency} value={frequency}>
+												{displayFrequency(frequency)}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name='stepUpRatio'
+						render={({ field }) => (
+							<FormItem className='flex flex-col items-start'>
+								<FormLabel>Step Up Ratio</FormLabel>
+								<FormControl>
+									<Input
+										type='number'
+										step={0.01}
+										min={0}
+										max={1}
+										placeholder='Step Up Ratio'
+										value={field.value}
+										onChange={(e) => {
+											const value = Number(e.target.value);
+											field.onChange(value);
+											form.handleSubmit(onFormChange)();
+										}}
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				</form>
+			</Form>
+		</Card>
 	);
 }
