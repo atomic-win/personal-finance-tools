@@ -10,19 +10,15 @@ export function evaluateMutualFund(
 	returnRequest: ReturnRequest,
 	date: DateTime
 ): number {
-	const { investmentDuration } = returnRequest;
-	const endDate = date
-		.plus(getLuxonDuration(investmentDuration))
-		.minus({ days: 1 });
-
-	return (
-		100 *
-		(Math.pow(
-			navs.get(endDate.toISODate()!)! / navs.get(date.toISODate()!)!,
-			1 / Math.max(1, endDate.diff(date, 'years')!.years)
-		) -
-			1)
-	);
+	const { returnType } = returnRequest;
+	switch (returnType) {
+		case 'simple':
+			return pointToPointReturn(navs, returnRequest, date);
+		case 'swp':
+			return swpReturn(navs, returnRequest, date);
+		default:
+			throw new Error('Invalid return type');
+	}
 }
 
 export function displayFrequency(frequency: Frequency) {
@@ -96,4 +92,32 @@ export function getLuxonDuration(duration: PresetTimeDurations): DurationLike {
 		case PresetTimeDurations.TwentyYears:
 			return { years: 20 };
 	}
+}
+
+function pointToPointReturn(
+	navs: Map<string, number>,
+	returnRequest: ReturnRequest,
+	date: DateTime
+) {
+	const { investmentDuration } = returnRequest;
+	const endDate = date
+		.plus(getLuxonDuration(investmentDuration))
+		.minus({ days: 1 });
+
+	return (
+		100 *
+		(Math.pow(
+			navs.get(endDate.toISODate()!)! / navs.get(date.toISODate()!)!,
+			1 / Math.max(1, endDate.diff(date, 'years')!.years)
+		) -
+			1)
+	);
+}
+
+function swpReturn(
+	navs: Map<string, number>,
+	returnRequest: ReturnRequest,
+	date: DateTime
+) {
+	return 5;
 }
