@@ -12,13 +12,19 @@ import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcr
 import { Suspense } from 'react';
 
 export default function ReturnsPage({
+	title,
+	description,
 	returnType,
 }: {
+	title: string;
+	description: string;
 	returnType: ReturnType;
 }) {
+	const htmlTitle = `Indian Mutual Funds ${title} Returns`;
+
 	return (
 		<>
-			<title>Mutual Funds Rolling Returns</title>
+			<title>{htmlTitle}</title>
 			<meta
 				name='keywords'
 				content='Mutual Funds, Rolling Returns, CAGR, Investment Analysis, Financial Planning'
@@ -34,14 +40,8 @@ export default function ReturnsPage({
 			/>
 			<div className='px-4 space-y-2'>
 				<h1 className='text-2xl font-bold'>Indian Mutual Funds Analysis</h1>
-				<h2 className='text-lg font-semibold'>Rolling Returns</h2>
-				<p>
-					Analyze CAGR (Compound Annual Growth Rate) rolling returns of Indian
-					Mutual Funds. Understand long-term fund performance across different
-					time frames to make informed investment decisions. Discover trends,
-					evaluate consistency, and compare funds to identify those that align
-					with your financial goals.
-				</p>
+				<h2 className='text-lg font-semibold'>{title} Returns</h2>
+				<p>{description}</p>
 				<Suspense>
 					<ReturnsPageContainer returnType={returnType} />
 				</Suspense>
