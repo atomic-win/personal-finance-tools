@@ -62,7 +62,10 @@ export default function ReturnsChartCard(
 					</CardDescription>
 				</div>
 				<div className='w-1/2'>
-					<Label className='pb-2'>Investment Duration</Label>
+					<Label className='pb-2'>
+						{props.returnType !== 'swp' && 'Investment Duration'}
+						{props.returnType === 'swp' && 'Withdrawal Duration'}
+					</Label>
 					<Select
 						onValueChange={(x) => setReturnWindow(x as PresetTimeDurations)}
 						value={returnWindow.toString()}>

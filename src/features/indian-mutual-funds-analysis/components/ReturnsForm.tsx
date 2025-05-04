@@ -82,7 +82,9 @@ export default function ReturnsForm(
 						name='frequency'
 						render={({ field }) => (
 							<FormItem className='flex flex-col items-start'>
-								<FormLabel>Frequency</FormLabel>
+								<FormLabel>
+									{props.returnType === 'swp' && 'Withdrawal Frequency'}
+								</FormLabel>
 								<Select
 									onValueChange={(value) => {
 										field.onChange(value);
