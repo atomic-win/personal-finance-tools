@@ -179,7 +179,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 						control={form.control}
 						name='investmentDuration'
 						render={({ field }) => (
-							<FormItem className='flex flex-col items-start'>
+							<FormItem className='flex flex-col items-start col-span-4 sm:col-span-1 sm:col-start-4'>
 								<FormLabel>
 									{getInvestmentDurationLabel(props.returnType)}
 								</FormLabel>
