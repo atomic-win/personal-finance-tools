@@ -29,28 +29,25 @@ export default function ReturnsPage({
 	const htmlTitle = `Indian Mutual Funds ${title} Returns`;
 
 	const breadcrumb = (returnType: ReturnType) => {
-		if (returnType === 'simple') {
-			return {
-				title: 'Rolling Returns',
-				href: '/indian-mutual-funds-analysis/rolling-returns',
-			};
+		switch (returnType) {
+			case 'simple':
+				return {
+					title: 'Rolling Returns',
+					href: '/indian-mutual-funds-analysis/rolling-returns',
+				};
+			case 'sip':
+				return {
+					title: 'SIP Returns',
+					href: '/indian-mutual-funds-analysis/sip',
+				};
+			case 'swp':
+				return {
+					title: 'SWP Returns',
+					href: '/indian-mutual-funds-analysis/swp',
+				};
+			default:
+				throw new Error('Invalid return type');
 		}
-
-		if (returnType === 'sip') {
-			return {
-				title: 'SIP Returns',
-				href: '/indian-mutual-funds-analysis/sip',
-			};
-		}
-
-		if (returnType === 'swp') {
-			return {
-				title: 'SWP Returns',
-				href: '/indian-mutual-funds-analysis/swp',
-			};
-		}
-
-		throw new Error('Invalid return type');
 	};
 
 	return (
