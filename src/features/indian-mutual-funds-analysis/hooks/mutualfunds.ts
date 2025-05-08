@@ -173,12 +173,10 @@ export function useRollingReturnsQuery(
 function createReturnsQuery(
 	request: ReturnRequest & {
 		mutualfund: MutualFund;
-		lookbackDuration: PresetTimeDurations;
 	}
 ) {
 	const {
 		mutualfund,
-		lookbackDuration,
 		investmentDuration,
 		returnType,
 		frequency,
@@ -205,7 +203,6 @@ function createReturnsQuery(
 			mutualfund.schemeCode,
 			'returns',
 			{
-				lookbackDuration,
 				investmentDuration,
 				returnType,
 				frequency,
@@ -222,14 +219,9 @@ function createReturnsQuery(
 				return [];
 			}
 
-			const startDate = DateTime.max(
-				DateTime.fromISO(mutualfund.earliestDate),
-				endDate.minus(getLuxonDuration(lookbackDuration)).plus({ days: 1 })
-			);
-
 			const returns: Return[] = [];
 			for (
-				let date = startDate;
+				let date = DateTime.fromISO(mutualfund.earliestDate);
 				date <= endDate;
 				date = date.plus({ days: 1 })
 			) {
