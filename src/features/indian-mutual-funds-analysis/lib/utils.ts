@@ -211,7 +211,7 @@ function calculateSipReturn(
 	}
 
 	xirrInputs.push({
-		years: endDate.diff(startDate, 'years')!.years,
+		years: 0,
 		amount: -totalUnits * navs.get(endDate.toISODate()!)!,
 	});
 
