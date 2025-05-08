@@ -19,6 +19,8 @@ import {
 	displayPresetTimeDuration,
 	investmentDurationWithReturnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
+import LoadingComponent from '@/components/LoadingComponent';
+import ErrorComponent from '@/components/ErrorComponent';
 
 export default function RollingReturnsTableCard(
 	props: {
@@ -98,15 +100,25 @@ function RollingReturnsTableCell(
 		lookbackDuration: PresetTimeDurations;
 	} & ReturnRequest
 ) {
-	const { data: returns, isLoading, isError } = useRollingReturnsQuery(props);
+	const rollingReturnsQuery = useRollingReturnsQuery(props);
 
-	if (isLoading) {
-		return <TableCell className='text-center'>Loading...</TableCell>;
+	if (rollingReturnsQuery.isFetching) {
+		return (
+			<TableCell className='text-center'>
+				<LoadingComponent loadingMessage='Calculating returns...' />
+			</TableCell>
+		);
 	}
 
-	if (isError || !returns) {
-		return <TableCell className='text-center'>Error</TableCell>;
+	if (rollingReturnsQuery.isError) {
+		return (
+			<TableCell className='text-center'>
+				<ErrorComponent errorMessage='Error occurred while calculating returns' />
+			</TableCell>
+		);
 	}
+
+	const returns = rollingReturnsQuery.data!;
 
 	if (returns.noData) {
 		return <TableCell className='text-center'>-</TableCell>;

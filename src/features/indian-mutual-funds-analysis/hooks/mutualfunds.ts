@@ -173,13 +173,11 @@ export function useRollingReturnsQuery(
 function createReturnsQuery(
 	request: ReturnRequest & {
 		mutualfund: MutualFund;
-		lookbackDuration: PresetTimeDurations;
 	}
 ) {
 	const {
 		mutualfund,
-		lookbackDuration,
-		investmentDuration: returnWindow,
+		investmentDuration,
 		returnType,
 		frequency,
 		stepUpFrequency,
@@ -205,47 +203,37 @@ function createReturnsQuery(
 			mutualfund.schemeCode,
 			'returns',
 			{
-				lookbackDuration,
-				returnWindow,
+				investmentDuration,
 				returnType,
 				frequency,
 				stepUpFrequency,
 				stepUpRatio,
 			},
 		],
-		queryFn: async () => {
+		queryFn: () => {
 			const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
-				getLuxonDuration(returnWindow)
+				getLuxonDuration(investmentDuration)
 			);
 
 			if (endDate < DateTime.fromISO(mutualfund.earliestDate)) {
 				return [];
 			}
 
-			const startDate = DateTime.max(
-				DateTime.fromISO(mutualfund.earliestDate),
-				endDate.minus(getLuxonDuration(lookbackDuration)).plus({ days: 1 })
-			);
-
-			const returns = [];
+			const returns: Return[] = [];
 			for (
-				let date = startDate;
+				let date = DateTime.fromISO(mutualfund.earliestDate);
 				date <= endDate;
 				date = date.plus({ days: 1 })
 			) {
 				returns.push({
-					date: date.plus(getLuxonDuration(returnWindow)).toISODate()!,
+					schemeCode: mutualfund.schemeCode,
+					date: date.plus(getLuxonDuration(investmentDuration)).toISODate()!,
 					return: evaluateMutualFund(mutualfund.navs, request, date),
 				});
 			}
 
-			return returns as Return[];
+			return returns;
 		},
-		select: (returns: Return[]) =>
-			returns.map((r) => ({
-				...r,
-				schemeCode: mutualfund.schemeCode,
-			})),
 		staleTime: 1000 * 60 * 60, // 1 hour
 		refetchInterval: 1000 * 60 * 60, // 1 hour
 		refetchIntervalInBackground: true,

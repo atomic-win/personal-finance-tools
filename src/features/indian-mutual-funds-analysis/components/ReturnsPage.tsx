@@ -16,6 +16,8 @@ import {
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
 import { Suspense } from 'react';
 import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
+import LoadingComponent from '@/components/LoadingComponent';
+import ErrorComponent from '@/components/ErrorComponent';
 
 export default function ReturnsPage({
 	title,
@@ -77,11 +79,27 @@ export default function ReturnsPage({
 
 function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 	const searchParams = useSearchParams();
-	const { data: mutualFundList } = useMutualFundListQuery();
+	const mutualFundListQuery = useMutualFundListQuery();
 
-	const addedMutualFundResults = useMutualFundQueries(
+	const mutualFundQueries = useMutualFundQueries(
 		searchParams.getAll('mfSchemeCode').map(Number)
 	);
+
+	if (mutualFundListQuery.isFetching) {
+		return <LoadingComponent loadingMessage='Fetching mutual fund list...' />;
+	}
+
+	if (mutualFundListQuery.isError) {
+		return <ErrorComponent errorMessage='Failed to fetch mutual fund list' />;
+	}
+
+	if (mutualFundQueries.some((mfq) => mfq.isFetching)) {
+		return <LoadingComponent loadingMessage='Fetching mutual fund data...' />;
+	}
+
+	if (mutualFundQueries.some((mfq) => mfq.isError)) {
+		return <ErrorComponent errorMessage='Failed to fetch mutual fund data' />;
+	}
 
 	const frequency = searchParams.get('frequency')
 		? (searchParams.get('frequency') as Frequency)
@@ -99,12 +117,7 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		? (searchParams.get('investmentDuration') as PresetTimeDurations)
 		: PresetTimeDurations.OneYear;
 
-	if (!mutualFundList || !mutualFundList.length) {
-		return null;
-	}
-
-	const addedMutualfunds = (addedMutualFundResults || [])
-		.filter((r) => r.isSuccess)
+	const addedMutualfunds = (mutualFundQueries || [])
 		.map((r) => r.data!)
 		.filter((mf) => mf !== null && !!mf.schemeName);
 
@@ -128,7 +141,7 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 			</div>
 			<div>
 				<SelectMutualFundsCard
-					mutualFundList={mutualFundList}
+					mutualFundList={mutualFundListQuery.data!}
 					addedMutualFunds={addedMutualfunds}
 				/>
 			</div>
