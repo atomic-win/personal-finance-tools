@@ -28,6 +28,24 @@ export default function ReturnsPage({
 }) {
 	const htmlTitle = `Indian Mutual Funds ${title} Returns`;
 
+	const breadcrumb = (returnType: ReturnType) => {
+		if (returnType === 'simple') {
+			return {
+				title: 'Rolling Returns',
+				href: '/indian-mutual-funds-analysis/rolling-returns',
+			};
+		}
+
+		if (returnType === 'swp') {
+			return {
+				title: 'SWP Returns',
+				href: '/indian-mutual-funds-analysis/swp',
+			};
+		}
+
+		throw new Error('Invalid return type');
+	};
+
 	return (
 		<>
 			<title>{htmlTitle}</title>
@@ -38,10 +56,7 @@ export default function ReturnsPage({
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{ title: 'Indian Mutual Funds Analysis', href: '', disabled: true },
-					{
-						title: 'Rolling Returns',
-						href: '/indian-mutual-funds-analysis/rolling-returns',
-					},
+					breadcrumb(returnType),
 				]}
 			/>
 			<div className='px-4 space-y-2'>
