@@ -117,7 +117,7 @@ function ReturnsChart(
 		);
 	}
 
-	if (mutualFundReturnQueries.some((r) => r.isLoading)) {
+	if (mutualFundReturnQueries.some((r) => r.isFetching)) {
 		return <LoadingComponent loadingMessage='Calculating returns...' />;
 	}
 

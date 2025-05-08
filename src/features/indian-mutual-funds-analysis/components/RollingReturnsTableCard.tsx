@@ -102,7 +102,7 @@ function RollingReturnsTableCell(
 ) {
 	const rollingReturnsQuery = useRollingReturnsQuery(props);
 
-	if (rollingReturnsQuery.isLoading) {
+	if (rollingReturnsQuery.isFetching) {
 		return (
 			<TableCell className='text-center'>
 				<LoadingComponent loadingMessage='Calculating returns...' />

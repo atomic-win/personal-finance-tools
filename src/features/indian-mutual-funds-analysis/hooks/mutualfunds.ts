@@ -179,7 +179,7 @@ function createReturnsQuery(
 	const {
 		mutualfund,
 		lookbackDuration,
-		investmentDuration: returnWindow,
+		investmentDuration,
 		returnType,
 		frequency,
 		stepUpFrequency,
@@ -206,7 +206,7 @@ function createReturnsQuery(
 			'returns',
 			{
 				lookbackDuration,
-				returnWindow,
+				investmentDuration,
 				returnType,
 				frequency,
 				stepUpFrequency,
@@ -215,7 +215,7 @@ function createReturnsQuery(
 		],
 		queryFn: async () => {
 			const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
-				getLuxonDuration(returnWindow)
+				getLuxonDuration(investmentDuration)
 			);
 
 			if (endDate < DateTime.fromISO(mutualfund.earliestDate)) {
@@ -234,7 +234,7 @@ function createReturnsQuery(
 				date = date.plus({ days: 1 })
 			) {
 				returns.push({
-					date: date.plus(getLuxonDuration(returnWindow)).toISODate()!,
+					date: date.plus(getLuxonDuration(investmentDuration)).toISODate()!,
 					return: evaluateMutualFund(mutualfund.navs, request, date),
 				});
 			}
