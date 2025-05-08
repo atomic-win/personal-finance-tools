@@ -1,4 +1,4 @@
-import { useRollingReturnQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import { useRollingReturnsQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import {
@@ -15,18 +15,24 @@ import {
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { cn } from '@/lib/utils';
-import { displayPresetTimeDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
+import {
+	displayPresetTimeDuration,
+	investmentDurationWithReturnTypeText,
+} from '@/features/indian-mutual-funds-analysis/lib/utils';
 
 export default function RollingReturnsTableCard(
 	props: {
 		mutualfunds: MutualFund[];
-	} & Omit<ReturnRequest, 'investmentDuration'>
+	} & ReturnRequest
 ) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>
-					Latest Rolling {props.returnType === 'simple' ? 'CAGR' : 'XIRR'} (%)
+					{`${investmentDurationWithReturnTypeText(
+						props.investmentDuration,
+						props.returnType
+					)} Rolling Returns`}
 				</CardTitle>
 			</CardHeader>
 			<CardContent>
@@ -39,7 +45,7 @@ export default function RollingReturnsTableCard(
 function RollingReturnsTable(
 	props: {
 		mutualfunds: MutualFund[];
-	} & Omit<ReturnRequest, 'investmentDuration'>
+	} & ReturnRequest
 ) {
 	const { mutualfunds } = props;
 
@@ -67,14 +73,16 @@ function RollingReturnsTable(
 				{Object.values(PresetTimeDurations).map((duration) => (
 					<TableRow key={duration}>
 						<TableCell>
-							{displayPresetTimeDuration(duration as PresetTimeDurations)}
+							{`Last ${displayPresetTimeDuration(
+								duration as PresetTimeDurations
+							)}`}
 						</TableCell>
 						{mutualfunds.map((mf) => (
 							<RollingReturnsTableCell
 								key={mf.schemeCode}
 								{...props}
 								mutualfund={mf}
-								investmentDuration={duration as PresetTimeDurations}
+								lookbackDuration={duration as PresetTimeDurations}
 							/>
 						))}
 					</TableRow>
@@ -87,9 +95,10 @@ function RollingReturnsTable(
 function RollingReturnsTableCell(
 	props: {
 		mutualfund: MutualFund;
+		lookbackDuration: PresetTimeDurations;
 	} & ReturnRequest
 ) {
-	const { data: returns, isLoading, isError } = useRollingReturnQuery(props);
+	const { data: returns, isLoading, isError } = useRollingReturnsQuery(props);
 
 	if (isLoading) {
 		return <TableCell className='text-center'>Loading...</TableCell>;

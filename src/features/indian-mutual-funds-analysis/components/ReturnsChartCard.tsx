@@ -32,18 +32,18 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { displayPresetTimeDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
+import {
+	displayPresetTimeDuration,
+	investmentDurationWithReturnTypeText,
+	returnTypeText,
+} from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { ChevronDown } from 'lucide-react';
 
 export default function ReturnsChartCard(
 	props: {
 		mutualfunds: MutualFund[];
-	} & Omit<ReturnRequest, 'investmentDuration'>
+	} & ReturnRequest
 ) {
-	const [returnWindow, setReturnWindow] = useState<PresetTimeDurations>(
-		PresetTimeDurations.OneYear
-	);
-
 	const [lookbackDuration, setLookbackDuration] = useState<PresetTimeDurations>(
 		PresetTimeDurations.TwoYears
 	);
@@ -52,47 +52,16 @@ export default function ReturnsChartCard(
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex items-center gap-4 space-y-0 border-b py-4 sm:flex-row'>
 				<div className='grid text-center sm:text-left w-full gap-2'>
-					<CardTitle>
-						{props.returnType === 'simple' ? 'CAGR (%)' : 'XIRR (%)'}
-					</CardTitle>
+					<CardTitle>{returnTypeText(props.returnType)}</CardTitle>
 					<CardDescription>
-						{`Showing ${displayPresetTimeDuration(returnWindow)} ${
-							props.returnType === 'simple' ? 'CAGR' : 'XIRR'
-						} % for the last ${displayPresetTimeDuration(lookbackDuration)}`}
+						{`Showing ${investmentDurationWithReturnTypeText(
+							props.investmentDuration,
+							props.returnType
+						)} for the last ${displayPresetTimeDuration(lookbackDuration)}`}
 					</CardDescription>
 				</div>
 				<div className='w-1/2'>
-					<Label className='pb-2'>
-						{props.returnType !== 'swp' && 'Investment Duration'}
-						{props.returnType === 'swp' && 'Withdrawal Duration'}
-					</Label>
-					<Select
-						onValueChange={(x) => setReturnWindow(x as PresetTimeDurations)}
-						value={returnWindow.toString()}>
-						<SelectTrigger
-							className='w-full rounded-lg sm:ml-auto'
-							aria-label='Select a value'>
-							<SelectValue
-								placeholder={`Last ${displayPresetTimeDuration(returnWindow)}`}
-							/>
-							<SelectIcon>
-								<ChevronDown className='h-4 w-4 opacity-50' />
-							</SelectIcon>
-						</SelectTrigger>
-						<SelectContent className='rounded-xl'>
-							{Object.values(PresetTimeDurations).map((duration) => (
-								<SelectItem
-									key={duration}
-									value={duration}
-									className='rounded-lg'>
-									{displayPresetTimeDuration(duration)}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
-				</div>
-				<div className='w-1/2'>
-					<Label className='pb-2'>Lookback Duration</Label>
+					<Label className='pb-2'>Last</Label>
 					<Select
 						onValueChange={(x) => setLookbackDuration(x as PresetTimeDurations)}
 						value={lookbackDuration.toString()}>
@@ -122,11 +91,7 @@ export default function ReturnsChartCard(
 				</div>
 			</CardHeader>
 			<CardContent className='p-6'>
-				<ReturnsChart
-					{...props}
-					lookbackDuration={lookbackDuration}
-					investmentDuration={returnWindow}
-				/>
+				<ReturnsChart {...props} lookbackDuration={lookbackDuration} />
 			</CardContent>
 		</Card>
 	);
@@ -138,7 +103,7 @@ function ReturnsChart(
 		lookbackDuration: PresetTimeDurations;
 	} & ReturnRequest
 ) {
-	const { mutualfunds, investmentDuration: returnWindow } = props;
+	const { mutualfunds } = props;
 
 	const mutualFundReturnResults = useReturnQueries(props);
 
@@ -228,7 +193,10 @@ function ReturnsChart(
 					minTickGap={32}
 					unit={'%'}
 					label={{
-						value: `${displayPresetTimeDuration(returnWindow)} CAGR (%)`,
+						value: investmentDurationWithReturnTypeText(
+							props.investmentDuration,
+							props.returnType
+						),
 						position: 'insideLeft',
 						angle: -90,
 						style: { textAnchor: 'middle' },
@@ -243,6 +211,7 @@ function ReturnsChart(
 						stroke={`var(--color-${mutualfund.schemeCode})`}
 						strokeWidth={2}
 						dot={false}
+						unit={'%'}
 					/>
 				))}
 				<ChartLegend content={<ChartLegendContent />} />

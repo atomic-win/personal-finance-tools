@@ -9,6 +9,8 @@ import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/compo
 import { useSearchParams } from 'next/navigation';
 import {
 	Frequency,
+	PresetTimeDurations,
+	ReturnRequest,
 	ReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
@@ -74,6 +76,10 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		? Number(searchParams.get('stepUpRatio'))
 		: 0.1;
 
+	const investmentDuration = searchParams.get('investmentDuration')
+		? (searchParams.get('investmentDuration') as PresetTimeDurations)
+		: PresetTimeDurations.OneYear;
+
 	if (!mutualFundList || !mutualFundList.length) {
 		return null;
 	}
@@ -83,28 +89,22 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		.map((r) => r.data!)
 		.filter((mf) => mf !== null && !!mf.schemeName);
 
+	const returnsRequest = {
+		investmentDuration,
+		returnType,
+		frequency,
+		stepUpFrequency,
+		stepUpRatio,
+	} as ReturnRequest;
+
 	return (
 		<div className='grid grid-cols-3 gap-4'>
 			<div className='col-span-2 space-y-4'>
-				<ReturnsForm
-					returnType={returnType}
-					frequency={frequency}
-					stepUpFrequency={stepUpFrequency}
-					stepUpRatio={stepUpRatio}
-				/>
-				<ReturnsChartCard
-					mutualfunds={addedMutualfunds}
-					returnType={returnType}
-					frequency={frequency}
-					stepUpFrequency={stepUpFrequency}
-					stepUpRatio={stepUpRatio}
-				/>
+				<ReturnsForm {...returnsRequest} />
+				<ReturnsChartCard mutualfunds={addedMutualfunds} {...returnsRequest} />
 				<RollingReturnsTableCard
 					mutualfunds={addedMutualfunds}
-					returnType={returnType}
-					frequency={frequency}
-					stepUpFrequency={stepUpFrequency}
-					stepUpRatio={stepUpRatio}
+					{...returnsRequest}
 				/>
 			</div>
 			<div>

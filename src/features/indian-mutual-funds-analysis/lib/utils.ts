@@ -2,6 +2,7 @@ import {
 	Frequency,
 	PresetTimeDurations,
 	ReturnRequest,
+	ReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { DateTime, DurationLike } from 'luxon';
 
@@ -64,6 +65,58 @@ export function displayPresetTimeDuration(
 			return '15 years';
 		case PresetTimeDurations.TwentyYears:
 			return '20 years';
+	}
+}
+
+export function investmentDurationWithReturnTypeText(
+	investmentDuration: PresetTimeDurations,
+	returnType: ReturnType
+) {
+	return `${investmentDurationText(investmentDuration)} ${returnTypeText(
+		returnType
+	)}`;
+}
+
+export function returnTypeText(returnType: ReturnType) {
+	if (returnType === 'simple') {
+		return 'CAGR (%)';
+	}
+
+	if (returnType === 'swp') {
+		return 'SWP XIRR (%)';
+	}
+
+	throw new Error('Invalid return type');
+}
+
+export function investmentDurationText(
+	investmentDuration: PresetTimeDurations
+) {
+	switch (investmentDuration) {
+		case PresetTimeDurations.OneMonth:
+			return '1-month';
+		case PresetTimeDurations.TwoMonths:
+			return '2-month';
+		case PresetTimeDurations.ThreeMonths:
+			return '3-month';
+		case PresetTimeDurations.SixMonths:
+			return '6-month';
+		case PresetTimeDurations.OneYear:
+			return '1-year';
+		case PresetTimeDurations.TwoYears:
+			return '2-year';
+		case PresetTimeDurations.ThreeYears:
+			return '3-year';
+		case PresetTimeDurations.FiveYears:
+			return '5-year';
+		case PresetTimeDurations.TenYears:
+			return '10-year';
+		case PresetTimeDurations.FifteenYears:
+			return '15-year';
+		case PresetTimeDurations.TwentyYears:
+			return '20-year';
+		default:
+			throw new Error('Invalid investment duration');
 	}
 }
 

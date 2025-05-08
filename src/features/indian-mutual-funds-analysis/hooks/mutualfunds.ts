@@ -123,21 +123,19 @@ export function useReturnQueries(
 	});
 }
 
-export function useRollingReturnQuery(
+export function useRollingReturnsQuery(
 	request: ReturnRequest & {
 		mutualfund: MutualFund;
+		lookbackDuration: PresetTimeDurations;
 	}
 ) {
-	const { mutualfund, investmentDuration: returnWindow } = request;
-
 	return useQuery({
 		...createReturnsQuery({
 			...request,
-			lookbackDuration: request.investmentDuration,
 		}),
 		select: (returns: Return[]) => {
-			const startDate = DateTime.fromISO(mutualfund.lastDate)
-				.minus(getLuxonDuration(returnWindow))
+			const startDate = DateTime.fromISO(request.mutualfund.lastDate)
+				.minus(getLuxonDuration(request.lookbackDuration))
 				.plus({ days: 1 });
 
 			const a = returns
@@ -202,7 +200,10 @@ function createReturnsQuery(
 				getLuxonDuration(returnWindow)
 			);
 
-			if (endDate < DateTime.fromISO(mutualfund.earliestDate)) {
+			if (
+				endDate.minus(getLuxonDuration(lookbackDuration)).plus({ days: 1 }) <
+				DateTime.fromISO(mutualfund.earliestDate)
+			) {
 				return [];
 			}
 
