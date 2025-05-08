@@ -14,9 +14,11 @@ export function evaluateMutualFund(
 	const { returnType } = returnRequest;
 	switch (returnType) {
 		case 'simple':
-			return pointToPointReturn(navs, returnRequest, date);
+			return calculateCagrReturn(navs, returnRequest, date);
+		case 'sip':
+			return calculateSipReturn(navs, returnRequest, date);
 		case 'swp':
-			return swpReturn(navs, returnRequest, date);
+			return calculateSwpReturn(navs, returnRequest, date);
 		default:
 			throw new Error('Invalid return type');
 	}
@@ -78,15 +80,16 @@ export function investmentDurationWithReturnTypeText(
 }
 
 export function returnTypeText(returnType: ReturnType) {
-	if (returnType === 'simple') {
-		return 'CAGR (%)';
+	switch (returnType) {
+		case 'simple':
+			return 'CAGR (%)';
+		case 'sip':
+			return 'SIP XIRR (%)';
+		case 'swp':
+			return 'SWP XIRR (%)';
+		default:
+			throw new Error('Invalid return type');
 	}
-
-	if (returnType === 'swp') {
-		return 'SWP XIRR (%)';
-	}
-
-	throw new Error('Invalid return type');
 }
 
 export function investmentDurationText(
@@ -147,7 +150,7 @@ export function getLuxonDuration(duration: PresetTimeDurations): DurationLike {
 	}
 }
 
-function pointToPointReturn(
+function calculateCagrReturn(
 	navs: Map<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime
@@ -167,7 +170,55 @@ function pointToPointReturn(
 	);
 }
 
-function swpReturn(
+function calculateSipReturn(
+	navs: Map<string, number>,
+	returnRequest: ReturnRequest,
+	date: DateTime
+) {
+	const { investmentDuration, frequency, stepUpFrequency, stepUpRatio } =
+		returnRequest;
+
+	const startDate = date;
+	const endDate = date.plus(getLuxonDuration(investmentDuration));
+	const frequencyDuration = getLuxonDurationForFrequency(frequency);
+
+	const xirrInputs: { years: number; amount: number }[] = [];
+
+	let totalUnits = 0;
+	let investmentAmount = 1;
+	let stepUpDate = startDate.plus(
+		getLuxonDurationForFrequency(stepUpFrequency)
+	);
+
+	for (
+		let currentDate = startDate;
+		currentDate < endDate;
+		currentDate = currentDate.plus(frequencyDuration)
+	) {
+		if (currentDate > stepUpDate) {
+			investmentAmount *= 1 + stepUpRatio;
+			stepUpDate = stepUpDate.plus(
+				getLuxonDurationForFrequency(stepUpFrequency)
+			);
+		}
+
+		totalUnits += investmentAmount / navs.get(currentDate.toISODate()!)!;
+
+		xirrInputs.push({
+			years: endDate.diff(currentDate, 'years')!.years,
+			amount: investmentAmount,
+		});
+	}
+
+	xirrInputs.push({
+		years: 0,
+		amount: -totalUnits * navs.get(endDate.toISODate()!)!,
+	});
+
+	return calculateXIRR(xirrInputs);
+}
+
+function calculateSwpReturn(
 	navs: Map<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime

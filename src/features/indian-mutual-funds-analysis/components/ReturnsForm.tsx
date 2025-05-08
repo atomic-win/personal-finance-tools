@@ -216,21 +216,24 @@ export default function ReturnsForm(props: ReturnRequest) {
 }
 
 function getFrequencyLabel(returnType: ReturnType) {
-	if (returnType === 'swp') {
-		return 'Withdrawal Frequency';
+	switch (returnType) {
+		case 'sip':
+			return 'Investment Frequency';
+		case 'swp':
+			return 'Withdrawal Frequency';
+		default:
+			throw new Error('Invalid return type');
 	}
-
-	throw new Error('Invalid return type');
 }
 
 function getInvestmentDurationLabel(returnType: ReturnType) {
-	if (returnType === 'simple') {
-		return 'Investment Duration';
+	switch (returnType) {
+		case 'simple':
+		case 'sip':
+			return 'Investment Duration';
+		case 'swp':
+			return 'Withdrawal Duration';
+		default:
+			throw new Error('Invalid return type');
 	}
-
-	if (returnType === 'swp') {
-		return 'Withdrawal Duration';
-	}
-
-	throw new Error('Invalid return type');
 }
