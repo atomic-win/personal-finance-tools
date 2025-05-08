@@ -1,10 +1,14 @@
 import {
 	MutualFund,
-	MutualFundReturn,
-	MutualFundRollingReturn,
+	Return,
+	RollingReturn,
 	PresetTimeDurations,
+	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import { getLuxonDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
+import {
+	evaluateMutualFund,
+	getLuxonDuration,
+} from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateTime } from 'luxon';
@@ -89,10 +93,12 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 }
 
 export function useReturnQueries(
-	mutualfunds: MutualFund[],
-	returnWindow: PresetTimeDurations,
-	lookbackDuration: PresetTimeDurations
+	request: ReturnRequest & {
+		mutualfunds: MutualFund[];
+		lookbackDuration: PresetTimeDurations;
+	}
 ) {
+	const { mutualfunds, lookbackDuration } = request;
 	const earliestDate = DateTime.min(
 		...mutualfunds.map((mf) => DateTime.fromISO(mf.lastDate)),
 		DateTime.local()
@@ -102,8 +108,11 @@ export function useReturnQueries(
 
 	return useQueries({
 		queries: mutualfunds.map((mutualfund) => ({
-			...createReturnsQuery(mutualfund, returnWindow),
-			select: (returns: MutualFundReturn[]) =>
+			...createReturnsQuery({
+				...request,
+				mutualfund,
+			}),
+			select: (returns: Return[]) =>
 				returns
 					.filter((r) => DateTime.fromISO(r.date) >= earliestDate)
 					.map((r) => ({
@@ -114,41 +123,95 @@ export function useReturnQueries(
 	});
 }
 
-export function useRollingReturnQuery(
-	mutualfund: MutualFund,
-	returnWindow: PresetTimeDurations
+export function useRollingReturnsQuery(
+	request: ReturnRequest & {
+		mutualfund: MutualFund;
+		lookbackDuration: PresetTimeDurations;
+	}
 ) {
 	return useQuery({
-		...createReturnsQuery(mutualfund, returnWindow),
-		select: (returns: MutualFundReturn[]) => {
-			const startDate = DateTime.fromISO(mutualfund.lastDate)
-				.minus(getLuxonDuration(returnWindow))
+		...createReturnsQuery({
+			...request,
+		}),
+		select: (returns: Return[]) => {
+			const startDate = DateTime.fromISO(request.mutualfund.lastDate)
+				.minus(getLuxonDuration(request.lookbackDuration))
 				.plus({ days: 1 });
 
 			const a = returns
 				.filter((r) => DateTime.fromISO(r.date) >= startDate)
 				.map((r) => r.return);
 
+			const totalDays = DateTime.fromISO(request.mutualfund.lastDate).diff(
+				startDate,
+				'days'
+			).days;
+
+			const availableDays = a.length;
+
+			const shouldUseData = availableDays / Math.max(1, totalDays) >= 0.9;
+
+			if (!shouldUseData) {
+				return {
+					noData: true,
+					avgReturn: 0,
+					minReturn: 0,
+					maxReturn: 0,
+				} as RollingReturn;
+			}
+
 			return {
-				noData: a.length === 0,
-				avgReturn: a.reduce((x, y) => x + y, 0) / Math.max(1, a.length),
+				noData: false,
+				avgReturn: a.reduce((x, y) => x + y, 0) / a.length,
 				minReturn: a.reduce((x, y) => Math.min(x, y), Infinity),
 				maxReturn: a.reduce((x, y) => Math.max(x, y), -Infinity),
-			} as MutualFundRollingReturn;
+			} as RollingReturn;
 		},
 	});
 }
 
 function createReturnsQuery(
-	mutualfund: MutualFund,
-	returnWindow: PresetTimeDurations
+	request: ReturnRequest & {
+		mutualfund: MutualFund;
+		lookbackDuration: PresetTimeDurations;
+	}
 ) {
+	const {
+		mutualfund,
+		lookbackDuration,
+		investmentDuration: returnWindow,
+		returnType,
+		frequency,
+		stepUpFrequency,
+		stepUpRatio,
+	} = request;
+
+	if (!!!returnType) {
+		throw new Error('Return type is required');
+	}
+
+	if (
+		returnType === 'swp' &&
+		(!frequency || !stepUpFrequency || stepUpRatio < 0)
+	) {
+		throw new Error(
+			'Frequency and step up frequency/ratio are required for SWP returns'
+		);
+	}
+
 	return {
 		queryKey: [
 			'mutualfunds',
 			mutualfund.schemeCode,
 			'returns',
-			{ returnWindow },
+			{
+				lookbackDuration,
+				returnWindow,
+				returnType,
+				frequency,
+				stepUpFrequency,
+				stepUpRatio,
+			},
 		],
 		queryFn: async () => {
 			const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
@@ -159,21 +222,26 @@ function createReturnsQuery(
 				return [];
 			}
 
+			const startDate = DateTime.max(
+				DateTime.fromISO(mutualfund.earliestDate),
+				endDate.minus(getLuxonDuration(lookbackDuration)).plus({ days: 1 })
+			);
+
 			const returns = [];
 			for (
-				let date = DateTime.fromISO(mutualfund.earliestDate);
+				let date = startDate;
 				date <= endDate;
 				date = date.plus({ days: 1 })
 			) {
 				returns.push({
 					date: date.plus(getLuxonDuration(returnWindow)).toISODate()!,
-					return: evaluateMutualFund(mutualfund.navs, returnWindow, date),
+					return: evaluateMutualFund(mutualfund.navs, request, date),
 				});
 			}
 
-			return returns as MutualFundReturn[];
+			return returns as Return[];
 		},
-		select: (returns: MutualFundReturn[]) =>
+		select: (returns: Return[]) =>
 			returns.map((r) => ({
 				...r,
 				schemeCode: mutualfund.schemeCode,
@@ -182,23 +250,4 @@ function createReturnsQuery(
 		refetchInterval: 1000 * 60 * 60, // 1 hour
 		refetchIntervalInBackground: true,
 	};
-}
-
-function evaluateMutualFund(
-	navs: Map<string, number>,
-	investmentDuration: PresetTimeDurations,
-	date: DateTime
-): number {
-	const endDate = date
-		.plus(getLuxonDuration(investmentDuration))
-		.minus({ days: 1 });
-
-	return (
-		100 *
-		(Math.pow(
-			navs.get(endDate.toISODate()!)! / navs.get(date.toISODate()!)!,
-			1 / Math.max(1, endDate.diff(date, 'years')!.years)
-		) -
-			1)
-	);
 }
