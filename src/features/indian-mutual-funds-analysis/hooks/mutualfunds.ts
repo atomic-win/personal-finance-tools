@@ -142,9 +142,27 @@ export function useRollingReturnsQuery(
 				.filter((r) => DateTime.fromISO(r.date) >= startDate)
 				.map((r) => r.return);
 
+			const totalDays = DateTime.fromISO(request.mutualfund.lastDate).diff(
+				startDate,
+				'days'
+			).days;
+
+			const availableDays = a.length;
+
+			const shouldUseData = availableDays / Math.max(1, totalDays) >= 0.9;
+
+			if (!shouldUseData) {
+				return {
+					noData: true,
+					avgReturn: 0,
+					minReturn: 0,
+					maxReturn: 0,
+				} as RollingReturn;
+			}
+
 			return {
-				noData: a.length === 0,
-				avgReturn: a.reduce((x, y) => x + y, 0) / Math.max(1, a.length),
+				noData: false,
+				avgReturn: a.reduce((x, y) => x + y, 0) / a.length,
 				minReturn: a.reduce((x, y) => Math.min(x, y), Infinity),
 				maxReturn: a.reduce((x, y) => Math.max(x, y), -Infinity),
 			} as RollingReturn;
@@ -200,10 +218,7 @@ function createReturnsQuery(
 				getLuxonDuration(returnWindow)
 			);
 
-			if (
-				endDate.minus(getLuxonDuration(lookbackDuration)).plus({ days: 1 }) <
-				DateTime.fromISO(mutualfund.earliestDate)
-			) {
+			if (endDate < DateTime.fromISO(mutualfund.earliestDate)) {
 				return [];
 			}
 
