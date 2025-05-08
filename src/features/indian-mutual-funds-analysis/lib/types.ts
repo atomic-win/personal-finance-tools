@@ -6,7 +6,7 @@ export type MutualFund = {
 	navs: Map<string, number>;
 };
 
-export type ReturnType = 'simple' | 'swp';
+export type ReturnType = 'simple' | 'sip' | 'swp';
 
 export type ReturnRequest = {
 	investmentDuration: PresetTimeDurations;

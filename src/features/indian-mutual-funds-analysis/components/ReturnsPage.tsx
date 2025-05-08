@@ -36,6 +36,13 @@ export default function ReturnsPage({
 			};
 		}
 
+		if (returnType === 'sip') {
+			return {
+				title: 'SIP Returns',
+				href: '/indian-mutual-funds-analysis/sip',
+			};
+		}
+
 		if (returnType === 'swp') {
 			return {
 				title: 'SWP Returns',
