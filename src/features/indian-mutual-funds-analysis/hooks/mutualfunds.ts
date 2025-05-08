@@ -213,7 +213,7 @@ function createReturnsQuery(
 				stepUpRatio,
 			},
 		],
-		queryFn: async () => {
+		queryFn: () => {
 			const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
 				getLuxonDuration(investmentDuration)
 			);
@@ -227,25 +227,21 @@ function createReturnsQuery(
 				endDate.minus(getLuxonDuration(lookbackDuration)).plus({ days: 1 })
 			);
 
-			const returns = [];
+			const returns: Return[] = [];
 			for (
 				let date = startDate;
 				date <= endDate;
 				date = date.plus({ days: 1 })
 			) {
 				returns.push({
+					schemeCode: mutualfund.schemeCode,
 					date: date.plus(getLuxonDuration(investmentDuration)).toISODate()!,
 					return: evaluateMutualFund(mutualfund.navs, request, date),
 				});
 			}
 
-			return returns as Return[];
+			return returns;
 		},
-		select: (returns: Return[]) =>
-			returns.map((r) => ({
-				...r,
-				schemeCode: mutualfund.schemeCode,
-			})),
 		staleTime: 1000 * 60 * 60, // 1 hour
 		refetchInterval: 1000 * 60 * 60, // 1 hour
 		refetchIntervalInBackground: true,
