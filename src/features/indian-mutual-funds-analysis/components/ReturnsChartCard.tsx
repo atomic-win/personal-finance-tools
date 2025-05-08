@@ -38,6 +38,8 @@ import {
 	returnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { ChevronDown } from 'lucide-react';
+import LoadingComponent from '@/components/LoadingComponent';
+import ErrorComponent from '@/components/ErrorComponent';
 
 export default function ReturnsChartCard(
 	props: {
@@ -105,7 +107,7 @@ function ReturnsChart(
 ) {
 	const { mutualfunds } = props;
 
-	const mutualFundReturnResults = useReturnQueries(props);
+	const mutualFundReturnQueries = useReturnQueries(props);
 
 	if (mutualfunds.length === 0) {
 		return (
@@ -115,23 +117,17 @@ function ReturnsChart(
 		);
 	}
 
-	if (mutualFundReturnResults.some((r) => r.isLoading)) {
+	if (mutualFundReturnQueries.some((r) => r.isLoading)) {
+		return <LoadingComponent loadingMessage='Calculating returns...' />;
+	}
+
+	if (mutualFundReturnQueries.some((r) => r.isError)) {
 		return (
-			<div className='flex items-center justify-center'>
-				<Label>Loading data...</Label>
-			</div>
+			<ErrorComponent errorMessage='Error occurred while calculating returns' />
 		);
 	}
 
-	if (mutualFundReturnResults.some((r) => r.isError)) {
-		return (
-			<div className='flex items-center justify-center'>
-				<Label>Error loading data</Label>
-			</div>
-		);
-	}
-
-	const mutualFundReturns: Return[] = mutualFundReturnResults
+	const mutualFundReturns: Return[] = mutualFundReturnQueries
 		.map((r) => r.data)
 		.filter((r) => !!r)
 		.map((r) => r!)
