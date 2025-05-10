@@ -129,6 +129,9 @@ function RollingReturnsTableCell(
 			<div className='mx-auto w-fit'>
 				<RollingReturnsValue label='Avg' value={returns.avgReturn} />
 				<RollingReturnsValue label='Min' value={returns.minReturn} />
+				{Object.entries(returns.percentiles).map(([key, value]) => (
+					<RollingReturnsValue key={key} label={`p-${key}`} value={value} />
+				))}
 				<RollingReturnsValue label='Max' value={returns.maxReturn} />
 			</div>
 		</TableCell>

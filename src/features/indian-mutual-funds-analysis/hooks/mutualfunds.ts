@@ -10,6 +10,7 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateTime } from 'luxon';
 import _ from 'lodash';
+import percentile from 'percentile';
 
 const mfApiClient = axios.create({
 	baseURL: 'https://api.mfapi.in',
@@ -152,15 +153,22 @@ export function useRollingReturnsQuery(
 				return {
 					noData: true,
 					avgReturn: 0,
-					minReturn: 0,
-					maxReturn: 0,
+					percentiles: {},
 				} as RollingReturn;
 			}
+
+			const percentiles = percentile([25, 50, 75, 90], a) as number[];
 
 			return {
 				noData: false,
 				avgReturn: a.reduce((x, y) => x + y, 0) / a.length,
 				minReturn: a.reduce((x, y) => Math.min(x, y), Infinity),
+				percentiles: {
+					25: percentiles[0],
+					50: percentiles[1],
+					75: percentiles[2],
+					90: percentiles[3],
+				},
 				maxReturn: a.reduce((x, y) => Math.max(x, y), -Infinity),
 			} as RollingReturn;
 		},
