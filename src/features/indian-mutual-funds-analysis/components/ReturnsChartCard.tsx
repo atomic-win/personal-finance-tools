@@ -52,8 +52,8 @@ export default function ReturnsChartCard(
 
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
-			<CardHeader className='flex items-center gap-4 space-y-0 border-b py-4 sm:flex-row'>
-				<div className='grid text-center sm:text-left w-full gap-2'>
+			<CardHeader className='flex flex-col md:flex-row md:items-center gap-4 space-y-2 md:space-y-0 border-b py-4'>
+				<div className='grid text-center md:text-left w-full gap-2'>
 					<CardTitle>{returnTypeText(props.returnType)}</CardTitle>
 					<CardDescription>
 						{`Showing ${investmentDurationWithReturnTypeText(
@@ -62,13 +62,13 @@ export default function ReturnsChartCard(
 						)} for the last ${displayPresetTimeDuration(lookbackDuration)}`}
 					</CardDescription>
 				</div>
-				<div className='w-1/2'>
-					<Label className='pb-2'>Last</Label>
+				<div className='w-full md:w-1/2'>
+					<Label className='pb-2 block'>Last</Label>
 					<Select
 						onValueChange={(x) => setLookbackDuration(x as PresetTimeDurations)}
 						value={lookbackDuration.toString()}>
 						<SelectTrigger
-							className='w-full rounded-lg sm:ml-auto'
+							className='w-full rounded-lg'
 							aria-label='Select a value'>
 							<SelectValue
 								placeholder={`Last ${displayPresetTimeDuration(
