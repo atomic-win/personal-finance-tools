@@ -1,6 +1,8 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 
+const DEFAULT_CURRENCY = 'USD';
+
 export function useCurrencyQuery() {
 	return useQuery({
 		queryKey: ['settings', 'currency'],
@@ -12,23 +14,28 @@ export function useCurrencyQuery() {
 				return currencyFromLocalStorage;
 			}
 
-			const response = await fetch('https://ipapi.co/json/');
-			if (!response.ok) {
-				console.error(
-					'Failed to fetch currency data from ipapi.co:',
-					response.statusText
-				);
+			try {
+				const response = await fetch('https://ipapi.co/json/');
+				if (!response.ok) {
+					console.error(
+						'Failed to fetch currency data from ipapi.co:',
+						response.statusText
+					);
 
-				return 'USD';
+					return DEFAULT_CURRENCY;
+				}
+
+				const data = await response.json();
+				const currencyFromApi = data.currency as string;
+				if (currencyFromApi) {
+					return currencyFromApi;
+				}
+
+				return DEFAULT_CURRENCY;
+			} catch (error) {
+				console.error('Error fetching currency data:', error);
+				return DEFAULT_CURRENCY;
 			}
-
-			const data = await response.json();
-			const currencyFromApi = data.currency as string;
-			if (currencyFromApi) {
-				return currencyFromApi;
-			}
-
-			return 'USD';
 		},
 		refetchIntervalInBackground: true,
 	});
