@@ -4,13 +4,6 @@ const nextConfig: NextConfig = {
 	reactStrictMode: true,
 	distDir: 'build',
 	output: 'standalone',
-	webpack(config) {
-		config.module.rules.push({
-			test: /\.worker\.ts$/,
-			use: { loader: 'worker-loader', options: { esModule: true } },
-		});
-		return config;
-	},
 };
 
 export default nextConfig;
