@@ -1,6 +1,48 @@
 import { clsx, type ClassValue } from 'clsx';
-import _ from 'lodash';
 import { twMerge } from 'tailwind-merge';
+
+export const LOCALE_OPTIONS = [
+	'en',
+	'en-001',
+	'en-029',
+	'en-150',
+	'en-AG',
+	'en-AU',
+	'en-BB',
+	'en-BM',
+	'en-BS',
+	'en-BW',
+	'en-BZ',
+	'en-CA',
+	'en-CC',
+	'en-CK',
+	'en-DM',
+	'en-FJ',
+	'en-FK',
+	'en-GB',
+	'en-GD',
+	'en-GU',
+	'en-HK',
+	'en-IE',
+	'en-IN',
+	'en-JM',
+	'en-KN',
+	'en-LC',
+	'en-MH',
+	'en-MP',
+	'en-MT',
+	'en-NG',
+	'en-NZ',
+	'en-PH',
+	'en-PK',
+	'en-PW',
+	'en-SG',
+	'en-SI',
+	'en-TT',
+	'en-US',
+	'en-VC',
+	'en-ZA',
+];
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -20,17 +62,4 @@ export function displayCurrencyAmountText(
 		maximumFractionDigits,
 		notation,
 	}).format(amount);
-}
-
-export function calculateLocaleOptions(ipDataLocales: string[]) {
-	const locales = _.uniq([...ipDataLocales, 'en', 'en-US']).filter(
-		(locale) => locale === 'en' || locale.startsWith('en-')
-	);
-
-	const supportedLocales = Intl.NumberFormat.supportedLocalesOf(locales, {
-		localeMatcher: 'best fit',
-	});
-
-	supportedLocales.sort((a, b) => b.length - a.length);
-	return supportedLocales;
 }

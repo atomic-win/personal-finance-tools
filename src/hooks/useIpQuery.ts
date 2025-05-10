@@ -8,8 +8,8 @@ export type IpData = {
 };
 
 const DEFAULT_IP_DATA: IpData = {
-	currency: 'USD',
-	languages: ['en-US'],
+	currency: '',
+	languages: [],
 };
 
 export function useIpQuery() {
