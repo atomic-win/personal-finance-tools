@@ -18,7 +18,7 @@ import {
 import { ChevronRight } from 'lucide-react';
 import { useIpQuery } from '@/hooks/useIpQuery';
 import { useLocaleQuery } from '@/hooks/useLocaleQuery';
-import { calculateLocaleOptions } from '@/lib/utils';
+import { LOCALE_OPTIONS } from '@/lib/utils';
 
 export default function SettingsSidebarGroup() {
 	const { isMobile } = useSidebar();
@@ -51,7 +51,7 @@ export default function SettingsSidebarGroup() {
 			name: 'locale',
 			title: 'Language',
 			value: locale,
-			options: calculateLocaleOptions(!!!ipData ? [] : ipData.languages),
+			options: LOCALE_OPTIONS,
 		},
 	];
 

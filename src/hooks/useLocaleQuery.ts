@@ -1,6 +1,7 @@
 'use client';
-import { calculateLocaleOptions } from '@/lib/utils';
+import { LOCALE_OPTIONS } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
+import _ from 'lodash';
 
 const DEFAULT_LOCALE = 'en-US';
 
@@ -26,11 +27,19 @@ export function useLocaleQuery() {
 
 				const data = await response.json();
 
-				const locales = calculateLocaleOptions(
-					(data.languages as string).split(',') || []
-				);
+				const locales = _.uniq([
+					...((data.languages as string).split(',') || []),
+					'en',
+					'en-US',
+				]).filter((locale) => LOCALE_OPTIONS.includes(locale));
 
-				return locales[0];
+				const supportedLocales = Intl.NumberFormat.supportedLocalesOf(locales, {
+					localeMatcher: 'best fit',
+				});
+
+				supportedLocales.sort((a, b) => b.length - a.length);
+
+				return supportedLocales[0] || DEFAULT_LOCALE;
 			} catch (error) {
 				console.error('Error fetching locale data:', error);
 				return DEFAULT_LOCALE;
