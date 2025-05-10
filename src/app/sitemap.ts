@@ -45,5 +45,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			changeFrequency: 'daily',
 			priority: 1,
 		},
+		{
+			url: `${BASE_URL}/indian-mutual-funds-analysis/sip`,
+			lastModified: new Date(),
+			changeFrequency: 'daily',
+			priority: 1,
+		},
+		{
+			url: `${BASE_URL}/indian-mutual-funds-analysis/swp`,
+			lastModified: new Date(),
+			changeFrequency: 'daily',
+			priority: 1,
+		},
 	];
 }
