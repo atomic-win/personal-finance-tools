@@ -15,7 +15,7 @@ declare const self: DedicatedWorkerGlobalScope;
 self.onmessage = (
 	event: MessageEvent<{
 		mutualfund: MutualFund;
-		request: ReturnRequest & { mutualfund: MutualFund };
+		request: ReturnRequest;
 	}>
 ) => {
 	const { mutualfund, request } = event.data;
