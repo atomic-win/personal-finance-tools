@@ -28,6 +28,7 @@ export type RollingReturn = {
 	noData: boolean;
 	avgReturn: number;
 	minReturn: number;
+	percentiles: Record<number, number>;
 	maxReturn: number;
 };
 
