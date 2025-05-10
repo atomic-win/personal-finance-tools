@@ -104,7 +104,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 						))}
 					</SidebarMenu>
 				</SidebarGroup>
-				<SettingsSidebarGroup />
+				<SidebarGroup className='mt-auto'>
+					<SettingsSidebarGroup />
+				</SidebarGroup>
 				<SidebarGroup className='mt-8'>
 					<SidebarGroupContent>
 						<SidebarMenu>

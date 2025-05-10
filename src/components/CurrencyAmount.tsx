@@ -1,6 +1,8 @@
 import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
 import { useLocaleQuery } from '@/hooks/useLocaleQuery';
 import { displayCurrencyAmountText } from '@/lib/utils';
+import LoadingComponent from '@/components/LoadingComponent';
+import ErrorComponent from '@/components/ErrorComponent';
 
 export default function CurrencyAmount({
 	amount,
@@ -11,16 +13,28 @@ export default function CurrencyAmount({
 	notation?: 'standard' | 'compact';
 	numberOfFractionDigits?: number;
 }) {
-	const { data: currency, isLoading: isLoadingCurrency } = useCurrencyQuery();
-	const { data: locale, isLoading: isLoadingLocale } = useLocaleQuery();
+	const currencyQuery = useCurrencyQuery();
+	const localeQuery = useLocaleQuery();
 
-	if (isLoadingCurrency || isLoadingLocale || !currency || !locale) {
-		return '';
+	if (currencyQuery.isLoading) {
+		return <LoadingComponent loadingMessage='Loading currency...' />;
+	}
+
+	if (currencyQuery.isError) {
+		return <ErrorComponent errorMessage='Error while loading currency' />;
+	}
+
+	if (localeQuery.isLoading) {
+		return <LoadingComponent loadingMessage='Loading locale...' />;
+	}
+
+	if (localeQuery.isError) {
+		return <ErrorComponent errorMessage='Error while loading locale' />;
 	}
 
 	return displayCurrencyAmountText(
-		locale,
-		currency,
+		localeQuery.data || 'en-US',
+		currencyQuery.data || 'USD',
 		amount,
 		notation,
 		numberOfFractionDigits
