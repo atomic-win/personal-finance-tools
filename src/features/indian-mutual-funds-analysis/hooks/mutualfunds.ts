@@ -5,10 +5,7 @@ import {
 	PresetTimeDurations,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import {
-	evaluateMutualFund,
-	getLuxonDuration,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+import { getLuxonDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateTime } from 'luxon';
@@ -210,29 +207,25 @@ function createReturnsQuery(
 				stepUpRatio,
 			},
 		],
-		queryFn: () => {
-			const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
-				getLuxonDuration(investmentDuration)
-			);
+		queryFn: async (): Promise<Return[]> => {
+			return new Promise((resolve, reject) => {
+				const worker = new Worker(
+					new URL('../workers/returns.worker.ts', import.meta.url),
+					{ type: 'module' }
+				);
 
-			if (endDate < DateTime.fromISO(mutualfund.earliestDate)) {
-				return [];
-			}
+				worker.onmessage = (event: MessageEvent<Return[]>) => {
+					resolve(event.data);
+					worker.terminate();
+				};
 
-			const returns: Return[] = [];
-			for (
-				let date = DateTime.fromISO(mutualfund.earliestDate);
-				date <= endDate;
-				date = date.plus({ days: 1 })
-			) {
-				returns.push({
-					schemeCode: mutualfund.schemeCode,
-					date: date.plus(getLuxonDuration(investmentDuration)).toISODate()!,
-					return: evaluateMutualFund(mutualfund.navs, request, date),
-				});
-			}
+				worker.onerror = (error: ErrorEvent) => {
+					reject(error.message);
+					worker.terminate();
+				};
 
-			return returns;
+				worker.postMessage({ mutualfund, request });
+			});
 		},
 		staleTime: 1000 * 60 * 60, // 1 hour
 		refetchInterval: 1000 * 60 * 60, // 1 hour
