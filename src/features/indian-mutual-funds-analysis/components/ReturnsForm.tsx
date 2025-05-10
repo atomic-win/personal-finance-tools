@@ -80,7 +80,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 		<Card className='rounded-lg shadow-md w-full p-4'>
 			<Form {...form}>
 				<form
-					className='grid grid-cols-4 gap-4'
+					className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'
 					onSubmit={(e) => e.preventDefault()}>
 					{props.returnType !== 'simple' && (
 						<>
@@ -97,7 +97,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 											}}
 											defaultValue={field.value}>
 											<FormControl>
-												<SelectTrigger className='w-full rounded-lg sm:ml-auto'>
+												<SelectTrigger className='w-full rounded-lg'>
 													<SelectValue placeholder='Select Frequency' />
 													<SelectIcon>
 														<ChevronDown className='h-4 w-4 opacity-50' />
@@ -129,7 +129,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 											}}
 											defaultValue={field.value}>
 											<FormControl>
-												<SelectTrigger className='w-full rounded-lg sm:ml-auto'>
+												<SelectTrigger className='w-full rounded-lg'>
 													<SelectValue placeholder='Select Step Up Frequency' />
 													<SelectIcon>
 														<ChevronDown className='h-4 w-4 opacity-50' />
@@ -179,7 +179,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 						control={form.control}
 						name='investmentDuration'
 						render={({ field }) => (
-							<FormItem className='flex flex-col items-start col-span-4 sm:col-span-1 sm:col-start-4'>
+							<FormItem className='flex flex-col items-start col-span-1 md:col-span-1 md:col-start-4'>
 								<FormLabel>
 									{getInvestmentDurationLabel(props.returnType)}
 								</FormLabel>
@@ -190,7 +190,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 									}}
 									defaultValue={field.value}>
 									<FormControl>
-										<SelectTrigger className='w-full rounded-lg sm:ml-auto'>
+										<SelectTrigger className='w-full rounded-lg'>
 											<SelectValue placeholder='Select Investment Duration' />
 											<SelectIcon>
 												<ChevronDown className='h-4 w-4 opacity-50' />

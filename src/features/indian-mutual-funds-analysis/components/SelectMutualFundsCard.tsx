@@ -119,14 +119,14 @@ function MutualFundSearchForm({
 					render={({ field }) => (
 						<FormItem className='flex flex-col'>
 							<Popover>
-								<div className='flex items-center gap-2'>
+								<div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2'>
 									<PopoverTrigger asChild className='flex-1'>
 										<FormControl>
 											<Button
 												variant='outline'
 												role='combobox'
 												className={cn(
-													'w-full justify-between h-10',
+													'w-full justify-between h-10 mb-2 sm:mb-0',
 													!field.value && 'text-muted-foreground'
 												)}>
 												<span className='text-wrap truncate max-w-[80%]'>
@@ -144,7 +144,7 @@ function MutualFundSearchForm({
 									<Button
 										type='button'
 										onClick={addSchemeCode}
-										className='h-10 w-20'
+										className='h-10 w-full sm:w-20'
 										disabled={field.value === 0}>
 										Add
 									</Button>
@@ -240,12 +240,12 @@ function MutualFundDisplayItem({ mutualfund }: { mutualfund: MutualFund }) {
 	return (
 		<Card className='p-2 rounded-lg shadow-md'>
 			<CardContent className='flex justify-between items-center p-2 gap-2 text-sm'>
-				<span>{mutualfund.schemeName}</span>
+				<span className='truncate'>{mutualfund.schemeName}</span>
 				<Button
 					variant='secondary'
 					onClick={() => removeSchemeCode()}
-					className='h-full'>
-					<Trash2 />
+					className='h-full shrink-0'>
+					<Trash2 className='h-4 w-4' />
 				</Button>
 			</CardContent>
 		</Card>

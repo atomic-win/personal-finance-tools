@@ -60,37 +60,46 @@ function RollingReturnsTable(
 	}
 
 	return (
-		<Table className='w-full'>
-			<TableHeader>
-				<TableRow>
-					<TableHead>Rolling Window</TableHead>
-					{mutualfunds.map((mf) => (
-						<TableHead key={mf.schemeCode} className='text-center'>
-							{mf.schemeName}
-						</TableHead>
-					))}
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{Object.values(PresetTimeDurations).map((duration) => (
-					<TableRow key={duration}>
-						<TableCell>
-							{`Last ${displayPresetTimeDuration(
-								duration as PresetTimeDurations
-							)}`}
-						</TableCell>
+		<div className='overflow-x-auto'>
+			<Table className='w-full'>
+				<TableHeader>
+					<TableRow>
+						<TableHead className='whitespace-nowrap'>Rolling Window</TableHead>
 						{mutualfunds.map((mf) => (
-							<RollingReturnsTableCell
+							<TableHead
 								key={mf.schemeCode}
-								{...props}
-								mutualfund={mf}
-								lookbackDuration={duration as PresetTimeDurations}
-							/>
+								className='text-center whitespace-nowrap'>
+								<span className='hidden md:inline'>{mf.schemeName}</span>
+								<span className='md:hidden'>
+									{mf.schemeName.length > 15
+										? `${mf.schemeName.substring(0, 15)}...`
+										: mf.schemeName}
+								</span>
+							</TableHead>
 						))}
 					</TableRow>
-				))}
-			</TableBody>
-		</Table>
+				</TableHeader>
+				<TableBody>
+					{Object.values(PresetTimeDurations).map((duration) => (
+						<TableRow key={duration}>
+							<TableCell className='whitespace-nowrap'>
+								{`Last ${displayPresetTimeDuration(
+									duration as PresetTimeDurations
+								)}`}
+							</TableCell>
+							{mutualfunds.map((mf) => (
+								<RollingReturnsTableCell
+									key={mf.schemeCode}
+									{...props}
+									mutualfund={mf}
+									lookbackDuration={duration as PresetTimeDurations}
+								/>
+							))}
+						</TableRow>
+					))}
+				</TableBody>
+			</Table>
+		</div>
 	);
 }
 
