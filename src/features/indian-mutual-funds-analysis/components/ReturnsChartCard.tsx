@@ -163,7 +163,7 @@ function ReturnsChart(
 		const data = chartDataMap.get(date)!;
 		chartDataMap.set(date, {
 			...data,
-			[r.schemeCode.toString()]: r.return,
+			[r.schemeCode.toString()]: Number(r.return.toFixed(2)),
 		});
 	});
 
@@ -198,7 +198,10 @@ function ReturnsChart(
 						style: { textAnchor: 'middle' },
 					}}
 				/>
-				<ChartTooltip cursor={true} content={<ChartTooltipContent />} />
+				<ChartTooltip
+					cursor={true}
+					content={<ChartTooltipContent unit='%' />}
+				/>
 				{mutualfunds.map((mutualfund) => (
 					<Line
 						key={mutualfund.schemeCode}
