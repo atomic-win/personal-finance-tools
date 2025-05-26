@@ -34,7 +34,7 @@ export default function Page() {
 			<meta name='description' content={pageDescription} />
 			<meta
 				name='keywords'
-				content='SWP, Systematic Withdrawal Plan, Mutual Funds, Investment, Financial Planning'
+				content='SWP, Systematic Withdrawal Plan, Step Up, Mutual Funds, Investment, Financial Planning'
 			/>
 			<CalculatorPage<SwpCalculator>
 				calculatorName='SWP'
