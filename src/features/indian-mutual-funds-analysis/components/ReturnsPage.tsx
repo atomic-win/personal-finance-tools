@@ -21,36 +21,16 @@ import ErrorComponent from '@/components/ErrorComponent';
 
 export default function ReturnsPage({
 	title,
+	href,
 	description,
 	returnType,
 }: {
 	title: string;
+	href: string;
 	description: string;
 	returnType: ReturnType;
 }) {
 	const htmlTitle = `Indian Mutual Funds ${title} Returns`;
-
-	const breadcrumb = (returnType: ReturnType) => {
-		switch (returnType) {
-			case 'cagr':
-				return {
-					title: 'CAGR Returns',
-					href: '/indian-mutual-funds-analysis/cagr',
-				};
-			case 'sip':
-				return {
-					title: 'SIP Returns',
-					href: '/indian-mutual-funds-analysis/sip',
-				};
-			case 'swp':
-				return {
-					title: 'SWP Returns',
-					href: '/indian-mutual-funds-analysis/swp',
-				};
-			default:
-				throw new Error('Invalid return type');
-		}
-	};
 
 	return (
 		<>
@@ -62,7 +42,7 @@ export default function ReturnsPage({
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{ title: 'Indian Mutual Funds Analysis', href: '', disabled: true },
-					breadcrumb(returnType),
+					{ title: `${title} Returns`, href, disabled: true },
 				]}
 			/>
 			<div className='px-4 space-y-2'>
