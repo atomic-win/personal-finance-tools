@@ -1,5 +1,11 @@
 import { useRollingReturnsQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import {
 	Table,
@@ -11,16 +17,18 @@ import {
 } from '@/components/ui/table';
 import {
 	MutualFund,
-	PresetTimeDurations,
 	ReturnRequest,
+	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { cn } from '@/lib/utils';
 import {
 	displayPresetTimeDuration,
 	investmentDurationWithReturnTypeText,
+	rollingReturnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
+import percentile from 'percentile';
 
 export default function RollingReturnsTableCard(
 	props: {
@@ -36,6 +44,11 @@ export default function RollingReturnsTableCard(
 						props.returnType
 					)} Rolling Returns`}
 				</CardTitle>
+				<CardDescription>
+					{`${rollingReturnTypeText(
+						props.rollingReturnType
+					)} for the last ${displayPresetTimeDuration(props.rollingWindow)}`}
+				</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<RollingReturnsTable {...props} />
@@ -64,37 +77,19 @@ function RollingReturnsTable(
 			<Table className='w-full'>
 				<TableHeader>
 					<TableRow>
-						<TableHead className='whitespace-nowrap'>Rolling Window</TableHead>
-						{mutualfunds.map((mf) => (
-							<TableHead
-								key={mf.schemeCode}
-								className='text-center whitespace-nowrap'>
-								<span className='hidden md:inline'>{mf.schemeName}</span>
-								<span className='md:hidden'>
-									{mf.schemeName.length > 15
-										? `${mf.schemeName.substring(0, 15)}...`
-										: mf.schemeName}
-								</span>
-							</TableHead>
-						))}
+						<TableHead className='whitespace-nowrap'>Mutual Fund</TableHead>
+						<TableHead className='text-center'>
+							{rollingReturnTypeText(props.rollingReturnType)}
+						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{Object.values(PresetTimeDurations).map((duration) => (
-						<TableRow key={duration}>
+					{mutualfunds.map((mf) => (
+						<TableRow key={mf.schemeCode}>
 							<TableCell className='whitespace-nowrap'>
-								{`Last ${displayPresetTimeDuration(
-									duration as PresetTimeDurations
-								)}`}
+								{mf.schemeName}
 							</TableCell>
-							{mutualfunds.map((mf) => (
-								<RollingReturnsTableCell
-									key={mf.schemeCode}
-									{...props}
-									mutualfund={mf}
-									lookbackDuration={duration as PresetTimeDurations}
-								/>
-							))}
+							<RollingReturnsTableCell {...props} mutualfund={mf} />
 						</TableRow>
 					))}
 				</TableBody>
@@ -106,7 +101,6 @@ function RollingReturnsTable(
 function RollingReturnsTableCell(
 	props: {
 		mutualfund: MutualFund;
-		lookbackDuration: PresetTimeDurations;
 	} & ReturnRequest
 ) {
 	const rollingReturnsQuery = useRollingReturnsQuery(props);
@@ -129,37 +123,46 @@ function RollingReturnsTableCell(
 
 	const returns = rollingReturnsQuery.data!;
 
-	if (returns.noData) {
+	if (returns.length === 0) {
 		return <TableCell className='text-center'>-</TableCell>;
 	}
 
+	const rollingReturnValue = calculateRollingReturns(
+		returns,
+		props.rollingReturnType
+	);
+
 	return (
-		<TableCell>
-			<div className='mx-auto w-fit'>
-				<RollingReturnsValue label='Avg' value={returns.avgReturn} />
-				<RollingReturnsValue label='Min' value={returns.minReturn} />
-				{Object.entries(returns.percentiles).map(([key, value]) => (
-					<RollingReturnsValue key={key} label={`p-${key}`} value={value} />
-				))}
-				<RollingReturnsValue label='Max' value={returns.maxReturn} />
-			</div>
+		<TableCell
+			className={cn(
+				rollingReturnValue < 0 ? 'text-red-600' : 'text-green-600',
+				'mx-auto w-fit font-semibold text-center'
+			)}>
+			{rollingReturnValue.toFixed(2)}%
 		</TableCell>
 	);
 }
 
-function RollingReturnsValue({
-	label,
-	value,
-}: {
-	label: string;
-	value: number;
-}) {
-	return (
-		<div className='font-semibold'>
-			<span>{label}: </span>
-			<span className={cn(value < 0 ? 'text-red-600' : 'text-green-600')}>
-				{value.toFixed(2)}%
-			</span>
-		</div>
-	);
+function calculateRollingReturns(
+	returns: number[],
+	rollingReturnType: RollingReturnType
+) {
+	switch (rollingReturnType) {
+		case RollingReturnType.Min:
+			return Math.min(...returns);
+		case RollingReturnType.Max:
+			return Math.max(...returns);
+		case RollingReturnType.Avg:
+			return returns.reduce((sum, r) => sum + r, 0) / returns.length;
+		case RollingReturnType.P25:
+			return percentile(25, returns) as number;
+		case RollingReturnType.P50:
+			return percentile(50, returns) as number;
+		case RollingReturnType.P75:
+			return percentile(75, returns) as number;
+		case RollingReturnType.P90:
+			return percentile(90, returns) as number;
+		default:
+			throw new Error(`Unsupported rolling return type: ${rollingReturnType}`);
+	}
 }

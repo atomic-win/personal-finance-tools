@@ -3,6 +3,7 @@ import {
 	PresetTimeDurations,
 	ReturnRequest,
 	ReturnType,
+	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { DateTime, DurationLike } from 'luxon';
 
@@ -120,6 +121,27 @@ export function investmentDurationText(
 			return '20-year';
 		default:
 			throw new Error('Invalid investment duration');
+	}
+}
+
+export function rollingReturnTypeText(rollingReturnType: RollingReturnType) {
+	switch (rollingReturnType) {
+		case RollingReturnType.Min:
+			return 'Minimum Rolling Return';
+		case RollingReturnType.Max:
+			return 'Maximum Rolling Return';
+		case RollingReturnType.Avg:
+			return 'Average Rolling Return';
+		case RollingReturnType.P25:
+			return '25th Percentile Rolling Return';
+		case RollingReturnType.P50:
+			return '50th Percentile Rolling Return';
+		case RollingReturnType.P75:
+			return '75th Percentile Rolling Return';
+		case RollingReturnType.P90:
+			return '90th Percentile Rolling Return';
+		default:
+			throw new Error('Invalid rolling return type');
 	}
 }
 

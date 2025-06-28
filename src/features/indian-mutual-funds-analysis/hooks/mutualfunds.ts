@@ -1,8 +1,6 @@
 import {
 	MutualFund,
 	Return,
-	RollingReturn,
-	PresetTimeDurations,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { getLuxonDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
@@ -10,7 +8,6 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { DateTime } from 'luxon';
 import _ from 'lodash';
-import percentile from 'percentile';
 
 const mfApiClient = axios.create({
 	baseURL: 'https://api.mfapi.in',
@@ -93,15 +90,14 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 export function useReturnQueries(
 	request: ReturnRequest & {
 		mutualfunds: MutualFund[];
-		lookbackDuration: PresetTimeDurations;
 	}
 ) {
-	const { mutualfunds, lookbackDuration } = request;
+	const { mutualfunds, rollingWindow } = request;
 	const earliestDate = DateTime.min(
 		...mutualfunds.map((mf) => DateTime.fromISO(mf.lastDate)),
 		DateTime.local()
 	)
-		.minus(getLuxonDuration(lookbackDuration))
+		.minus(getLuxonDuration(rollingWindow))
 		.plus({ days: 1 });
 
 	return useQueries({
@@ -124,7 +120,6 @@ export function useReturnQueries(
 export function useRollingReturnsQuery(
 	request: ReturnRequest & {
 		mutualfund: MutualFund;
-		lookbackDuration: PresetTimeDurations;
 	}
 ) {
 	return useQuery({
@@ -133,7 +128,7 @@ export function useRollingReturnsQuery(
 		}),
 		select: (returns: Return[]) => {
 			const startDate = DateTime.fromISO(request.mutualfund.lastDate)
-				.minus(getLuxonDuration(request.lookbackDuration))
+				.minus(getLuxonDuration(request.rollingWindow))
 				.plus({ days: 1 });
 
 			const a = returns
@@ -146,31 +141,9 @@ export function useRollingReturnsQuery(
 			).days;
 
 			const availableDays = a.length;
-
 			const shouldUseData = availableDays / Math.max(1, totalDays) >= 0.9;
 
-			if (!shouldUseData) {
-				return {
-					noData: true,
-					avgReturn: 0,
-					percentiles: {},
-				} as RollingReturn;
-			}
-
-			const percentiles = percentile([25, 50, 75, 90], a) as number[];
-
-			return {
-				noData: false,
-				avgReturn: a.reduce((x, y) => x + y, 0) / a.length,
-				minReturn: a.reduce((x, y) => Math.min(x, y), Infinity),
-				percentiles: {
-					25: percentiles[0],
-					50: percentiles[1],
-					75: percentiles[2],
-					90: percentiles[3],
-				},
-				maxReturn: a.reduce((x, y) => Math.max(x, y), -Infinity),
-			} as RollingReturn;
+			return shouldUseData ? a : [];
 		},
 	});
 }

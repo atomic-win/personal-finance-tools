@@ -12,6 +12,7 @@ import {
 	PresetTimeDurations,
 	ReturnRequest,
 	ReturnType,
+	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
 import { Suspense } from 'react';
@@ -99,6 +100,14 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		? (searchParams.get('investmentDuration') as PresetTimeDurations)
 		: PresetTimeDurations.OneYear;
 
+	const rollingWindow = searchParams.get('rollingWindow')
+		? (searchParams.get('rollingWindow') as PresetTimeDurations)
+		: PresetTimeDurations.TwoYears;
+
+	const rollingReturnType = searchParams.get('rollingReturnType')
+		? (searchParams.get('rollingReturnType') as RollingReturnType)
+		: RollingReturnType.Avg;
+
 	const addedMutualfunds = (mutualFundQueries || [])
 		.map((r) => r.data!)
 		.filter((mf) => mf !== null && !!mf.schemeName);
@@ -109,6 +118,8 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		frequency,
 		stepUpFrequency,
 		stepUpRatio,
+		rollingWindow,
+		rollingReturnType,
 	} as ReturnRequest;
 
 	return (
