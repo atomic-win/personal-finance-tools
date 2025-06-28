@@ -40,7 +40,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			priority: 1,
 		},
 		{
-			url: `${BASE_URL}/indian-mutual-funds-analysis/rolling-returns`,
+			url: `${BASE_URL}/indian-mutual-funds-analysis/cagr`,
 			lastModified: new Date(),
 			changeFrequency: 'daily',
 			priority: 1,

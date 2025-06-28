@@ -49,8 +49,8 @@ const data = [
 		url: '#',
 		items: [
 			{
-				title: 'Rolling Returns',
-				url: '/indian-mutual-funds-analysis/rolling-returns',
+				title: 'CAGR Returns',
+				url: '/indian-mutual-funds-analysis/cagr',
 			},
 			{
 				title: 'SIP Returns',
