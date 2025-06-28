@@ -13,7 +13,7 @@ export function evaluateMutualFund(
 ): number {
 	const { returnType } = returnRequest;
 	switch (returnType) {
-		case 'simple':
+		case 'cagr':
 			return calculateCagrReturn(navs, returnRequest, date);
 		case 'sip':
 			return calculateSipReturn(navs, returnRequest, date);
@@ -81,7 +81,7 @@ export function investmentDurationWithReturnTypeText(
 
 export function returnTypeText(returnType: ReturnType) {
 	switch (returnType) {
-		case 'simple':
+		case 'cagr':
 			return 'CAGR (%)';
 		case 'sip':
 			return 'SIP XIRR (%)';

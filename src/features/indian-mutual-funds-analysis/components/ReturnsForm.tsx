@@ -82,7 +82,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 				<form
 					className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'
 					onSubmit={(e) => e.preventDefault()}>
-					{props.returnType !== 'simple' && (
+					{props.returnType !== 'cagr' && (
 						<>
 							<FormField
 								control={form.control}
@@ -228,7 +228,7 @@ function getFrequencyLabel(returnType: ReturnType) {
 
 function getInvestmentDurationLabel(returnType: ReturnType) {
 	switch (returnType) {
-		case 'simple':
+		case 'cagr':
 		case 'sip':
 			return 'Investment Duration';
 		case 'swp':

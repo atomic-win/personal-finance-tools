@@ -32,10 +32,10 @@ export default function ReturnsPage({
 
 	const breadcrumb = (returnType: ReturnType) => {
 		switch (returnType) {
-			case 'simple':
+			case 'cagr':
 				return {
-					title: 'Rolling Returns',
-					href: '/indian-mutual-funds-analysis/rolling-returns',
+					title: 'CAGR Returns',
+					href: '/indian-mutual-funds-analysis/cagr',
 				};
 			case 'sip':
 				return {

@@ -4,8 +4,8 @@ import ReturnsPage from '@/features/indian-mutual-funds-analysis/components/Retu
 export default function Page() {
 	return (
 		<ReturnsPage
-			returnType='simple'
-			title='Rolling'
+			returnType='cagr'
+			title='CAGR'
 			description='Analyze CAGR (Compound Annual Growth Rate) rolling returns of Indian
 						Mutual Funds. Understand long-term fund performance across different
 						time frames to make informed investment decisions. Discover trends,
