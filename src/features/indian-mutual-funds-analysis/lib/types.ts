@@ -28,21 +28,13 @@ export enum Frequency {
 
 export enum RollingReturnType {
 	Min = 'min',
-	Max = 'max',
 	Avg = 'avg',
+	Max = 'max',
 	P25 = 'p25',
 	P50 = 'p50',
 	P75 = 'p75',
 	P90 = 'p90',
 }
-
-export type RollingReturn = {
-	noData: boolean;
-	avgReturn: number;
-	minReturn: number;
-	percentiles: Record<number, number>;
-	maxReturn: number;
-};
 
 export type Return = {
 	schemeCode: number;

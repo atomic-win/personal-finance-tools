@@ -28,6 +28,7 @@ import { z } from 'zod';
 import {
 	displayFrequency,
 	displayPresetTimeDuration,
+	rollingReturnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -277,7 +278,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 									<SelectContent>
 										{Object.values(RollingReturnType).map((type) => (
 											<SelectItem key={type} value={type}>
-												{getRollingReturnTypeLabel(type)}
+												{rollingReturnTypeText(type)}
 											</SelectItem>
 										))}
 									</SelectContent>
@@ -312,26 +313,5 @@ function getInvestmentDurationLabel(returnType: ReturnType) {
 			return 'Withdrawal Duration';
 		default:
 			throw new Error('Invalid return type');
-	}
-}
-
-function getRollingReturnTypeLabel(rollingReturnType: RollingReturnType) {
-	switch (rollingReturnType) {
-		case RollingReturnType.Min:
-			return 'Minimum Return';
-		case RollingReturnType.Max:
-			return 'Maximum Return';
-		case RollingReturnType.Avg:
-			return 'Average Return';
-		case RollingReturnType.P25:
-			return '25th Percentile Return';
-		case RollingReturnType.P50:
-			return '50th Percentile Return';
-		case RollingReturnType.P75:
-			return '75th Percentile Return';
-		case RollingReturnType.P90:
-			return '90th Percentile Return';
-		default:
-			throw new Error('Invalid rolling return type');
 	}
 }

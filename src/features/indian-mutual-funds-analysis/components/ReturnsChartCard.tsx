@@ -18,7 +18,6 @@ import {
 import {
 	MutualFund,
 	Return,
-	PresetTimeDurations,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
@@ -59,7 +58,6 @@ export default function ReturnsChartCard(
 function ReturnsChart(
 	props: {
 		mutualfunds: MutualFund[];
-		rollingWindow: PresetTimeDurations;
 	} & ReturnRequest
 ) {
 	const { mutualfunds } = props;
