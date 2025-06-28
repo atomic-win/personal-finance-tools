@@ -18,6 +18,7 @@ import { Suspense } from 'react';
 import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
 import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function ReturnsPage({
 	title,
@@ -58,6 +59,7 @@ export default function ReturnsPage({
 }
 
 function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
+	const isMobile = useIsMobile();
 	const searchParams = useSearchParams();
 	const mutualFundListQuery = useMutualFundListQuery();
 
@@ -113,7 +115,12 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
 			<div className='order-2 md:order-1 md:col-span-2 space-y-4'>
 				<ReturnsForm {...returnsRequest} />
-				<ReturnsChartCard mutualfunds={addedMutualfunds} {...returnsRequest} />
+				{!isMobile && (
+					<ReturnsChartCard
+						mutualfunds={addedMutualfunds}
+						{...returnsRequest}
+					/>
+				)}
 				<RollingReturnsTableCard
 					mutualfunds={addedMutualfunds}
 					{...returnsRequest}
