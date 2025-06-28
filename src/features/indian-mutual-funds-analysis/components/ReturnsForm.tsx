@@ -11,6 +11,7 @@ import {
 	PresetTimeDurations,
 	ReturnRequest,
 	ReturnType,
+	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -37,6 +38,8 @@ const schema = z.object({
 	stepUpFrequency: z.nativeEnum(Frequency),
 	stepUpRatio: z.number().min(0).max(1),
 	investmentDuration: z.nativeEnum(PresetTimeDurations),
+	rollingWindow: z.nativeEnum(PresetTimeDurations),
+	rollingReturnType: z.nativeEnum(RollingReturnType),
 });
 
 export default function ReturnsForm(props: ReturnRequest) {
@@ -56,6 +59,8 @@ export default function ReturnsForm(props: ReturnRequest) {
 		params.delete('stepUpFrequency');
 		params.delete('stepUpRatio');
 		params.delete('investmentDuration');
+		params.delete('rollingWindow');
+		params.delete('rollingReturnType');
 
 		if (data.frequency !== Frequency.Monthly) {
 			params.set('frequency', data.frequency);
@@ -73,6 +78,14 @@ export default function ReturnsForm(props: ReturnRequest) {
 			params.set('investmentDuration', data.investmentDuration);
 		}
 
+		if (data.rollingWindow !== PresetTimeDurations.TwoYears) {
+			params.set('rollingWindow', data.rollingWindow);
+		}
+
+		if (data.rollingReturnType !== RollingReturnType.Avg) {
+			params.set('rollingReturnType', data.rollingReturnType);
+		}
+
 		replace(`${pathname}?${params}`);
 	}
 
@@ -80,7 +93,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 		<Card className='rounded-lg shadow-md w-full p-4'>
 			<Form {...form}>
 				<form
-					className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4'
+					className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'
 					onSubmit={(e) => e.preventDefault()}>
 					{props.returnType !== 'cagr' && (
 						<>
@@ -179,7 +192,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 						control={form.control}
 						name='investmentDuration'
 						render={({ field }) => (
-							<FormItem className='flex flex-col items-start col-span-1 md:col-span-1 md:col-start-4'>
+							<FormItem className='flex flex-col items-start'>
 								<FormLabel>
 									{getInvestmentDurationLabel(props.returnType)}
 								</FormLabel>
@@ -201,6 +214,70 @@ export default function ReturnsForm(props: ReturnRequest) {
 										{Object.values(PresetTimeDurations).map((duration) => (
 											<SelectItem key={duration} value={duration}>
 												{displayPresetTimeDuration(duration)}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name='rollingWindow'
+						render={({ field }) => (
+							<FormItem className='flex flex-col items-start'>
+								<FormLabel>Rolling Window</FormLabel>
+								<Select
+									onValueChange={(value) => {
+										field.onChange(value);
+										form.handleSubmit(onFormChange)();
+									}}
+									defaultValue={field.value}>
+									<FormControl>
+										<SelectTrigger className='w-full rounded-lg'>
+											<SelectValue placeholder='Select Rolling Window' />
+											<SelectIcon>
+												<ChevronDown className='h-4 w-4 opacity-50' />
+											</SelectIcon>
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										{Object.values(PresetTimeDurations).map((duration) => (
+											<SelectItem key={duration} value={duration}>
+												{displayPresetTimeDuration(duration)}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={form.control}
+						name='rollingReturnType'
+						render={({ field }) => (
+							<FormItem className='flex flex-col items-start'>
+								<FormLabel>Rolling Return Type</FormLabel>
+								<Select
+									onValueChange={(value) => {
+										field.onChange(value);
+										form.handleSubmit(onFormChange)();
+									}}
+									defaultValue={field.value}>
+									<FormControl>
+										<SelectTrigger className='w-full rounded-lg'>
+											<SelectValue placeholder='Select Rolling Return Type' />
+											<SelectIcon>
+												<ChevronDown className='h-4 w-4 opacity-50' />
+											</SelectIcon>
+										</SelectTrigger>
+									</FormControl>
+									<SelectContent>
+										{Object.values(RollingReturnType).map((type) => (
+											<SelectItem key={type} value={type}>
+												{getRollingReturnTypeLabel(type)}
 											</SelectItem>
 										))}
 									</SelectContent>
@@ -235,5 +312,26 @@ function getInvestmentDurationLabel(returnType: ReturnType) {
 			return 'Withdrawal Duration';
 		default:
 			throw new Error('Invalid return type');
+	}
+}
+
+function getRollingReturnTypeLabel(rollingReturnType: RollingReturnType) {
+	switch (rollingReturnType) {
+		case RollingReturnType.Min:
+			return 'Minimum Return';
+		case RollingReturnType.Max:
+			return 'Maximum Return';
+		case RollingReturnType.Avg:
+			return 'Average Return';
+		case RollingReturnType.P25:
+			return '25th Percentile Return';
+		case RollingReturnType.P50:
+			return '50th Percentile Return';
+		case RollingReturnType.P75:
+			return '75th Percentile Return';
+		case RollingReturnType.P90:
+			return '90th Percentile Return';
+		default:
+			throw new Error('Invalid rolling return type');
 	}
 }

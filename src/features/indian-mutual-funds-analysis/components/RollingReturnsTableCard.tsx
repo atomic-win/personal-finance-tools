@@ -92,7 +92,7 @@ function RollingReturnsTable(
 									key={mf.schemeCode}
 									{...props}
 									mutualfund={mf}
-									lookbackDuration={duration as PresetTimeDurations}
+									rollingWindow={duration as PresetTimeDurations}
 								/>
 							))}
 						</TableRow>
@@ -106,7 +106,7 @@ function RollingReturnsTable(
 function RollingReturnsTableCell(
 	props: {
 		mutualfund: MutualFund;
-		lookbackDuration: PresetTimeDurations;
+		rollingWindow: PresetTimeDurations;
 	} & ReturnRequest
 ) {
 	const rollingReturnsQuery = useRollingReturnsQuery(props);

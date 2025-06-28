@@ -14,6 +14,8 @@ export type ReturnRequest = {
 	frequency: Frequency;
 	stepUpFrequency: Frequency;
 	stepUpRatio: number;
+	rollingWindow: PresetTimeDurations;
+	rollingReturnType: RollingReturnType;
 };
 
 export enum Frequency {
@@ -22,6 +24,16 @@ export enum Frequency {
 	Monthly = 'monthly',
 	Quarterly = 'quarterly',
 	Yearly = 'yearly',
+}
+
+export enum RollingReturnType {
+	Min = 'min',
+	Max = 'max',
+	Avg = 'avg',
+	P25 = 'p25',
+	P50 = 'p50',
+	P75 = 'p75',
+	P90 = 'p90',
 }
 
 export type RollingReturn = {

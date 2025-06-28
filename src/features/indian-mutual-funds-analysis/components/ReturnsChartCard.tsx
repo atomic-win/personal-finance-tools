@@ -22,22 +22,12 @@ import {
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-import { useState } from 'react';
-import {
-	Select,
-	SelectContent,
-	SelectIcon,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import {
 	displayPresetTimeDuration,
 	investmentDurationWithReturnTypeText,
 	returnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
-import { ChevronDown } from 'lucide-react';
 import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
 
@@ -46,10 +36,6 @@ export default function ReturnsChartCard(
 		mutualfunds: MutualFund[];
 	} & ReturnRequest
 ) {
-	const [lookbackDuration, setLookbackDuration] = useState<PresetTimeDurations>(
-		PresetTimeDurations.TwoYears
-	);
-
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex flex-col md:flex-row md:items-center gap-4 space-y-2 md:space-y-0 border-b py-4'>
@@ -59,41 +45,12 @@ export default function ReturnsChartCard(
 						{`Showing ${investmentDurationWithReturnTypeText(
 							props.investmentDuration,
 							props.returnType
-						)} for the last ${displayPresetTimeDuration(lookbackDuration)}`}
+						)} for the last ${displayPresetTimeDuration(props.rollingWindow)}`}
 					</CardDescription>
-				</div>
-				<div className='w-full md:w-1/2'>
-					<Label className='pb-2 block'>Last</Label>
-					<Select
-						onValueChange={(x) => setLookbackDuration(x as PresetTimeDurations)}
-						value={lookbackDuration.toString()}>
-						<SelectTrigger
-							className='w-full rounded-lg'
-							aria-label='Select a value'>
-							<SelectValue
-								placeholder={`Last ${displayPresetTimeDuration(
-									lookbackDuration
-								)}`}
-							/>
-							<SelectIcon>
-								<ChevronDown className='h-4 w-4 opacity-50' />
-							</SelectIcon>
-						</SelectTrigger>
-						<SelectContent className='rounded-xl'>
-							{Object.values(PresetTimeDurations).map((duration) => (
-								<SelectItem
-									key={duration}
-									value={duration}
-									className='rounded-lg'>
-									{displayPresetTimeDuration(duration)}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
 				</div>
 			</CardHeader>
 			<CardContent className='p-6'>
-				<ReturnsChart {...props} lookbackDuration={lookbackDuration} />
+				<ReturnsChart {...props} />
 			</CardContent>
 		</Card>
 	);
@@ -102,7 +59,7 @@ export default function ReturnsChartCard(
 function ReturnsChart(
 	props: {
 		mutualfunds: MutualFund[];
-		lookbackDuration: PresetTimeDurations;
+		rollingWindow: PresetTimeDurations;
 	} & ReturnRequest
 ) {
 	const { mutualfunds } = props;
