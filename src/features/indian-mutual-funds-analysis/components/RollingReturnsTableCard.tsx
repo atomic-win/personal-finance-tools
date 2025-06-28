@@ -86,9 +86,7 @@ function RollingReturnsTable(
 				<TableBody>
 					{mutualfunds.map((mf) => (
 						<TableRow key={mf.schemeCode}>
-							<TableCell className='whitespace-nowrap'>
-								{mf.schemeName}
-							</TableCell>
+							<TableCell>{mf.schemeName}</TableCell>
 							<RollingReturnsTableCell {...props} mutualfund={mf} />
 						</TableRow>
 					))}
