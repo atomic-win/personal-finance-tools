@@ -133,17 +133,12 @@ function RollingReturnsTableCell(
 	);
 
 	return (
-		<TableCell>
-			<div className='mx-auto w-fit'>
-				<div className='font-semibold'>
-					<span
-						className={cn(
-							rollingReturnValue < 0 ? 'text-red-600' : 'text-green-600'
-						)}>
-						{rollingReturnValue.toFixed(2)}%
-					</span>
-				</div>
-			</div>
+		<TableCell
+			className={cn(
+				rollingReturnValue < 0 ? 'text-red-600' : 'text-green-600',
+				'mx-auto w-fit font-semibold text-center'
+			)}>
+			{rollingReturnValue.toFixed(2)}%
 		</TableCell>
 	);
 }
