@@ -17,22 +17,29 @@ export async function GET(req: NextRequest) {
 	}
 
 	try {
-		const firstTradedDate = (await yahooFinance.quote(symbol))
-			.firstTradeDateMilliseconds!;
+		const symbolData = await yahooFinance.quote(symbol);
 
 		const rates = await yahooFinance.chart(symbol, {
-			period1: DateTime.fromJSDate(firstTradedDate).toISODate()!,
+			period1: DateTime.fromJSDate(
+				symbolData.firstTradeDateMilliseconds!
+			).toISODate()!,
 			events: '',
 		});
 
-		return NextResponse.json(
-			rates.quotes
+		return NextResponse.json({
+			symbol: symbolData.symbol,
+			name:
+				symbolData.longName ||
+				symbolData.shortName ||
+				symbolData.displayName ||
+				symbolData.symbol,
+			data: rates.quotes
 				.filter((quote) => quote.close !== null)
 				.map((quote) => ({
 					date: DateTime.fromJSDate(quote.date).toISODate()!,
 					rate: quote.close,
-				}))
-		);
+				})),
+		});
 	} catch (error) {
 		return NextResponse.json(
 			{
