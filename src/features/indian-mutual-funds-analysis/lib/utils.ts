@@ -1,11 +1,65 @@
 import {
 	Frequency,
+	Instrument,
 	PresetTimeDurations,
 	ReturnRequest,
 	ReturnType,
 	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { DateTime, DurationLike } from 'luxon';
+
+export function calculateInstrument({
+	symbol,
+	name,
+	type,
+	data,
+}: {
+	symbol: string;
+	name: string;
+	type: string;
+	data: { date: string; rate: number }[];
+}) {
+	const rates = new Map<string, number>();
+
+	let earliestDate = DateTime.local().toISODate();
+	let lastDate = DateTime.local().minus({ months: 1 }).toISODate();
+
+	data.forEach((x) => {
+		const date = DateTime.fromFormat(x.date, 'dd-MM-yyyy').toISODate()!;
+
+		rates.set(date, x.rate);
+
+		if (date < earliestDate) {
+			earliestDate = date;
+		}
+
+		if (date > lastDate) {
+			lastDate = date;
+		}
+	});
+
+	let latestNav = rates.get(lastDate)!;
+	for (
+		let date = lastDate;
+		earliestDate <= date;
+		date = DateTime.fromISO(date).minus({ days: 1 }).toISODate()!
+	) {
+		if (!rates.has(date)) {
+			rates.set(date, latestNav);
+		} else {
+			latestNav = rates.get(date)!;
+		}
+	}
+
+	return {
+		symbol,
+		name,
+		type,
+		earliestDate,
+		lastDate,
+		rates,
+	} as Instrument;
+}
 
 export function evaluateMutualFund(
 	navs: Map<string, number>,
