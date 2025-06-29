@@ -59,11 +59,6 @@ export function useRollingReturnsQuery(
 			const availableDays = a.length;
 			const shouldUseData = availableDays / Math.max(1, totalDays) >= 0.9;
 
-			console.debug(
-				`Rolling returns for ${instrument.symbol} (${instrument.name}): ` +
-					`availableDays=${availableDays}, totalDays=${totalDays}, shouldUseData=${shouldUseData}`
-			);
-
 			return shouldUseData ? a : [];
 		},
 	});
