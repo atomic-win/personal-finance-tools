@@ -90,6 +90,11 @@ function ReturnsChart(props: {
 		);
 	}
 
+	const symbolToId = new Map<string, string>();
+	instruments.forEach((instrument, i) => {
+		symbolToId.set(instrument.symbol, i.toString());
+	});
+
 	const instrumentReturns: Return[] = returnQueries
 		.map((r) => r.data)
 		.filter((r) => !!r)
@@ -99,7 +104,7 @@ function ReturnsChart(props: {
 	const chartConfig = instruments.reduce(
 		(acc, instrument, i) => ({
 			...acc,
-			[instrument.symbol.toString()]: {
+			[symbolToId.get(instrument.symbol)!]: {
 				label: instrument.name,
 				color: `var(--chart-${i + 1})`,
 			},
@@ -126,7 +131,7 @@ function ReturnsChart(props: {
 		const data = chartDataMap.get(date)!;
 		chartDataMap.set(date, {
 			...data,
-			[r.symbol.toString()]: Number(r.return.toFixed(2)),
+			[symbolToId.get(r.symbol)!]: Number(r.return.toFixed(2)),
 		});
 	});
 
@@ -167,10 +172,10 @@ function ReturnsChart(props: {
 				/>
 				{instruments.map((instrument) => (
 					<Line
-						key={instrument.symbol}
-						dataKey={instrument.symbol.toString()}
+						key={symbolToId.get(instrument.symbol)!}
+						dataKey={symbolToId.get(instrument.symbol)!}
 						type='monotone'
-						stroke={`var(--color-${instrument.symbol})`}
+						stroke={`var(--color-${symbolToId.get(instrument.symbol)!})`}
 						strokeWidth={2}
 						dot={false}
 						unit={'%'}

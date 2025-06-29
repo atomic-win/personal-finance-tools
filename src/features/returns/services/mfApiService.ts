@@ -2,6 +2,7 @@ import { Instrument, InstrumentType } from '@/features/returns/lib/types';
 import axios from 'axios';
 import _ from 'lodash';
 import { calculateInstrument } from '../lib/utils';
+import { DateTime } from 'luxon';
 
 const mfApiClient = axios.create({
 	baseURL: 'https://api.mfapi.in',
@@ -41,7 +42,7 @@ export async function getMutualFundRates(schemeCode: number) {
 		name: apiResponse.meta.scheme_name,
 		type: InstrumentType.MutualFund,
 		data: apiResponse.data.map((x) => ({
-			date: x.date,
+			date: DateTime.fromFormat(x.date, 'dd-MM-yyyy').toISODate()!,
 			rate: x.nav,
 		})),
 	});

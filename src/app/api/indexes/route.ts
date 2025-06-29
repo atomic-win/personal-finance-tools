@@ -20,9 +20,7 @@ export async function GET(req: NextRequest) {
 		const symbolData = await yahooFinance.quote(symbol);
 
 		const rates = await yahooFinance.chart(symbol, {
-			period1: DateTime.fromJSDate(
-				symbolData.firstTradeDateMilliseconds!
-			).toISODate()!,
+			period1: DateTime.local().minus({ years: 20 }).toISODate()!,
 			events: '',
 		});
 

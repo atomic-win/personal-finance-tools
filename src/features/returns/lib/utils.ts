@@ -26,7 +26,7 @@ export function calculateInstrument({
 	let lastDate = DateTime.local().minus({ months: 1 }).toISODate();
 
 	data.forEach((x) => {
-		const date = DateTime.fromFormat(x.date, 'dd-MM-yyyy').toISODate()!;
+		const date = x.date;
 
 		rates.set(date, x.rate);
 

@@ -25,10 +25,13 @@ export function useReturnQueries(
 			select: (returns: Return[]) =>
 				returns
 					.filter((r) => DateTime.fromISO(r.date) >= earliestDate)
-					.map((r) => ({
-						...r,
-						schemeCode: instrument.symbol,
-					})),
+					.map(
+						(r) =>
+							({
+								...r,
+								symbol: instrument.symbol,
+							} as Return)
+					),
 		})),
 	});
 }
@@ -55,6 +58,11 @@ export function useRollingReturnsQuery(
 
 			const availableDays = a.length;
 			const shouldUseData = availableDays / Math.max(1, totalDays) >= 0.9;
+
+			console.debug(
+				`Rolling returns for ${instrument.symbol} (${instrument.name}): ` +
+					`availableDays=${availableDays}, totalDays=${totalDays}, shouldUseData=${shouldUseData}`
+			);
 
 			return shouldUseData ? a : [];
 		},
