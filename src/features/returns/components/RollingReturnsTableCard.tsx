@@ -1,4 +1,4 @@
-import { useRollingReturnsQuery } from '@/features/indian-mutual-funds-analysis/hooks/returns';
+import { useRollingReturnsQuery } from '@/features/returns/hooks/returns';
 import {
 	Card,
 	CardContent,
@@ -20,14 +20,14 @@ import {
 	InstrumentType,
 	ReturnRequest,
 	RollingReturnType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/returns/lib/types';
 import { cn } from '@/lib/utils';
 import {
 	displayPresetTimeDuration,
 	instrumentTypeText,
 	investmentDurationWithReturnTypeText,
 	rollingReturnTypeText,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/returns/lib/utils';
 import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
 import percentile from 'percentile';

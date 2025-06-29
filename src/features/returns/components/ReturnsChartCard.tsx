@@ -1,5 +1,5 @@
 'use client';
-import { useReturnQueries } from '@/features/indian-mutual-funds-analysis/hooks/returns';
+import { useReturnQueries } from '@/features/returns/hooks/returns';
 import {
 	Card,
 	CardContent,
@@ -20,7 +20,7 @@ import {
 	InstrumentType,
 	Return,
 	ReturnRequest,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/returns/lib/types';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { Label } from '@/components/ui/label';
 import {
@@ -28,7 +28,7 @@ import {
 	instrumentTypeText,
 	investmentDurationWithReturnTypeText,
 	returnTypeText,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/returns/lib/utils';
 import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
 

@@ -29,11 +29,8 @@ import React, { useState } from 'react';
 import fuzzysort from 'fuzzysort';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import {
-	Instrument,
-	InstrumentType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
-import { instrumentTypeText } from '@/features/indian-mutual-funds-analysis/lib/utils';
+import { Instrument, InstrumentType } from '@/features/returns/lib/types';
+import { instrumentTypeText } from '@/features/returns/lib/utils';
 
 const schema = z.object({
 	symbol: z.string(),

@@ -1,7 +1,4 @@
-import {
-	Instrument,
-	InstrumentType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+import { Instrument, InstrumentType } from '@/features/returns/lib/types';
 import axios from 'axios';
 import _ from 'lodash';
 import { calculateInstrument } from '../lib/utils';

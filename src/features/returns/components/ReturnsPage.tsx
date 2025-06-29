@@ -1,7 +1,7 @@
 'use client';
-import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components/ReturnsChartCard';
-import RollingReturnsTableCard from '@/features/indian-mutual-funds-analysis/components/RollingReturnsTableCard';
-import SelectInstrumentsCard from '@/features/indian-mutual-funds-analysis/components/SelectInstrumentsCard';
+import ReturnsChartCard from '@/features/returns/components/ReturnsChartCard';
+import RollingReturnsTableCard from '@/features/returns/components/RollingReturnsTableCard';
+import SelectInstrumentsCard from '@/features/returns/components/SelectInstrumentsCard';
 import { useSearchParams } from 'next/navigation';
 import {
 	Frequency,
@@ -10,52 +10,52 @@ import {
 	ReturnRequest,
 	ReturnType,
 	RollingReturnType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
-import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
+} from '@/features/returns/lib/types';
+import SidebarTriggerWithBreadcrumb, {
+	BreadcrumbItemDetail,
+} from '@/components/SidebarTriggerWithBreadcrumb';
 import { Suspense } from 'react';
-import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
+import ReturnsForm from '@/features/returns/components/ReturnsForm';
 import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
 	useInstrumentListQuery,
 	useInstrumentQueries,
-} from '@/features/indian-mutual-funds-analysis/hooks/instruments';
+} from '@/features/returns/hooks/instruments';
 import { instrumentTypeText } from '../lib/utils';
 
 export default function ReturnsPage({
-	title,
-	href,
-	description,
+	instrumentType,
 	returnType,
+	htmlTitle,
+	keywords,
+	breadcrumbs,
+	pageTitle,
+	pageSubtitle,
+	description,
 }: {
-	title: string;
-	href: string;
-	description: string;
+	instrumentType: InstrumentType;
 	returnType: ReturnType;
+	htmlTitle: string;
+	keywords: string[];
+	breadcrumbs: BreadcrumbItemDetail[];
+	pageTitle: string;
+	pageSubtitle: string;
+	description: string;
 }) {
-	const htmlTitle = `Indian Mutual Funds ${title} Returns`;
-
 	return (
 		<>
 			<title>{htmlTitle}</title>
-			<meta
-				name='keywords'
-				content='Mutual Funds, Rolling Returns, CAGR, Investment Analysis, Financial Planning'
-			/>
-			<SidebarTriggerWithBreadcrumb
-				breadcrumbs={[
-					{ title: 'Indian Mutual Funds Analysis', href: '', disabled: true },
-					{ title: `${title} Returns`, href, disabled: true },
-				]}
-			/>
+			<meta name='keywords' content={keywords.join(', ')} />
+			<SidebarTriggerWithBreadcrumb breadcrumbs={breadcrumbs} />
 			<div className='px-4 space-y-2'>
-				<h1 className='text-2xl font-bold'>Indian Mutual Funds Analysis</h1>
-				<h2 className='text-lg font-semibold'>{title} Returns</h2>
+				<h1 className='text-2xl font-bold'>{pageTitle}</h1>
+				<h2 className='text-lg font-semibold'>{pageSubtitle}</h2>
 				<p>{description}</p>
 				<Suspense>
 					<ReturnsPageContainer
-						instrumentType={InstrumentType.MutualFund}
+						instrumentType={instrumentType}
 						returnType={returnType}
 					/>
 				</Suspense>

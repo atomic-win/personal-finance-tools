@@ -12,7 +12,7 @@ import {
 	ReturnRequest,
 	ReturnType,
 	RollingReturnType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/returns/lib/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
 	Select,
@@ -29,7 +29,7 @@ import {
 	displayFrequency,
 	displayPresetTimeDuration,
 	rollingReturnTypeText,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/returns/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { ChevronDown } from 'lucide-react';

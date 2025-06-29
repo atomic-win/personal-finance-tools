@@ -2,8 +2,8 @@ import {
 	Instrument,
 	Return,
 	ReturnRequest,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
-import { getLuxonDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/returns/lib/types';
+import { getLuxonDuration } from '@/features/returns/lib/utils';
 import { useQueries, useQuery } from '@tanstack/react-query';
 import { DateTime } from 'luxon';
 

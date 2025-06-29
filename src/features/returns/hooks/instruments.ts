@@ -2,8 +2,8 @@ import { useQuery, useQueries } from '@tanstack/react-query';
 import {
 	getMutualFundsList,
 	getMutualFundRates,
-} from '@/features/indian-mutual-funds-analysis/services/mfApiService';
-import { InstrumentType } from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/returns/services/mfApiService';
+import { InstrumentType } from '@/features/returns/lib/types';
 
 export function useInstrumentListQuery(instrumentType: InstrumentType) {
 	return useQuery({

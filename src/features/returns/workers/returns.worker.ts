@@ -3,11 +3,11 @@ import {
 	Instrument,
 	Return,
 	ReturnRequest,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/returns/lib/types';
 import {
 	getLuxonDuration,
 	evaluateInstrument,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/returns/lib/utils';
 import { DateTime } from 'luxon';
 
 declare const self: DedicatedWorkerGlobalScope;

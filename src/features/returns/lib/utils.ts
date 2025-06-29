@@ -6,7 +6,7 @@ import {
 	ReturnRequest,
 	ReturnType,
 	RollingReturnType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/returns/lib/types';
 import { DateTime, DurationLike } from 'luxon';
 
 export function calculateInstrument({
