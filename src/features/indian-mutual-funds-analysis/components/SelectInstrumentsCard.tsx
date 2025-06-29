@@ -35,12 +35,12 @@ const schema = z.object({
 	symbol: z.string(),
 });
 
-export default function SelectMutualFundsCard({
-	mutualFundList,
-	addedMutualFunds,
+export default function SelectInstrumentsCard({
+	instrumentList,
+	addedInstruments,
 }: {
-	mutualFundList: Instrument[];
-	addedMutualFunds: Instrument[];
+	instrumentList: Instrument[];
+	addedInstruments: Instrument[];
 }) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
@@ -48,22 +48,22 @@ export default function SelectMutualFundsCard({
 				<CardTitle>Mutual Funds</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<MutualFundSearchForm
-					mutualFundList={mutualFundList}
-					addedMutualFunds={addedMutualFunds}
+				<InstrumentSearchForm
+					instrumentList={instrumentList}
+					addedInstruments={addedInstruments}
 				/>
-				<MutualFundsDisplay addedMutualFunds={addedMutualFunds} />
+				<InstrumentsDisplay addedInstruments={addedInstruments} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function MutualFundSearchForm({
-	mutualFundList,
-	addedMutualFunds,
+function InstrumentSearchForm({
+	instrumentList,
+	addedInstruments,
 }: {
-	mutualFundList: Instrument[];
-	addedMutualFunds: Instrument[];
+	instrumentList: Instrument[];
+	addedInstruments: Instrument[];
 }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -79,15 +79,15 @@ function MutualFundSearchForm({
 	});
 
 	const searchResults = fuzzysort
-		.go(mfSearchText, mutualFundList || [], {
+		.go(mfSearchText, instrumentList || [], {
 			threshold: 0.5,
 			limit: 10,
 			key: 'name',
 		})
 		.map((x) => x.obj as Instrument)
 		.filter(
-			(mutualfund) =>
-				!addedMutualFunds.find((a) => a.symbol === mutualfund.symbol)
+			(instrument) =>
+				!addedInstruments.find((a) => a.symbol === instrument.symbol)
 		);
 
 	function addSchemeCode() {
@@ -125,8 +125,8 @@ function MutualFundSearchForm({
 												<span className='text-wrap truncate max-w-[80%]'>
 													{field.value
 														? searchResults.find(
-																(mutualfund) =>
-																	mutualfund.symbol === field.value
+																(instrument) =>
+																	instrument.symbol === field.value
 														  )?.name
 														: 'Add a Mutual Fund'}
 												</span>
@@ -151,24 +151,24 @@ function MutualFundSearchForm({
 										<CommandList>
 											<CommandEmpty>No Mutual Funds found.</CommandEmpty>
 											<CommandGroup>
-												{searchResults.map((mutualfund) => (
+												{searchResults.map((instrument) => (
 													<CommandItem
-														value={mutualfund.name}
-														key={`${mutualfund.symbol} - ${mutualfund.name}`}
+														value={instrument.name}
+														key={`${instrument.symbol} - ${instrument.name}`}
 														onSelect={() => {
-															form.setValue('symbol', mutualfund.symbol, {
+															form.setValue('symbol', instrument.symbol, {
 																shouldValidate: true,
 															});
 														}}>
 														<Check
 															className={cn(
 																'mr-2 h-4 w-4',
-																mutualfund.symbol === field.value
+																instrument.symbol === field.value
 																	? 'opacity-100'
 																	: 'opacity-0'
 															)}
 														/>
-														{mutualfund.name}
+														{instrument.name}
 													</CommandItem>
 												))}
 											</CommandGroup>
@@ -185,29 +185,29 @@ function MutualFundSearchForm({
 	);
 }
 
-function MutualFundsDisplay({
-	addedMutualFunds,
+function InstrumentsDisplay({
+	addedInstruments,
 }: {
-	addedMutualFunds: Instrument[];
+	addedInstruments: Instrument[];
 }) {
-	if (!addedMutualFunds.length) {
+	if (!addedInstruments.length) {
 		return null;
 	}
 
 	return (
 		<div className='space-y-2 mt-2'>
 			<CardTitle className='text-base m-2 mt-4'>Added Mutual Funds:</CardTitle>
-			{addedMutualFunds.map((mutualfund) => (
-				<MutualFundDisplayItem
-					mutualfund={mutualfund}
-					key={mutualfund.symbol}
+			{addedInstruments.map((instrument) => (
+				<InstrumentDisplayItem
+					instrument={instrument}
+					key={instrument.symbol}
 				/>
 			))}
 		</div>
 	);
 }
 
-function MutualFundDisplayItem({ mutualfund }: { mutualfund: Instrument }) {
+function InstrumentDisplayItem({ instrument }: { instrument: Instrument }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const { replace } = useRouter();
@@ -215,7 +215,7 @@ function MutualFundDisplayItem({ mutualfund }: { mutualfund: Instrument }) {
 	function removeSchemeCode() {
 		const params = new URLSearchParams(searchParams);
 		const schemeCodes = searchParams.getAll('symbol');
-		const schemeCode = mutualfund.symbol.toString();
+		const schemeCode = instrument.symbol.toString();
 
 		params.delete('symbol');
 
@@ -231,7 +231,7 @@ function MutualFundDisplayItem({ mutualfund }: { mutualfund: Instrument }) {
 	return (
 		<Card className='p-2 rounded-lg shadow-md'>
 			<CardContent className='flex justify-between items-center p-2 gap-2 text-sm'>
-				<span className='truncate'>{mutualfund.name}</span>
+				<span className='truncate'>{instrument.name}</span>
 				<Button
 					variant='secondary'
 					onClick={() => removeSchemeCode()}

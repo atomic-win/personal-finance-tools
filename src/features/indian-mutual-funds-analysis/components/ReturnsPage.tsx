@@ -1,11 +1,7 @@
 'use client';
-import {
-	useMutualFundListQuery,
-	useMutualFundQueries,
-} from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
 import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components/ReturnsChartCard';
 import RollingReturnsTableCard from '@/features/indian-mutual-funds-analysis/components/RollingReturnsTableCard';
-import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
+import SelectInstrumentsCard from '@/features/indian-mutual-funds-analysis/components/SelectInstrumentsCard';
 import { useSearchParams } from 'next/navigation';
 import {
 	Frequency,
@@ -20,6 +16,10 @@ import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/Retu
 import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
 import { useIsMobile } from '@/hooks/use-mobile';
+import {
+	useInstrumentListQuery,
+	useInstrumentQueries,
+} from '@/features/indian-mutual-funds-analysis/hooks/instruments';
 
 export default function ReturnsPage({
 	title,
@@ -62,25 +62,25 @@ export default function ReturnsPage({
 function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 	const isMobile = useIsMobile();
 	const searchParams = useSearchParams();
-	const mutualFundListQuery = useMutualFundListQuery();
+	const instrumentListQuery = useInstrumentListQuery();
 
-	const mutualFundQueries = useMutualFundQueries(
+	const instrumentQueries = useInstrumentQueries(
 		searchParams.getAll('symbol').map(Number)
 	);
 
-	if (mutualFundListQuery.isFetching) {
+	if (instrumentListQuery.isFetching) {
 		return <LoadingComponent loadingMessage='Fetching mutual fund list...' />;
 	}
 
-	if (mutualFundListQuery.isError) {
+	if (instrumentListQuery.isError) {
 		return <ErrorComponent errorMessage='Failed to fetch mutual fund list' />;
 	}
 
-	if (mutualFundQueries.some((mfq) => mfq.isFetching)) {
+	if (instrumentQueries.some((mfq) => mfq.isFetching)) {
 		return <LoadingComponent loadingMessage='Fetching mutual fund data...' />;
 	}
 
-	if (mutualFundQueries.some((mfq) => mfq.isError)) {
+	if (instrumentQueries.some((mfq) => mfq.isError)) {
 		return <ErrorComponent errorMessage='Failed to fetch mutual fund data' />;
 	}
 
@@ -108,11 +108,11 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		? (searchParams.get('rollingReturnType') as RollingReturnType)
 		: RollingReturnType.Avg;
 
-	const addedMutualfunds = (mutualFundQueries || [])
+	const addedInstruments = (instrumentQueries || [])
 		.map((r) => r.data!)
-		.filter((mf) => mf !== null && !!mf.name);
+		.filter((instrument) => instrument !== null && !!instrument.name);
 
-	const returnsRequest = {
+	const returnRequest = {
 		investmentDuration,
 		returnType,
 		frequency,
@@ -125,22 +125,22 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 	return (
 		<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
 			<div className='order-2 md:order-1 md:col-span-2 space-y-4'>
-				<ReturnsForm {...returnsRequest} />
+				<ReturnsForm {...returnRequest} />
 				{!isMobile && (
 					<ReturnsChartCard
-						mutualfunds={addedMutualfunds}
-						{...returnsRequest}
+						instruments={addedInstruments}
+						returnRequest={returnRequest}
 					/>
 				)}
 				<RollingReturnsTableCard
-					mutualfunds={addedMutualfunds}
-					{...returnsRequest}
+					instruments={addedInstruments}
+					returnRequest={returnRequest}
 				/>
 			</div>
 			<div className='order-1 md:order-2'>
-				<SelectMutualFundsCard
-					mutualFundList={mutualFundListQuery.data!}
-					addedMutualFunds={addedMutualfunds}
+				<SelectInstrumentsCard
+					instrumentList={instrumentListQuery.data!}
+					addedInstruments={addedInstruments}
 				/>
 			</div>
 		</div>

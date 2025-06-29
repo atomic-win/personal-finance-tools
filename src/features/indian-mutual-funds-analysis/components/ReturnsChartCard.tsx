@@ -1,5 +1,5 @@
 'use client';
-import { useReturnQueries } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import { useReturnQueries } from '@/features/indian-mutual-funds-analysis/hooks/returns';
 import {
 	Card,
 	CardContent,
@@ -30,21 +30,24 @@ import {
 import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
 
-export default function ReturnsChartCard(
-	props: {
-		mutualfunds: Instrument[];
-	} & ReturnRequest
-) {
+export default function ReturnsChartCard(props: {
+	instruments: Instrument[];
+	returnRequest: ReturnRequest;
+}) {
+	const { returnRequest } = props;
+
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex flex-col md:flex-row md:items-center gap-4 space-y-2 md:space-y-0 border-b py-4'>
 				<div className='grid text-center md:text-left w-full gap-2'>
-					<CardTitle>{returnTypeText(props.returnType)}</CardTitle>
+					<CardTitle>{returnTypeText(returnRequest.returnType)}</CardTitle>
 					<CardDescription>
 						{`Showing ${investmentDurationWithReturnTypeText(
-							props.investmentDuration,
-							props.returnType
-						)} for the last ${displayPresetTimeDuration(props.rollingWindow)}`}
+							returnRequest.investmentDuration,
+							returnRequest.returnType
+						)} for the last ${displayPresetTimeDuration(
+							returnRequest.rollingWindow
+						)}`}
 					</CardDescription>
 				</div>
 			</CardHeader>
@@ -55,16 +58,15 @@ export default function ReturnsChartCard(
 	);
 }
 
-function ReturnsChart(
-	props: {
-		mutualfunds: Instrument[];
-	} & ReturnRequest
-) {
-	const { mutualfunds } = props;
+function ReturnsChart(props: {
+	instruments: Instrument[];
+	returnRequest: ReturnRequest;
+}) {
+	const { instruments, returnRequest } = props;
 
-	const mutualFundReturnQueries = useReturnQueries(props);
+	const returnQueries = useReturnQueries(returnRequest, instruments);
 
-	if (mutualfunds.length === 0) {
+	if (instruments.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
 				<Label>No mutual funds selected</Label>
@@ -72,27 +74,27 @@ function ReturnsChart(
 		);
 	}
 
-	if (mutualFundReturnQueries.some((r) => r.isFetching)) {
+	if (returnQueries.some((r) => r.isFetching)) {
 		return <LoadingComponent loadingMessage='Calculating returns...' />;
 	}
 
-	if (mutualFundReturnQueries.some((r) => r.isError)) {
+	if (returnQueries.some((r) => r.isError)) {
 		return (
 			<ErrorComponent errorMessage='Error occurred while calculating returns' />
 		);
 	}
 
-	const mutualFundReturns: Return[] = mutualFundReturnQueries
+	const instrumentReturns: Return[] = returnQueries
 		.map((r) => r.data)
 		.filter((r) => !!r)
 		.map((r) => r!)
 		.flat();
 
-	const chartConfig = mutualfunds.reduce(
-		(acc, mutualfund, i) => ({
+	const chartConfig = instruments.reduce(
+		(acc, instrument, i) => ({
 			...acc,
-			[mutualfund.symbol.toString()]: {
-				label: mutualfund.name,
+			[instrument.symbol.toString()]: {
+				label: instrument.name,
 				color: `var(--chart-${i + 1})`,
 			},
 		}),
@@ -106,7 +108,7 @@ function ReturnsChart(
 		}
 	>();
 
-	mutualFundReturns.forEach((r) => {
+	instrumentReturns.forEach((r) => {
 		const date = r.date;
 
 		if (!chartDataMap.has(date)) {
@@ -145,8 +147,8 @@ function ReturnsChart(
 					unit={'%'}
 					label={{
 						value: investmentDurationWithReturnTypeText(
-							props.investmentDuration,
-							props.returnType
+							returnRequest.investmentDuration,
+							returnRequest.returnType
 						),
 						position: 'insideLeft',
 						angle: -90,
@@ -157,12 +159,12 @@ function ReturnsChart(
 					cursor={true}
 					content={<ChartTooltipContent unit='%' />}
 				/>
-				{mutualfunds.map((mutualfund) => (
+				{instruments.map((instrument) => (
 					<Line
-						key={mutualfund.symbol}
-						dataKey={mutualfund.symbol.toString()}
+						key={instrument.symbol}
+						dataKey={instrument.symbol.toString()}
 						type='monotone'
-						stroke={`var(--color-${mutualfund.symbol})`}
+						stroke={`var(--color-${instrument.symbol})`}
 						strokeWidth={2}
 						dot={false}
 						unit={'%'}

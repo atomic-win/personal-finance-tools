@@ -61,7 +61,7 @@ export function calculateInstrument({
 	} as Instrument;
 }
 
-export function evaluateMutualFund(
+export function evaluateInstrument(
 	navs: Map<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime
