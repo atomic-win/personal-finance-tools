@@ -3,10 +3,11 @@ import {
 	getMutualFundsList,
 	getMutualFundRates,
 } from '@/features/indian-mutual-funds-analysis/services/mfApiService';
+import { InstrumentType } from '@/features/indian-mutual-funds-analysis/lib/types';
 
-export function useInstrumentListQuery() {
+export function useInstrumentListQuery(instrumentType: InstrumentType) {
 	return useQuery({
-		queryKey: ['instruments', 'list'],
+		queryKey: ['instruments', instrumentType, 'list'],
 		queryFn: async () => await getMutualFundsList(),
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
@@ -14,11 +15,14 @@ export function useInstrumentListQuery() {
 	});
 }
 
-export function useInstrumentQueries(schemeCodes: number[]) {
+export function useInstrumentQueries(
+	instrumentType: InstrumentType,
+	symbols: string[]
+) {
 	return useQueries({
-		queries: schemeCodes.map((schemeCode) => ({
-			queryKey: ['instruments', schemeCode],
-			queryFn: async () => await getMutualFundRates(schemeCode),
+		queries: symbols.map((symbol) => ({
+			queryKey: ['instruments', instrumentType, symbol],
+			queryFn: async () => await getMutualFundRates(Number(symbol)),
 			staleTime: 1000 * 60 * 60, // 1 hour
 			refetchInterval: 1000 * 60 * 60, // 1 hour
 			refetchIntervalInBackground: true,

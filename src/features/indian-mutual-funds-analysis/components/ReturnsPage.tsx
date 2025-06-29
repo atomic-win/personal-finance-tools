@@ -21,6 +21,7 @@ import {
 	useInstrumentListQuery,
 	useInstrumentQueries,
 } from '@/features/indian-mutual-funds-analysis/hooks/instruments';
+import { instrumentTypeText } from '../lib/utils';
 
 export default function ReturnsPage({
 	title,
@@ -53,36 +54,70 @@ export default function ReturnsPage({
 				<h2 className='text-lg font-semibold'>{title} Returns</h2>
 				<p>{description}</p>
 				<Suspense>
-					<ReturnsPageContainer returnType={returnType} />
+					<ReturnsPageContainer
+						instrumentType={InstrumentType.MutualFund}
+						returnType={returnType}
+					/>
 				</Suspense>
 			</div>
 		</>
 	);
 }
 
-function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
+function ReturnsPageContainer({
+	instrumentType,
+	returnType,
+}: {
+	instrumentType: InstrumentType;
+	returnType: ReturnType;
+}) {
 	const isMobile = useIsMobile();
 	const searchParams = useSearchParams();
-	const instrumentListQuery = useInstrumentListQuery();
+	const instrumentListQuery = useInstrumentListQuery(instrumentType);
 
 	const instrumentQueries = useInstrumentQueries(
-		searchParams.getAll('symbol').map(Number)
+		instrumentType,
+		searchParams.getAll('symbol')
 	);
 
 	if (instrumentListQuery.isFetching) {
-		return <LoadingComponent loadingMessage='Fetching mutual fund list...' />;
+		return (
+			<LoadingComponent
+				loadingMessage={`Fetching ${instrumentTypeText(
+					instrumentType
+				)} list...`}
+			/>
+		);
 	}
 
 	if (instrumentListQuery.isError) {
-		return <ErrorComponent errorMessage='Failed to fetch mutual fund list' />;
+		return (
+			<ErrorComponent
+				errorMessage={`Error fetching ${instrumentTypeText(
+					instrumentType
+				)} list`}
+			/>
+		);
 	}
 
 	if (instrumentQueries.some((mfq) => mfq.isFetching)) {
-		return <LoadingComponent loadingMessage='Fetching mutual fund data...' />;
+		return (
+			<LoadingComponent
+				loadingMessage={`Fetching ${instrumentTypeText(
+					instrumentType
+				)} data...`}
+			/>
+		);
 	}
 
 	if (instrumentQueries.some((mfq) => mfq.isError)) {
-		return <ErrorComponent errorMessage='Failed to fetch mutual fund data' />;
+		return (
+			<ErrorComponent
+				errorMessage={`Error fetching ${instrumentTypeText(
+					instrumentType
+				)} data`}
+			/>
+		);
 	}
 
 	const frequency = searchParams.get('frequency')
@@ -129,20 +164,20 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 				<ReturnsForm {...returnRequest} />
 				{!isMobile && (
 					<ReturnsChartCard
-						instrumentType={InstrumentType.MutualFund}
+						instrumentType={instrumentType}
 						instruments={addedInstruments}
 						returnRequest={returnRequest}
 					/>
 				)}
 				<RollingReturnsTableCard
-					instrumentType={InstrumentType.MutualFund}
+					instrumentType={instrumentType}
 					instruments={addedInstruments}
 					returnRequest={returnRequest}
 				/>
 			</div>
 			<div className='order-1 md:order-2'>
 				<SelectInstrumentsCard
-					instrumentType={InstrumentType.MutualFund}
+					instrumentType={instrumentType}
 					instrumentList={instrumentListQuery.data!}
 					addedInstruments={addedInstruments}
 				/>
