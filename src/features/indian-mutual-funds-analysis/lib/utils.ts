@@ -1,6 +1,7 @@
 import {
 	Frequency,
 	Instrument,
+	InstrumentType,
 	PresetTimeDurations,
 	ReturnRequest,
 	ReturnType,
@@ -196,6 +197,17 @@ export function rollingReturnTypeText(rollingReturnType: RollingReturnType) {
 			return '90th Percentile Rolling Return';
 		default:
 			throw new Error('Invalid rolling return type');
+	}
+}
+
+export function instrumentTypeText(instrumentType: InstrumentType) {
+	switch (instrumentType) {
+		case InstrumentType.MutualFund:
+			return 'Mutual Funds';
+		case InstrumentType.Index:
+			return 'Benchmark Indices';
+		default:
+			throw new Error('Invalid instrument type');
 	}
 }
 

@@ -17,12 +17,14 @@ import {
 } from '@/components/ui/table';
 import {
 	Instrument,
+	InstrumentType,
 	ReturnRequest,
 	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { cn } from '@/lib/utils';
 import {
 	displayPresetTimeDuration,
+	instrumentTypeText,
 	investmentDurationWithReturnTypeText,
 	rollingReturnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
@@ -31,6 +33,7 @@ import ErrorComponent from '@/components/ErrorComponent';
 import percentile from 'percentile';
 
 export default function RollingReturnsTableCard(props: {
+	instrumentType: InstrumentType;
 	instruments: Instrument[];
 	returnRequest: ReturnRequest;
 }) {
@@ -60,6 +63,7 @@ export default function RollingReturnsTableCard(props: {
 }
 
 function RollingReturnsTable(props: {
+	instrumentType: InstrumentType;
 	instruments: Instrument[];
 	returnRequest: ReturnRequest;
 }) {
@@ -68,7 +72,9 @@ function RollingReturnsTable(props: {
 	if (instruments.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
-				<Label>No mutual funds selected</Label>
+				<Label>{`No ${instrumentTypeText(
+					props.instrumentType
+				)} selected`}</Label>
 			</div>
 		);
 	}
@@ -78,7 +84,9 @@ function RollingReturnsTable(props: {
 			<Table className='w-full'>
 				<TableHeader>
 					<TableRow>
-						<TableHead className='whitespace-nowrap'>Mutual Fund</TableHead>
+						<TableHead className='whitespace-nowrap'>
+							{instrumentTypeText(props.instrumentType)}
+						</TableHead>
 						<TableHead className='text-center'>
 							{rollingReturnTypeText(returnRequest.rollingReturnType)}
 						</TableHead>

@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/chart';
 import {
 	Instrument,
+	InstrumentType,
 	Return,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
@@ -24,6 +25,7 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { Label } from '@/components/ui/label';
 import {
 	displayPresetTimeDuration,
+	instrumentTypeText,
 	investmentDurationWithReturnTypeText,
 	returnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
@@ -31,6 +33,7 @@ import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
 
 export default function ReturnsChartCard(props: {
+	instrumentType: InstrumentType;
 	instruments: Instrument[];
 	returnRequest: ReturnRequest;
 }) {
@@ -59,6 +62,7 @@ export default function ReturnsChartCard(props: {
 }
 
 function ReturnsChart(props: {
+	instrumentType: InstrumentType;
 	instruments: Instrument[];
 	returnRequest: ReturnRequest;
 }) {
@@ -69,7 +73,9 @@ function ReturnsChart(props: {
 	if (instruments.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
-				<Label>No mutual funds selected</Label>
+				<Label>{`No ${instrumentTypeText(
+					props.instrumentType
+				)} selected`}</Label>
 			</div>
 		);
 	}

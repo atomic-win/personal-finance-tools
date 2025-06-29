@@ -5,6 +5,7 @@ import SelectInstrumentsCard from '@/features/indian-mutual-funds-analysis/compo
 import { useSearchParams } from 'next/navigation';
 import {
 	Frequency,
+	InstrumentType,
 	PresetTimeDurations,
 	ReturnRequest,
 	ReturnType,
@@ -128,17 +129,20 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 				<ReturnsForm {...returnRequest} />
 				{!isMobile && (
 					<ReturnsChartCard
+						instrumentType={InstrumentType.MutualFund}
 						instruments={addedInstruments}
 						returnRequest={returnRequest}
 					/>
 				)}
 				<RollingReturnsTableCard
+					instrumentType={InstrumentType.MutualFund}
 					instruments={addedInstruments}
 					returnRequest={returnRequest}
 				/>
 			</div>
 			<div className='order-1 md:order-2'>
 				<SelectInstrumentsCard
+					instrumentType={InstrumentType.MutualFund}
 					instrumentList={instrumentListQuery.data!}
 					addedInstruments={addedInstruments}
 				/>

@@ -29,39 +29,51 @@ import React, { useState } from 'react';
 import fuzzysort from 'fuzzysort';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { Instrument } from '@/features/indian-mutual-funds-analysis/lib/types';
+import {
+	Instrument,
+	InstrumentType,
+} from '@/features/indian-mutual-funds-analysis/lib/types';
+import { instrumentTypeText } from '@/features/indian-mutual-funds-analysis/lib/utils';
 
 const schema = z.object({
 	symbol: z.string(),
 });
 
 export default function SelectInstrumentsCard({
+	instrumentType,
 	instrumentList,
 	addedInstruments,
 }: {
+	instrumentType: InstrumentType;
 	instrumentList: Instrument[];
 	addedInstruments: Instrument[];
 }) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
-				<CardTitle>Mutual Funds</CardTitle>
+				<CardTitle>{instrumentTypeText(instrumentType)}</CardTitle>
 			</CardHeader>
 			<CardContent>
 				<InstrumentSearchForm
+					instrumentType={instrumentType}
 					instrumentList={instrumentList}
 					addedInstruments={addedInstruments}
 				/>
-				<InstrumentsDisplay addedInstruments={addedInstruments} />
+				<InstrumentsDisplay
+					instrumentType={instrumentType}
+					addedInstruments={addedInstruments}
+				/>
 			</CardContent>
 		</Card>
 	);
 }
 
 function InstrumentSearchForm({
+	instrumentType,
 	instrumentList,
 	addedInstruments,
 }: {
+	instrumentType: InstrumentType;
 	instrumentList: Instrument[];
 	addedInstruments: Instrument[];
 }) {
@@ -128,7 +140,7 @@ function InstrumentSearchForm({
 																(instrument) =>
 																	instrument.symbol === field.value
 														  )?.name
-														: 'Add a Mutual Fund'}
+														: `Select ${instrumentTypeText(instrumentType)}...`}
 												</span>
 												<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
 											</Button>
@@ -145,11 +157,15 @@ function InstrumentSearchForm({
 								<PopoverContent className='p-0 w-[var(--radix-popover-trigger-width)]'>
 									<Command>
 										<CommandInput
-											placeholder='Search Mutual Fund'
+											placeholder={`Search ${instrumentTypeText(
+												instrumentType
+											)}...`}
 											onValueChange={setMfSearchText}
 										/>
 										<CommandList>
-											<CommandEmpty>No Mutual Funds found.</CommandEmpty>
+											<CommandEmpty>
+												No {instrumentTypeText(instrumentType)} found.
+											</CommandEmpty>
 											<CommandGroup>
 												{searchResults.map((instrument) => (
 													<CommandItem
@@ -186,8 +202,10 @@ function InstrumentSearchForm({
 }
 
 function InstrumentsDisplay({
+	instrumentType,
 	addedInstruments,
 }: {
+	instrumentType: InstrumentType;
 	addedInstruments: Instrument[];
 }) {
 	if (!addedInstruments.length) {
@@ -196,7 +214,9 @@ function InstrumentsDisplay({
 
 	return (
 		<div className='space-y-2 mt-2'>
-			<CardTitle className='text-base m-2 mt-4'>Added Mutual Funds:</CardTitle>
+			<CardTitle className='text-base m-2 mt-4'>
+				Added {instrumentTypeText(instrumentType)}
+			</CardTitle>
 			{addedInstruments.map((instrument) => (
 				<InstrumentDisplayItem
 					instrument={instrument}
