@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 import {
-	MutualFund,
+	Instrument,
 	Return,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
@@ -14,7 +14,7 @@ declare const self: DedicatedWorkerGlobalScope;
 
 self.onmessage = (
 	event: MessageEvent<{
-		mutualfund: MutualFund;
+		mutualfund: Instrument;
 		request: ReturnRequest;
 	}>
 ) => {
@@ -36,9 +36,9 @@ self.onmessage = (
 		date = date.plus({ days: 1 })
 	) {
 		results.push({
-			schemeCode: mutualfund.schemeCode,
+			symbol: mutualfund.symbol,
 			date: date.plus(getLuxonDuration(investmentDuration)).toISODate()!,
-			return: evaluateMutualFund(mutualfund.navs, request, date),
+			return: evaluateMutualFund(mutualfund.rates, request, date),
 		});
 	}
 

@@ -29,25 +29,18 @@ import React, { useState } from 'react';
 import fuzzysort from 'fuzzysort';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { MutualFund } from '@/features/indian-mutual-funds-analysis/lib/types';
+import { Instrument } from '@/features/indian-mutual-funds-analysis/lib/types';
 
 const schema = z.object({
-	mfSchemeCode: z.coerce
-		.number()
-		.min(100000, {
-			message: 'Mutual Fund Scheme Code must be a 6 digit number',
-		})
-		.max(999999, {
-			message: 'Mutual Fund Scheme Code must be a 6 digit number',
-		}),
+	symbol: z.string(),
 });
 
 export default function SelectMutualFundsCard({
 	mutualFundList,
 	addedMutualFunds,
 }: {
-	mutualFundList: MutualFund[];
-	addedMutualFunds: MutualFund[];
+	mutualFundList: Instrument[];
+	addedMutualFunds: Instrument[];
 }) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
@@ -69,8 +62,8 @@ function MutualFundSearchForm({
 	mutualFundList,
 	addedMutualFunds,
 }: {
-	mutualFundList: MutualFund[];
-	addedMutualFunds: MutualFund[];
+	mutualFundList: Instrument[];
+	addedMutualFunds: Instrument[];
 }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -81,7 +74,7 @@ function MutualFundSearchForm({
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
 		defaultValues: {
-			mfSchemeCode: 0,
+			symbol: '',
 		},
 	});
 
@@ -89,21 +82,21 @@ function MutualFundSearchForm({
 		.go(mfSearchText, mutualFundList || [], {
 			threshold: 0.5,
 			limit: 10,
-			key: 'schemeName',
+			key: 'name',
 		})
-		.map((x) => x.obj as MutualFund)
+		.map((x) => x.obj as Instrument)
 		.filter(
 			(mutualfund) =>
-				!addedMutualFunds.find((a) => a.schemeCode === mutualfund.schemeCode)
+				!addedMutualFunds.find((a) => a.symbol === mutualfund.symbol)
 		);
 
 	function addSchemeCode() {
 		const params = new URLSearchParams(searchParams);
-		const schemeCodes = params.getAll('mfSchemeCode');
-		const selectedSchemeCode = form.getValues('mfSchemeCode').toString();
+		const schemeCodes = params.getAll('symbol');
+		const selectedSchemeCode = form.getValues('symbol').toString();
 
 		if (!schemeCodes.includes(selectedSchemeCode)) {
-			params.append('mfSchemeCode', selectedSchemeCode);
+			params.append('symbol', selectedSchemeCode);
 			replace(`${pathname}?${params.toString()}`);
 		}
 
@@ -115,7 +108,7 @@ function MutualFundSearchForm({
 			<form className='space-y-4'>
 				<FormField
 					control={form.control}
-					name='mfSchemeCode'
+					name='symbol'
 					render={({ field }) => (
 						<FormItem className='flex flex-col'>
 							<Popover>
@@ -133,8 +126,8 @@ function MutualFundSearchForm({
 													{field.value
 														? searchResults.find(
 																(mutualfund) =>
-																	mutualfund.schemeCode === field.value
-														  )?.schemeName
+																	mutualfund.symbol === field.value
+														  )?.name
 														: 'Add a Mutual Fund'}
 												</span>
 												<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
@@ -145,7 +138,7 @@ function MutualFundSearchForm({
 										type='button'
 										onClick={addSchemeCode}
 										className='h-10 w-full sm:w-20'
-										disabled={field.value === 0}>
+										disabled={field.value === ''}>
 										Add
 									</Button>
 								</div>
@@ -160,24 +153,22 @@ function MutualFundSearchForm({
 											<CommandGroup>
 												{searchResults.map((mutualfund) => (
 													<CommandItem
-														value={mutualfund.schemeName}
-														key={`${mutualfund.schemeCode} - ${mutualfund.schemeName}`}
+														value={mutualfund.name}
+														key={`${mutualfund.symbol} - ${mutualfund.name}`}
 														onSelect={() => {
-															form.setValue(
-																'mfSchemeCode',
-																mutualfund.schemeCode,
-																{ shouldValidate: true }
-															);
+															form.setValue('symbol', mutualfund.symbol, {
+																shouldValidate: true,
+															});
 														}}>
 														<Check
 															className={cn(
 																'mr-2 h-4 w-4',
-																mutualfund.schemeCode === field.value
+																mutualfund.symbol === field.value
 																	? 'opacity-100'
 																	: 'opacity-0'
 															)}
 														/>
-														{mutualfund.schemeName}
+														{mutualfund.name}
 													</CommandItem>
 												))}
 											</CommandGroup>
@@ -197,7 +188,7 @@ function MutualFundSearchForm({
 function MutualFundsDisplay({
 	addedMutualFunds,
 }: {
-	addedMutualFunds: MutualFund[];
+	addedMutualFunds: Instrument[];
 }) {
 	if (!addedMutualFunds.length) {
 		return null;
@@ -209,29 +200,29 @@ function MutualFundsDisplay({
 			{addedMutualFunds.map((mutualfund) => (
 				<MutualFundDisplayItem
 					mutualfund={mutualfund}
-					key={mutualfund.schemeCode}
+					key={mutualfund.symbol}
 				/>
 			))}
 		</div>
 	);
 }
 
-function MutualFundDisplayItem({ mutualfund }: { mutualfund: MutualFund }) {
+function MutualFundDisplayItem({ mutualfund }: { mutualfund: Instrument }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const { replace } = useRouter();
 
 	function removeSchemeCode() {
 		const params = new URLSearchParams(searchParams);
-		const schemeCodes = searchParams.getAll('mfSchemeCode');
-		const schemeCode = mutualfund.schemeCode.toString();
+		const schemeCodes = searchParams.getAll('symbol');
+		const schemeCode = mutualfund.symbol.toString();
 
-		params.delete('mfSchemeCode');
+		params.delete('symbol');
 
 		schemeCodes
 			.filter((code) => code !== schemeCode)
 			.forEach((code) => {
-				params.append('mfSchemeCode', code);
+				params.append('symbol', code);
 			});
 
 		replace(`${pathname}?${params.toString()}`);
@@ -240,7 +231,7 @@ function MutualFundDisplayItem({ mutualfund }: { mutualfund: MutualFund }) {
 	return (
 		<Card className='p-2 rounded-lg shadow-md'>
 			<CardContent className='flex justify-between items-center p-2 gap-2 text-sm'>
-				<span className='truncate'>{mutualfund.schemeName}</span>
+				<span className='truncate'>{mutualfund.name}</span>
 				<Button
 					variant='secondary'
 					onClick={() => removeSchemeCode()}

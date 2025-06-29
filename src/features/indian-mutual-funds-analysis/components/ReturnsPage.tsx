@@ -65,7 +65,7 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 	const mutualFundListQuery = useMutualFundListQuery();
 
 	const mutualFundQueries = useMutualFundQueries(
-		searchParams.getAll('mfSchemeCode').map(Number)
+		searchParams.getAll('symbol').map(Number)
 	);
 
 	if (mutualFundListQuery.isFetching) {
@@ -110,7 +110,7 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 
 	const addedMutualfunds = (mutualFundQueries || [])
 		.map((r) => r.data!)
-		.filter((mf) => mf !== null && !!mf.schemeName);
+		.filter((mf) => mf !== null && !!mf.name);
 
 	const returnsRequest = {
 		investmentDuration,

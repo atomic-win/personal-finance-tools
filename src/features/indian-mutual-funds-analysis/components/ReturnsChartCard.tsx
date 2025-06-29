@@ -16,7 +16,7 @@ import {
 	ChartTooltipContent,
 } from '@/components/ui/chart';
 import {
-	MutualFund,
+	Instrument,
 	Return,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
@@ -32,7 +32,7 @@ import ErrorComponent from '@/components/ErrorComponent';
 
 export default function ReturnsChartCard(
 	props: {
-		mutualfunds: MutualFund[];
+		mutualfunds: Instrument[];
 	} & ReturnRequest
 ) {
 	return (
@@ -57,7 +57,7 @@ export default function ReturnsChartCard(
 
 function ReturnsChart(
 	props: {
-		mutualfunds: MutualFund[];
+		mutualfunds: Instrument[];
 	} & ReturnRequest
 ) {
 	const { mutualfunds } = props;
@@ -91,8 +91,8 @@ function ReturnsChart(
 	const chartConfig = mutualfunds.reduce(
 		(acc, mutualfund, i) => ({
 			...acc,
-			[mutualfund.schemeCode.toString()]: {
-				label: mutualfund.schemeName,
+			[mutualfund.symbol.toString()]: {
+				label: mutualfund.name,
 				color: `var(--chart-${i + 1})`,
 			},
 		}),
@@ -118,7 +118,7 @@ function ReturnsChart(
 		const data = chartDataMap.get(date)!;
 		chartDataMap.set(date, {
 			...data,
-			[r.schemeCode.toString()]: Number(r.return.toFixed(2)),
+			[r.symbol.toString()]: Number(r.return.toFixed(2)),
 		});
 	});
 
@@ -159,10 +159,10 @@ function ReturnsChart(
 				/>
 				{mutualfunds.map((mutualfund) => (
 					<Line
-						key={mutualfund.schemeCode}
-						dataKey={mutualfund.schemeCode.toString()}
+						key={mutualfund.symbol}
+						dataKey={mutualfund.symbol.toString()}
 						type='monotone'
-						stroke={`var(--color-${mutualfund.schemeCode})`}
+						stroke={`var(--color-${mutualfund.symbol})`}
 						strokeWidth={2}
 						dot={false}
 						unit={'%'}

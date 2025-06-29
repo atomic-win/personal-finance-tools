@@ -1,5 +1,5 @@
 import {
-	MutualFund,
+	Instrument,
 	Return,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
@@ -18,9 +18,24 @@ export function useMutualFundListQuery() {
 	return useQuery({
 		queryKey: ['mutualfunds', 'list'],
 		queryFn: async () => {
-			return (await mfApiClient.get('mf')).data as MutualFund[];
+			return (await mfApiClient.get('mf')).data;
 		},
-		select: (data) => _.uniqBy(data, (mf) => mf.schemeCode),
+		select: (data) => {
+			const mutualFunds = (
+				data as {
+					schemeCode: number;
+					schemeName: string;
+				}[]
+			).map(
+				(x) =>
+					({
+						symbol: x.schemeCode.toString(),
+						name: x.schemeName,
+					} as Instrument)
+			);
+
+			return _.sortBy(mutualFunds, (x) => x.symbol);
+		},
 		staleTime: 1000 * 60 * 60 * 24, // 24 hours
 		refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
 		refetchIntervalInBackground: true,
@@ -40,7 +55,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 			}) => {
 				const schemeCode = apiResponse.meta.scheme_code;
 				const schemeName = apiResponse.meta.scheme_name;
-				const navs = new Map<string, number>();
+				const rates = new Map<string, number>();
 
 				let earliestDate = DateTime.local().toISODate();
 				let lastDate = DateTime.local().minus({ months: 1 }).toISODate();
@@ -48,7 +63,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 				apiResponse.data.forEach((x) => {
 					const date = DateTime.fromFormat(x.date, 'dd-MM-yyyy').toISODate()!;
 
-					navs.set(date, x.nav);
+					rates.set(date, x.nav);
 
 					if (date < earliestDate) {
 						earliestDate = date;
@@ -59,26 +74,26 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 					}
 				});
 
-				let latestNav = navs.get(lastDate)!;
+				let latestNav = rates.get(lastDate)!;
 				for (
 					let date = lastDate;
 					earliestDate <= date;
 					date = DateTime.fromISO(date).minus({ days: 1 }).toISODate()!
 				) {
-					if (!navs.has(date)) {
-						navs.set(date, latestNav);
+					if (!rates.has(date)) {
+						rates.set(date, latestNav);
 					} else {
-						latestNav = navs.get(date)!;
+						latestNav = rates.get(date)!;
 					}
 				}
 
 				return {
-					schemeCode,
-					schemeName,
+					symbol: schemeCode.toString(),
+					name: schemeName,
 					earliestDate,
 					lastDate,
-					navs,
-				} as MutualFund;
+					rates,
+				} as Instrument;
 			},
 			staleTime: 1000 * 60 * 60, // 1 hour
 			refetchInterval: 1000 * 60 * 60, // 1 hour
@@ -89,7 +104,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 
 export function useReturnQueries(
 	request: ReturnRequest & {
-		mutualfunds: MutualFund[];
+		mutualfunds: Instrument[];
 	}
 ) {
 	const { mutualfunds, rollingWindow } = request;
@@ -111,7 +126,7 @@ export function useReturnQueries(
 					.filter((r) => DateTime.fromISO(r.date) >= earliestDate)
 					.map((r) => ({
 						...r,
-						schemeCode: mutualfund.schemeCode,
+						schemeCode: mutualfund.symbol,
 					})),
 		})),
 	});
@@ -119,7 +134,7 @@ export function useReturnQueries(
 
 export function useRollingReturnsQuery(
 	request: ReturnRequest & {
-		mutualfund: MutualFund;
+		mutualfund: Instrument;
 	}
 ) {
 	return useQuery({
@@ -150,7 +165,7 @@ export function useRollingReturnsQuery(
 
 function createReturnsQuery(
 	request: ReturnRequest & {
-		mutualfund: MutualFund;
+		mutualfund: Instrument;
 	}
 ) {
 	const {
@@ -178,7 +193,7 @@ function createReturnsQuery(
 	return {
 		queryKey: [
 			'mutualfunds',
-			mutualfund.schemeCode,
+			mutualfund.symbol,
 			'returns',
 			{
 				investmentDuration,

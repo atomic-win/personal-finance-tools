@@ -16,7 +16,7 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import {
-	MutualFund,
+	Instrument,
 	ReturnRequest,
 	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
@@ -32,7 +32,7 @@ import percentile from 'percentile';
 
 export default function RollingReturnsTableCard(
 	props: {
-		mutualfunds: MutualFund[];
+		mutualfunds: Instrument[];
 	} & ReturnRequest
 ) {
 	return (
@@ -59,7 +59,7 @@ export default function RollingReturnsTableCard(
 
 function RollingReturnsTable(
 	props: {
-		mutualfunds: MutualFund[];
+		mutualfunds: Instrument[];
 	} & ReturnRequest
 ) {
 	const { mutualfunds } = props;
@@ -85,8 +85,8 @@ function RollingReturnsTable(
 				</TableHeader>
 				<TableBody>
 					{mutualfunds.map((mf) => (
-						<TableRow key={mf.schemeCode}>
-							<TableCell>{mf.schemeName}</TableCell>
+						<TableRow key={mf.symbol}>
+							<TableCell>{mf.name}</TableCell>
 							<RollingReturnsTableCell {...props} mutualfund={mf} />
 						</TableRow>
 					))}
@@ -98,7 +98,7 @@ function RollingReturnsTable(
 
 function RollingReturnsTableCell(
 	props: {
-		mutualfund: MutualFund;
+		mutualfund: Instrument;
 	} & ReturnRequest
 ) {
 	const rollingReturnsQuery = useRollingReturnsQuery(props);

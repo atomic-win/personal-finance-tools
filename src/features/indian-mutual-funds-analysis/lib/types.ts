@@ -1,9 +1,15 @@
-export type MutualFund = {
-	schemeCode: number;
-	schemeName: string;
+export enum InstrumentType {
+	MutualFund = 'mutualfund',
+	Index = 'index',
+}
+
+export type Instrument = {
+	symbol: string;
+	name: string;
+	type: InstrumentType;
 	earliestDate: string;
 	lastDate: string;
-	navs: Map<string, number>;
+	rates: Map<string, number>;
 };
 
 export type ReturnType = 'cagr' | 'sip' | 'swp';
@@ -37,7 +43,7 @@ export enum RollingReturnType {
 }
 
 export type Return = {
-	schemeCode: number;
+	symbol: string;
 	date: string;
 	return: number;
 };
