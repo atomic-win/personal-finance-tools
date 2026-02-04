@@ -115,7 +115,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupContent>
 						<SidebarMenu>
 							<SidebarMenuItem>
-								<SidebarMenuButton size='sm'>
+								<SidebarMenuButton
+									size='sm'
+									className='w-full justify-center'
+								>
 									<a
 										target='_blank'
 										href='https://forms.gle/hkvX3nzQcsBVn4xp7'
