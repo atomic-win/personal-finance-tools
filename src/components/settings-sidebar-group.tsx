@@ -3,30 +3,26 @@ import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
-	useSidebar,
 } from '@/components/ui/sidebar';
 import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
 import useUpdateSettingMutation from '@/hooks/useUpdateSettingMutation';
-import {
-	Select,
-	SelectContent,
-	SelectIcon,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
-import { ChevronRight } from 'lucide-react';
 import { useIpQuery } from '@/hooks/useIpQuery';
 import { useLocaleQuery } from '@/hooks/useLocaleQuery';
-import { LOCALE_OPTIONS } from '@/lib/utils';
-import LoadingComponent from '@/components/LoadingComponent';
-import ErrorComponent from '@/components/ErrorComponent';
+import { cn, LOCALE_OPTIONS } from '@/lib/utils';
+import LoadingComponent from '@/components/loading-component';
+import ErrorComponent from '@/components/error-component';
 import { useEffect } from 'react';
 import _ from 'lodash';
+import {
+	DropdownMenu,
+	DropdownMenuCheckboxItem,
+	DropdownMenuContent,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { buttonVariants } from '@/components/ui/button';
+import { ChevronRight } from 'lucide-react';
 
 export default function SettingsSidebarGroup() {
-	const { isMobile } = useSidebar();
-
 	const ipQuery = useIpQuery();
 	const currencyQuery = useCurrencyQuery();
 	const localeQuery = useLocaleQuery();
@@ -48,9 +44,12 @@ export default function SettingsSidebarGroup() {
 				'en-US',
 			]).filter((locale) => LOCALE_OPTIONS.includes(locale));
 
-			const supportedLocales = Intl.NumberFormat.supportedLocalesOf(locales, {
-				localeMatcher: 'best fit',
-			});
+			const supportedLocales = Intl.NumberFormat.supportedLocalesOf(
+				locales,
+				{
+					localeMatcher: 'best fit',
+				},
+			);
 
 			supportedLocales.sort((a, b) => b.length - a.length);
 
@@ -80,7 +79,9 @@ export default function SettingsSidebarGroup() {
 	}
 
 	if (ipQuery.isLoading) {
-		return <LoadingComponent loadingMessage='Loading currency and locale...' />;
+		return (
+			<LoadingComponent loadingMessage='Loading currency and locale...' />
+		);
 	}
 
 	if (ipQuery.isError) {
@@ -109,33 +110,38 @@ export default function SettingsSidebarGroup() {
 			<SidebarGroupLabel>Settings</SidebarGroupLabel>
 			<SidebarMenu>
 				{settings.map((setting) => (
-					<Select
-						key={setting.name}
-						onValueChange={(x) =>
-							updateSetting({ settingName: setting.name, settingValue: x })
-						}
-						value={setting.value}>
-						<SelectTrigger
-							className='w-full rounded-lg sm:ml-auto'
-							aria-label='Select a value'>
-							<SelectValue>
+					<DropdownMenu key={setting.name}>
+						<DropdownMenuTrigger
+							className={cn(
+								'w-full rounded-lg px-3 py-2 flex justify-between',
+								buttonVariants({
+									variant: 'outline',
+								}),
+							)}
+							aria-label='Select a value'
+						>
+							<span>
 								{setting.title} - {setting.value}
-							</SelectValue>
-							<SelectIcon>
-								<ChevronRight className='h-4 w-4 opacity-50' />
-							</SelectIcon>
-						</SelectTrigger>
-						<SelectContent
-							className='rounded-xl'
-							side={isMobile ? 'bottom' : 'right'}
-							align={isMobile ? 'end' : 'start'}>
+							</span>
+							<ChevronRight className='h-4 w-4 opacity-50' />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent side='right' align='center'>
 							{setting.options.map((option) => (
-								<SelectItem key={option} value={option} className='rounded-lg'>
+								<DropdownMenuCheckboxItem
+									key={option}
+									checked={option === setting.value}
+									onCheckedChange={() =>
+										updateSetting({
+											settingName: setting.name,
+											settingValue: option,
+										})
+									}
+								>
 									{option}
-								</SelectItem>
+								</DropdownMenuCheckboxItem>
 							))}
-						</SelectContent>
-					</Select>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				))}
 			</SidebarMenu>
 		</SidebarGroup>

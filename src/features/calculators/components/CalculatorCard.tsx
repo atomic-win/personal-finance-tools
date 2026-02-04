@@ -1,21 +1,14 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from '@/components/ui/form';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Calculator } from '@/features/calculators/lib/types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
 	useUpdateCalculatorMutation,
 	useRemoveCalculatorMutation,
 } from '@/features/calculators/hooks/calculators';
-import { DefaultValues, Path, useForm } from 'react-hook-form';
+import { Controller, DefaultValues, Path, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -69,28 +62,31 @@ export default function CalculatorCard<T extends Calculator>({
 				</div>
 			</CardHeader>
 			<CardContent>
-				<Form {...form}>
-					<form
-						onChange={form.handleSubmit(onFormChange)}
-						className='space-y-4'>
-						{formFields.map((formField) => (
-							<FormField
-								key={formField.name}
-								control={form.control}
-								name={formField.name as Path<T>}
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>{formField.label}</FormLabel>
-										<FormControl>
-											<Input {...field} />
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-						))}
-					</form>
-				</Form>
+				<form
+					onChange={form.handleSubmit(onFormChange)}
+					className='space-y-4'
+				>
+					{formFields.map((formField) => (
+						<Controller
+							key={formField.name}
+							control={form.control}
+							name={formField.name as Path<T>}
+							render={({ field }) => (
+								<Field>
+									<FieldLabel>{formField.label}</FieldLabel>
+									<Input {...field} />
+									<FieldError
+										errors={[
+											form.formState.errors[
+												formField.name as Path<T>
+											] as { message?: string },
+										]}
+									/>
+								</Field>
+							)}
+						/>
+					))}
+				</form>
 				<CalculatorResult calculator={calculator} />
 			</CardContent>
 		</Card>

@@ -27,13 +27,14 @@ import {
 	investmentDurationWithReturnTypeText,
 	returnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
-import LoadingComponent from '@/components/LoadingComponent';
-import ErrorComponent from '@/components/ErrorComponent';
+import LoadingComponent from '@/components/loading-component';
+import ErrorComponent from '@/components/error-component';
+import { formatISO } from 'date-fns';
 
 export default function ReturnsChartCard(
 	props: {
 		mutualfunds: MutualFund[];
-	} & ReturnRequest
+	} & ReturnRequest,
 ) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
@@ -43,7 +44,7 @@ export default function ReturnsChartCard(
 					<CardDescription>
 						{`Showing ${investmentDurationWithReturnTypeText(
 							props.investmentDuration,
-							props.returnType
+							props.returnType,
 						)} for the last ${displayPresetTimeDuration(props.rollingWindow)}`}
 					</CardDescription>
 				</div>
@@ -58,7 +59,7 @@ export default function ReturnsChartCard(
 function ReturnsChart(
 	props: {
 		mutualfunds: MutualFund[];
-	} & ReturnRequest
+	} & ReturnRequest,
 ) {
 	const { mutualfunds } = props;
 
@@ -96,8 +97,8 @@ function ReturnsChart(
 				color: `var(--chart-${i + 1})`,
 			},
 		}),
-		{}
-	) satisfies ChartConfig;
+		{},
+	) as ChartConfig;
 
 	const chartDataMap = new Map<
 		string,
@@ -123,7 +124,7 @@ function ReturnsChart(
 	});
 
 	const chartData = Array.from(chartDataMap.values()).sort((a, b) =>
-		a.date.localeCompare(b.date)
+		a.date.localeCompare(b.date),
 	);
 
 	return (
@@ -146,7 +147,7 @@ function ReturnsChart(
 					label={{
 						value: investmentDurationWithReturnTypeText(
 							props.investmentDuration,
-							props.returnType
+							props.returnType,
 						),
 						position: 'insideLeft',
 						angle: -90,
@@ -155,7 +156,46 @@ function ReturnsChart(
 				/>
 				<ChartTooltip
 					cursor={true}
-					content={<ChartTooltipContent unit='%' />}
+					content={
+						<ChartTooltipContent
+							hideLabel
+							className='w-full'
+							formatter={(value, name, item, index) => (
+								<>
+									{/* Add this before the first item */}
+									{index === 0 && (
+										<div className='flex basis-full items-center pt-1.5 text-xs font-medium text-foreground'>
+											{formatISO(
+												new Date(
+													item.payload.date as number,
+												),
+												{
+													representation: 'date',
+												},
+											)}
+										</div>
+									)}
+									<div
+										className='h-2.5 w-2.5 shrink-0 rounded-[2px]'
+										style={{
+											backgroundColor:
+												chartConfig[
+													name as keyof typeof chartConfig
+												]!.color,
+										}}
+									/>
+									{
+										chartConfig[
+											name as keyof typeof chartConfig
+										]!.label
+									}
+									<div className='ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground'>
+										{value}%
+									</div>
+								</>
+							)}
+						/>
+					}
 				/>
 				{mutualfunds.map((mutualfund) => (
 					<Line

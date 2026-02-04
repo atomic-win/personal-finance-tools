@@ -29,7 +29,10 @@ export default function SidebarTriggerWithBreadcrumb({
 				<Breadcrumb>
 					<BreadcrumbList>
 						{breadcrumbs.map(({ title, href, disabled }, index) => (
-							<div key={index} className='flex items-center gap-2'>
+							<div
+								key={index}
+								className='flex items-center gap-2'
+							>
 								{index > 0 && (
 									<BreadcrumbSeparator className='block' />
 								)}
@@ -37,11 +40,15 @@ export default function SidebarTriggerWithBreadcrumb({
 									{index === breadcrumbs.length - 1 ? (
 										<BreadcrumbPage>{title}</BreadcrumbPage>
 									) : disabled ? (
-										<BreadcrumbLink asChild>
-											<span className='text-muted-foreground'>{title}</span>
+										<BreadcrumbLink>
+											<span className='text-muted-foreground'>
+												{title}
+											</span>
 										</BreadcrumbLink>
 									) : (
-										<BreadcrumbLink href={href}>{title}</BreadcrumbLink>
+										<BreadcrumbLink href={href}>
+											{title}
+										</BreadcrumbLink>
 									)}
 								</BreadcrumbItem>
 							</div>

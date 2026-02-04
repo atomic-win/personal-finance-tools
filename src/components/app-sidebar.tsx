@@ -14,7 +14,7 @@ import {
 	SidebarMenuSubItem,
 	SidebarRail,
 } from '@/components/ui/sidebar';
-import SettingsSidebarGroup from '@/components/SettingsSidebarGroup';
+import SettingsSidebarGroup from '@/components/settings-sidebar-group';
 import Link from 'next/link';
 
 const data = [
@@ -70,13 +70,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 			<SidebarHeader>
 				<SidebarMenu>
 					<SidebarMenuItem>
-						<SidebarMenuButton size='lg' asChild>
-							<Link href='/'>
+						<SidebarMenuButton size='lg'>
+							<Link href='/' className='flex items-center gap-3'>
 								<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
 									<DollarSignIcon className='size-4' />
 								</div>
 								<div className='flex flex-col gap-0.5 leading-none'>
-									<span className='font-semibold'>Personal Finance Tools</span>
+									<span className='font-semibold'>
+										Personal Finance Tools
+									</span>
 								</div>
 							</Link>
 						</SidebarMenuButton>
@@ -94,8 +96,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								<SidebarMenuSub>
 									{item.items.map((item) => (
 										<SidebarMenuSubItem key={item.title}>
-											<SidebarMenuSubButton asChild>
-												<a href={item.url}>{item.title}</a>
+											<SidebarMenuSubButton
+												href={item.url}
+											>
+												{item.title}
 											</SidebarMenuSubButton>
 										</SidebarMenuSubItem>
 									))}
@@ -111,8 +115,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupContent>
 						<SidebarMenu>
 							<SidebarMenuItem>
-								<SidebarMenuButton asChild size='sm'>
-									<a target='_blank' href='https://forms.gle/hkvX3nzQcsBVn4xp7'>
+								<SidebarMenuButton
+									size='sm'
+									className='w-full justify-center'
+								>
+									<a
+										target='_blank'
+										href='https://forms.gle/hkvX3nzQcsBVn4xp7'
+										className='flex items-center gap-2'
+									>
 										<Send />
 										<span>Feedback</span>
 									</a>

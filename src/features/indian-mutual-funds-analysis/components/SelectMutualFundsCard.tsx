@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Command,
@@ -9,13 +9,8 @@ import {
 	CommandItem,
 	CommandList,
 } from '@/components/ui/command';
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormMessage,
-} from '@/components/ui/form';
+import { Controller } from 'react-hook-form';
+import { Field, FieldError } from '@/components/ui/field';
 import {
 	Popover,
 	PopoverContent,
@@ -94,7 +89,9 @@ function MutualFundSearchForm({
 		.map((x) => x.obj as MutualFund)
 		.filter(
 			(mutualfund) =>
-				!addedMutualFunds.find((a) => a.schemeCode === mutualfund.schemeCode)
+				!addedMutualFunds.find(
+					(a) => a.schemeCode === mutualfund.schemeCode,
+				),
 		);
 
 	function addSchemeCode() {
@@ -111,86 +108,95 @@ function MutualFundSearchForm({
 	}
 
 	return (
-		<Form {...form}>
-			<form className='space-y-4'>
-				<FormField
-					control={form.control}
-					name='mfSchemeCode'
-					render={({ field }) => (
-						<FormItem className='flex flex-col'>
-							<Popover>
-								<div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2'>
-									<PopoverTrigger asChild className='flex-1'>
-										<FormControl>
-											<Button
-												variant='outline'
-												role='combobox'
-												className={cn(
-													'w-full justify-between h-10 mb-2 sm:mb-0',
-													!field.value && 'text-muted-foreground'
-												)}>
-												<span className='text-wrap truncate max-w-[80%]'>
-													{field.value
-														? searchResults.find(
-																(mutualfund) =>
-																	mutualfund.schemeCode === field.value
-														  )?.schemeName
-														: 'Add a Mutual Fund'}
-												</span>
-												<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
-											</Button>
-										</FormControl>
-									</PopoverTrigger>
-									<Button
-										type='button'
-										onClick={addSchemeCode}
-										className='h-10 w-full sm:w-20'
-										disabled={field.value === 0}>
-										Add
-									</Button>
-								</div>
-								<PopoverContent className='p-0 w-[var(--radix-popover-trigger-width)]'>
-									<Command>
-										<CommandInput
-											placeholder='Search Mutual Fund'
-											onValueChange={setMfSearchText}
-										/>
-										<CommandList>
-											<CommandEmpty>No Mutual Funds found.</CommandEmpty>
-											<CommandGroup>
-												{searchResults.map((mutualfund) => (
-													<CommandItem
-														value={mutualfund.schemeName}
-														key={`${mutualfund.schemeCode} - ${mutualfund.schemeName}`}
-														onSelect={() => {
-															form.setValue(
-																'mfSchemeCode',
-																mutualfund.schemeCode,
-																{ shouldValidate: true }
-															);
-														}}>
-														<Check
-															className={cn(
-																'mr-2 h-4 w-4',
-																mutualfund.schemeCode === field.value
-																	? 'opacity-100'
-																	: 'opacity-0'
-															)}
-														/>
-														{mutualfund.schemeName}
-													</CommandItem>
-												))}
-											</CommandGroup>
-										</CommandList>
-									</Command>
-								</PopoverContent>
-							</Popover>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-			</form>
-		</Form>
+		<form className='space-y-4'>
+			<Controller
+				control={form.control}
+				name='mfSchemeCode'
+				render={({ field }) => (
+					<Field className='flex flex-col'>
+						<Popover>
+							<div className='flex flex-col sm:flex-row items-stretch sm:items-center gap-2'>
+								<PopoverTrigger
+									className={cn(
+										buttonVariants({ variant: 'outline' }),
+										'flex-1 w-full justify-between h-10 mb-2 sm:mb-0',
+										!field.value && 'text-muted-foreground',
+									)}
+									role='combobox'
+								>
+									<span className='text-wrap truncate max-w-[80%]'>
+										{field.value
+											? searchResults.find(
+													(mutualfund) =>
+														mutualfund.schemeCode ===
+														field.value,
+												)?.schemeName
+											: 'Add a Mutual Fund'}
+									</span>
+									<ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
+								</PopoverTrigger>
+								<Button
+									type='button'
+									onClick={addSchemeCode}
+									className='h-10 w-full sm:w-20'
+									disabled={field.value === 0}
+								>
+									Add
+								</Button>
+							</div>
+							<PopoverContent className='p-0 w-[var(--radix-popover-trigger-width)]'>
+								<Command>
+									<CommandInput
+										placeholder='Search Mutual Fund'
+										onValueChange={setMfSearchText}
+									/>
+									<CommandList>
+										<CommandEmpty>
+											{mfSearchText
+												? 'No results found.'
+												: 'Type to search mutual funds.'}
+										</CommandEmpty>
+										<CommandGroup>
+											{searchResults.map((mutualfund) => (
+												<CommandItem
+													value={
+														mutualfund.schemeName
+													}
+													key={`${mutualfund.schemeCode} - ${mutualfund.schemeName}`}
+													onSelect={() => {
+														form.setValue(
+															'mfSchemeCode',
+															mutualfund.schemeCode,
+															{
+																shouldValidate: true,
+															},
+														);
+													}}
+												>
+													<Check
+														className={cn(
+															'mr-2 h-4 w-4',
+															mutualfund.schemeCode ===
+																field.value
+																? 'opacity-100'
+																: 'opacity-0',
+														)}
+													/>
+													{mutualfund.schemeName}
+												</CommandItem>
+											))}
+										</CommandGroup>
+									</CommandList>
+								</Command>
+							</PopoverContent>
+						</Popover>
+						<FieldError
+							errors={[form.formState.errors.mfSchemeCode]}
+						/>
+					</Field>
+				)}
+			/>
+		</form>
 	);
 }
 
@@ -205,7 +211,9 @@ function MutualFundsDisplay({
 
 	return (
 		<div className='space-y-2 mt-2'>
-			<CardTitle className='text-base m-2 mt-4'>Added Mutual Funds:</CardTitle>
+			<CardTitle className='text-base m-2 mt-4'>
+				Added Mutual Funds:
+			</CardTitle>
 			{addedMutualFunds.map((mutualfund) => (
 				<MutualFundDisplayItem
 					mutualfund={mutualfund}
@@ -242,9 +250,10 @@ function MutualFundDisplayItem({ mutualfund }: { mutualfund: MutualFund }) {
 			<CardContent className='flex justify-between items-center p-2 gap-2 text-sm'>
 				<span className='truncate'>{mutualfund.schemeName}</span>
 				<Button
-					variant='secondary'
+					variant='destructive'
 					onClick={() => removeSchemeCode()}
-					className='h-full shrink-0'>
+					className='cursor-pointer'
+				>
 					<Trash2 className='h-4 w-4' />
 				</Button>
 			</CardContent>
