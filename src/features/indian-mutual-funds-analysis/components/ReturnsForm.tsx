@@ -20,7 +20,6 @@ import {
 	SelectValue,
 	SelectContent,
 	SelectItem,
-	SelectIcon,
 } from '@/components/ui/select';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -95,7 +94,8 @@ export default function ReturnsForm(props: ReturnRequest) {
 			<Form {...form}>
 				<form
 					className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'
-					onSubmit={(e) => e.preventDefault()}>
+					onSubmit={(e) => e.preventDefault()}
+				>
 					{props.returnType !== 'cagr' && (
 						<>
 							<FormField
@@ -103,27 +103,38 @@ export default function ReturnsForm(props: ReturnRequest) {
 								name='frequency'
 								render={({ field }) => (
 									<FormItem className='flex flex-col items-start'>
-										<FormLabel>{getFrequencyLabel(props.returnType)}</FormLabel>
+										<FormLabel>
+											{getFrequencyLabel(
+												props.returnType,
+											)}
+										</FormLabel>
 										<Select
 											onValueChange={(value) => {
 												field.onChange(value);
-												form.handleSubmit(onFormChange)();
+												form.handleSubmit(
+													onFormChange,
+												)();
 											}}
-											defaultValue={field.value}>
+											defaultValue={field.value}
+										>
 											<FormControl>
 												<SelectTrigger className='w-full rounded-lg'>
 													<SelectValue placeholder='Select Frequency' />
-													<SelectIcon>
-														<ChevronDown className='h-4 w-4 opacity-50' />
-													</SelectIcon>
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												{Object.values(Frequency).map((frequency) => (
-													<SelectItem key={frequency} value={frequency}>
-														{displayFrequency(frequency)}
-													</SelectItem>
-												))}
+												{Object.values(Frequency).map(
+													(frequency) => (
+														<SelectItem
+															key={frequency}
+															value={frequency}
+														>
+															{displayFrequency(
+																frequency,
+															)}
+														</SelectItem>
+													),
+												)}
 											</SelectContent>
 										</Select>
 										<FormMessage />
@@ -139,23 +150,30 @@ export default function ReturnsForm(props: ReturnRequest) {
 										<Select
 											onValueChange={(value) => {
 												field.onChange(value);
-												form.handleSubmit(onFormChange)();
+												form.handleSubmit(
+													onFormChange,
+												)();
 											}}
-											defaultValue={field.value}>
+											defaultValue={field.value}
+										>
 											<FormControl>
 												<SelectTrigger className='w-full rounded-lg'>
 													<SelectValue placeholder='Select Step Up Frequency' />
-													<SelectIcon>
-														<ChevronDown className='h-4 w-4 opacity-50' />
-													</SelectIcon>
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
-												{Object.values(Frequency).map((frequency) => (
-													<SelectItem key={frequency} value={frequency}>
-														{displayFrequency(frequency)}
-													</SelectItem>
-												))}
+												{Object.values(Frequency).map(
+													(frequency) => (
+														<SelectItem
+															key={frequency}
+															value={frequency}
+														>
+															{displayFrequency(
+																frequency,
+															)}
+														</SelectItem>
+													),
+												)}
 											</SelectContent>
 										</Select>
 										<FormMessage />
@@ -177,9 +195,13 @@ export default function ReturnsForm(props: ReturnRequest) {
 												placeholder='Step Up Ratio'
 												value={field.value}
 												onChange={(e) => {
-													const value = Number(e.target.value);
+													const value = Number(
+														e.target.value,
+													);
 													field.onChange(value);
-													form.handleSubmit(onFormChange)();
+													form.handleSubmit(
+														onFormChange,
+													)();
 												}}
 											/>
 										</FormControl>
@@ -195,28 +217,35 @@ export default function ReturnsForm(props: ReturnRequest) {
 						render={({ field }) => (
 							<FormItem className='flex flex-col items-start'>
 								<FormLabel>
-									{getInvestmentDurationLabel(props.returnType)}
+									{getInvestmentDurationLabel(
+										props.returnType,
+									)}
 								</FormLabel>
 								<Select
 									onValueChange={(value) => {
 										field.onChange(value);
 										form.handleSubmit(onFormChange)();
 									}}
-									defaultValue={field.value}>
+									defaultValue={field.value}
+								>
 									<FormControl>
 										<SelectTrigger className='w-full rounded-lg'>
 											<SelectValue placeholder='Select Investment Duration' />
-											<SelectIcon>
-												<ChevronDown className='h-4 w-4 opacity-50' />
-											</SelectIcon>
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
-										{Object.values(PresetTimeDurations).map((duration) => (
-											<SelectItem key={duration} value={duration}>
-												{displayPresetTimeDuration(duration)}
-											</SelectItem>
-										))}
+										{Object.values(PresetTimeDurations).map(
+											(duration) => (
+												<SelectItem
+													key={duration}
+													value={duration}
+												>
+													{displayPresetTimeDuration(
+														duration,
+													)}
+												</SelectItem>
+											),
+										)}
 									</SelectContent>
 								</Select>
 								<FormMessage />
@@ -234,21 +263,26 @@ export default function ReturnsForm(props: ReturnRequest) {
 										field.onChange(value);
 										form.handleSubmit(onFormChange)();
 									}}
-									defaultValue={field.value}>
+									defaultValue={field.value}
+								>
 									<FormControl>
 										<SelectTrigger className='w-full rounded-lg'>
 											<SelectValue placeholder='Select Rolling Window' />
-											<SelectIcon>
-												<ChevronDown className='h-4 w-4 opacity-50' />
-											</SelectIcon>
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
-										{Object.values(PresetTimeDurations).map((duration) => (
-											<SelectItem key={duration} value={duration}>
-												{displayPresetTimeDuration(duration)}
-											</SelectItem>
-										))}
+										{Object.values(PresetTimeDurations).map(
+											(duration) => (
+												<SelectItem
+													key={duration}
+													value={duration}
+												>
+													{displayPresetTimeDuration(
+														duration,
+													)}
+												</SelectItem>
+											),
+										)}
 									</SelectContent>
 								</Select>
 								<FormMessage />
@@ -266,21 +300,26 @@ export default function ReturnsForm(props: ReturnRequest) {
 										field.onChange(value);
 										form.handleSubmit(onFormChange)();
 									}}
-									defaultValue={field.value}>
+									defaultValue={field.value}
+								>
 									<FormControl>
 										<SelectTrigger className='w-full rounded-lg'>
 											<SelectValue placeholder='Select Rolling Return Type' />
-											<SelectIcon>
-												<ChevronDown className='h-4 w-4 opacity-50' />
-											</SelectIcon>
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
-										{Object.values(RollingReturnType).map((type) => (
-											<SelectItem key={type} value={type}>
-												{rollingReturnTypeText(type)}
-											</SelectItem>
-										))}
+										{Object.values(RollingReturnType).map(
+											(type) => (
+												<SelectItem
+													key={type}
+													value={type}
+												>
+													{rollingReturnTypeText(
+														type,
+													)}
+												</SelectItem>
+											),
+										)}
 									</SelectContent>
 								</Select>
 								<FormMessage />
