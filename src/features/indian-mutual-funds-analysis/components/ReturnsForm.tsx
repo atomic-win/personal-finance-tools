@@ -105,7 +105,9 @@ export default function ReturnsForm(props: ReturnRequest) {
 										defaultValue={field.value}
 									>
 										<SelectTrigger className='w-full rounded-lg'>
-											<SelectValue placeholder='Select Frequency' />
+											<SelectValue placeholder='Select Frequency'>
+												{displayFrequency(field.value)}
+											</SelectValue>
 										</SelectTrigger>
 										<SelectContent>
 											{Object.values(Frequency).map(
@@ -144,7 +146,9 @@ export default function ReturnsForm(props: ReturnRequest) {
 										defaultValue={field.value}
 									>
 										<SelectTrigger className='w-full rounded-lg'>
-											<SelectValue placeholder='Select Step Up Frequency' />
+											<SelectValue placeholder='Select Step Up Frequency'>
+												{displayFrequency(field.value)}
+											</SelectValue>
 										</SelectTrigger>
 										<SelectContent>
 											{Object.values(Frequency).map(
@@ -217,7 +221,9 @@ export default function ReturnsForm(props: ReturnRequest) {
 								defaultValue={field.value}
 							>
 								<SelectTrigger className='w-full rounded-lg'>
-									<SelectValue placeholder='Select Investment Duration' />
+									<SelectValue placeholder='Select Investment Duration'>
+										{displayPresetTimeDuration(field.value)}
+									</SelectValue>
 								</SelectTrigger>
 								<SelectContent>
 									{Object.values(PresetTimeDurations).map(
@@ -256,7 +262,9 @@ export default function ReturnsForm(props: ReturnRequest) {
 								defaultValue={field.value}
 							>
 								<SelectTrigger className='w-full rounded-lg'>
-									<SelectValue placeholder='Select Rolling Window' />
+									<SelectValue placeholder='Select Rolling Window'>
+										{displayPresetTimeDuration(field.value)}
+									</SelectValue>
 								</SelectTrigger>
 								<SelectContent>
 									{Object.values(PresetTimeDurations).map(
@@ -293,7 +301,9 @@ export default function ReturnsForm(props: ReturnRequest) {
 								defaultValue={field.value}
 							>
 								<SelectTrigger className='w-full rounded-lg'>
-									<SelectValue placeholder='Select Rolling Return Type' />
+									<SelectValue placeholder='Select Rolling Return Type'>
+										{rollingReturnTypeText(field.value)}
+									</SelectValue>
 								</SelectTrigger>
 								<SelectContent>
 									{Object.values(RollingReturnType).map(
