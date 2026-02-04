@@ -152,7 +152,9 @@ function MutualFundSearchForm({
 									/>
 									<CommandList>
 										<CommandEmpty>
-											No Mutual Funds found.
+											{mfSearchText
+												? 'No results found.'
+												: 'Type to search mutual funds.'}
 										</CommandEmpty>
 										<CommandGroup>
 											{searchResults.map((mutualfund) => (
@@ -248,9 +250,9 @@ function MutualFundDisplayItem({ mutualfund }: { mutualfund: MutualFund }) {
 			<CardContent className='flex justify-between items-center p-2 gap-2 text-sm'>
 				<span className='truncate'>{mutualfund.schemeName}</span>
 				<Button
-					variant='secondary'
+					variant='destructive'
 					onClick={() => removeSchemeCode()}
-					className='h-full shrink-0'
+					className='cursor-pointer'
 				>
 					<Trash2 className='h-4 w-4' />
 				</Button>
