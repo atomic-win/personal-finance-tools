@@ -71,7 +71,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton size='lg'>
-							<Link href='/'>
+							<Link href='/' className='flex items-center gap-3'>
 								<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
 									<DollarSignIcon className='size-4' />
 								</div>
@@ -119,6 +119,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									<a
 										target='_blank'
 										href='https://forms.gle/hkvX3nzQcsBVn4xp7'
+										className='flex items-center gap-2'
 									>
 										<Send />
 										<span>Feedback</span>
