@@ -3,28 +3,26 @@ import {
 	SidebarGroup,
 	SidebarGroupLabel,
 	SidebarMenu,
-	useSidebar,
 } from '@/components/ui/sidebar';
 import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
 import useUpdateSettingMutation from '@/hooks/useUpdateSettingMutation';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
 import { useIpQuery } from '@/hooks/useIpQuery';
 import { useLocaleQuery } from '@/hooks/useLocaleQuery';
-import { LOCALE_OPTIONS } from '@/lib/utils';
+import { cn, LOCALE_OPTIONS } from '@/lib/utils';
 import LoadingComponent from '@/components/loading-component';
 import ErrorComponent from '@/components/error-component';
 import { useEffect } from 'react';
 import _ from 'lodash';
+import {
+	DropdownMenu,
+	DropdownMenuCheckboxItem,
+	DropdownMenuContent,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { buttonVariants } from '@/components/ui/button';
+import { ChevronRight } from 'lucide-react';
 
 export default function SettingsSidebarGroup() {
-	const { isMobile } = useSidebar();
-
 	const ipQuery = useIpQuery();
 	const currencyQuery = useCurrencyQuery();
 	const localeQuery = useLocaleQuery();
@@ -112,40 +110,38 @@ export default function SettingsSidebarGroup() {
 			<SidebarGroupLabel>Settings</SidebarGroupLabel>
 			<SidebarMenu>
 				{settings.map((setting) => (
-					<Select
-						key={setting.name}
-						onValueChange={(x) =>
-							updateSetting({
-								settingName: setting.name,
-								settingValue: x!,
-							})
-						}
-						value={setting.value}
-					>
-						<SelectTrigger
-							className='w-full rounded-lg sm:ml-auto'
+					<DropdownMenu key={setting.name}>
+						<DropdownMenuTrigger
+							className={cn(
+								'w-full rounded-lg px-3 py-2 flex justify-between',
+								buttonVariants({
+									variant: 'outline',
+								}),
+							)}
 							aria-label='Select a value'
 						>
-							<SelectValue>
+							<span>
 								{setting.title} - {setting.value}
-							</SelectValue>
-						</SelectTrigger>
-						<SelectContent
-							className='rounded-xl'
-							side={isMobile ? 'bottom' : 'right'}
-							align={isMobile ? 'end' : 'start'}
-						>
+							</span>
+							<ChevronRight className='h-4 w-4 opacity-50' />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent side='right' align='center'>
 							{setting.options.map((option) => (
-								<SelectItem
+								<DropdownMenuCheckboxItem
 									key={option}
-									value={option}
-									className='rounded-lg'
+									checked={option === setting.value}
+									onCheckedChange={() =>
+										updateSetting({
+											settingName: setting.name,
+											settingValue: option,
+										})
+									}
 								>
 									{option}
-								</SelectItem>
+								</DropdownMenuCheckboxItem>
 							))}
-						</SelectContent>
-					</Select>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				))}
 			</SidebarMenu>
 		</SidebarGroup>
