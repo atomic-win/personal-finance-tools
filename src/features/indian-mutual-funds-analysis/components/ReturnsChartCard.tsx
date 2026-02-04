@@ -33,7 +33,7 @@ import ErrorComponent from '@/components/ErrorComponent';
 export default function ReturnsChartCard(
 	props: {
 		mutualfunds: MutualFund[];
-	} & ReturnRequest
+	} & ReturnRequest,
 ) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
@@ -43,7 +43,7 @@ export default function ReturnsChartCard(
 					<CardDescription>
 						{`Showing ${investmentDurationWithReturnTypeText(
 							props.investmentDuration,
-							props.returnType
+							props.returnType,
 						)} for the last ${displayPresetTimeDuration(props.rollingWindow)}`}
 					</CardDescription>
 				</div>
@@ -58,7 +58,7 @@ export default function ReturnsChartCard(
 function ReturnsChart(
 	props: {
 		mutualfunds: MutualFund[];
-	} & ReturnRequest
+	} & ReturnRequest,
 ) {
 	const { mutualfunds } = props;
 
@@ -96,7 +96,7 @@ function ReturnsChart(
 				color: `var(--chart-${i + 1})`,
 			},
 		}),
-		{}
+		{},
 	) satisfies ChartConfig;
 
 	const chartDataMap = new Map<
@@ -123,7 +123,7 @@ function ReturnsChart(
 	});
 
 	const chartData = Array.from(chartDataMap.values()).sort((a, b) =>
-		a.date.localeCompare(b.date)
+		a.date.localeCompare(b.date),
 	);
 
 	return (
@@ -146,17 +146,14 @@ function ReturnsChart(
 					label={{
 						value: investmentDurationWithReturnTypeText(
 							props.investmentDuration,
-							props.returnType
+							props.returnType,
 						),
 						position: 'insideLeft',
 						angle: -90,
 						style: { textAnchor: 'middle' },
 					}}
 				/>
-				<ChartTooltip
-					cursor={true}
-					content={<ChartTooltipContent unit='%' />}
-				/>
+				<ChartTooltip cursor={true} content={<ChartTooltipContent />} />
 				{mutualfunds.map((mutualfund) => (
 					<Line
 						key={mutualfund.schemeCode}
