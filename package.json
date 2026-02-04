@@ -30,7 +30,7 @@
     "lodash": "^4.17.21",
     "lucide-react": "^0.483.0",
     "luxon": "^3.5.0",
-    "next": "16.0.7",
+    "next": "^16.1.6",
     "percentile": "^1.6.0",
     "react": "19.2.1",
     "react-day-picker": "^9.6.3",
