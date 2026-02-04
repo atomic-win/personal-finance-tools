@@ -29,7 +29,7 @@ import {
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import LoadingComponent from '@/components/loading-component';
 import ErrorComponent from '@/components/error-component';
-import { formatISO } from 'date-fns';
+import { DateTime } from 'luxon';
 
 export default function ReturnsChartCard(
 	props: {
@@ -101,14 +101,14 @@ function ReturnsChart(
 	) as ChartConfig;
 
 	const chartDataMap = new Map<
-		string,
+		number,
 		{
-			date: string;
+			date: number;
 		}
 	>();
 
 	mutualFundReturns.forEach((r) => {
-		const date = r.date;
+		const date = DateTime.fromISO(r.date).toMillis();
 
 		if (!chartDataMap.has(date)) {
 			chartDataMap.set(date, {
@@ -123,8 +123,8 @@ function ReturnsChart(
 		});
 	});
 
-	const chartData = Array.from(chartDataMap.values()).sort((a, b) =>
-		a.date.localeCompare(b.date),
+	const chartData = Array.from(chartDataMap.values()).sort(
+		(a, b) => a.date - b.date,
 	);
 
 	return (
@@ -137,6 +137,9 @@ function ReturnsChart(
 					axisLine={true}
 					tickMargin={8}
 					minTickGap={32}
+					tickFormatter={(value) =>
+						DateTime.fromMillis(value).toISODate()!
+					}
 				/>
 				<YAxis
 					tickLine={true}
@@ -165,14 +168,9 @@ function ReturnsChart(
 									{/* Add this before the first item */}
 									{index === 0 && (
 										<div className='flex basis-full items-center pt-1.5 text-xs font-medium text-foreground'>
-											{formatISO(
-												new Date(
-													item.payload.date as number,
-												),
-												{
-													representation: 'date',
-												},
-											)}
+											{DateTime.fromMillis(
+												item.payload.date,
+											).toISODate()}
 										</div>
 									)}
 									<div
