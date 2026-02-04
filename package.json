@@ -41,7 +41,6 @@
 	"devDependencies": {
 		"@tailwindcss/postcss": "^4",
 		"@types/lodash": "^4.17.16",
-		"@types/luxon": "^3.4.2",
 		"@types/node": "^22",
 		"@types/react": "19.2.11",
 		"@types/react-dom": "19.2.3",
@@ -49,9 +48,5 @@
 		"eslint-config-next": "16.1.6",
 		"tailwindcss": "^4",
 		"typescript": "^5"
-	},
-	"overrides": {
-		"@types/react": "19.2.11",
-		"@types/react-dom": "19.2.3"
 	}
 }
