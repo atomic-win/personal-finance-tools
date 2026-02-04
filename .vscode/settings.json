@@ -1,0 +1,51 @@
+{
+	// Format
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+
+	// Use tabs instead of spaces
+	"editor.insertSpaces": false,
+	"editor.tabSize": 2,
+	"prettier.useTabs": true,
+	"prettier.tabWidth": 4,
+
+	// Use single quotes
+	"prettier.singleQuote": true,
+	"prettier.jsxSingleQuote": true,
+
+	// ESLint: Auto-fix on save
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "always",
+		"source.fixAll.eslint": "always"
+	},
+
+	// TypeScript + JavaScript
+	"typescript.tsdk": "node_modules/typescript/lib",
+	"javascript.updateImportsOnFileMove.enabled": "always",
+	"typescript.updateImportsOnFileMove.enabled": "always",
+
+	// Next.js style imports
+	"typescript.preferences.importModuleSpecifier": "non-relative",
+
+	// Tailwind CSS
+	"css.validate": false,
+	"editor.quickSuggestions": {
+		"strings": true
+	},
+
+	// Emmet in JSX/TSX
+	"emmet.includeLanguages": {
+		"javascript": "javascriptreact",
+		"typescriptreact": "javascriptreact"
+	},
+
+	// Disable search noise
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/.next": true,
+		"**/dist": true
+	},
+
+	// Explorer sorting
+	"explorer.sortOrder": "type"
+}
