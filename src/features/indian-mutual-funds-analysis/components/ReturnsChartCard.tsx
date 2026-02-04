@@ -29,6 +29,7 @@ import {
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import LoadingComponent from '@/components/LoadingComponent';
 import ErrorComponent from '@/components/ErrorComponent';
+import { formatISO } from 'date-fns';
 
 export default function ReturnsChartCard(
 	props: {
@@ -97,7 +98,7 @@ function ReturnsChart(
 			},
 		}),
 		{},
-	) satisfies ChartConfig;
+	) as ChartConfig;
 
 	const chartDataMap = new Map<
 		string,
@@ -153,7 +154,49 @@ function ReturnsChart(
 						style: { textAnchor: 'middle' },
 					}}
 				/>
-				<ChartTooltip cursor={true} content={<ChartTooltipContent />} />
+				<ChartTooltip
+					cursor={true}
+					content={
+						<ChartTooltipContent
+							hideLabel
+							className='w-full'
+							formatter={(value, name, item, index) => (
+								<>
+									{/* Add this before the first item */}
+									{index === 0 && (
+										<div className='flex basis-full items-center pt-1.5 text-xs font-medium text-foreground'>
+											{formatISO(
+												new Date(
+													item.payload.date as number,
+												),
+												{
+													representation: 'date',
+												},
+											)}
+										</div>
+									)}
+									<div
+										className='h-2.5 w-2.5 shrink-0 rounded-[2px]'
+										style={{
+											backgroundColor:
+												chartConfig[
+													name as keyof typeof chartConfig
+												]!.color,
+										}}
+									/>
+									{
+										chartConfig[
+											name as keyof typeof chartConfig
+										]!.label
+									}
+									<div className='ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground'>
+										{value}%
+									</div>
+								</>
+							)}
+						/>
+					}
+				/>
 				{mutualfunds.map((mutualfund) => (
 					<Line
 						key={mutualfund.schemeCode}
