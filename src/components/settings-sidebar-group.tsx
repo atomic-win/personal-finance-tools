@@ -17,8 +17,8 @@ import {
 import { useIpQuery } from '@/hooks/useIpQuery';
 import { useLocaleQuery } from '@/hooks/useLocaleQuery';
 import { LOCALE_OPTIONS } from '@/lib/utils';
-import LoadingComponent from '@/components/LoadingComponent';
-import ErrorComponent from '@/components/ErrorComponent';
+import LoadingComponent from '@/components/loading-component';
+import ErrorComponent from '@/components/error-component';
 import { useEffect } from 'react';
 import _ from 'lodash';
 

@@ -1,8 +1,8 @@
 import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
 import { useLocaleQuery } from '@/hooks/useLocaleQuery';
 import { displayCurrencyAmountText } from '@/lib/utils';
-import LoadingComponent from '@/components/LoadingComponent';
-import ErrorComponent from '@/components/ErrorComponent';
+import LoadingComponent from '@/components/loading-component';
+import ErrorComponent from '@/components/error-component';
 
 export default function CurrencyAmount({
 	amount,
@@ -37,6 +37,6 @@ export default function CurrencyAmount({
 		currencyQuery.data || 'USD',
 		amount,
 		notation,
-		numberOfFractionDigits
+		numberOfFractionDigits,
 	);
 }

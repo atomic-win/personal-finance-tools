@@ -14,11 +14,11 @@ import {
 	ReturnType,
 	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
+import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Suspense } from 'react';
 import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
-import LoadingComponent from '@/components/LoadingComponent';
-import ErrorComponent from '@/components/ErrorComponent';
+import LoadingComponent from '@/components/loading-component';
+import ErrorComponent from '@/components/error-component';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function ReturnsPage({
@@ -43,12 +43,18 @@ export default function ReturnsPage({
 			/>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
-					{ title: 'Indian Mutual Funds Analysis', href: '', disabled: true },
+					{
+						title: 'Indian Mutual Funds Analysis',
+						href: '',
+						disabled: true,
+					},
 					{ title: `${title} Returns`, href, disabled: true },
 				]}
 			/>
 			<div className='px-4 space-y-2'>
-				<h1 className='text-2xl font-bold'>Indian Mutual Funds Analysis</h1>
+				<h1 className='text-2xl font-bold'>
+					Indian Mutual Funds Analysis
+				</h1>
 				<h2 className='text-lg font-semibold'>{title} Returns</h2>
 				<p>{description}</p>
 				<Suspense>
@@ -65,23 +71,31 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 	const mutualFundListQuery = useMutualFundListQuery();
 
 	const mutualFundQueries = useMutualFundQueries(
-		searchParams.getAll('mfSchemeCode').map(Number)
+		searchParams.getAll('mfSchemeCode').map(Number),
 	);
 
 	if (mutualFundListQuery.isFetching) {
-		return <LoadingComponent loadingMessage='Fetching mutual fund list...' />;
+		return (
+			<LoadingComponent loadingMessage='Fetching mutual fund list...' />
+		);
 	}
 
 	if (mutualFundListQuery.isError) {
-		return <ErrorComponent errorMessage='Failed to fetch mutual fund list' />;
+		return (
+			<ErrorComponent errorMessage='Failed to fetch mutual fund list' />
+		);
 	}
 
 	if (mutualFundQueries.some((mfq) => mfq.isFetching)) {
-		return <LoadingComponent loadingMessage='Fetching mutual fund data...' />;
+		return (
+			<LoadingComponent loadingMessage='Fetching mutual fund data...' />
+		);
 	}
 
 	if (mutualFundQueries.some((mfq) => mfq.isError)) {
-		return <ErrorComponent errorMessage='Failed to fetch mutual fund data' />;
+		return (
+			<ErrorComponent errorMessage='Failed to fetch mutual fund data' />
+		);
 	}
 
 	const frequency = searchParams.get('frequency')

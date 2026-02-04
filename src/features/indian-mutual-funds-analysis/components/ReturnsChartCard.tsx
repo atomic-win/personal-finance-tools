@@ -27,8 +27,8 @@ import {
 	investmentDurationWithReturnTypeText,
 	returnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
-import LoadingComponent from '@/components/LoadingComponent';
-import ErrorComponent from '@/components/ErrorComponent';
+import LoadingComponent from '@/components/loading-component';
+import ErrorComponent from '@/components/error-component';
 import { formatISO } from 'date-fns';
 
 export default function ReturnsChartCard(

@@ -8,7 +8,7 @@ import {
 import { Calculator } from '@/features/calculators/lib/types';
 import CalculatorCard from '@/features/calculators/components/CalculatorCard';
 import { z } from 'zod';
-import SidebarTriggerWithBreadcrumb from '@/components/SidebarTriggerWithBreadcrumb';
+import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { useEffect } from 'react';
 
 export default function CalculatorPage<T extends Calculator>({
@@ -53,7 +53,9 @@ export default function CalculatorPage<T extends Calculator>({
 				]}
 			/>
 			<div className='p-4 pt-0 space-y-2'>
-				<h1 className='text-2xl font-bold'>{calculatorName} Calculator</h1>
+				<h1 className='text-2xl font-bold'>
+					{calculatorName} Calculator
+				</h1>
 				<p>{pageDescription}</p>
 				<div className='flex justify-end'>
 					<Button onClick={() => addCalculator()}>

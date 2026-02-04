@@ -14,7 +14,7 @@ import {
 	SidebarMenuSubItem,
 	SidebarRail,
 } from '@/components/ui/sidebar';
-import SettingsSidebarGroup from '@/components/SettingsSidebarGroup';
+import SettingsSidebarGroup from '@/components/settings-sidebar-group';
 import Link from 'next/link';
 
 const data = [
