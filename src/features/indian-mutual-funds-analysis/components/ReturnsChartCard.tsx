@@ -29,7 +29,7 @@ import {
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import LoadingComponent from '@/components/loading-component';
 import ErrorComponent from '@/components/error-component';
-import { formatISO } from 'date-fns';
+import { DateTime } from 'luxon';
 
 export default function ReturnsChartCard(
 	props: {
@@ -165,14 +165,11 @@ function ReturnsChart(
 									{/* Add this before the first item */}
 									{index === 0 && (
 										<div className='flex basis-full items-center pt-1.5 text-xs font-medium text-foreground'>
-											{formatISO(
-												new Date(
+											{
+												DateTime.fromMillis(
 													item.payload.date as number,
-												),
-												{
-													representation: 'date',
-												},
-											)}
+												).toISODate()!
+											}
 										</div>
 									)}
 									<div
