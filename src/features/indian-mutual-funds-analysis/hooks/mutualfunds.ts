@@ -95,11 +95,10 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 }
 
 export function useReturnQueries(
-	request: ReturnRequest & {
-		mutualfunds: MutualFund[];
-	},
+	request: ReturnRequest,
+	mutualfunds: MutualFund[],
 ) {
-	const { mutualfunds, rollingWindow } = request;
+	const { rollingWindow } = request;
 	const earliestDate = DateTime.min(
 		...mutualfunds.map((mf) => DateTime.fromISO(mf.lastDate)),
 		DateTime.local(),
@@ -109,10 +108,7 @@ export function useReturnQueries(
 
 	return useQueries({
 		queries: mutualfunds.map((mutualfund) => ({
-			...createReturnsQuery({
-				...request,
-				mutualfund,
-			}),
+			...createReturnsQuery(request, mutualfund),
 			select: (returns: Return[]) =>
 				returns
 					.filter((r) => DateTime.fromISO(r.date) >= earliestDate)
@@ -125,16 +121,13 @@ export function useReturnQueries(
 }
 
 export function useRollingReturnsQuery(
-	request: ReturnRequest & {
-		mutualfund: MutualFund;
-	},
+	request: ReturnRequest,
+	mutualfund: MutualFund,
 ) {
 	return useQuery({
-		...createReturnsQuery({
-			...request,
-		}),
+		...createReturnsQuery(request, mutualfund),
 		select: (returns: Return[]) => {
-			const startDate = DateTime.fromISO(request.mutualfund.lastDate)
+			const startDate = DateTime.fromISO(mutualfund.lastDate)
 				.minus(getLuxonDuration(request.rollingWindow))
 				.plus({ days: 1 });
 
@@ -142,9 +135,10 @@ export function useRollingReturnsQuery(
 				.filter((r) => DateTime.fromISO(r.date) >= startDate)
 				.map((r) => r.return);
 
-			const totalDays = DateTime.fromISO(
-				request.mutualfund.lastDate,
-			).diff(startDate, 'days').days;
+			const totalDays = DateTime.fromISO(mutualfund.lastDate).diff(
+				startDate,
+				'days',
+			).days;
 
 			const availableDays = a.length;
 			const shouldUseData = availableDays / Math.max(1, totalDays) >= 0.9;
@@ -154,13 +148,8 @@ export function useRollingReturnsQuery(
 	});
 }
 
-function createReturnsQuery(
-	request: ReturnRequest & {
-		mutualfund: MutualFund;
-	},
-) {
+function createReturnsQuery(request: ReturnRequest, mutualfund: MutualFund) {
 	const {
-		mutualfund,
 		investmentDuration,
 		returnType,
 		frequency,

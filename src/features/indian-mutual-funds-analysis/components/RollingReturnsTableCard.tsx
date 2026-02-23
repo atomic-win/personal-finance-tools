@@ -29,12 +29,11 @@ import {
 import LoadingComponent from '@/components/loading-component';
 import ErrorComponent from '@/components/error-component';
 import percentile from 'percentile';
+import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
 
-export default function RollingReturnsTableCard(
-	props: {
-		mutualfunds: MutualFund[];
-	} & ReturnRequest,
-) {
+const LoadedRollingReturnsTable = withMutualFunds(RollingReturnsTable);
+
+export default function RollingReturnsTableCard(props: ReturnRequest) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
@@ -51,18 +50,17 @@ export default function RollingReturnsTableCard(
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<RollingReturnsTable {...props} />
+				<LoadedRollingReturnsTable returnRequest={props} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function RollingReturnsTable(
-	props: {
-		mutualfunds: MutualFund[];
-	} & ReturnRequest,
-) {
-	const { mutualfunds } = props;
+function RollingReturnsTable(props: {
+	mutualfunds: MutualFund[];
+	returnRequest: ReturnRequest;
+}) {
+	const { mutualfunds, returnRequest } = props;
 
 	if (mutualfunds.length === 0) {
 		return (
@@ -81,7 +79,9 @@ function RollingReturnsTable(
 							Mutual Fund
 						</TableHead>
 						<TableHead className='text-center'>
-							{rollingReturnTypeText(props.rollingReturnType)}
+							{rollingReturnTypeText(
+								returnRequest.rollingReturnType,
+							)}
 						</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -90,7 +90,7 @@ function RollingReturnsTable(
 						<TableRow key={mf.schemeCode}>
 							<TableCell>{mf.schemeName}</TableCell>
 							<RollingReturnsTableCell
-								{...props}
+								returnRequest={returnRequest}
 								mutualfund={mf}
 							/>
 						</TableRow>
@@ -101,12 +101,15 @@ function RollingReturnsTable(
 	);
 }
 
-function RollingReturnsTableCell(
-	props: {
-		mutualfund: MutualFund;
-	} & ReturnRequest,
-) {
-	const rollingReturnsQuery = useRollingReturnsQuery(props);
+function RollingReturnsTableCell(props: {
+	mutualfund: MutualFund;
+	returnRequest: ReturnRequest;
+}) {
+	const { mutualfund, returnRequest } = props;
+	const rollingReturnsQuery = useRollingReturnsQuery(
+		returnRequest,
+		mutualfund,
+	);
 
 	if (rollingReturnsQuery.isFetching) {
 		return (
@@ -132,7 +135,7 @@ function RollingReturnsTableCell(
 
 	const rollingReturnValue = calculateRollingReturns(
 		returns,
-		props.rollingReturnType,
+		returnRequest.rollingReturnType,
 	);
 
 	return (

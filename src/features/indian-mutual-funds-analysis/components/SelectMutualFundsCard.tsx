@@ -20,11 +20,12 @@ import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import fuzzysort from 'fuzzysort';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { MutualFund } from '@/features/indian-mutual-funds-analysis/lib/types';
+import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
 
 const schema = z.object({
 	mfSchemeCode: z.coerce
@@ -37,12 +38,13 @@ const schema = z.object({
 		}),
 });
 
+const LoadedMutualFundSearchForm = withMutualFunds(MutualFundSearchForm);
+const LoadedMutualFundsDisplay = withMutualFunds(MutualFundsDisplay);
+
 export default function SelectMutualFundsCard({
 	mutualFundList,
-	addedMutualFunds,
 }: {
 	mutualFundList: MutualFund[];
-	addedMutualFunds: MutualFund[];
 }) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
@@ -50,11 +52,8 @@ export default function SelectMutualFundsCard({
 				<CardTitle>Mutual Funds</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<MutualFundSearchForm
-					mutualFundList={mutualFundList}
-					addedMutualFunds={addedMutualFunds}
-				/>
-				<MutualFundsDisplay addedMutualFunds={addedMutualFunds} />
+				<LoadedMutualFundSearchForm mutualFundList={mutualFundList} />
+				<LoadedMutualFundsDisplay />
 			</CardContent>
 		</Card>
 	);
@@ -62,10 +61,10 @@ export default function SelectMutualFundsCard({
 
 function MutualFundSearchForm({
 	mutualFundList,
-	addedMutualFunds,
+	mutualfunds,
 }: {
 	mutualFundList: MutualFund[];
-	addedMutualFunds: MutualFund[];
+	mutualfunds: MutualFund[];
 }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -89,7 +88,7 @@ function MutualFundSearchForm({
 		.map((x) => x.obj as MutualFund)
 		.filter(
 			(mutualfund) =>
-				!addedMutualFunds.find(
+				!mutualfunds.find(
 					(a) => a.schemeCode === mutualfund.schemeCode,
 				),
 		);
@@ -200,12 +199,8 @@ function MutualFundSearchForm({
 	);
 }
 
-function MutualFundsDisplay({
-	addedMutualFunds,
-}: {
-	addedMutualFunds: MutualFund[];
-}) {
-	if (!addedMutualFunds.length) {
+function MutualFundsDisplay({ mutualfunds }: { mutualfunds: MutualFund[] }) {
+	if (!mutualfunds.length) {
 		return null;
 	}
 
@@ -214,7 +209,7 @@ function MutualFundsDisplay({
 			<CardTitle className='text-base m-2 mt-4'>
 				Added Mutual Funds:
 			</CardTitle>
-			{addedMutualFunds.map((mutualfund) => (
+			{mutualfunds.map((mutualfund) => (
 				<MutualFundDisplayItem
 					mutualfund={mutualfund}
 					key={mutualfund.schemeCode}

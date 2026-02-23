@@ -30,12 +30,18 @@ import {
 import LoadingComponent from '@/components/loading-component';
 import ErrorComponent from '@/components/error-component';
 import { DateTime } from 'luxon';
+import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
+import { useIsMobile } from '@/hooks/use-mobile';
 
-export default function ReturnsChartCard(
-	props: {
-		mutualfunds: MutualFund[];
-	} & ReturnRequest,
-) {
+const LoadedReturnsChart = withMutualFunds(ReturnsChart);
+
+export default function ReturnsChartCard(props: ReturnRequest) {
+	const isMobile = useIsMobile();
+
+	if (isMobile) {
+		return null;
+	}
+
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex flex-col md:flex-row md:items-center gap-4 space-y-2 md:space-y-0 border-b py-4'>
@@ -50,20 +56,22 @@ export default function ReturnsChartCard(
 				</div>
 			</CardHeader>
 			<CardContent className='p-6'>
-				<ReturnsChart {...props} />
+				<LoadedReturnsChart returnRequest={props} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function ReturnsChart(
-	props: {
-		mutualfunds: MutualFund[];
-	} & ReturnRequest,
-) {
-	const { mutualfunds } = props;
+function ReturnsChart(props: {
+	mutualfunds: MutualFund[];
+	returnRequest: ReturnRequest;
+}) {
+	const { mutualfunds, returnRequest } = props;
 
-	const mutualFundReturnQueries = useReturnQueries(props);
+	const mutualFundReturnQueries = useReturnQueries(
+		returnRequest,
+		mutualfunds,
+	);
 
 	if (mutualfunds.length === 0) {
 		return (
@@ -149,8 +157,8 @@ function ReturnsChart(
 					unit={'%'}
 					label={{
 						value: investmentDurationWithReturnTypeText(
-							props.investmentDuration,
-							props.returnType,
+							returnRequest.investmentDuration,
+							returnRequest.returnType,
 						),
 						position: 'insideLeft',
 						angle: -90,

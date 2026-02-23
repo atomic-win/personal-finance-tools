@@ -1,8 +1,5 @@
 'use client';
-import {
-	useMutualFundListQuery,
-	useMutualFundQueries,
-} from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import { useMutualFundListQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
 import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components/ReturnsChartCard';
 import RollingReturnsTableCard from '@/features/indian-mutual-funds-analysis/components/RollingReturnsTableCard';
 import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
@@ -19,7 +16,6 @@ import { Suspense } from 'react';
 import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
 import LoadingComponent from '@/components/loading-component';
 import ErrorComponent from '@/components/error-component';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 export default function ReturnsPage({
 	title,
@@ -66,13 +62,8 @@ export default function ReturnsPage({
 }
 
 function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
-	const isMobile = useIsMobile();
 	const searchParams = useSearchParams();
 	const mutualFundListQuery = useMutualFundListQuery();
-
-	const mutualFundQueries = useMutualFundQueries(
-		searchParams.getAll('mfSchemeCode').map(Number),
-	);
 
 	if (mutualFundListQuery.isFetching) {
 		return (
@@ -83,18 +74,6 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 	if (mutualFundListQuery.isError) {
 		return (
 			<ErrorComponent errorMessage='Failed to fetch mutual fund list' />
-		);
-	}
-
-	if (mutualFundQueries.some((mfq) => mfq.isFetching)) {
-		return (
-			<LoadingComponent loadingMessage='Fetching mutual fund data...' />
-		);
-	}
-
-	if (mutualFundQueries.some((mfq) => mfq.isError)) {
-		return (
-			<ErrorComponent errorMessage='Failed to fetch mutual fund data' />
 		);
 	}
 
@@ -122,10 +101,6 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		? (searchParams.get('rollingReturnType') as RollingReturnType)
 		: RollingReturnType.Avg;
 
-	const addedMutualfunds = (mutualFundQueries || [])
-		.map((r) => r.data!)
-		.filter((mf) => mf !== null && !!mf.schemeName);
-
 	const returnsRequest = {
 		investmentDuration,
 		returnType,
@@ -140,21 +115,12 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 		<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
 			<div className='order-2 md:order-1 md:col-span-2 space-y-4'>
 				<ReturnsForm {...returnsRequest} />
-				{!isMobile && (
-					<ReturnsChartCard
-						mutualfunds={addedMutualfunds}
-						{...returnsRequest}
-					/>
-				)}
-				<RollingReturnsTableCard
-					mutualfunds={addedMutualfunds}
-					{...returnsRequest}
-				/>
+				<ReturnsChartCard {...returnsRequest} />
+				<RollingReturnsTableCard {...returnsRequest} />
 			</div>
 			<div className='order-1 md:order-2'>
 				<SelectMutualFundsCard
 					mutualFundList={mutualFundListQuery.data!}
-					addedMutualFunds={addedMutualfunds}
 				/>
 			</div>
 		</div>
