@@ -3,7 +3,7 @@ export type MutualFund = {
 	schemeName: string;
 	earliestDate: string;
 	lastDate: string;
-	navs: Map<string, number>;
+	navs: Record<string, number>;
 };
 
 export type ReturnType = 'cagr' | 'sip' | 'swp';

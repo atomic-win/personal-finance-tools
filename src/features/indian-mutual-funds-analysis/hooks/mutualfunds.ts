@@ -80,7 +80,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 					schemeName,
 					earliestDate,
 					lastDate,
-					navs,
+					navs: Object.fromEntries(navs) as Record<string, number>,
 				} as MutualFund;
 			},
 		})),
