@@ -1,5 +1,4 @@
 'use client';
-import { useMutualFundListQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
 import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components/ReturnsChartCard';
 import RollingReturnsTableCard from '@/features/indian-mutual-funds-analysis/components/RollingReturnsTableCard';
 import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
@@ -14,8 +13,6 @@ import {
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Suspense } from 'react';
 import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
-import LoadingComponent from '@/components/loading-component';
-import ErrorComponent from '@/components/error-component';
 
 export default function ReturnsPage({
 	title,
@@ -63,19 +60,6 @@ export default function ReturnsPage({
 
 function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 	const searchParams = useSearchParams();
-	const mutualFundListQuery = useMutualFundListQuery();
-
-	if (mutualFundListQuery.isFetching) {
-		return (
-			<LoadingComponent loadingMessage='Fetching mutual fund list...' />
-		);
-	}
-
-	if (mutualFundListQuery.isError) {
-		return (
-			<ErrorComponent errorMessage='Failed to fetch mutual fund list' />
-		);
-	}
 
 	const frequency = searchParams.get('frequency')
 		? (searchParams.get('frequency') as Frequency)
@@ -119,9 +103,7 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 				<RollingReturnsTableCard {...returnsRequest} />
 			</div>
 			<div className='order-1 md:order-2'>
-				<SelectMutualFundsCard
-					mutualFundList={mutualFundListQuery.data!}
-				/>
+				<SelectMutualFundsCard />
 			</div>
 		</div>
 	);

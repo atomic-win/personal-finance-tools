@@ -25,7 +25,9 @@ import fuzzysort from 'fuzzysort';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { MutualFund } from '@/features/indian-mutual-funds-analysis/lib/types';
-import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
+import { useMutualFundListQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import ErrorComponent from '@/components/error-component';
+import LoadingComponent from '@/components/loading-component';
 
 const schema = z.object({
 	mfSchemeCode: z.coerce
@@ -38,33 +40,51 @@ const schema = z.object({
 		}),
 });
 
-const LoadedMutualFundSearchForm = withMutualFunds(MutualFundSearchForm);
-const LoadedMutualFundsDisplay = withMutualFunds(MutualFundsDisplay);
+export default function SelectMutualFundsCard() {
+	const searchParams = useSearchParams();
+	const mutualFundListQuery = useMutualFundListQuery();
 
-export default function SelectMutualFundsCard({
-	mutualFundList,
-}: {
-	mutualFundList: MutualFund[];
-}) {
+	if (mutualFundListQuery.isFetching) {
+		return (
+			<LoadingComponent loadingMessage='Fetching mutual fund list...' />
+		);
+	}
+
+	if (mutualFundListQuery.isError) {
+		return (
+			<ErrorComponent errorMessage='Failed to fetch mutual fund list' />
+		);
+	}
+
+	const schemeCodes = searchParams
+		.getAll('mfSchemeCode')
+		.map((code) => parseInt(code));
+
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>Mutual Funds</CardTitle>
 			</CardHeader>
 			<CardContent>
-				<LoadedMutualFundSearchForm mutualFundList={mutualFundList} />
-				<LoadedMutualFundsDisplay />
+				<MutualFundSearchForm
+					mutualfunds={mutualFundListQuery.data!}
+					schemeCodes={schemeCodes}
+				/>
+				<MutualFundsDisplay
+					mutualfunds={mutualFundListQuery.data!}
+					schemeCodes={schemeCodes}
+				/>
 			</CardContent>
 		</Card>
 	);
 }
 
 function MutualFundSearchForm({
-	mutualFundList,
 	mutualfunds,
+	schemeCodes,
 }: {
-	mutualFundList: MutualFund[];
 	mutualfunds: MutualFund[];
+	schemeCodes: number[];
 }) {
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
@@ -80,18 +100,13 @@ function MutualFundSearchForm({
 	});
 
 	const searchResults = fuzzysort
-		.go(mfSearchText, mutualFundList || [], {
+		.go(mfSearchText, mutualfunds, {
 			threshold: 0.5,
 			limit: 10,
 			key: 'schemeName',
 		})
 		.map((x) => x.obj as MutualFund)
-		.filter(
-			(mutualfund) =>
-				!mutualfunds.find(
-					(a) => a.schemeCode === mutualfund.schemeCode,
-				),
-		);
+		.filter((mutualfund) => !schemeCodes.includes(mutualfund.schemeCode));
 
 	function addSchemeCode() {
 		const params = new URLSearchParams(searchParams);
@@ -199,8 +214,14 @@ function MutualFundSearchForm({
 	);
 }
 
-function MutualFundsDisplay({ mutualfunds }: { mutualfunds: MutualFund[] }) {
-	if (!mutualfunds.length) {
+function MutualFundsDisplay({
+	mutualfunds,
+	schemeCodes,
+}: {
+	mutualfunds: MutualFund[];
+	schemeCodes: number[];
+}) {
+	if (!schemeCodes.length) {
 		return null;
 	}
 
@@ -209,10 +230,12 @@ function MutualFundsDisplay({ mutualfunds }: { mutualfunds: MutualFund[] }) {
 			<CardTitle className='text-base m-2 mt-4'>
 				Added Mutual Funds:
 			</CardTitle>
-			{mutualfunds.map((mutualfund) => (
+			{schemeCodes.map((schemeCode) => (
 				<MutualFundDisplayItem
-					mutualfund={mutualfund}
-					key={mutualfund.schemeCode}
+					mutualfund={
+						mutualfunds.find((mf) => mf.schemeCode === schemeCode)!
+					}
+					key={schemeCode}
 				/>
 			))}
 		</div>
