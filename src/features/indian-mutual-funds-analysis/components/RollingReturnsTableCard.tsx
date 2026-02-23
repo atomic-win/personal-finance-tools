@@ -29,41 +29,44 @@ import {
 import LoadingComponent from '@/components/loading-component';
 import ErrorComponent from '@/components/error-component';
 import percentile from 'percentile';
+import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
 
-export default function RollingReturnsTableCard(
-	props: {
-		mutualfunds: MutualFund[];
-	} & ReturnRequest,
-) {
+const LoadedRollingReturnsTable = withMutualFunds(RollingReturnsTable);
+
+export default function RollingReturnsTableCard({
+	returnRequest,
+}: {
+	returnRequest: ReturnRequest;
+}) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>
 					{`${investmentDurationWithReturnTypeText(
-						props.investmentDuration,
-						props.returnType,
+						returnRequest.investmentDuration,
+						returnRequest.returnType,
 					)} Rolling Returns`}
 				</CardTitle>
 				<CardDescription>
 					{`${rollingReturnTypeText(
-						props.rollingReturnType,
-					)} for the last ${displayPresetTimeDuration(props.rollingWindow)}`}
+						returnRequest.rollingReturnType,
+					)} for the last ${displayPresetTimeDuration(returnRequest.rollingWindow)}`}
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<RollingReturnsTable {...props} />
+				<LoadedRollingReturnsTable returnRequest={returnRequest} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function RollingReturnsTable(
-	props: {
-		mutualfunds: MutualFund[];
-	} & ReturnRequest,
-) {
-	const { mutualfunds } = props;
-
+function RollingReturnsTable({
+	mutualfunds,
+	returnRequest,
+}: {
+	mutualfunds: MutualFund[];
+	returnRequest: ReturnRequest;
+}) {
 	if (mutualfunds.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
@@ -81,7 +84,9 @@ function RollingReturnsTable(
 							Mutual Fund
 						</TableHead>
 						<TableHead className='text-center'>
-							{rollingReturnTypeText(props.rollingReturnType)}
+							{rollingReturnTypeText(
+								returnRequest.rollingReturnType,
+							)}
 						</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -90,7 +95,7 @@ function RollingReturnsTable(
 						<TableRow key={mf.schemeCode}>
 							<TableCell>{mf.schemeName}</TableCell>
 							<RollingReturnsTableCell
-								{...props}
+								returnRequest={returnRequest}
 								mutualfund={mf}
 							/>
 						</TableRow>
@@ -101,12 +106,17 @@ function RollingReturnsTable(
 	);
 }
 
-function RollingReturnsTableCell(
-	props: {
-		mutualfund: MutualFund;
-	} & ReturnRequest,
-) {
-	const rollingReturnsQuery = useRollingReturnsQuery(props);
+function RollingReturnsTableCell({
+	mutualfund,
+	returnRequest,
+}: {
+	mutualfund: MutualFund;
+	returnRequest: ReturnRequest;
+}) {
+	const rollingReturnsQuery = useRollingReturnsQuery(
+		returnRequest,
+		mutualfund,
+	);
 
 	if (rollingReturnsQuery.isFetching) {
 		return (
@@ -132,7 +142,7 @@ function RollingReturnsTableCell(
 
 	const rollingReturnValue = calculateRollingReturns(
 		returns,
-		props.rollingReturnType,
+		returnRequest.rollingReturnType,
 	);
 
 	return (

@@ -21,9 +21,6 @@ export function useMutualFundListQuery() {
 			return (await mfApiClient.get('mf')).data as MutualFund[];
 		},
 		select: (data) => _.uniqBy(data, (mf) => mf.schemeCode),
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
-		refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
-		refetchIntervalInBackground: true,
 	});
 }
 
@@ -32,13 +29,12 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 		queries: schemeCodes.map((schemeCode) => ({
 			queryKey: ['mutualfunds', schemeCode],
 			queryFn: async () => {
-				return (await mfApiClient.get(`mf/${schemeCode}`)).data;
-			},
-			select: (apiResponse: {
-				meta: { scheme_code: number; scheme_name: string };
-				data: { date: string; nav: number }[];
-			}) => {
-				const schemeCode = apiResponse.meta.scheme_code;
+				const apiResponse = (await mfApiClient.get(`mf/${schemeCode}`))
+					.data as {
+					meta: { scheme_code: number; scheme_name: string };
+					data: { date: string; nav: number }[];
+				};
+
 				const schemeName = apiResponse.meta.scheme_name;
 				const navs = new Map<string, number>();
 
@@ -84,22 +80,18 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 					schemeName,
 					earliestDate,
 					lastDate,
-					navs,
+					navs: Object.fromEntries(navs) as Record<string, number>,
 				} as MutualFund;
 			},
-			staleTime: 1000 * 60 * 60, // 1 hour
-			refetchInterval: 1000 * 60 * 60, // 1 hour
-			refetchIntervalInBackground: true,
 		})),
 	});
 }
 
 export function useReturnQueries(
-	request: ReturnRequest & {
-		mutualfunds: MutualFund[];
-	},
+	request: ReturnRequest,
+	mutualfunds: MutualFund[],
 ) {
-	const { mutualfunds, rollingWindow } = request;
+	const { rollingWindow } = request;
 	const earliestDate = DateTime.min(
 		...mutualfunds.map((mf) => DateTime.fromISO(mf.lastDate)),
 		DateTime.local(),
@@ -109,10 +101,7 @@ export function useReturnQueries(
 
 	return useQueries({
 		queries: mutualfunds.map((mutualfund) => ({
-			...createReturnsQuery({
-				...request,
-				mutualfund,
-			}),
+			...createReturnsQuery(request, mutualfund),
 			select: (returns: Return[]) =>
 				returns
 					.filter((r) => DateTime.fromISO(r.date) >= earliestDate)
@@ -125,16 +114,13 @@ export function useReturnQueries(
 }
 
 export function useRollingReturnsQuery(
-	request: ReturnRequest & {
-		mutualfund: MutualFund;
-	},
+	request: ReturnRequest,
+	mutualfund: MutualFund,
 ) {
 	return useQuery({
-		...createReturnsQuery({
-			...request,
-		}),
+		...createReturnsQuery(request, mutualfund),
 		select: (returns: Return[]) => {
-			const startDate = DateTime.fromISO(request.mutualfund.lastDate)
+			const startDate = DateTime.fromISO(mutualfund.lastDate)
 				.minus(getLuxonDuration(request.rollingWindow))
 				.plus({ days: 1 });
 
@@ -142,9 +128,10 @@ export function useRollingReturnsQuery(
 				.filter((r) => DateTime.fromISO(r.date) >= startDate)
 				.map((r) => r.return);
 
-			const totalDays = DateTime.fromISO(
-				request.mutualfund.lastDate,
-			).diff(startDate, 'days').days;
+			const totalDays = DateTime.fromISO(mutualfund.lastDate).diff(
+				startDate,
+				'days',
+			).days;
 
 			const availableDays = a.length;
 			const shouldUseData = availableDays / Math.max(1, totalDays) >= 0.9;
@@ -154,13 +141,8 @@ export function useRollingReturnsQuery(
 	});
 }
 
-function createReturnsQuery(
-	request: ReturnRequest & {
-		mutualfund: MutualFund;
-	},
-) {
+function createReturnsQuery(request: ReturnRequest, mutualfund: MutualFund) {
 	const {
-		mutualfund,
 		investmentDuration,
 		returnType,
 		frequency,
@@ -213,8 +195,5 @@ function createReturnsQuery(
 				worker.postMessage({ mutualfund, request });
 			});
 		},
-		staleTime: 1000 * 60 * 60, // 1 hour
-		refetchInterval: 1000 * 60 * 60, // 1 hour
-		refetchIntervalInBackground: true,
 	};
 }

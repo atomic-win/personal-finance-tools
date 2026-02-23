@@ -8,7 +8,7 @@ import {
 import { DateTime, DurationLike } from 'luxon';
 
 export function evaluateMutualFund(
-	navs: Map<string, number>,
+	navs: Record<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime,
 ): number {
@@ -173,7 +173,7 @@ export function getLuxonDuration(duration: PresetTimeDurations): DurationLike {
 }
 
 function calculateCagrReturn(
-	navs: Map<string, number>,
+	navs: Record<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime,
 ) {
@@ -185,7 +185,7 @@ function calculateCagrReturn(
 	return (
 		100 *
 		(Math.pow(
-			navs.get(endDate.toISODate()!)! / navs.get(date.toISODate()!)!,
+			navs[endDate.toISODate()!]! / navs[date.toISODate()!]!,
 			1 / Math.max(1, endDate.diff(date, 'years')!.years),
 		) -
 			1)
@@ -193,7 +193,7 @@ function calculateCagrReturn(
 }
 
 function calculateSipReturn(
-	navs: Map<string, number>,
+	navs: Record<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime,
 ) {
@@ -224,7 +224,7 @@ function calculateSipReturn(
 			);
 		}
 
-		totalUnits += investmentAmount / navs.get(currentDate.toISODate()!)!;
+		totalUnits += investmentAmount / navs[currentDate.toISODate()!]!;
 
 		xirrInputs.push({
 			years: endDate.diff(currentDate, 'years')!.years,
@@ -234,14 +234,14 @@ function calculateSipReturn(
 
 	xirrInputs.push({
 		years: 0,
-		amount: -totalUnits * navs.get(endDate.toISODate()!)!,
+		amount: -totalUnits * navs[endDate.toISODate()!]!,
 	});
 
 	return calculateXIRR(xirrInputs);
 }
 
 function calculateSwpReturn(
-	navs: Map<string, number>,
+	navs: Record<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime,
 ) {
@@ -272,7 +272,7 @@ function calculateSwpReturn(
 			);
 		}
 
-		totalUnits += investmentAmount / navs.get(currentDate.toISODate()!)!;
+		totalUnits += investmentAmount / navs[currentDate.toISODate()!]!;
 
 		xirrInputs.push({
 			years: endDate.diff(currentDate, 'years')!.years,
@@ -282,7 +282,7 @@ function calculateSwpReturn(
 
 	xirrInputs.push({
 		years: endDate.diff(startDate, 'years')!.years,
-		amount: totalUnits * navs.get(startDate.toISODate()!)!,
+		amount: totalUnits * navs[startDate.toISODate()!]!,
 	});
 
 	return calculateXIRR(xirrInputs);
