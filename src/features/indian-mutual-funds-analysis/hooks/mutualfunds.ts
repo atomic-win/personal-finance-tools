@@ -29,13 +29,12 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 		queries: schemeCodes.map((schemeCode) => ({
 			queryKey: ['mutualfunds', schemeCode],
 			queryFn: async () => {
-				return (await mfApiClient.get(`mf/${schemeCode}`)).data;
-			},
-			select: (apiResponse: {
-				meta: { scheme_code: number; scheme_name: string };
-				data: { date: string; nav: number }[];
-			}) => {
-				const schemeCode = apiResponse.meta.scheme_code;
+				const apiResponse = (await mfApiClient.get(`mf/${schemeCode}`))
+					.data as {
+					meta: { scheme_code: number; scheme_name: string };
+					data: { date: string; nav: number }[];
+				};
+
 				const schemeName = apiResponse.meta.scheme_name;
 				const navs = new Map<string, number>();
 
