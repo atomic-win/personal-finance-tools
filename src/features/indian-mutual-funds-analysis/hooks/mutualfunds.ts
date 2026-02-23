@@ -21,9 +21,6 @@ export function useMutualFundListQuery() {
 			return (await mfApiClient.get('mf')).data as MutualFund[];
 		},
 		select: (data) => _.uniqBy(data, (mf) => mf.schemeCode),
-		staleTime: 1000 * 60 * 60 * 24, // 24 hours
-		refetchInterval: 1000 * 60 * 60 * 24, // 24 hours
-		refetchIntervalInBackground: true,
 	});
 }
 
@@ -87,9 +84,6 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 					navs,
 				} as MutualFund;
 			},
-			staleTime: 1000 * 60 * 60, // 1 hour
-			refetchInterval: 1000 * 60 * 60, // 1 hour
-			refetchIntervalInBackground: true,
 		})),
 	});
 }
@@ -202,8 +196,5 @@ function createReturnsQuery(request: ReturnRequest, mutualfund: MutualFund) {
 				worker.postMessage({ mutualfund, request });
 			});
 		},
-		staleTime: 1000 * 60 * 60, // 1 hour
-		refetchInterval: 1000 * 60 * 60, // 1 hour
-		refetchIntervalInBackground: true,
 	};
 }
