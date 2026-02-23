@@ -35,7 +35,11 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const LoadedReturnsChart = withMutualFunds(ReturnsChart);
 
-export default function ReturnsChartCard(props: ReturnRequest) {
+export default function ReturnsChartCard({
+	returnRequest,
+}: {
+	returnRequest: ReturnRequest;
+}) {
 	const isMobile = useIsMobile();
 
 	if (isMobile) {
@@ -46,28 +50,31 @@ export default function ReturnsChartCard(props: ReturnRequest) {
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex flex-col md:flex-row md:items-center gap-4 space-y-2 md:space-y-0 border-b py-4'>
 				<div className='grid text-center md:text-left w-full gap-2'>
-					<CardTitle>{returnTypeText(props.returnType)}</CardTitle>
+					<CardTitle>
+						{returnTypeText(returnRequest.returnType)}
+					</CardTitle>
 					<CardDescription>
 						{`Showing ${investmentDurationWithReturnTypeText(
-							props.investmentDuration,
-							props.returnType,
-						)} for the last ${displayPresetTimeDuration(props.rollingWindow)}`}
+							returnRequest.investmentDuration,
+							returnRequest.returnType,
+						)} for the last ${displayPresetTimeDuration(returnRequest.rollingWindow)}`}
 					</CardDescription>
 				</div>
 			</CardHeader>
 			<CardContent className='p-6'>
-				<LoadedReturnsChart returnRequest={props} />
+				<LoadedReturnsChart returnRequest={returnRequest} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function ReturnsChart(props: {
+function ReturnsChart({
+	mutualfunds,
+	returnRequest,
+}: {
 	mutualfunds: MutualFund[];
 	returnRequest: ReturnRequest;
 }) {
-	const { mutualfunds, returnRequest } = props;
-
 	const mutualFundReturnQueries = useReturnQueries(
 		returnRequest,
 		mutualfunds,

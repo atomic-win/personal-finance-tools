@@ -33,35 +33,40 @@ import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/wit
 
 const LoadedRollingReturnsTable = withMutualFunds(RollingReturnsTable);
 
-export default function RollingReturnsTableCard(props: ReturnRequest) {
+export default function RollingReturnsTableCard({
+	returnRequest,
+}: {
+	returnRequest: ReturnRequest;
+}) {
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader>
 				<CardTitle>
 					{`${investmentDurationWithReturnTypeText(
-						props.investmentDuration,
-						props.returnType,
+						returnRequest.investmentDuration,
+						returnRequest.returnType,
 					)} Rolling Returns`}
 				</CardTitle>
 				<CardDescription>
 					{`${rollingReturnTypeText(
-						props.rollingReturnType,
-					)} for the last ${displayPresetTimeDuration(props.rollingWindow)}`}
+						returnRequest.rollingReturnType,
+					)} for the last ${displayPresetTimeDuration(returnRequest.rollingWindow)}`}
 				</CardDescription>
 			</CardHeader>
 			<CardContent>
-				<LoadedRollingReturnsTable returnRequest={props} />
+				<LoadedRollingReturnsTable returnRequest={returnRequest} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function RollingReturnsTable(props: {
+function RollingReturnsTable({
+	mutualfunds,
+	returnRequest,
+}: {
 	mutualfunds: MutualFund[];
 	returnRequest: ReturnRequest;
 }) {
-	const { mutualfunds, returnRequest } = props;
-
 	if (mutualfunds.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
@@ -101,11 +106,13 @@ function RollingReturnsTable(props: {
 	);
 }
 
-function RollingReturnsTableCell(props: {
+function RollingReturnsTableCell({
+	mutualfund,
+	returnRequest,
+}: {
 	mutualfund: MutualFund;
 	returnRequest: ReturnRequest;
 }) {
-	const { mutualfund, returnRequest } = props;
 	const rollingReturnsQuery = useRollingReturnsQuery(
 		returnRequest,
 		mutualfund,

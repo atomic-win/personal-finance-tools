@@ -34,7 +34,12 @@ const schema = z.object({
 	rollingReturnType: z.nativeEnum(RollingReturnType),
 });
 
-export default function ReturnsForm(props: ReturnRequest) {
+export default function ReturnsForm({
+	returnRequest,
+}: {
+	returnRequest: ReturnRequest;
+}) {
+	const props = schema.parse(returnRequest);
 	const searchParams = useSearchParams();
 	const pathname = usePathname();
 	const { replace } = useRouter();
@@ -87,7 +92,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 				className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4'
 				onSubmit={(e) => e.preventDefault()}
 			>
-				{props.returnType !== 'cagr' && (
+				{returnRequest.returnType !== 'cagr' && (
 					<>
 						<Controller
 							control={form.control}
@@ -95,7 +100,9 @@ export default function ReturnsForm(props: ReturnRequest) {
 							render={({ field }) => (
 								<Field className='flex flex-col items-start'>
 									<FieldLabel>
-										{getFrequencyLabel(props.returnType)}
+										{getFrequencyLabel(
+											returnRequest.returnType,
+										)}
 									</FieldLabel>
 									<Select
 										onValueChange={(value) => {
@@ -211,7 +218,9 @@ export default function ReturnsForm(props: ReturnRequest) {
 					render={({ field }) => (
 						<Field className='flex flex-col items-start'>
 							<FieldLabel>
-								{getInvestmentDurationLabel(props.returnType)}
+								{getInvestmentDurationLabel(
+									returnRequest.returnType,
+								)}
 							</FieldLabel>
 							<Select
 								onValueChange={(value) => {
