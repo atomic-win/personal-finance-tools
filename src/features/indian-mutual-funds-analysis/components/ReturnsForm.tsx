@@ -102,7 +102,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 											field.onChange(value);
 											form.handleSubmit(onFormChange)();
 										}}
-										defaultValue={field.value}
+										value={field.value}
 									>
 										<SelectTrigger className='w-full rounded-lg'>
 											<SelectValue placeholder='Select Frequency'>
@@ -143,7 +143,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 											field.onChange(value);
 											form.handleSubmit(onFormChange)();
 										}}
-										defaultValue={field.value}
+										value={field.value}
 									>
 										<SelectTrigger className='w-full rounded-lg'>
 											<SelectValue placeholder='Select Step Up Frequency'>
@@ -218,7 +218,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 									field.onChange(value);
 									form.handleSubmit(onFormChange)();
 								}}
-								defaultValue={field.value}
+								value={field.value}
 							>
 								<SelectTrigger className='w-full rounded-lg'>
 									<SelectValue placeholder='Select Investment Duration'>
@@ -259,7 +259,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 									field.onChange(value);
 									form.handleSubmit(onFormChange)();
 								}}
-								defaultValue={field.value}
+								value={field.value}
 							>
 								<SelectTrigger className='w-full rounded-lg'>
 									<SelectValue placeholder='Select Rolling Window'>
@@ -298,7 +298,7 @@ export default function ReturnsForm(props: ReturnRequest) {
 									field.onChange(value);
 									form.handleSubmit(onFormChange)();
 								}}
-								defaultValue={field.value}
+								value={field.value}
 							>
 								<SelectTrigger className='w-full rounded-lg'>
 									<SelectValue placeholder='Select Rolling Return Type'>
