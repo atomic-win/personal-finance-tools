@@ -1,10 +1,10 @@
 'use client';
-import {
-	RdCalculator,
-	RdCalculatorSchema,
-} from '@/features/calculators/lib/types';
 import CalculatorPage from '@/features/calculators/components/CalculatorPage';
 import RdCalculatorResult from '@/features/calculators/components/RdCalculatorResult';
+import {
+	type RdCalculator,
+	RdCalculatorSchema,
+} from '@/features/calculators/lib/types';
 
 const formFields = [
 	{

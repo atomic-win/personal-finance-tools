@@ -1,18 +1,18 @@
 'use client';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components/ReturnsChartCard';
+import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
 import RollingReturnsTableCard from '@/features/indian-mutual-funds-analysis/components/RollingReturnsTableCard';
 import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
-import { useSearchParams } from 'next/navigation';
 import {
 	Frequency,
 	PresetTimeDurations,
-	ReturnRequest,
-	ReturnType,
+	type ReturnRequest,
+	type ReturnType,
 	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
-import { Suspense } from 'react';
-import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
 
 export default function ReturnsPage({
 	title,
@@ -45,9 +45,7 @@ export default function ReturnsPage({
 				]}
 			/>
 			<div className='px-4 space-y-2'>
-				<h1 className='text-2xl font-bold'>
-					Indian Mutual Funds Analysis
-				</h1>
+				<h1 className='text-2xl font-bold'>Indian Mutual Funds Analysis</h1>
 				<h2 className='text-lg font-semibold'>{title} Returns</h2>
 				<p>{description}</p>
 				<Suspense>

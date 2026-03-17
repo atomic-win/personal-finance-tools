@@ -1,6 +1,6 @@
-import { SipCalculator } from '@/features/calculators/lib/types';
-import { calculateSipResult } from '@/features/calculators/lib/utils';
 import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
+import type { SipCalculator } from '@/features/calculators/lib/types';
+import { calculateSipResult } from '@/features/calculators/lib/utils';
 
 export default function SipCalculatorResult({
 	calculator,

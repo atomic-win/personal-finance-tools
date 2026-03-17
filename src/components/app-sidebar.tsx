@@ -1,5 +1,6 @@
 import { DollarSignIcon, Send } from 'lucide-react';
-
+import Link from 'next/link';
+import SettingsSidebarGroup from '@/components/settings-sidebar-group';
 import {
 	Sidebar,
 	SidebarContent,
@@ -14,8 +15,6 @@ import {
 	SidebarMenuSubItem,
 	SidebarRail,
 } from '@/components/ui/sidebar';
-import SettingsSidebarGroup from '@/components/settings-sidebar-group';
-import Link from 'next/link';
 
 const data = [
 	{
@@ -76,9 +75,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 									<DollarSignIcon className='size-4' />
 								</div>
 								<div className='flex flex-col gap-0.5 leading-none'>
-									<span className='font-semibold'>
-										Personal Finance Tools
-									</span>
+									<span className='font-semibold'>Personal Finance Tools</span>
 								</div>
 							</Link>
 						</SidebarMenuButton>
@@ -96,9 +93,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 								<SidebarMenuSub>
 									{item.items.map((item) => (
 										<SidebarMenuSubItem key={item.title}>
-											<SidebarMenuSubButton
-												href={item.url}
-											>
+											<SidebarMenuSubButton href={item.url}>
 												{item.title}
 											</SidebarMenuSubButton>
 										</SidebarMenuSubItem>
@@ -115,14 +110,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 					<SidebarGroupContent>
 						<SidebarMenu>
 							<SidebarMenuItem>
-								<SidebarMenuButton
-									size='sm'
-									className='w-full justify-center'
-								>
+								<SidebarMenuButton size='sm' className='w-full justify-center'>
 									<a
 										target='_blank'
 										href='https://forms.gle/hkvX3nzQcsBVn4xp7'
 										className='flex items-center gap-2'
+										rel='noopener'
 									>
 										<Send />
 										<span>Feedback</span>

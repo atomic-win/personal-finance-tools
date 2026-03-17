@@ -1,4 +1,13 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import fuzzysort from 'fuzzysort';
+import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import ErrorComponent from '@/components/error-component';
+import LoadingComponent from '@/components/loading-component';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
@@ -9,25 +18,15 @@ import {
 	CommandItem,
 	CommandList,
 } from '@/components/ui/command';
-import { Controller } from 'react-hook-form';
 import { Field, FieldError } from '@/components/ui/field';
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useState } from 'react';
-import fuzzysort from 'fuzzysort';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { MutualFund } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { useMutualFundListQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
-import ErrorComponent from '@/components/error-component';
-import LoadingComponent from '@/components/loading-component';
+import type { MutualFund } from '@/features/indian-mutual-funds-analysis/lib/types';
+import { cn } from '@/lib/utils';
 
 const schema = z.object({
 	mfSchemeCode: z.coerce
@@ -45,20 +44,16 @@ export default function SelectMutualFundsCard() {
 	const mutualFundListQuery = useMutualFundListQuery();
 
 	if (mutualFundListQuery.isFetching) {
-		return (
-			<LoadingComponent loadingMessage='Fetching mutual fund list...' />
-		);
+		return <LoadingComponent loadingMessage='Fetching mutual fund list...' />;
 	}
 
 	if (mutualFundListQuery.isError) {
-		return (
-			<ErrorComponent errorMessage='Failed to fetch mutual fund list' />
-		);
+		return <ErrorComponent errorMessage='Failed to fetch mutual fund list' />;
 	}
 
 	const schemeCodes = searchParams
 		.getAll('mfSchemeCode')
-		.map((code) => parseInt(code));
+		.map((x) => parseInt(x, 10));
 
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
@@ -67,10 +62,12 @@ export default function SelectMutualFundsCard() {
 			</CardHeader>
 			<CardContent>
 				<MutualFundSearchForm
+					// biome-ignore lint/style/noNonNullAssertion: We are sure that the data will always be available as we are checking for loading and error states above.
 					mutualfunds={mutualFundListQuery.data!}
 					schemeCodes={schemeCodes}
 				/>
 				<MutualFundsDisplay
+					// biome-ignore lint/style/noNonNullAssertion: We are sure that the data will always be available as we are checking for loading and error states above.
 					mutualfunds={mutualFundListQuery.data!}
 					schemeCodes={schemeCodes}
 				/>
@@ -134,16 +131,14 @@ function MutualFundSearchForm({
 									className={cn(
 										buttonVariants({ variant: 'outline' }),
 										'flex-1 w-full justify-between h-10 mb-2 sm:mb-0',
-										!field.value && 'text-muted-foreground',
+										!field.value && 'text-muted-foreground'
 									)}
 									role='combobox'
 								>
 									<span className='text-wrap truncate max-w-[80%]'>
 										{field.value
 											? searchResults.find(
-													(mutualfund) =>
-														mutualfund.schemeCode ===
-														field.value,
+													(mutualfund) => mutualfund.schemeCode === field.value
 												)?.schemeName
 											: 'Add a Mutual Fund'}
 									</span>
@@ -158,7 +153,7 @@ function MutualFundSearchForm({
 									Add
 								</Button>
 							</div>
-							<PopoverContent className='p-0 w-[var(--radix-popover-trigger-width)]'>
+							<PopoverContent className='p-0 w-(--anchor-width)'>
 								<Command>
 									<CommandInput
 										placeholder='Search Mutual Fund'
@@ -173,9 +168,7 @@ function MutualFundSearchForm({
 										<CommandGroup>
 											{searchResults.map((mutualfund) => (
 												<CommandItem
-													value={
-														mutualfund.schemeName
-													}
+													value={mutualfund.schemeName}
 													key={`${mutualfund.schemeCode} - ${mutualfund.schemeName}`}
 													onSelect={() => {
 														form.setValue(
@@ -183,17 +176,16 @@ function MutualFundSearchForm({
 															mutualfund.schemeCode,
 															{
 																shouldValidate: true,
-															},
+															}
 														);
 													}}
 												>
 													<Check
 														className={cn(
 															'mr-2 h-4 w-4',
-															mutualfund.schemeCode ===
-																field.value
+															mutualfund.schemeCode === field.value
 																? 'opacity-100'
-																: 'opacity-0',
+																: 'opacity-0'
 														)}
 													/>
 													{mutualfund.schemeName}
@@ -204,9 +196,7 @@ function MutualFundSearchForm({
 								</Command>
 							</PopoverContent>
 						</Popover>
-						<FieldError
-							errors={[form.formState.errors.mfSchemeCode]}
-						/>
+						<FieldError errors={[form.formState.errors.mfSchemeCode]} />
 					</Field>
 				)}
 			/>
@@ -227,14 +217,11 @@ function MutualFundsDisplay({
 
 	return (
 		<div className='space-y-2 mt-2'>
-			<CardTitle className='text-base m-2 mt-4'>
-				Added Mutual Funds:
-			</CardTitle>
+			<CardTitle className='text-base m-2 mt-4'>Added Mutual Funds:</CardTitle>
 			{schemeCodes.map((schemeCode) => (
 				<MutualFundDisplayItem
-					mutualfund={
-						mutualfunds.find((mf) => mf.schemeCode === schemeCode)!
-					}
+					// biome-ignore lint/style/noNonNullAssertion: We are sure that the mutual fund will always be available as we are controlling the scheme codes through the search form and URL params.
+					mutualfund={mutualfunds.find((mf) => mf.schemeCode === schemeCode)!}
 					key={schemeCode}
 				/>
 			))}

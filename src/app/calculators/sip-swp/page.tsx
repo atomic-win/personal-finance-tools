@@ -1,10 +1,10 @@
 'use client';
-import {
-	SipSwpCalculator,
-	sipSwpCalculatorSchema,
-} from '@/features/calculators/lib/types';
 import CalculatorPage from '@/features/calculators/components/CalculatorPage';
 import SipSwpCalculatorResult from '@/features/calculators/components/SipSwpCalculatorResult';
+import {
+	type SipSwpCalculator,
+	sipSwpCalculatorSchema,
+} from '@/features/calculators/lib/types';
 
 const formFields = [
 	{

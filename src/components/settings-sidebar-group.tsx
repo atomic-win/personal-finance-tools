@@ -1,26 +1,26 @@
 'use client';
-import {
-	SidebarGroup,
-	SidebarGroupLabel,
-	SidebarMenu,
-} from '@/components/ui/sidebar';
-import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
-import useUpdateSettingMutation from '@/hooks/useUpdateSettingMutation';
-import { useIpQuery } from '@/hooks/useIpQuery';
-import { useLocaleQuery } from '@/hooks/useLocaleQuery';
-import { cn, LOCALE_OPTIONS } from '@/lib/utils';
-import LoadingComponent from '@/components/loading-component';
-import ErrorComponent from '@/components/error-component';
-import { useEffect } from 'react';
 import _ from 'lodash';
+import { ChevronRight } from 'lucide-react';
+import { useEffect } from 'react';
+import ErrorComponent from '@/components/error-component';
+import LoadingComponent from '@/components/loading-component';
+import { buttonVariants } from '@/components/ui/button';
 import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { buttonVariants } from '@/components/ui/button';
-import { ChevronRight } from 'lucide-react';
+import {
+	SidebarGroup,
+	SidebarGroupLabel,
+	SidebarMenu,
+} from '@/components/ui/sidebar';
+import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
+import { useIpQuery } from '@/hooks/useIpQuery';
+import { useLocaleQuery } from '@/hooks/useLocaleQuery';
+import useUpdateSettingMutation from '@/hooks/useUpdateSettingMutation';
+import { cn, LOCALE_OPTIONS } from '@/lib/utils';
 
 export default function SettingsSidebarGroup() {
 	const ipQuery = useIpQuery();
@@ -44,12 +44,9 @@ export default function SettingsSidebarGroup() {
 				'en-US',
 			]).filter((locale) => LOCALE_OPTIONS.includes(locale));
 
-			const supportedLocales = Intl.NumberFormat.supportedLocalesOf(
-				locales,
-				{
-					localeMatcher: 'best fit',
-				},
-			);
+			const supportedLocales = Intl.NumberFormat.supportedLocalesOf(locales, {
+				localeMatcher: 'best fit',
+			});
 
 			supportedLocales.sort((a, b) => b.length - a.length);
 
@@ -79,9 +76,7 @@ export default function SettingsSidebarGroup() {
 	}
 
 	if (ipQuery.isLoading) {
-		return (
-			<LoadingComponent loadingMessage='Loading currency and locale...' />
-		);
+		return <LoadingComponent loadingMessage='Loading currency and locale...' />;
 	}
 
 	if (ipQuery.isError) {
@@ -116,7 +111,7 @@ export default function SettingsSidebarGroup() {
 								'w-full rounded-lg px-3 py-2 flex justify-between',
 								buttonVariants({
 									variant: 'outline',
-								}),
+								})
 							)}
 							aria-label='Select a value'
 						>

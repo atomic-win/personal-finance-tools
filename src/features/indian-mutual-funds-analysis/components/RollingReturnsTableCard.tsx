@@ -1,4 +1,6 @@
-import { useRollingReturnsQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import percentile from 'percentile';
+import ErrorComponent from '@/components/error-component';
+import LoadingComponent from '@/components/loading-component';
 import {
 	Card,
 	CardContent,
@@ -15,21 +17,19 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
+import { useRollingReturnsQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
 import {
-	MutualFund,
-	ReturnRequest,
+	type MutualFund,
+	type ReturnRequest,
 	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import { cn } from '@/lib/utils';
 import {
 	displayPresetTimeDuration,
 	investmentDurationWithReturnTypeText,
 	rollingReturnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
-import LoadingComponent from '@/components/loading-component';
-import ErrorComponent from '@/components/error-component';
-import percentile from 'percentile';
-import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
+import { cn } from '@/lib/utils';
 
 const LoadedRollingReturnsTable = withMutualFunds(RollingReturnsTable);
 
@@ -44,12 +44,12 @@ export default function RollingReturnsTableCard({
 				<CardTitle>
 					{`${investmentDurationWithReturnTypeText(
 						returnRequest.investmentDuration,
-						returnRequest.returnType,
+						returnRequest.returnType
 					)} Rolling Returns`}
 				</CardTitle>
 				<CardDescription>
 					{`${rollingReturnTypeText(
-						returnRequest.rollingReturnType,
+						returnRequest.rollingReturnType
 					)} for the last ${displayPresetTimeDuration(returnRequest.rollingWindow)}`}
 				</CardDescription>
 			</CardHeader>
@@ -80,13 +80,9 @@ function RollingReturnsTable({
 			<Table className='w-full'>
 				<TableHeader>
 					<TableRow>
-						<TableHead className='whitespace-nowrap'>
-							Mutual Fund
-						</TableHead>
+						<TableHead className='whitespace-nowrap'>Mutual Fund</TableHead>
 						<TableHead className='text-center'>
-							{rollingReturnTypeText(
-								returnRequest.rollingReturnType,
-							)}
+							{rollingReturnTypeText(returnRequest.rollingReturnType)}
 						</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -113,10 +109,7 @@ function RollingReturnsTableCell({
 	mutualfund: MutualFund;
 	returnRequest: ReturnRequest;
 }) {
-	const rollingReturnsQuery = useRollingReturnsQuery(
-		returnRequest,
-		mutualfund,
-	);
+	const rollingReturnsQuery = useRollingReturnsQuery(returnRequest, mutualfund);
 
 	if (rollingReturnsQuery.isFetching) {
 		return (
@@ -134,6 +127,7 @@ function RollingReturnsTableCell({
 		);
 	}
 
+	// biome-ignore lint/style/noNonNullAssertion: We are sure that the data will always be available as we are checking for loading and error states above.
 	const returns = rollingReturnsQuery.data!;
 
 	if (returns.length === 0) {
@@ -142,14 +136,14 @@ function RollingReturnsTableCell({
 
 	const rollingReturnValue = calculateRollingReturns(
 		returns,
-		returnRequest.rollingReturnType,
+		returnRequest.rollingReturnType
 	);
 
 	return (
 		<TableCell
 			className={cn(
 				rollingReturnValue < 0 ? 'text-red-600' : 'text-green-600',
-				'mx-auto w-fit font-semibold text-center',
+				'mx-auto w-fit font-semibold text-center'
 			)}
 		>
 			{rollingReturnValue.toFixed(2)}%
@@ -159,7 +153,7 @@ function RollingReturnsTableCell({
 
 function calculateRollingReturns(
 	returns: number[],
-	rollingReturnType: RollingReturnType,
+	rollingReturnType: RollingReturnType
 ) {
 	switch (rollingReturnType) {
 		case RollingReturnType.Min:
@@ -177,8 +171,6 @@ function calculateRollingReturns(
 		case RollingReturnType.P90:
 			return percentile(90, returns) as number;
 		default:
-			throw new Error(
-				`Unsupported rolling return type: ${rollingReturnType}`,
-			);
+			throw new Error(`Unsupported rolling return type: ${rollingReturnType}`);
 	}
 }

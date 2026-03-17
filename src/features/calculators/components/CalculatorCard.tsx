@@ -1,17 +1,22 @@
 'use client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Trash2 } from 'lucide-react';
+import {
+	Controller,
+	type DefaultValues,
+	type Path,
+	useForm,
+} from 'react-hook-form';
+import type { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
-import { Calculator } from '@/features/calculators/lib/types';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-	useUpdateCalculatorMutation,
-	useRemoveCalculatorMutation,
-} from '@/features/calculators/hooks/calculators';
-import { Controller, DefaultValues, Path, useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import {
+	useRemoveCalculatorMutation,
+	useUpdateCalculatorMutation,
+} from '@/features/calculators/hooks/calculators';
+import type { Calculator } from '@/features/calculators/lib/types';
 
 export default function CalculatorCard<T extends Calculator>({
 	calculatorName,
@@ -62,10 +67,7 @@ export default function CalculatorCard<T extends Calculator>({
 				</div>
 			</CardHeader>
 			<CardContent>
-				<form
-					onChange={form.handleSubmit(onFormChange)}
-					className='space-y-4'
-				>
+				<form onChange={form.handleSubmit(onFormChange)} className='space-y-4'>
 					{formFields.map((formField) => (
 						<Controller
 							key={formField.name}
@@ -77,9 +79,9 @@ export default function CalculatorCard<T extends Calculator>({
 									<Input {...field} />
 									<FieldError
 										errors={[
-											form.formState.errors[
-												formField.name as Path<T>
-											] as { message?: string },
+											form.formState.errors[formField.name as Path<T>] as {
+												message?: string;
+											},
 										]}
 									/>
 								</Field>

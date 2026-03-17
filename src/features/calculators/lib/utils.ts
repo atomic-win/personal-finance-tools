@@ -17,10 +17,8 @@ export function calculateFdResult(
 ) {
 	const maturityAmount =
 		principalAmount *
-		Math.pow(
-			1 + annualInterestRate / (100 * compoundingFrequency),
-			compoundingFrequency * numberOfYears
-		);
+		(1 + annualInterestRate / (100 * compoundingFrequency)) **
+			(compoundingFrequency * numberOfYears);
 
 	const interestEarned = maturityAmount - principalAmount;
 	const principalAmountPercent =
@@ -83,7 +81,7 @@ export function calculateSipResult(
 	numberOfYears: number
 ) {
 	const annualInterestRate = annualInterestPercent / 100;
-	const monthlyInterestRate = Math.pow(1 + annualInterestRate, 1 / 12) - 1;
+	const monthlyInterestRate = (1 + annualInterestRate) ** (1 / 12) - 1;
 
 	let totalInvestedAmount = lumpsumAmount;
 	let estimatedTotalValue = lumpsumAmount;
@@ -118,8 +116,7 @@ export function calculateSwpResult(
 	annualInterestPercent: number,
 	annualInflationPercent: number
 ) {
-	const monthlyInterestRate =
-		Math.pow(1 + annualInterestPercent / 100, 1 / 12) - 1;
+	const monthlyInterestRate = (1 + annualInterestPercent / 100) ** (1 / 12) - 1;
 	const annualInflationRate = annualInflationPercent / 100;
 
 	let withdrawalAmount = 0;
@@ -138,7 +135,7 @@ export function calculateSwpResult(
 		monthlyWithdrawal *= 1 + annualInflationRate;
 	}
 
-	if (withdrawalAmount > Math.pow(10, 20)) {
+	if (withdrawalAmount > 10 ** 20) {
 		withdrawalAmount = Infinity;
 		numberOfMonths = Infinity;
 	}

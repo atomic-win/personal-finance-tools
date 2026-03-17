@@ -1,5 +1,8 @@
 'use client';
-import { useReturnQueries } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import { DateTime } from 'luxon';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import ErrorComponent from '@/components/error-component';
+import LoadingComponent from '@/components/loading-component';
 import {
 	Card,
 	CardContent,
@@ -8,29 +11,26 @@ import {
 	CardTitle,
 } from '@/components/ui/card';
 import {
-	ChartConfig,
+	type ChartConfig,
 	ChartContainer,
 	ChartLegend,
 	ChartLegendContent,
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart';
-import {
+import { Label } from '@/components/ui/label';
+import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
+import { useReturnQueries } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import type {
 	MutualFund,
 	Return,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-import { Label } from '@/components/ui/label';
 import {
 	displayPresetTimeDuration,
 	investmentDurationWithReturnTypeText,
 	returnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
-import LoadingComponent from '@/components/loading-component';
-import ErrorComponent from '@/components/error-component';
-import { DateTime } from 'luxon';
-import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const LoadedReturnsChart = withMutualFunds(ReturnsChart);
@@ -50,13 +50,11 @@ export default function ReturnsChartCard({
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex flex-col md:flex-row md:items-center gap-4 space-y-2 md:space-y-0 border-b py-4'>
 				<div className='grid text-center md:text-left w-full gap-2'>
-					<CardTitle>
-						{returnTypeText(returnRequest.returnType)}
-					</CardTitle>
+					<CardTitle>{returnTypeText(returnRequest.returnType)}</CardTitle>
 					<CardDescription>
 						{`Showing ${investmentDurationWithReturnTypeText(
 							returnRequest.investmentDuration,
-							returnRequest.returnType,
+							returnRequest.returnType
 						)} for the last ${displayPresetTimeDuration(returnRequest.rollingWindow)}`}
 					</CardDescription>
 				</div>
@@ -75,10 +73,7 @@ function ReturnsChart({
 	mutualfunds: MutualFund[];
 	returnRequest: ReturnRequest;
 }) {
-	const mutualFundReturnQueries = useReturnQueries(
-		returnRequest,
-		mutualfunds,
-	);
+	const mutualFundReturnQueries = useReturnQueries(returnRequest, mutualfunds);
 
 	if (mutualfunds.length === 0) {
 		return (
@@ -101,18 +96,18 @@ function ReturnsChart({
 	const mutualFundReturns: Return[] = mutualFundReturnQueries
 		.map((r) => r.data)
 		.filter((r) => !!r)
-		.map((r) => r!)
 		.flat();
 
 	const chartConfig = mutualfunds.reduce(
 		(acc, mutualfund, i) => ({
+			// biome-ignore lint/performance/noAccumulatingSpread: We need to accumulate the config for each mutual fund to create the final chart config.
 			...acc,
 			[mutualfund.schemeCode.toString()]: {
 				label: mutualfund.schemeName,
 				color: `var(--chart-${i + 1})`,
 			},
 		}),
-		{},
+		{}
 	) as ChartConfig;
 
 	const chartDataMap = new Map<
@@ -131,6 +126,7 @@ function ReturnsChart({
 			});
 		}
 
+		// biome-ignore lint/style/noNonNullAssertion: We are sure that the data will always be available as we are controlling the date range and format.
 		const data = chartDataMap.get(date)!;
 		chartDataMap.set(date, {
 			...data,
@@ -139,7 +135,7 @@ function ReturnsChart({
 	});
 
 	const chartData = Array.from(chartDataMap.values()).sort(
-		(a, b) => a.date - b.date,
+		(a, b) => a.date - b.date
 	);
 
 	return (
@@ -152,9 +148,8 @@ function ReturnsChart({
 					axisLine={true}
 					tickMargin={8}
 					minTickGap={32}
-					tickFormatter={(value) =>
-						DateTime.fromMillis(value).toISODate()!
-					}
+					// biome-ignore lint/style/noNonNullAssertion: We are sure that the date will always be valid as we are controlling the date format.
+					tickFormatter={(value) => DateTime.fromMillis(value).toISODate()!}
 				/>
 				<YAxis
 					tickLine={true}
@@ -165,7 +160,7 @@ function ReturnsChart({
 					label={{
 						value: investmentDurationWithReturnTypeText(
 							returnRequest.investmentDuration,
-							returnRequest.returnType,
+							returnRequest.returnType
 						),
 						position: 'insideLeft',
 						angle: -90,
@@ -183,25 +178,17 @@ function ReturnsChart({
 									{/* Add this before the first item */}
 									{index === 0 && (
 										<div className='flex basis-full items-center pt-1.5 text-xs font-medium text-foreground'>
-											{DateTime.fromMillis(
-												item.payload.date,
-											).toISODate()}
+											{DateTime.fromMillis(item.payload.date).toISODate()}
 										</div>
 									)}
 									<div
 										className='h-2.5 w-2.5 shrink-0 rounded-[2px]'
 										style={{
 											backgroundColor:
-												chartConfig[
-													name as keyof typeof chartConfig
-												]!.color,
+												chartConfig[name as keyof typeof chartConfig]?.color,
 										}}
 									/>
-									{
-										chartConfig[
-											name as keyof typeof chartConfig
-										]!.label
-									}
+									{chartConfig[name as keyof typeof chartConfig]?.label}
 									<div className='ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground'>
 										{value}%
 									</div>

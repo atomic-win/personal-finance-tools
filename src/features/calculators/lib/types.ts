@@ -1,6 +1,11 @@
 import { z } from 'zod';
 
-export type CalculatorType = 'sip' | 'swp' | 'sip-swp' | 'fixed-deposit' | 'recurring-deposit';
+export type CalculatorType =
+	| 'sip'
+	| 'swp'
+	| 'sip-swp'
+	| 'fixed-deposit'
+	| 'recurring-deposit';
 
 export const FdCalculatorSchema = z.object({
 	principalAmount: z.coerce.number().min(0, {

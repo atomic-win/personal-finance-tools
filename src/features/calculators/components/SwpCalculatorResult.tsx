@@ -1,6 +1,6 @@
-import { SwpCalculator } from '@/features/calculators/lib/types';
-import { calculateSwpResult } from '@/features/calculators/lib/utils';
 import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
+import type { SwpCalculator } from '@/features/calculators/lib/types';
+import { calculateSwpResult } from '@/features/calculators/lib/utils';
 
 export default function SwpCalculatorResult({
 	calculator,

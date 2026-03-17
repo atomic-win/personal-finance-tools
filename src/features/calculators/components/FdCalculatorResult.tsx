@@ -1,6 +1,6 @@
-import { FdCalculator } from '@/features/calculators/lib/types';
-import { calculateFdResult } from '@/features/calculators/lib/utils';
 import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
+import type { FdCalculator } from '@/features/calculators/lib/types';
+import { calculateFdResult } from '@/features/calculators/lib/utils';
 
 export default function FdCalculatorResult({
 	calculator,
