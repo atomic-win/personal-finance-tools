@@ -45,9 +45,7 @@ export default function ReturnsPage({
 				]}
 			/>
 			<div className='px-4 space-y-2'>
-				<h1 className='text-2xl font-bold'>
-					Indian Mutual Funds Analysis
-				</h1>
+				<h1 className='text-2xl font-bold'>Indian Mutual Funds Analysis</h1>
 				<h2 className='text-lg font-semibold'>{title} Returns</h2>
 				<p>{description}</p>
 				<Suspense>

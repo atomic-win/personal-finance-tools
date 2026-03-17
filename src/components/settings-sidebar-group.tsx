@@ -44,12 +44,9 @@ export default function SettingsSidebarGroup() {
 				'en-US',
 			]).filter((locale) => LOCALE_OPTIONS.includes(locale));
 
-			const supportedLocales = Intl.NumberFormat.supportedLocalesOf(
-				locales,
-				{
-					localeMatcher: 'best fit',
-				},
-			);
+			const supportedLocales = Intl.NumberFormat.supportedLocalesOf(locales, {
+				localeMatcher: 'best fit',
+			});
 
 			supportedLocales.sort((a, b) => b.length - a.length);
 
@@ -79,9 +76,7 @@ export default function SettingsSidebarGroup() {
 	}
 
 	if (ipQuery.isLoading) {
-		return (
-			<LoadingComponent loadingMessage='Loading currency and locale...' />
-		);
+		return <LoadingComponent loadingMessage='Loading currency and locale...' />;
 	}
 
 	if (ipQuery.isError) {
@@ -116,7 +111,7 @@ export default function SettingsSidebarGroup() {
 								'w-full rounded-lg px-3 py-2 flex justify-between',
 								buttonVariants({
 									variant: 'outline',
-								}),
+								})
 							)}
 							aria-label='Select a value'
 						>

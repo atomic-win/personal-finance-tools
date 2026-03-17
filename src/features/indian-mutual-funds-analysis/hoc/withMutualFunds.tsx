@@ -13,24 +13,18 @@ export function withMutualFunds<
 	return function WithMutualFunds(props: Omit<T, 'mutualfunds'>) {
 		const searchParams = useSearchParams();
 		const mutualFundQueries = useMutualFundQueries(
-			searchParams.getAll('mfSchemeCode').map(Number),
+			searchParams.getAll('mfSchemeCode').map(Number)
 		);
 
 		if (mutualFundQueries.some((q) => q.isLoading)) {
-			return (
-				<LoadingComponent loadingMessage='Loading mutual fund data...' />
-			);
+			return <LoadingComponent loadingMessage='Loading mutual fund data...' />;
 		}
 
 		if (mutualFundQueries.some((q) => q.isError)) {
-			return (
-				<ErrorComponent errorMessage='Failed to load mutual fund data.' />
-			);
+			return <ErrorComponent errorMessage='Failed to load mutual fund data.' />;
 		}
 
-		const mutualFunds = mutualFundQueries.map(
-			(q) => q.data!,
-		) as MutualFund[];
+		const mutualFunds = mutualFundQueries.map((q) => q.data!) as MutualFund[];
 
 		return <Component {...(props as T)} mutualfunds={mutualFunds} />;
 	};

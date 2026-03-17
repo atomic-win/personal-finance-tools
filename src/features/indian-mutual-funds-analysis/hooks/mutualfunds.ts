@@ -39,15 +39,10 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 				const navs = new Map<string, number>();
 
 				let earliestDate = DateTime.local().toISODate();
-				let lastDate = DateTime.local()
-					.minus({ months: 1 })
-					.toISODate();
+				let lastDate = DateTime.local().minus({ months: 1 }).toISODate();
 
 				apiResponse.data.forEach((x) => {
-					const date = DateTime.fromFormat(
-						x.date,
-						'dd-MM-yyyy',
-					).toISODate()!;
+					const date = DateTime.fromFormat(x.date, 'dd-MM-yyyy').toISODate()!;
 
 					navs.set(date, x.nav);
 
@@ -64,9 +59,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 				for (
 					let date = lastDate;
 					earliestDate <= date;
-					date = DateTime.fromISO(date)
-						.minus({ days: 1 })
-						.toISODate()!
+					date = DateTime.fromISO(date).minus({ days: 1 }).toISODate()!
 				) {
 					if (!navs.has(date)) {
 						navs.set(date, latestNav);
@@ -89,12 +82,12 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 
 export function useReturnQueries(
 	request: ReturnRequest,
-	mutualfunds: MutualFund[],
+	mutualfunds: MutualFund[]
 ) {
 	const { rollingWindow } = request;
 	const earliestDate = DateTime.min(
 		...mutualfunds.map((mf) => DateTime.fromISO(mf.lastDate)),
-		DateTime.local(),
+		DateTime.local()
 	)
 		.minus(getLuxonDuration(rollingWindow))
 		.plus({ days: 1 });
@@ -115,7 +108,7 @@ export function useReturnQueries(
 
 export function useRollingReturnsQuery(
 	request: ReturnRequest,
-	mutualfund: MutualFund,
+	mutualfund: MutualFund
 ) {
 	return useQuery({
 		...createReturnsQuery(request, mutualfund),
@@ -130,7 +123,7 @@ export function useRollingReturnsQuery(
 
 			const totalDays = DateTime.fromISO(mutualfund.lastDate).diff(
 				startDate,
-				'days',
+				'days'
 			).days;
 
 			const availableDays = a.length;
@@ -159,7 +152,7 @@ function createReturnsQuery(request: ReturnRequest, mutualfund: MutualFund) {
 		(!frequency || !stepUpFrequency || stepUpRatio < 0)
 	) {
 		throw new Error(
-			'Frequency and step up frequency/ratio are required for SWP returns',
+			'Frequency and step up frequency/ratio are required for SWP returns'
 		);
 	}
 
@@ -179,7 +172,7 @@ function createReturnsQuery(request: ReturnRequest, mutualfund: MutualFund) {
 		queryFn: async (): Promise<Return[]> => {
 			return new Promise((resolve, reject) => {
 				const worker = new Worker(
-					new URL('../workers/returns.worker.ts', import.meta.url),
+					new URL('../workers/returns.worker.ts', import.meta.url)
 				);
 
 				worker.onmessage = (event: MessageEvent<Return[]>) => {

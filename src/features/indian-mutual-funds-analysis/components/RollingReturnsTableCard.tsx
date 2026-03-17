@@ -44,12 +44,12 @@ export default function RollingReturnsTableCard({
 				<CardTitle>
 					{`${investmentDurationWithReturnTypeText(
 						returnRequest.investmentDuration,
-						returnRequest.returnType,
+						returnRequest.returnType
 					)} Rolling Returns`}
 				</CardTitle>
 				<CardDescription>
 					{`${rollingReturnTypeText(
-						returnRequest.rollingReturnType,
+						returnRequest.rollingReturnType
 					)} for the last ${displayPresetTimeDuration(returnRequest.rollingWindow)}`}
 				</CardDescription>
 			</CardHeader>
@@ -80,13 +80,9 @@ function RollingReturnsTable({
 			<Table className='w-full'>
 				<TableHeader>
 					<TableRow>
-						<TableHead className='whitespace-nowrap'>
-							Mutual Fund
-						</TableHead>
+						<TableHead className='whitespace-nowrap'>Mutual Fund</TableHead>
 						<TableHead className='text-center'>
-							{rollingReturnTypeText(
-								returnRequest.rollingReturnType,
-							)}
+							{rollingReturnTypeText(returnRequest.rollingReturnType)}
 						</TableHead>
 					</TableRow>
 				</TableHeader>
@@ -113,10 +109,7 @@ function RollingReturnsTableCell({
 	mutualfund: MutualFund;
 	returnRequest: ReturnRequest;
 }) {
-	const rollingReturnsQuery = useRollingReturnsQuery(
-		returnRequest,
-		mutualfund,
-	);
+	const rollingReturnsQuery = useRollingReturnsQuery(returnRequest, mutualfund);
 
 	if (rollingReturnsQuery.isFetching) {
 		return (
@@ -142,14 +135,14 @@ function RollingReturnsTableCell({
 
 	const rollingReturnValue = calculateRollingReturns(
 		returns,
-		returnRequest.rollingReturnType,
+		returnRequest.rollingReturnType
 	);
 
 	return (
 		<TableCell
 			className={cn(
 				rollingReturnValue < 0 ? 'text-red-600' : 'text-green-600',
-				'mx-auto w-fit font-semibold text-center',
+				'mx-auto w-fit font-semibold text-center'
 			)}
 		>
 			{rollingReturnValue.toFixed(2)}%
@@ -159,7 +152,7 @@ function RollingReturnsTableCell({
 
 function calculateRollingReturns(
 	returns: number[],
-	rollingReturnType: RollingReturnType,
+	rollingReturnType: RollingReturnType
 ) {
 	switch (rollingReturnType) {
 		case RollingReturnType.Min:
@@ -177,8 +170,6 @@ function calculateRollingReturns(
 		case RollingReturnType.P90:
 			return percentile(90, returns) as number;
 		default:
-			throw new Error(
-				`Unsupported rolling return type: ${rollingReturnType}`,
-			);
+			throw new Error(`Unsupported rolling return type: ${rollingReturnType}`);
 	}
 }

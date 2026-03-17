@@ -53,9 +53,7 @@ export default function CalculatorPage<T extends Calculator>({
 				]}
 			/>
 			<div className='p-4 pt-0 space-y-2'>
-				<h1 className='text-2xl font-bold'>
-					{calculatorName} Calculator
-				</h1>
+				<h1 className='text-2xl font-bold'>{calculatorName} Calculator</h1>
 				<p>{pageDescription}</p>
 				<div className='flex justify-end'>
 					<Button onClick={() => addCalculator()}>

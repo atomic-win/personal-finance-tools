@@ -100,9 +100,7 @@ export default function ReturnsForm({
 							render={({ field }) => (
 								<Field className='flex flex-col items-start'>
 									<FieldLabel>
-										{getFrequencyLabel(
-											returnRequest.returnType,
-										)}
+										{getFrequencyLabel(returnRequest.returnType)}
 									</FieldLabel>
 									<Select
 										onValueChange={(value) => {
@@ -117,25 +115,14 @@ export default function ReturnsForm({
 											</SelectValue>
 										</SelectTrigger>
 										<SelectContent>
-											{Object.values(Frequency).map(
-												(frequency) => (
-													<SelectItem
-														key={frequency}
-														value={frequency}
-													>
-														{displayFrequency(
-															frequency,
-														)}
-													</SelectItem>
-												),
-											)}
+											{Object.values(Frequency).map((frequency) => (
+												<SelectItem key={frequency} value={frequency}>
+													{displayFrequency(frequency)}
+												</SelectItem>
+											))}
 										</SelectContent>
 									</Select>
-									<FieldError
-										errors={[
-											form.formState.errors.frequency,
-										]}
-									/>
+									<FieldError errors={[form.formState.errors.frequency]} />
 								</Field>
 							)}
 						/>
@@ -158,25 +145,15 @@ export default function ReturnsForm({
 											</SelectValue>
 										</SelectTrigger>
 										<SelectContent>
-											{Object.values(Frequency).map(
-												(frequency) => (
-													<SelectItem
-														key={frequency}
-														value={frequency}
-													>
-														{displayFrequency(
-															frequency,
-														)}
-													</SelectItem>
-												),
-											)}
+											{Object.values(Frequency).map((frequency) => (
+												<SelectItem key={frequency} value={frequency}>
+													{displayFrequency(frequency)}
+												</SelectItem>
+											))}
 										</SelectContent>
 									</Select>
 									<FieldError
-										errors={[
-											form.formState.errors
-												.stepUpFrequency,
-										]}
+										errors={[form.formState.errors.stepUpFrequency]}
 									/>
 								</Field>
 							)}
@@ -195,18 +172,12 @@ export default function ReturnsForm({
 										placeholder='Step Up Ratio'
 										value={field.value}
 										onChange={(e) => {
-											const value = Number(
-												e.target.value,
-											);
+											const value = Number(e.target.value);
 											field.onChange(value);
 											form.handleSubmit(onFormChange)();
 										}}
 									/>
-									<FieldError
-										errors={[
-											form.formState.errors.stepUpRatio,
-										]}
-									/>
+									<FieldError errors={[form.formState.errors.stepUpRatio]} />
 								</Field>
 							)}
 						/>
@@ -218,9 +189,7 @@ export default function ReturnsForm({
 					render={({ field }) => (
 						<Field className='flex flex-col items-start'>
 							<FieldLabel>
-								{getInvestmentDurationLabel(
-									returnRequest.returnType,
-								)}
+								{getInvestmentDurationLabel(returnRequest.returnType)}
 							</FieldLabel>
 							<Select
 								onValueChange={(value) => {
@@ -235,25 +204,14 @@ export default function ReturnsForm({
 									</SelectValue>
 								</SelectTrigger>
 								<SelectContent>
-									{Object.values(PresetTimeDurations).map(
-										(duration) => (
-											<SelectItem
-												key={duration}
-												value={duration}
-											>
-												{displayPresetTimeDuration(
-													duration,
-												)}
-											</SelectItem>
-										),
-									)}
+									{Object.values(PresetTimeDurations).map((duration) => (
+										<SelectItem key={duration} value={duration}>
+											{displayPresetTimeDuration(duration)}
+										</SelectItem>
+									))}
 								</SelectContent>
 							</Select>
-							<FieldError
-								errors={[
-									form.formState.errors.investmentDuration,
-								]}
-							/>
+							<FieldError errors={[form.formState.errors.investmentDuration]} />
 						</Field>
 					)}
 				/>
@@ -276,23 +234,14 @@ export default function ReturnsForm({
 									</SelectValue>
 								</SelectTrigger>
 								<SelectContent>
-									{Object.values(PresetTimeDurations).map(
-										(duration) => (
-											<SelectItem
-												key={duration}
-												value={duration}
-											>
-												{displayPresetTimeDuration(
-													duration,
-												)}
-											</SelectItem>
-										),
-									)}
+									{Object.values(PresetTimeDurations).map((duration) => (
+										<SelectItem key={duration} value={duration}>
+											{displayPresetTimeDuration(duration)}
+										</SelectItem>
+									))}
 								</SelectContent>
 							</Select>
-							<FieldError
-								errors={[form.formState.errors.rollingWindow]}
-							/>
+							<FieldError errors={[form.formState.errors.rollingWindow]} />
 						</Field>
 					)}
 				/>
@@ -315,20 +264,14 @@ export default function ReturnsForm({
 									</SelectValue>
 								</SelectTrigger>
 								<SelectContent>
-									{Object.values(RollingReturnType).map(
-										(type) => (
-											<SelectItem key={type} value={type}>
-												{rollingReturnTypeText(type)}
-											</SelectItem>
-										),
-									)}
+									{Object.values(RollingReturnType).map((type) => (
+										<SelectItem key={type} value={type}>
+											{rollingReturnTypeText(type)}
+										</SelectItem>
+									))}
 								</SelectContent>
 							</Select>
-							<FieldError
-								errors={[
-									form.formState.errors.rollingReturnType,
-								]}
-							/>
+							<FieldError errors={[form.formState.errors.rollingReturnType]} />
 						</Field>
 					)}
 				/>

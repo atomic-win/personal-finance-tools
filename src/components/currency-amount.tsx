@@ -37,6 +37,6 @@ export default function CurrencyAmount({
 		currencyQuery.data || 'USD',
 		amount,
 		notation,
-		numberOfFractionDigits,
+		numberOfFractionDigits
 	);
 }

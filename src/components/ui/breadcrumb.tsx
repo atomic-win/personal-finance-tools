@@ -22,7 +22,7 @@ function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
 			data-slot='breadcrumb-list'
 			className={cn(
 				'text-muted-foreground gap-1.5 text-sm sm:gap-2.5 flex flex-wrap items-center break-words',
-				className,
+				className
 			)}
 			{...props}
 		/>
@@ -48,12 +48,9 @@ function BreadcrumbLink({
 		defaultTagName: 'a',
 		props: mergeProps<'a'>(
 			{
-				className: cn(
-					'hover:text-foreground transition-colors',
-					className,
-				),
+				className: cn('hover:text-foreground transition-colors', className),
 			},
-			props,
+			props
 		),
 		render,
 		state: {
@@ -104,7 +101,7 @@ function BreadcrumbEllipsis({
 			aria-hidden='true'
 			className={cn(
 				'size-5 [&>svg]:size-4 flex items-center justify-center',
-				className,
+				className
 			)}
 			{...props}
 		>

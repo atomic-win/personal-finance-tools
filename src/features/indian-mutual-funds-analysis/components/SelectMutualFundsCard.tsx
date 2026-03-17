@@ -45,15 +45,11 @@ export default function SelectMutualFundsCard() {
 	const mutualFundListQuery = useMutualFundListQuery();
 
 	if (mutualFundListQuery.isFetching) {
-		return (
-			<LoadingComponent loadingMessage='Fetching mutual fund list...' />
-		);
+		return <LoadingComponent loadingMessage='Fetching mutual fund list...' />;
 	}
 
 	if (mutualFundListQuery.isError) {
-		return (
-			<ErrorComponent errorMessage='Failed to fetch mutual fund list' />
-		);
+		return <ErrorComponent errorMessage='Failed to fetch mutual fund list' />;
 	}
 
 	const schemeCodes = searchParams
@@ -134,16 +130,14 @@ function MutualFundSearchForm({
 									className={cn(
 										buttonVariants({ variant: 'outline' }),
 										'flex-1 w-full justify-between h-10 mb-2 sm:mb-0',
-										!field.value && 'text-muted-foreground',
+										!field.value && 'text-muted-foreground'
 									)}
 									role='combobox'
 								>
 									<span className='text-wrap truncate max-w-[80%]'>
 										{field.value
 											? searchResults.find(
-													(mutualfund) =>
-														mutualfund.schemeCode ===
-														field.value,
+													(mutualfund) => mutualfund.schemeCode === field.value
 												)?.schemeName
 											: 'Add a Mutual Fund'}
 									</span>
@@ -173,9 +167,7 @@ function MutualFundSearchForm({
 										<CommandGroup>
 											{searchResults.map((mutualfund) => (
 												<CommandItem
-													value={
-														mutualfund.schemeName
-													}
+													value={mutualfund.schemeName}
 													key={`${mutualfund.schemeCode} - ${mutualfund.schemeName}`}
 													onSelect={() => {
 														form.setValue(
@@ -183,17 +175,16 @@ function MutualFundSearchForm({
 															mutualfund.schemeCode,
 															{
 																shouldValidate: true,
-															},
+															}
 														);
 													}}
 												>
 													<Check
 														className={cn(
 															'mr-2 h-4 w-4',
-															mutualfund.schemeCode ===
-																field.value
+															mutualfund.schemeCode === field.value
 																? 'opacity-100'
-																: 'opacity-0',
+																: 'opacity-0'
 														)}
 													/>
 													{mutualfund.schemeName}
@@ -204,9 +195,7 @@ function MutualFundSearchForm({
 								</Command>
 							</PopoverContent>
 						</Popover>
-						<FieldError
-							errors={[form.formState.errors.mfSchemeCode]}
-						/>
+						<FieldError errors={[form.formState.errors.mfSchemeCode]} />
 					</Field>
 				)}
 			/>
@@ -227,14 +216,10 @@ function MutualFundsDisplay({
 
 	return (
 		<div className='space-y-2 mt-2'>
-			<CardTitle className='text-base m-2 mt-4'>
-				Added Mutual Funds:
-			</CardTitle>
+			<CardTitle className='text-base m-2 mt-4'>Added Mutual Funds:</CardTitle>
 			{schemeCodes.map((schemeCode) => (
 				<MutualFundDisplayItem
-					mutualfund={
-						mutualfunds.find((mf) => mf.schemeCode === schemeCode)!
-					}
+					mutualfund={mutualfunds.find((mf) => mf.schemeCode === schemeCode)!}
 					key={schemeCode}
 				/>
 			))}
