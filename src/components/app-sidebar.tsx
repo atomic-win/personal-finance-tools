@@ -1,5 +1,6 @@
 import { DollarSignIcon, Send } from 'lucide-react';
-
+import Link from 'next/link';
+import SettingsSidebarGroup from '@/components/settings-sidebar-group';
 import {
 	Sidebar,
 	SidebarContent,
@@ -14,8 +15,6 @@ import {
 	SidebarMenuSubItem,
 	SidebarRail,
 } from '@/components/ui/sidebar';
-import SettingsSidebarGroup from '@/components/settings-sidebar-group';
-import Link from 'next/link';
 
 const data = [
 	{
@@ -116,6 +115,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 										target='_blank'
 										href='https://forms.gle/hkvX3nzQcsBVn4xp7'
 										className='flex items-center gap-2'
+										rel='noopener'
 									>
 										<Send />
 										<span>Feedback</span>

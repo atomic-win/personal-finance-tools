@@ -1,4 +1,6 @@
-import { useRollingReturnsQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import percentile from 'percentile';
+import ErrorComponent from '@/components/error-component';
+import LoadingComponent from '@/components/loading-component';
 import {
 	Card,
 	CardContent,
@@ -15,21 +17,19 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
+import { useRollingReturnsQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
 import {
-	MutualFund,
-	ReturnRequest,
+	type MutualFund,
+	type ReturnRequest,
 	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import { cn } from '@/lib/utils';
 import {
 	displayPresetTimeDuration,
 	investmentDurationWithReturnTypeText,
 	rollingReturnTypeText,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
-import LoadingComponent from '@/components/loading-component';
-import ErrorComponent from '@/components/error-component';
-import percentile from 'percentile';
-import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
+import { cn } from '@/lib/utils';
 
 const LoadedRollingReturnsTable = withMutualFunds(RollingReturnsTable);
 
@@ -127,6 +127,7 @@ function RollingReturnsTableCell({
 		);
 	}
 
+	// biome-ignore lint/style/noNonNullAssertion: We are sure that the data will always be available as we are checking for loading and error states above.
 	const returns = rollingReturnsQuery.data!;
 
 	if (returns.length === 0) {

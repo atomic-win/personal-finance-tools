@@ -78,27 +78,33 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
 		return null;
 	}
 
+	const styleRules = Object.entries(THEMES)
+		.map(([theme, prefix]) => {
+			const rules = colorConfig
+				.map(([key, itemConfig]) => {
+					const color =
+						itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
+						itemConfig.color;
+					return color ? `--color-${key}: ${color}` : null;
+				})
+				.filter((rule) => rule !== null);
+
+			if (!rules.length) return '';
+
+			return `${prefix} [data-chart=${id}] { ${rules.join('; ')}; }`;
+		})
+		.filter((rule) => rule !== '');
+
+	if (!styleRules.length) {
+		return null;
+	}
+
 	return (
-		<style
-			dangerouslySetInnerHTML={{
-				__html: Object.entries(THEMES)
-					.map(
-						([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
-${colorConfig
-	.map(([key, itemConfig]) => {
-		const color =
-			itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
-			itemConfig.color;
-		return color ? `  --color-${key}: ${color};` : null;
-	})
-	.join('\n')}
-}
-`
-					)
-					.join('\n'),
-			}}
-		/>
+		<>
+			{styleRules.map((rule) => (
+				<style key={rule}>{rule}</style>
+			))}
+		</>
 	);
 };
 
@@ -173,7 +179,7 @@ function ChartTooltipContent({
 	return (
 		<div
 			className={cn(
-				'border-border/50 bg-background gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl grid min-w-[8rem] items-start',
+				'border-border/50 bg-background gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl grid min-w-32 items-start',
 				className
 			)}
 		>
@@ -348,9 +354,9 @@ function getPayloadConfigFromPayload(
 
 export {
 	ChartContainer,
-	ChartTooltip,
-	ChartTooltipContent,
 	ChartLegend,
 	ChartLegendContent,
 	ChartStyle,
+	ChartTooltip,
+	ChartTooltipContent,
 };

@@ -1,6 +1,6 @@
-import { RdCalculator } from '@/features/calculators/lib/types';
-import { calculateRdResult } from '@/features/calculators/lib/utils';
 import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
+import type { RdCalculator } from '@/features/calculators/lib/types';
+import { calculateRdResult } from '@/features/calculators/lib/utils';
 
 export default function RdCalculatorResult({
 	calculator,

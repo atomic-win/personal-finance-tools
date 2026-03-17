@@ -1,11 +1,11 @@
+import type { DateTime, DurationLike } from 'luxon';
 import {
 	Frequency,
 	PresetTimeDurations,
-	ReturnRequest,
-	ReturnType,
+	type ReturnRequest,
+	type ReturnType,
 	RollingReturnType,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
-import { DateTime, DurationLike } from 'luxon';
 
 export function evaluateMutualFund(
 	navs: Record<string, number>,
@@ -184,10 +184,9 @@ function calculateCagrReturn(
 
 	return (
 		100 *
-		(Math.pow(
-			navs[endDate.toISODate()!]! / navs[date.toISODate()!]!,
-			1 / Math.max(1, endDate.diff(date, 'years')!.years)
-		) -
+		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the start and end dates will always be available as we are controlling the date range through the investment duration and the available NAV data.
+		((navs[endDate.toISODate()!]! / navs[date.toISODate()!]!) **
+			(1 / Math.max(1, endDate.diff(date, 'years')?.years)) -
 			1)
 	);
 }
@@ -224,16 +223,18 @@ function calculateSipReturn(
 			);
 		}
 
+		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the current date will always be available as we are controlling the date range through the investment duration and the available NAV data.
 		totalUnits += investmentAmount / navs[currentDate.toISODate()!]!;
 
 		xirrInputs.push({
-			years: endDate.diff(currentDate, 'years')!.years,
+			years: endDate.diff(currentDate, 'years')?.years ?? 0,
 			amount: investmentAmount,
 		});
 	}
 
 	xirrInputs.push({
 		years: 0,
+		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the end date will always be available as we are controlling the date range through the investment duration and the available NAV data.
 		amount: -totalUnits * navs[endDate.toISODate()!]!,
 	});
 
@@ -272,16 +273,18 @@ function calculateSwpReturn(
 			);
 		}
 
+		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the current date will always be available as we are controlling the date range through the investment duration and the available NAV data.
 		totalUnits += investmentAmount / navs[currentDate.toISODate()!]!;
 
 		xirrInputs.push({
-			years: endDate.diff(currentDate, 'years')!.years,
+			years: endDate.diff(currentDate, 'years')?.years ?? 0,
 			amount: -investmentAmount,
 		});
 	}
 
 	xirrInputs.push({
-		years: endDate.diff(startDate, 'years')!.years,
+		years: endDate.diff(startDate, 'years')?.years ?? 0,
+		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the start date will always be available as we are controlling the date range through the investment duration and the available NAV data.
 		amount: totalUnits * navs[startDate.toISODate()!]!,
 	});
 
@@ -316,7 +319,7 @@ function calculateXIRR(
 	while (xirrHigh - xirrLow > 1e-6) {
 		const xirrGuess = (xirrLow + xirrHigh) / 2;
 		const npv = xirrInputs.reduce(
-			(acc, input) => acc + input.amount * Math.pow(1 + xirrGuess, input.years),
+			(acc, input) => acc + input.amount * (1 + xirrGuess) ** input.years,
 			0
 		);
 

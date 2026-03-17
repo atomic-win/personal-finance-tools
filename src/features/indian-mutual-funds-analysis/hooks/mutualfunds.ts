@@ -1,13 +1,13 @@
-import {
+import { useQueries, useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import _ from 'lodash';
+import { DateTime } from 'luxon';
+import type {
 	MutualFund,
 	Return,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import { getLuxonDuration } from '@/features/indian-mutual-funds-analysis/lib/utils';
-import { useQueries, useQuery } from '@tanstack/react-query';
-import axios from 'axios';
-import { DateTime } from 'luxon';
-import _ from 'lodash';
 
 const mfApiClient = axios.create({
 	baseURL: 'https://api.mfapi.in',
@@ -42,6 +42,7 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 				let lastDate = DateTime.local().minus({ months: 1 }).toISODate();
 
 				apiResponse.data.forEach((x) => {
+					// biome-ignore lint/style/noNonNullAssertion: We are sure that the date will always be valid as we are controlling the date format.
 					const date = DateTime.fromFormat(x.date, 'dd-MM-yyyy').toISODate()!;
 
 					navs.set(date, x.nav);
@@ -55,15 +56,18 @@ export function useMutualFundQueries(schemeCodes: number[]) {
 					}
 				});
 
+				// biome-ignore lint/style/noNonNullAssertion: We are sure that the last date will always be valid as we are controlling the date format and range.
 				let latestNav = navs.get(lastDate)!;
 				for (
 					let date = lastDate;
 					earliestDate <= date;
+					// biome-ignore lint/style/noNonNullAssertion: We are sure that the date will always be valid as we are controlling the date format and range.
 					date = DateTime.fromISO(date).minus({ days: 1 }).toISODate()!
 				) {
 					if (!navs.has(date)) {
 						navs.set(date, latestNav);
 					} else {
+						// biome-ignore lint/style/noNonNullAssertion: We are sure that the date will always be valid as we are controlling the date format and range.
 						latestNav = navs.get(date)!;
 					}
 				}
@@ -143,7 +147,7 @@ function createReturnsQuery(request: ReturnRequest, mutualfund: MutualFund) {
 		stepUpRatio,
 	} = request;
 
-	if (!!!returnType) {
+	if (!returnType) {
 		throw new Error('Return type is required');
 	}
 

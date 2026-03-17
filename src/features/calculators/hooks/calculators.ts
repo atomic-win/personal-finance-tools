@@ -1,13 +1,13 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { NIL, v7 } from 'uuid';
-import {
+import type {
+	Calculator,
 	FdCalculator,
 	RdCalculator,
 	SipCalculator,
 	SipSwpCalculator,
 	SwpCalculator,
-	Calculator,
 } from '@/features/calculators/lib/types';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 const defaultFdCalculator: FdCalculator = {
 	id: NIL,
@@ -104,7 +104,7 @@ export function useAddCalculatorMutation<T extends Calculator>(
 
 			return { previousData };
 		},
-		onError: (err, variables, context) => {
+		onError: (err, _variables, context) => {
 			console.error(err);
 			queryClient.setQueryData(
 				['calculators', type],
@@ -135,7 +135,7 @@ export function useUpdateCalculatorMutation<T extends Calculator>(
 
 			return { previousData };
 		},
-		onError: (err, variables, context) => {
+		onError: (err, _variables, context) => {
 			console.error(err);
 			queryClient.setQueryData(
 				['calculators', type],
@@ -166,7 +166,7 @@ export function useRemoveCalculatorMutation<T extends Calculator>(
 
 			return { previousData };
 		},
-		onError: (err, variables, context) => {
+		onError: (err, _variables, context) => {
 			console.error(err);
 			queryClient.setQueryData(
 				['calculators', type],

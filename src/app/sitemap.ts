@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
+	// biome-ignore lint/style/noNonNullAssertion: We are sure that the environment variable will always be available as we have set it up in our deployment environment and it is required for the application to function correctly.
 	const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL!;
 	return [
 		{

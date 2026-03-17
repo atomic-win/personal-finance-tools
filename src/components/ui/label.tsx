@@ -1,11 +1,12 @@
 'use client';
 
-import * as React from 'react';
+import type * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
 function Label({ className, ...props }: React.ComponentProps<'label'>) {
 	return (
+		// biome-ignore lint/a11y/noLabelWithoutControl: This component is meant to be used as a wrapper for form controls, so it may not always have a control directly associated with it. The 'for' attribute can be used on the child form control to associate it with the label, ensuring accessibility.
 		<label
 			data-slot='label'
 			className={cn(

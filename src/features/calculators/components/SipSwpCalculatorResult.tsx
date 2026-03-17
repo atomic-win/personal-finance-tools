@@ -1,9 +1,9 @@
-import { SipSwpCalculator } from '@/features/calculators/lib/types';
+import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
+import type { SipSwpCalculator } from '@/features/calculators/lib/types';
 import {
 	calculateSipResult,
 	calculateSwpResult,
 } from '@/features/calculators/lib/utils';
-import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
 
 export default function SipSwpCalculatorResult({
 	calculator,
@@ -24,10 +24,9 @@ export default function SipSwpCalculatorResult({
 	const { estimatedWithdrawalAmount, estimatedNumberOfYears } =
 		calculateSwpResult(
 			estimatedTotalValueAfterSip,
-			Math.pow(
-				1 + calculator.annualInflationPercent / 100,
-				calculator.numberOfSipYears
-			) * calculator.currentMonthlyExpenseAmount,
+			(1 + calculator.annualInflationPercent / 100) **
+				calculator.numberOfSipYears *
+				calculator.currentMonthlyExpenseAmount,
 			calculator.annualInterestPercent,
 			calculator.annualInflationPercent
 		);

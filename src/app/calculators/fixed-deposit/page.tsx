@@ -1,10 +1,10 @@
 'use client';
-import {
-	FdCalculator,
-	FdCalculatorSchema,
-} from '@/features/calculators/lib/types';
 import CalculatorPage from '@/features/calculators/components/CalculatorPage';
 import FdCalculatorResult from '@/features/calculators/components/FdCalculatorResult';
+import {
+	type FdCalculator,
+	FdCalculatorSchema,
+} from '@/features/calculators/lib/types';
 
 const formFields = [
 	{

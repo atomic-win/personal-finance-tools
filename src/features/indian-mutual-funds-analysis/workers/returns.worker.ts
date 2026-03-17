@@ -1,14 +1,15 @@
 /// <reference lib="webworker" />
-import {
+
+import { DateTime } from 'luxon';
+import type {
 	MutualFund,
 	Return,
 	ReturnRequest,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import {
-	getLuxonDuration,
 	evaluateMutualFund,
+	getLuxonDuration,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
-import { DateTime } from 'luxon';
 
 declare const self: DedicatedWorkerGlobalScope;
 
@@ -37,6 +38,7 @@ self.onmessage = (
 	) {
 		results.push({
 			schemeCode: mutualfund.schemeCode,
+			// biome-ignore lint/style/noNonNullAssertion: We are sure that the date will always be valid as we are controlling the date range and format.
 			date: date.plus(getLuxonDuration(investmentDuration)).toISODate()!,
 			return: evaluateMutualFund(mutualfund.navs, request, date),
 		});
