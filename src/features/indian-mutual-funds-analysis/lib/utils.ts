@@ -314,7 +314,7 @@ function calculateXIRR(
 	}
 
 	let xirrLow = -1;
-	let xirrHigh = 1;
+	let xirrHigh = 2;
 
 	while (xirrHigh - xirrLow > 1e-6) {
 		const xirrGuess = (xirrLow + xirrHigh) / 2;
