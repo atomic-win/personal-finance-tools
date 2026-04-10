@@ -48,8 +48,8 @@ const data = [
 		url: '#',
 		items: [
 			{
-				title: 'NAV Chart',
-				url: '/indian-mutual-funds-analysis/nav-chart',
+				title: 'NAV History',
+				url: '/indian-mutual-funds-analysis/nav',
 			},
 			{
 				title: 'CAGR Returns',
