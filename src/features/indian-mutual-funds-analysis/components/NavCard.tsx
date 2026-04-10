@@ -119,6 +119,7 @@ function NavChart({
 	) as ChartConfig;
 
 	const chartDataMap = new Map<number, { date: number }>();
+	let maxNav = 0;
 
 	for (const mutualfund of mutualfunds) {
 		for (const [dateStr, nav] of Object.entries(mutualfund.navs)) {
@@ -136,6 +137,10 @@ function NavChart({
 				...data,
 				[mutualfund.schemeCode.toString()]: nav,
 			});
+
+			if (nav > maxNav) {
+				maxNav = nav;
+			}
 		}
 	}
 
@@ -175,6 +180,9 @@ function NavChart({
 						position: 'insideLeft',
 						angle: -90,
 						style: { textAnchor: 'middle' },
+					}}
+					padding={{
+						top: 50,
 					}}
 				/>
 				<ChartTooltip
