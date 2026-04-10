@@ -1,8 +1,6 @@
 'use client';
 import { DateTime } from 'luxon';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-import ErrorComponent from '@/components/error-component';
-import LoadingComponent from '@/components/loading-component';
 import {
 	Card,
 	CardContent,
@@ -140,6 +138,7 @@ function NavChart({
 				chartDataMap.set(millis, { date: millis });
 			}
 
+			// biome-ignore lint/style/noNonNullAssertion: We just ensured this above with the has() check.
 			const data = chartDataMap.get(millis)!;
 			chartDataMap.set(millis, {
 				...data,

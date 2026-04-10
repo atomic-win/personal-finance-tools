@@ -1,5 +1,4 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
 import { Suspense, useState } from 'react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import NavChartCard from '@/features/indian-mutual-funds-analysis/components/NavCard';
