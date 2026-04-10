@@ -3,6 +3,7 @@ import { Suspense, useState } from 'react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import NavChartCard from '@/features/indian-mutual-funds-analysis/components/NavCard';
 import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
+import { PresetTimeDurations } from '@/features/indian-mutual-funds-analysis/lib/types';
 
 export default function NavChartPage() {
 	return (
@@ -43,13 +44,13 @@ export default function NavChartPage() {
 }
 
 function NavChartPageContainer() {
-	const [timeRange, setTimeRange] = useState<string>('1y');
+	const [timeRange, setTimeRange] = useState(PresetTimeDurations.OneYear);
 
 	return (
 		<div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
 			<div className='order-2 md:order-1 md:col-span-2 space-y-4'>
 				<NavChartCard
-					timeRange={timeRange as 'all'}
+					timeRange={timeRange}
 					onTimeRangeChange={setTimeRange}
 				/>
 			</div>

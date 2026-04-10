@@ -25,21 +25,15 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
-import type { MutualFund } from '@/features/indian-mutual-funds-analysis/lib/types';
+import {
+	type MutualFund,
+	PresetTimeDurations,
+} from '@/features/indian-mutual-funds-analysis/lib/types';
+import {
+	displayPresetTimeDuration,
+	getLuxonDuration,
+} from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-
-const timeRanges = [
-	{ label: '1 Month', value: '1m', duration: { months: 1 } },
-	{ label: '3 Months', value: '3m', duration: { months: 3 } },
-	{ label: '6 Months', value: '6m', duration: { months: 6 } },
-	{ label: '1 Year', value: '1y', duration: { years: 1 } },
-	{ label: '3 Years', value: '3y', duration: { years: 3 } },
-	{ label: '5 Years', value: '5y', duration: { years: 5 } },
-	{ label: '10 Years', value: '10y', duration: { years: 10 } },
-	{ label: 'All Time', value: 'all', duration: {} },
-] as const;
-
-type TimeRange = (typeof timeRanges)[number]['value'];
 
 const LoadedNavChart = withMutualFunds(NavChart);
 
@@ -47,8 +41,8 @@ export default function NavChartCard({
 	timeRange,
 	onTimeRangeChange,
 }: {
-	timeRange: TimeRange;
-	onTimeRangeChange: (value: TimeRange) => void;
+	timeRange: PresetTimeDurations;
+	onTimeRangeChange: (value: PresetTimeDurations) => void;
 }) {
 	const isMobile = useIsMobile();
 
@@ -67,19 +61,21 @@ export default function NavChartCard({
 				</div>
 				<Select
 					value={timeRange}
-					onValueChange={(v) => onTimeRangeChange(v as TimeRange)}
+					onValueChange={(v) =>
+						onTimeRangeChange(v as PresetTimeDurations)
+					}
 				>
 					<SelectTrigger className='w-40 rounded-lg'>
 						<SelectValue placeholder='Select range' />
 					</SelectTrigger>
 					<SelectContent className='rounded-xl'>
-						{timeRanges.map((range) => (
+						{Object.values(PresetTimeDurations).map((duration) => (
 							<SelectItem
-								key={range.value}
-								value={range.value}
+								key={duration}
+								value={duration}
 								className='rounded-lg'
 							>
-								{range.label}
+								{displayPresetTimeDuration(duration)}
 							</SelectItem>
 						))}
 					</SelectContent>
@@ -97,7 +93,7 @@ function NavChart({
 	timeRange,
 }: {
 	mutualfunds: MutualFund[];
-	timeRange: TimeRange;
+	timeRange: PresetTimeDurations;
 }) {
 	if (mutualfunds.length === 0) {
 		return (
@@ -107,12 +103,8 @@ function NavChart({
 		);
 	}
 
-	const selectedRange = timeRanges.find((r) => r.value === timeRange);
 	const now = DateTime.local();
-	const startDate =
-		timeRange === 'all'
-			? DateTime.fromISO('1900-01-01')
-			: now.minus(selectedRange?.duration ?? {});
+	const startDate = now.minus(getLuxonDuration(timeRange));
 
 	const chartConfig = mutualfunds.reduce(
 		(acc, mutualfund, i) => ({
