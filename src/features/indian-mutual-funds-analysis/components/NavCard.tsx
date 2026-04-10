@@ -61,12 +61,12 @@ export default function NavChartCard({
 				</div>
 				<Select
 					value={timeRange}
-					onValueChange={(v) =>
-						onTimeRangeChange(v as PresetTimeDurations)
-					}
+					onValueChange={(v) => onTimeRangeChange(v as PresetTimeDurations)}
 				>
 					<SelectTrigger className='w-40 rounded-lg'>
-						<SelectValue placeholder='Select range' />
+						<SelectValue placeholder='Select range'>
+							{displayPresetTimeDuration(timeRange)}
+						</SelectValue>
 					</SelectTrigger>
 					<SelectContent className='rounded-xl'>
 						{Object.values(PresetTimeDurations).map((duration) => (
