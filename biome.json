@@ -7,7 +7,16 @@
 	},
 	"files": {
 		"ignoreUnknown": true,
-		"includes": ["**", "!node_modules", "!.next", "!dist", "!build"]
+		"includes": [
+			"**",
+			"!node_modules",
+			"!.next",
+			"!.output",
+			"!.vinxi",
+			"!dist",
+			"!build",
+			"!src/routeTree.gen.ts"
+		]
 	},
 	"formatter": {
 		"enabled": true,
@@ -42,7 +51,6 @@
 			}
 		},
 		"domains": {
-			"next": "recommended",
 			"react": "recommended"
 		}
 	},

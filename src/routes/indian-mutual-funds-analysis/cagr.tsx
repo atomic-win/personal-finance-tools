@@ -1,7 +1,21 @@
-'use client';
+import { createFileRoute } from '@tanstack/react-router';
 import ReturnsPage from '@/features/indian-mutual-funds-analysis/components/ReturnsPage';
 
-export default function Page() {
+export const Route = createFileRoute('/indian-mutual-funds-analysis/cagr')({
+	head: () => ({
+		meta: [
+			{ title: 'Indian Mutual Funds CAGR Returns' },
+			{
+				name: 'keywords',
+				content:
+					'Mutual Funds, Rolling Returns, CAGR, Investment Analysis, Financial Planning',
+			},
+		],
+	}),
+	component: Page,
+});
+
+function Page() {
 	return (
 		<ReturnsPage
 			returnType='cagr'

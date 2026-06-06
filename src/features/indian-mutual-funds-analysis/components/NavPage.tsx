@@ -1,5 +1,4 @@
-'use client';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import NavChartCard from '@/features/indian-mutual-funds-analysis/components/NavCard';
 import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
@@ -8,11 +7,6 @@ import { PresetTimeDurations } from '@/features/indian-mutual-funds-analysis/lib
 export default function NavChartPage() {
 	return (
 		<>
-			<title>Indian Mutual Funds NAV History</title>
-			<meta
-				name='keywords'
-				content='Mutual Funds, NAV, Net Asset Value, NAV History, Investment Analysis'
-			/>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{
@@ -35,9 +29,7 @@ export default function NavChartPage() {
 					Compare NAV trends across multiple funds to track performance over
 					time.
 				</p>
-				<Suspense>
-					<NavChartPageContainer />
-				</Suspense>
+				<NavChartPageContainer />
 			</div>
 		</>
 	);

@@ -1,4 +1,4 @@
-import { useSearchParams } from 'next/navigation';
+import { useSearch } from '@tanstack/react-router';
 import ErrorComponent from '@/components/error-component';
 import LoadingComponent from '@/components/loading-component';
 import { useMutualFundQueries } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
@@ -10,10 +10,17 @@ export function withMutualFunds<
 	},
 >(Component: React.ComponentType<T>) {
 	return function WithMutualFunds(props: Omit<T, 'mutualfunds'>) {
-		const searchParams = useSearchParams();
-		const mutualFundQueries = useMutualFundQueries(
-			searchParams.getAll('mfSchemeCode').map(Number)
-		);
+		const search = useSearch({ strict: false }) as Record<
+			string,
+			string | string[]
+		>;
+		const rawCodes = search.mfSchemeCode;
+		const codes = Array.isArray(rawCodes)
+			? rawCodes.map(Number)
+			: rawCodes
+				? [Number(rawCodes)]
+				: [];
+		const mutualFundQueries = useMutualFundQueries(codes);
 
 		if (mutualFundQueries.some((q) => q.isLoading)) {
 			return <LoadingComponent loadingMessage='Loading mutual fund data...' />;

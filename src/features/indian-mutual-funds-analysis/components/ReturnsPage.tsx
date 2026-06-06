@@ -1,6 +1,4 @@
-'use client';
-import { useSearchParams } from 'next/navigation';
-import { Suspense } from 'react';
+import { useSearch } from '@tanstack/react-router';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components/ReturnsChartCard';
 import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
@@ -25,15 +23,8 @@ export default function ReturnsPage({
 	description: string;
 	returnType: ReturnType;
 }) {
-	const htmlTitle = `Indian Mutual Funds ${title} Returns`;
-
 	return (
 		<>
-			<title>{htmlTitle}</title>
-			<meta
-				name='keywords'
-				content='Mutual Funds, Rolling Returns, CAGR, Investment Analysis, Financial Planning'
-			/>
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{
@@ -48,40 +39,32 @@ export default function ReturnsPage({
 				<h1 className='text-2xl font-bold'>Indian Mutual Funds Analysis</h1>
 				<h2 className='text-lg font-semibold'>{title} Returns</h2>
 				<p>{description}</p>
-				<Suspense>
-					<ReturnsPageContainer returnType={returnType} />
-				</Suspense>
+				<ReturnsPageContainer returnType={returnType} />
 			</div>
 		</>
 	);
 }
 
 function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
-	const searchParams = useSearchParams();
+	const search = useSearch({ strict: false }) as Record<string, string>;
 
-	const frequency = searchParams.get('frequency')
-		? (searchParams.get('frequency') as Frequency)
-		: Frequency.Monthly;
+	const frequency = (search.frequency as Frequency) || Frequency.Monthly;
 
-	const stepUpFrequency = searchParams.get('stepUpFrequency')
-		? (searchParams.get('stepUpFrequency') as Frequency)
-		: Frequency.Yearly;
+	const stepUpFrequency =
+		(search.stepUpFrequency as Frequency) || Frequency.Yearly;
 
-	const stepUpRatio = searchParams.get('stepUpRatio')
-		? Number(searchParams.get('stepUpRatio'))
-		: 0.1;
+	const stepUpRatio = search.stepUpRatio ? Number(search.stepUpRatio) : 0.1;
 
-	const investmentDuration = searchParams.get('investmentDuration')
-		? (searchParams.get('investmentDuration') as PresetTimeDurations)
-		: PresetTimeDurations.OneYear;
+	const investmentDuration =
+		(search.investmentDuration as PresetTimeDurations) ||
+		PresetTimeDurations.OneYear;
 
-	const rollingWindow = searchParams.get('rollingWindow')
-		? (searchParams.get('rollingWindow') as PresetTimeDurations)
-		: PresetTimeDurations.TwoYears;
+	const rollingWindow =
+		(search.rollingWindow as PresetTimeDurations) ||
+		PresetTimeDurations.TwoYears;
 
-	const rollingReturnType = searchParams.get('rollingReturnType')
-		? (searchParams.get('rollingReturnType') as RollingReturnType)
-		: RollingReturnType.Avg;
+	const rollingReturnType =
+		(search.rollingReturnType as RollingReturnType) || RollingReturnType.Avg;
 
 	const returnsRequest = {
 		investmentDuration,

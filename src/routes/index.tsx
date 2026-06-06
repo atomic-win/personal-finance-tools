@@ -1,9 +1,20 @@
+import { createFileRoute } from '@tanstack/react-router';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 
-export default function HomePage() {
+export const Route = createFileRoute('/')({
+	head: () => ({
+		meta: [
+			{
+				title: 'Personal Finance Tools',
+			},
+		],
+	}),
+	component: HomePage,
+});
+
+function HomePage() {
 	return (
 		<>
-			<title>Personal Finance Tools</title>
 			<SidebarTriggerWithBreadcrumb breadcrumbs={[]} />
 			<div className='text-center px-4 space-y-4'>
 				<h1 className='text-3xl'>Personal Finance Tools</h1>
