@@ -17,9 +17,8 @@
 /.next/
 /out/
 
-# tanstack start / vinxi
-/.output/
-/.vinxi/
+# tanstack router
+/src/routeTree.gen.ts
 
 # production
 /build

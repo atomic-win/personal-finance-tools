@@ -28,29 +28,26 @@ const formFields = [
 const pageDescription = `The Fixed Deposit (FD) Interest Calculator helps you estimate the maturity amount and interest earned on your fixed deposit investments. Simply input the principal amount, annual interest rate, time period, and compounding frequency to get the results.`;
 
 export const Route = createFileRoute('/calculators/fixed-deposit')({
-	head: () => ({
-		meta: [
-			{ title: 'FD Interest Calculator' },
-			{ name: 'description', content: pageDescription },
-			{
-				name: 'keywords',
-				content:
-					'Fixed Deposit, FD, Interest Calculator, Investment, Financial Planning',
-			},
-		],
-	}),
 	component: Page,
 });
 
 function Page() {
 	return (
-		<CalculatorPage<FdCalculator>
-			calculatorName='FD Interest'
-			pageDescription={pageDescription}
-			type='fixed-deposit'
-			calculatorSchema={FdCalculatorSchema}
-			formFields={formFields}
-			CalculatorResult={FdCalculatorResult}
-		/>
+		<>
+			<title>FD Interest Calculator</title>
+			<meta name='description' content={pageDescription} />
+			<meta
+				name='keywords'
+				content='Fixed Deposit, FD, Interest Calculator, Investment, Financial Planning'
+			/>
+			<CalculatorPage<FdCalculator>
+				calculatorName='FD Interest'
+				pageDescription={pageDescription}
+				type='fixed-deposit'
+				calculatorSchema={FdCalculatorSchema}
+				formFields={formFields}
+				CalculatorResult={FdCalculatorResult}
+			/>
+		</>
 	);
 }

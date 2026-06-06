@@ -11,8 +11,6 @@
 			"**",
 			"!node_modules",
 			"!.next",
-			"!.output",
-			"!.vinxi",
 			"!dist",
 			"!build",
 			"!src/routeTree.gen.ts"

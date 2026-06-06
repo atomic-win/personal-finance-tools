@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"start": "node .output/server/index.mjs",
+		"preview": "vite preview",
 		"lint": "biome check",
 		"format": "biome format --write"
 	},
@@ -19,7 +19,6 @@
 		"@tanstack/react-query-devtools": "^5.91.3",
 		"@tanstack/react-query-persist-client": "^5.90.22",
 		"@tanstack/react-router": "^1.169.2",
-		"@tanstack/react-start": "^1.167.65",
 		"axios": "^1.16.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
@@ -42,6 +41,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.4",
 		"@tailwindcss/vite": "^4.2.4",
+		"@tanstack/router-plugin": "^1.167.35",
 		"@types/lodash": "^4.17.16",
 		"@types/luxon": "^3.7.1",
 		"@types/node": "^22",
