@@ -1,6 +1,11 @@
+import { createFileRoute } from '@tanstack/react-router';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 
-export default function HomePage() {
+export const Route = createFileRoute('/')({
+	component: HomePage,
+});
+
+function HomePage() {
 	return (
 		<>
 			<title>Personal Finance Tools</title>

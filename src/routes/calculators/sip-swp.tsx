@@ -1,4 +1,4 @@
-'use client';
+import { createFileRoute } from '@tanstack/react-router';
 import CalculatorPage from '@/features/calculators/components/CalculatorPage';
 import SipSwpCalculatorResult from '@/features/calculators/components/SipSwpCalculatorResult';
 import {
@@ -37,9 +37,13 @@ const formFields = [
 	},
 ];
 
-export default function Page() {
-	const pageDescription = `The SIP + SWP Calculator helps you plan your investments and withdrawals. Systematic Investment Plan (SIP) allows you to invest a fixed amount regularly, while Systematic Withdrawal Plan (SWP) enables you to withdraw a fixed amount periodically. Use this tool to simulate and manage your financial goals effectively.`;
+const pageDescription = `The SIP + SWP Calculator helps you plan your investments and withdrawals. Systematic Investment Plan (SIP) allows you to invest a fixed amount regularly, while Systematic Withdrawal Plan (SWP) enables you to withdraw a fixed amount periodically. Use this tool to simulate and manage your financial goals effectively.`;
 
+export const Route = createFileRoute('/calculators/sip-swp')({
+	component: Page,
+});
+
+function Page() {
 	return (
 		<>
 			<title>SIP + SWP Calculator</title>

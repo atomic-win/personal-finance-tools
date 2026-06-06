@@ -174,11 +174,10 @@ function createReturnsQuery(request: ReturnRequest, mutualfund: MutualFund) {
 			},
 		],
 		queryFn: async (): Promise<Return[]> => {
-			return new Promise((resolve, reject) => {
-				const worker = new Worker(
-					new URL('../workers/returns.worker.ts', import.meta.url)
-				);
+			const WorkerModule = await import('../workers/returns.worker.ts?worker');
+			const worker = new WorkerModule.default();
 
+			return new Promise((resolve, reject) => {
 				worker.onmessage = (event: MessageEvent<Return[]>) => {
 					resolve(event.data);
 					worker.terminate();

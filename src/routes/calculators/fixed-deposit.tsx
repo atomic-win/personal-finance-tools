@@ -1,4 +1,4 @@
-'use client';
+import { createFileRoute } from '@tanstack/react-router';
 import CalculatorPage from '@/features/calculators/components/CalculatorPage';
 import FdCalculatorResult from '@/features/calculators/components/FdCalculatorResult';
 import {
@@ -25,17 +25,16 @@ const formFields = [
 	},
 ];
 
-export default function Page() {
-	const pageDescription = `The Fixed Deposit (FD) Interest Calculator helps you estimate the maturity amount and interest earned on your fixed deposit investments. Simply input the principal amount, annual interest rate, time period, and compounding frequency to get the results.`;
+const pageDescription = `The Fixed Deposit (FD) Interest Calculator helps you estimate the maturity amount and interest earned on your fixed deposit investments. Simply input the principal amount, annual interest rate, time period, and compounding frequency to get the results.`;
 
+export const Route = createFileRoute('/calculators/fixed-deposit')({
+	component: Page,
+});
+
+function Page() {
 	return (
 		<>
 			<title>FD Interest Calculator</title>
-			<meta name='description' content={pageDescription} />
-			<meta
-				name='keywords'
-				content='Fixed Deposit, FD, Interest Calculator, Investment, Financial Planning'
-			/>
 			<meta name='description' content={pageDescription} />
 			<meta
 				name='keywords'

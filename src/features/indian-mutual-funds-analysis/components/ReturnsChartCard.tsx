@@ -1,4 +1,3 @@
-'use client';
 import { DateTime } from 'luxon';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import ErrorComponent from '@/components/error-component';

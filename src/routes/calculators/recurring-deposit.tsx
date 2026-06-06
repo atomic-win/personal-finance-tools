@@ -1,4 +1,4 @@
-'use client';
+import { createFileRoute } from '@tanstack/react-router';
 import CalculatorPage from '@/features/calculators/components/CalculatorPage';
 import RdCalculatorResult from '@/features/calculators/components/RdCalculatorResult';
 import {
@@ -21,9 +21,13 @@ const formFields = [
 	},
 ];
 
-export default function Page() {
-	const pageDescription = `The Recurring Deposit (RD) Interest Calculator helps you estimate the maturity amount and interest earned on your recurring deposit investments. Simply input the monthly deposit amount, annual interest rate, and time period to get the results.`;
+const pageDescription = `The Recurring Deposit (RD) Interest Calculator helps you estimate the maturity amount and interest earned on your recurring deposit investments. Simply input the monthly deposit amount, annual interest rate, and time period to get the results.`;
 
+export const Route = createFileRoute('/calculators/recurring-deposit')({
+	component: Page,
+});
+
+function Page() {
 	return (
 		<>
 			<title>RD Interest Calculator</title>

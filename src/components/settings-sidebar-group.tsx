@@ -1,4 +1,3 @@
-'use client';
 import _ from 'lodash';
 import { ChevronRight } from 'lucide-react';
 import { useEffect } from 'react';

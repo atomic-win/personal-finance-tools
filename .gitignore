@@ -17,8 +17,12 @@
 /.next/
 /out/
 
+# tanstack router
+/src/routeTree.gen.ts
+
 # production
 /build
+/dist
 
 # misc
 .DS_Store
@@ -39,4 +43,3 @@ yarn-error.log*
 
 # typescript
 *.tsbuildinfo
-next-env.d.ts

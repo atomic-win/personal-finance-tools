@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Card } from '@/components/ui/card';
@@ -40,9 +40,8 @@ export default function ReturnsForm({
 	returnRequest: ReturnRequest;
 }) {
 	const props = schema.parse(returnRequest);
-	const searchParams = useSearchParams();
-	const pathname = usePathname();
-	const { replace } = useRouter();
+	const search = useSearch({ strict: false });
+	const navigate = useNavigate();
 
 	const form = useForm<z.infer<typeof schema>>({
 		resolver: zodResolver(schema),
@@ -50,40 +49,34 @@ export default function ReturnsForm({
 	});
 
 	function onFormChange(data: z.infer<typeof schema>) {
-		const params = new URLSearchParams(searchParams.toString());
+		const updatedSearch: Record<string, string | undefined> = {
+			...search,
+			frequency:
+				data.frequency !== Frequency.Monthly ? data.frequency : undefined,
+			stepUpFrequency:
+				data.stepUpFrequency !== Frequency.Yearly
+					? data.stepUpFrequency
+					: undefined,
+			stepUpRatio:
+				data.stepUpRatio !== 0.1 ? data.stepUpRatio.toString() : undefined,
+			investmentDuration:
+				data.investmentDuration !== PresetTimeDurations.OneYear
+					? data.investmentDuration
+					: undefined,
+			rollingWindow:
+				data.rollingWindow !== PresetTimeDurations.TwoYears
+					? data.rollingWindow
+					: undefined,
+			rollingReturnType:
+				data.rollingReturnType !== RollingReturnType.Avg
+					? data.rollingReturnType
+					: undefined,
+		};
 
-		params.delete('frequency');
-		params.delete('stepUpFrequency');
-		params.delete('stepUpRatio');
-		params.delete('investmentDuration');
-		params.delete('rollingWindow');
-		params.delete('rollingReturnType');
-
-		if (data.frequency !== Frequency.Monthly) {
-			params.set('frequency', data.frequency);
-		}
-
-		if (data.stepUpFrequency !== Frequency.Yearly) {
-			params.set('stepUpFrequency', data.stepUpFrequency);
-		}
-
-		if (data.stepUpRatio !== 0.1) {
-			params.set('stepUpRatio', data.stepUpRatio.toString());
-		}
-
-		if (data.investmentDuration !== PresetTimeDurations.OneYear) {
-			params.set('investmentDuration', data.investmentDuration);
-		}
-
-		if (data.rollingWindow !== PresetTimeDurations.TwoYears) {
-			params.set('rollingWindow', data.rollingWindow);
-		}
-
-		if (data.rollingReturnType !== RollingReturnType.Avg) {
-			params.set('rollingReturnType', data.rollingReturnType);
-		}
-
-		replace(`${pathname}?${params}`);
+		navigate({
+			search: updatedSearch as Record<string, string>,
+			replace: true,
+		});
 	}
 
 	return (

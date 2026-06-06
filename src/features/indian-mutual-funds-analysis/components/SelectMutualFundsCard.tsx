@@ -1,8 +1,7 @@
-'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import fuzzysort from 'fuzzysort';
 import { Check, ChevronsUpDown, Trash2 } from 'lucide-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -40,7 +39,10 @@ const schema = z.object({
 });
 
 export default function SelectMutualFundsCard() {
-	const searchParams = useSearchParams();
+	const search = useSearch({ strict: false }) as Record<
+		string,
+		string | string[]
+	>;
 	const mutualFundListQuery = useMutualFundListQuery();
 
 	if (mutualFundListQuery.isFetching) {
@@ -51,9 +53,12 @@ export default function SelectMutualFundsCard() {
 		return <ErrorComponent errorMessage='Failed to fetch mutual fund list' />;
 	}
 
-	const schemeCodes = searchParams
-		.getAll('mfSchemeCode')
-		.map((x) => parseInt(x, 10));
+	const rawCodes = search.mfSchemeCode;
+	const schemeCodes = Array.isArray(rawCodes)
+		? rawCodes.map((x: string) => parseInt(x, 10))
+		: rawCodes
+			? [parseInt(rawCodes as string, 10)]
+			: [];
 
 	return (
 		<Card className='rounded-lg shadow-md w-full'>
@@ -83,9 +88,11 @@ function MutualFundSearchForm({
 	mutualfunds: MutualFund[];
 	schemeCodes: number[];
 }) {
-	const searchParams = useSearchParams();
-	const pathname = usePathname();
-	const { replace } = useRouter();
+	const search = useSearch({ strict: false }) as Record<
+		string,
+		string | string[]
+	>;
+	const navigate = useNavigate();
 
 	const [mfSearchText, setMfSearchText] = useState('');
 
@@ -106,13 +113,21 @@ function MutualFundSearchForm({
 		.filter((mutualfund) => !schemeCodes.includes(mutualfund.schemeCode));
 
 	function addSchemeCode() {
-		const params = new URLSearchParams(searchParams);
-		const schemeCodes = params.getAll('mfSchemeCode');
 		const selectedSchemeCode = form.getValues('mfSchemeCode').toString();
+		const currentCodes = Array.isArray(search.mfSchemeCode)
+			? search.mfSchemeCode
+			: search.mfSchemeCode
+				? [search.mfSchemeCode as string]
+				: [];
 
-		if (!schemeCodes.includes(selectedSchemeCode)) {
-			params.append('mfSchemeCode', selectedSchemeCode);
-			replace(`${pathname}?${params.toString()}`);
+		if (!currentCodes.includes(selectedSchemeCode)) {
+			navigate({
+				search: {
+					...search,
+					mfSchemeCode: [...currentCodes, selectedSchemeCode],
+				} as Record<string, string | string[]>,
+				replace: true,
+			});
 		}
 
 		form.reset();
@@ -230,24 +245,31 @@ function MutualFundsDisplay({
 }
 
 function MutualFundDisplayItem({ mutualfund }: { mutualfund: MutualFund }) {
-	const searchParams = useSearchParams();
-	const pathname = usePathname();
-	const { replace } = useRouter();
+	const search = useSearch({ strict: false }) as Record<
+		string,
+		string | string[]
+	>;
+	const navigate = useNavigate();
 
 	function removeSchemeCode() {
-		const params = new URLSearchParams(searchParams);
-		const schemeCodes = searchParams.getAll('mfSchemeCode');
 		const schemeCode = mutualfund.schemeCode.toString();
+		const currentCodes = Array.isArray(search.mfSchemeCode)
+			? search.mfSchemeCode
+			: search.mfSchemeCode
+				? [search.mfSchemeCode as string]
+				: [];
 
-		params.delete('mfSchemeCode');
+		const updatedCodes = currentCodes.filter(
+			(code: string) => code !== schemeCode
+		);
 
-		schemeCodes
-			.filter((code) => code !== schemeCode)
-			.forEach((code) => {
-				params.append('mfSchemeCode', code);
-			});
-
-		replace(`${pathname}?${params.toString()}`);
+		navigate({
+			search: {
+				...search,
+				mfSchemeCode: updatedCodes.length > 0 ? updatedCodes : undefined,
+			} as Record<string, string | string[] | undefined>,
+			replace: true,
+		});
 	}
 
 	return (

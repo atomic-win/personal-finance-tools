@@ -1,5 +1,5 @@
+import { Link } from '@tanstack/react-router';
 import { DollarSignIcon, Send } from 'lucide-react';
-import Link from 'next/link';
 import SettingsSidebarGroup from '@/components/settings-sidebar-group';
 import {
 	Sidebar,
@@ -74,7 +74,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton size='lg'>
-							<Link href='/' className='flex items-center gap-3'>
+							<Link to='/' className='flex items-center gap-3'>
 								<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground'>
 									<DollarSignIcon className='size-4' />
 								</div>
