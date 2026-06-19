@@ -48,8 +48,8 @@ export function findPeakPrice(
 
 	for (const p of dailyPrices) {
 		if (p.date >= fromDate && p.date <= toDate) {
-			if (p.high > peakPrice) {
-				peakPrice = p.high;
+			if (p.close > peakPrice) {
+				peakPrice = p.close;
 				peakDate = p.date;
 			}
 		}
