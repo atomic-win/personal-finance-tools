@@ -1,5 +1,7 @@
 import { UploadIcon } from 'lucide-react';
+import { DateTime } from 'luxon';
 import { useRef, useState } from 'react';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -11,7 +13,99 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog';
 import { useSetTransactionsMutation, useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
-import { parseCSV, type TransactionInput } from '@/features/schedule-fa/lib/csv-parser';
+import type { Transaction } from '@/features/schedule-fa/lib/types';
+
+// --- CSV parsing ---
+
+type TransactionInput = Omit<Transaction, 'id'>;
+
+const csvRowSchema = z.object({
+	Date: z.string(),
+	Remarks: z.string().optional(),
+	Symbol: z.string().min(1),
+	Type: z.enum(['Buy', 'Sell']),
+	Units: z.coerce.number().positive(),
+	Price: z.coerce.number().nonnegative(),
+});
+
+function detectDelimiter(headerLine: string): string {
+	const tabCount = (headerLine.match(/\t/g) || []).length;
+	const commaCount = (headerLine.match(/,/g) || []).length;
+	return tabCount > commaCount ? '\t' : ',';
+}
+
+const dateFormats = [
+	'yyyy-MM-dd',
+	'yyyy/MM/dd',
+	'MM-dd-yyyy',
+	'MM/dd/yyyy',
+	'M/d/yyyy',
+	'dd-MM-yyyy',
+	'dd/MM/yyyy',
+	'd/M/yyyy',
+	'dd.MM.yyyy',
+];
+
+function normalizeDate(raw: string, rowNum: number): string {
+	for (const fmt of dateFormats) {
+		const dt = DateTime.fromFormat(raw.trim(), fmt);
+		if (dt.isValid) {
+			return dt.toISODate() ?? raw;
+		}
+	}
+	const iso = DateTime.fromISO(raw.trim());
+	if (iso.isValid) {
+		return iso.toISODate() ?? raw;
+	}
+	throw new Error(`Row ${rowNum}: Unable to parse date "${raw}"`);
+}
+
+function parseCSV(csvText: string): TransactionInput[] {
+	const lines = csvText.trim().split('\n');
+	if (lines.length < 2) {
+		throw new Error('File must have a header row and at least one data row');
+	}
+
+	const delimiter = detectDelimiter(lines[0]);
+	const header = lines[0].split(delimiter).map((h) => h.trim());
+	const requiredColumns = ['Date', 'Symbol', 'Type', 'Units', 'Price'];
+	for (const col of requiredColumns) {
+		if (!header.includes(col)) {
+			throw new Error(`Missing required column: ${col}`);
+		}
+	}
+
+	const transactions: TransactionInput[] = [];
+
+	for (let i = 1; i < lines.length; i++) {
+		const line = lines[i].trim();
+		if (!line) continue;
+
+		const values = line.split(delimiter).map((v) => v.trim());
+		const row: Record<string, string> = {};
+		for (let j = 0; j < header.length; j++) {
+			row[header[j]] = values[j] ?? '';
+		}
+
+		const parsed = csvRowSchema.safeParse(row);
+		if (!parsed.success) {
+			throw new Error(
+				`Row ${i + 1}: ${parsed.error.issues.map((e) => e.message).join(', ')}`
+			);
+		}
+
+		transactions.push({
+			date: normalizeDate(parsed.data.Date, i + 1),
+			remarks: parsed.data.Remarks ?? '',
+			symbol: parsed.data.Symbol.toUpperCase(),
+			type: parsed.data.Type,
+			units: parsed.data.Units,
+			price: parsed.data.Price,
+		});
+	}
+
+	return transactions;
+}
 
 export default function CSVUploadDialog() {
 	const { data: existing = [] } = useTransactionsQuery();

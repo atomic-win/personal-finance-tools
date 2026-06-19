@@ -20,7 +20,6 @@ import {
 import { useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
 import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
 import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
-import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
 import type {
 	ExchangeRate,
 	GroupingOption,
@@ -40,6 +39,85 @@ type Lot = {
 	soldOn: string | null;
 	salePrice: number | null;
 };
+
+// --- FIFO lot matching ---
+
+function applyFIFO(
+	transactions: { date: string; symbol: string; type: 'Buy' | 'Sell'; units: number; price: number }[],
+): { heldLots: Lot[]; soldLots: Lot[] } {
+	const sorted = [...transactions].sort(
+		(a, b) => DateTime.fromISO(a.date).toMillis() - DateTime.fromISO(b.date).toMillis(),
+	);
+
+	const buyLots: { date: string; price: number; remaining: number }[] = [];
+	const soldLots: Lot[] = [];
+
+	for (const tx of sorted) {
+		if (tx.type === 'Buy') {
+			buyLots.push({ date: tx.date, price: tx.price, remaining: tx.units });
+		} else {
+			let unitsToSell = tx.units;
+			for (const lot of buyLots) {
+				if (unitsToSell <= 0) break;
+				if (lot.remaining <= 0) continue;
+
+				const soldFromLot = Math.min(lot.remaining, unitsToSell);
+				lot.remaining -= soldFromLot;
+				unitsToSell -= soldFromLot;
+
+				soldLots.push({
+					symbol: tx.symbol,
+					acquiredOn: lot.date,
+					quantity: soldFromLot,
+					purchasePrice: lot.price,
+					soldOn: tx.date,
+					salePrice: tx.price,
+				});
+			}
+
+			if (unitsToSell > 0) {
+				throw new Error(
+					`Cannot sell ${tx.units} units of ${tx.symbol} on ${tx.date}: insufficient units`,
+				);
+			}
+		}
+	}
+
+	const heldLots: Lot[] = buyLots
+		.filter((lot) => lot.remaining > 0)
+		.map((lot) => ({
+			symbol: sorted[0].symbol,
+			acquiredOn: lot.date,
+			quantity: lot.remaining,
+			purchasePrice: lot.price,
+			soldOn: null,
+			salePrice: null,
+		}));
+
+	return { heldLots, soldLots };
+}
+
+function processTransactions(
+	transactions: { date: string; symbol: string; type: 'Buy' | 'Sell'; units: number; price: number }[],
+): { heldLots: Lot[]; soldLots: Lot[] } {
+	const bySymbol = new Map<string, typeof transactions>();
+	for (const tx of transactions) {
+		const existing = bySymbol.get(tx.symbol) ?? [];
+		existing.push(tx);
+		bySymbol.set(tx.symbol, existing);
+	}
+
+	const allHeldLots: Lot[] = [];
+	const allSoldLots: Lot[] = [];
+
+	for (const [, txns] of bySymbol) {
+		const { heldLots, soldLots } = applyFIFO(txns);
+		allHeldLots.push(...heldLots);
+		allSoldLots.push(...soldLots);
+	}
+
+	return { heldLots: allHeldLots, soldLots: allSoldLots };
+}
 
 // --- Computation helpers ---
 
