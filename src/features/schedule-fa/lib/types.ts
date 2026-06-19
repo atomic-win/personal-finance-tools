@@ -93,11 +93,7 @@ export type ScheduleFARow = {
 
 // --- Grouping ---
 
-export type GroupingOption =
-	| 'none'
-	| 'by-stock'
-	| 'by-year'
-	| 'by-stock-and-year';
+export type GroupingOption = 'none' | 'by-stock' | 'by-year';
 
 // --- Transactions (from CSV) ---
 

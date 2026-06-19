@@ -260,8 +260,6 @@ export function groupRows(
 				return row.nameOfEntity;
 			case 'by-year':
 				return row.dateOfAcquiring.substring(0, 4);
-			case 'by-stock-and-year':
-				return `${row.nameOfEntity}|${row.dateOfAcquiring.substring(0, 4)}`;
 		}
 	};
 

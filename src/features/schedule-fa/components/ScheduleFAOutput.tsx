@@ -52,7 +52,6 @@ export default function ScheduleFAOutput({ rows }: Props) {
 							<SelectItem value='none'>No Grouping</SelectItem>
 							<SelectItem value='by-stock'>By Stock</SelectItem>
 							<SelectItem value='by-year'>By Acquisition Year</SelectItem>
-							<SelectItem value='by-stock-and-year'>By Stock + Year</SelectItem>
 						</SelectContent>
 					</Select>
 				</div>
