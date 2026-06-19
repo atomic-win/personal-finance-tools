@@ -78,15 +78,16 @@ export type ScheduleFARow = {
 	zipCode: string;
 	natureOfEntity: string;
 	dateOfAcquiring: string;
-	initialValueUSD: number;
+	currency: string;
+	initialValueForeign: number;
 	initialValueINR: number;
-	peakValueUSD: number;
+	peakValueForeign: number;
 	peakValueINR: number;
-	closingBalanceUSD: number;
+	closingBalanceForeign: number;
 	closingBalanceINR: number;
-	totalDividendsUSD: number;
+	totalDividendsForeign: number;
 	totalDividendsINR: number;
-	totalSaleProceedsUSD: number;
+	totalSaleProceedsForeign: number;
 	totalSaleProceedsINR: number;
 };
 

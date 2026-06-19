@@ -177,15 +177,15 @@ export function computeScheduleFARows(input: ComputeInput): ScheduleFARow[] {
 		const { closingPrice } = findClosingPrice(stock.dailyPrices, yearEnd);
 
 		// Initial value (cost of acquisition)
-		const initialValueUSD = lot.purchasePrice * lot.quantity;
+		const initialValueForeign = lot.purchasePrice * lot.quantity;
 		const initialRate = findRate(rates, lot.acquiredOn);
 
 		// Peak value
-		const peakValueUSD = peakPrice * lot.quantity;
+		const peakValueForeign = peakPrice * lot.quantity;
 		const peakRate = findRate(rates, peakDate);
 
 		// Closing balance
-		const closingBalanceUSD = closingPrice * lot.quantity;
+		const closingBalanceForeign = closingPrice * lot.quantity;
 		const closingRate = findRate(rates, yearEnd);
 
 		// Dividends
@@ -195,11 +195,11 @@ export function computeScheduleFARows(input: ComputeInput): ScheduleFARow[] {
 		const relatedSoldLots = (soldBySymbol.get(lot.symbol) ?? []).filter(
 			(s) => s.acquiredOn === lot.acquiredOn
 		);
-		let saleProceedsUSD = 0;
+		let saleProceedsForeign = 0;
 		let saleProceedsINR = 0;
 		for (const soldLot of relatedSoldLots) {
 			const sp = computeSaleProceeds(soldLot, year, rates);
-			saleProceedsUSD += sp.totalUSD;
+			saleProceedsForeign += sp.totalUSD;
 			saleProceedsINR += sp.totalINR;
 		}
 
@@ -213,15 +213,16 @@ export function computeScheduleFARows(input: ComputeInput): ScheduleFARow[] {
 			zipCode: stock.zip,
 			natureOfEntity: 'Equity Shares',
 			dateOfAcquiring: lot.acquiredOn,
-			initialValueUSD,
-			initialValueINR: initialValueUSD * initialRate,
-			peakValueUSD,
-			peakValueINR: peakValueUSD * peakRate,
-			closingBalanceUSD,
-			closingBalanceINR: closingBalanceUSD * closingRate,
-			totalDividendsUSD: divs.totalUSD,
+			currency: stock.currency,
+			initialValueForeign,
+			initialValueINR: initialValueForeign * initialRate,
+			peakValueForeign,
+			peakValueINR: peakValueForeign * peakRate,
+			closingBalanceForeign,
+			closingBalanceINR: closingBalanceForeign * closingRate,
+			totalDividendsForeign: divs.totalUSD,
 			totalDividendsINR: divs.totalINR,
-			totalSaleProceedsUSD: saleProceedsUSD,
+			totalSaleProceedsForeign: saleProceedsForeign,
 			totalSaleProceedsINR: saleProceedsINR,
 		});
 	}
@@ -275,15 +276,16 @@ export function groupRows(
 			zipCode: first.zipCode,
 			natureOfEntity: first.natureOfEntity,
 			dateOfAcquiring: earliestDate,
-			initialValueUSD: sum(group, 'initialValueUSD'),
+			currency: first.currency,
+			initialValueForeign: sum(group, 'initialValueForeign'),
 			initialValueINR: sum(group, 'initialValueINR'),
-			peakValueUSD: sum(group, 'peakValueUSD'),
+			peakValueForeign: sum(group, 'peakValueForeign'),
 			peakValueINR: sum(group, 'peakValueINR'),
-			closingBalanceUSD: sum(group, 'closingBalanceUSD'),
+			closingBalanceForeign: sum(group, 'closingBalanceForeign'),
 			closingBalanceINR: sum(group, 'closingBalanceINR'),
-			totalDividendsUSD: sum(group, 'totalDividendsUSD'),
+			totalDividendsForeign: sum(group, 'totalDividendsForeign'),
 			totalDividendsINR: sum(group, 'totalDividendsINR'),
-			totalSaleProceedsUSD: sum(group, 'totalSaleProceedsUSD'),
+			totalSaleProceedsForeign: sum(group, 'totalSaleProceedsForeign'),
 			totalSaleProceedsINR: sum(group, 'totalSaleProceedsINR'),
 		});
 	}

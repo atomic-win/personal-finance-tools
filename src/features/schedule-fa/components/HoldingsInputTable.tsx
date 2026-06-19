@@ -61,7 +61,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 							<TableHead>Symbol</TableHead>
 							<TableHead>Date</TableHead>
 							<TableHead>Units</TableHead>
-							<TableHead>Price (USD)</TableHead>
+							<TableHead>Price</TableHead>
 							<TableHead className='w-10' />
 						</TableRow>
 					</TableHeader>

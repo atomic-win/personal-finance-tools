@@ -25,11 +25,11 @@ type Props = {
 	rows: ScheduleFARow[];
 };
 
-function formatCurrency(value: number, currency: 'USD' | 'INR'): string {
-	if (currency === 'USD') {
-		return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+function formatAmount(value: number, currency: string): string {
+	if (currency === 'INR') {
+		return `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 	}
-	return `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+	return `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 }
 
 export default function ScheduleFAOutput({ rows }: Props) {
@@ -72,19 +72,15 @@ export default function ScheduleFAOutput({ rows }: Props) {
 							<TableHead>Zip Code</TableHead>
 							<TableHead>Nature of Entity</TableHead>
 							<TableHead>Date of Acquiring</TableHead>
-							<TableHead className='text-right'>Initial Value (USD)</TableHead>
+							<TableHead className='text-right'>Initial Value</TableHead>
 							<TableHead className='text-right'>Initial Value (INR)</TableHead>
-							<TableHead className='text-right'>Peak Value (USD)</TableHead>
+							<TableHead className='text-right'>Peak Value</TableHead>
 							<TableHead className='text-right'>Peak Value (INR)</TableHead>
-							<TableHead className='text-right'>
-								Closing Balance (USD)
-							</TableHead>
-							<TableHead className='text-right'>
-								Closing Balance (INR)
-							</TableHead>
-							<TableHead className='text-right'>Dividends (USD)</TableHead>
+							<TableHead className='text-right'>Closing Balance</TableHead>
+							<TableHead className='text-right'>Closing Balance (INR)</TableHead>
+							<TableHead className='text-right'>Dividends</TableHead>
 							<TableHead className='text-right'>Dividends (INR)</TableHead>
-							<TableHead className='text-right'>Sale Proceeds (USD)</TableHead>
+							<TableHead className='text-right'>Sale Proceeds</TableHead>
 							<TableHead className='text-right'>Sale Proceeds (INR)</TableHead>
 						</TableRow>
 					</TableHeader>
@@ -99,34 +95,34 @@ export default function ScheduleFAOutput({ rows }: Props) {
 								<TableCell>{row.natureOfEntity}</TableCell>
 								<TableCell>{row.dateOfAcquiring}</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.initialValueUSD, 'USD')}
+									{formatAmount(row.initialValueForeign, row.currency)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.initialValueINR, 'INR')}
+									{formatAmount(row.initialValueINR, 'INR')}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.peakValueUSD, 'USD')}
+									{formatAmount(row.peakValueForeign, row.currency)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.peakValueINR, 'INR')}
+									{formatAmount(row.peakValueINR, 'INR')}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.closingBalanceUSD, 'USD')}
+									{formatAmount(row.closingBalanceForeign, row.currency)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.closingBalanceINR, 'INR')}
+									{formatAmount(row.closingBalanceINR, 'INR')}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.totalDividendsUSD, 'USD')}
+									{formatAmount(row.totalDividendsForeign, row.currency)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.totalDividendsINR, 'INR')}
+									{formatAmount(row.totalDividendsINR, 'INR')}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.totalSaleProceedsUSD, 'USD')}
+									{formatAmount(row.totalSaleProceedsForeign, row.currency)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatCurrency(row.totalSaleProceedsINR, 'INR')}
+									{formatAmount(row.totalSaleProceedsINR, 'INR')}
 								</TableCell>
 							</TableRow>
 						))}
