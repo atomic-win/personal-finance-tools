@@ -72,15 +72,10 @@ export default function ScheduleFAOutput({ rows }: Props) {
 							<TableHead>Zip Code</TableHead>
 							<TableHead>Nature of Entity</TableHead>
 							<TableHead>Date of Acquiring</TableHead>
-							<TableHead className='text-right'>Initial Value</TableHead>
 							<TableHead className='text-right'>Initial Value (INR)</TableHead>
-							<TableHead className='text-right'>Peak Value</TableHead>
 							<TableHead className='text-right'>Peak Value (INR)</TableHead>
-							<TableHead className='text-right'>Closing Balance</TableHead>
 							<TableHead className='text-right'>Closing Balance (INR)</TableHead>
-							<TableHead className='text-right'>Dividends</TableHead>
 							<TableHead className='text-right'>Dividends (INR)</TableHead>
-							<TableHead className='text-right'>Sale Proceeds</TableHead>
 							<TableHead className='text-right'>Sale Proceeds (INR)</TableHead>
 						</TableRow>
 					</TableHeader>
@@ -95,31 +90,16 @@ export default function ScheduleFAOutput({ rows }: Props) {
 								<TableCell>{row.natureOfEntity}</TableCell>
 								<TableCell>{row.dateOfAcquiring}</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.initialValueForeign, row.currency)}
-								</TableCell>
-								<TableCell className='text-right'>
 									{formatAmount(row.initialValueINR, 'INR')}
-								</TableCell>
-								<TableCell className='text-right'>
-									{formatAmount(row.peakValueForeign, row.currency)}
 								</TableCell>
 								<TableCell className='text-right'>
 									{formatAmount(row.peakValueINR, 'INR')}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.closingBalanceForeign, row.currency)}
-								</TableCell>
-								<TableCell className='text-right'>
 									{formatAmount(row.closingBalanceINR, 'INR')}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.totalDividendsForeign, row.currency)}
-								</TableCell>
-								<TableCell className='text-right'>
 									{formatAmount(row.totalDividendsINR, 'INR')}
-								</TableCell>
-								<TableCell className='text-right'>
-									{formatAmount(row.totalSaleProceedsForeign, row.currency)}
 								</TableCell>
 								<TableCell className='text-right'>
 									{formatAmount(row.totalSaleProceedsINR, 'INR')}
