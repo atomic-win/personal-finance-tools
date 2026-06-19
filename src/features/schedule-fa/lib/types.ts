@@ -1,4 +1,4 @@
-// --- Transaction (input row — from CSV or manual entry) ---
+// --- Transaction (input row — from file or manual entry) ---
 
 export type Transaction = {
 	id: string;

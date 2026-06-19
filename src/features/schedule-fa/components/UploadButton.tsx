@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useSetTransactionsMutation } from '@/features/schedule-fa/hooks/transactions';
 import type { Transaction } from '@/features/schedule-fa/lib/types';
 
-export default function CSVUploadButton() {
+export default function UploadButton() {
 	const { mutate: setTransactions } = useSetTransactionsMutation();
 	const [error, setError] = useState<string | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -19,7 +19,7 @@ export default function CSVUploadButton() {
 
 		try {
 			const text = await file.text();
-			const transactions = parseCSV(text);
+			const transactions = parseFile(text);
 			setTransactions(transactions);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'Failed to parse file');
@@ -52,7 +52,7 @@ export default function CSVUploadButton() {
 	);
 }
 
-// --- CSV parsing ---
+// --- File parsing ---
 
 const csvRowSchema = z.object({
 	Date: z.string(),
@@ -95,7 +95,7 @@ function normalizeDate(raw: string, rowNum: number): string {
 	throw new Error(`Row ${rowNum}: Unable to parse date "${raw}"`);
 }
 
-function parseCSV(csvText: string): Transaction[] {
+function parseFile(csvText: string): Transaction[] {
 	const lines = csvText.trim().split('\n');
 	if (lines.length < 2) {
 		throw new Error('File must have a header row and at least one data row');

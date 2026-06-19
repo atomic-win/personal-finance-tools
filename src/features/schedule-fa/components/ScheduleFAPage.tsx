@@ -1,7 +1,7 @@
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import CSVUploadButton from '@/features/schedule-fa/components/UploadButton';
+import UploadButton from '@/features/schedule-fa/components/UploadButton';
 import TransactionsInputTable from '@/features/schedule-fa/components/TransactionsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
 import {
@@ -37,7 +37,7 @@ export default function ScheduleFAPage() {
 						<CardTitle className='flex items-center justify-between'>
 							<span>Transactions</span>
 							<div className='flex items-center gap-3'>
-								<CSVUploadButton />
+								<UploadButton />
 								{transactions.length > 0 && (
 									<Button
 										variant='destructive'

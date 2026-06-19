@@ -66,7 +66,7 @@ export default function TransactionsInputTable() {
 									colSpan={6}
 									className='text-center text-muted-foreground'
 								>
-									No transactions added. Add manually or upload a CSV/TSV.
+									No transactions added. Add manually or upload a file.
 								</TableCell>
 							</TableRow>
 						)}
