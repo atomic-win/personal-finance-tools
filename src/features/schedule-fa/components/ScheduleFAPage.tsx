@@ -14,7 +14,12 @@ import { Spinner } from '@/components/ui/spinner';
 import CSVUploadDialog from '@/features/schedule-fa/components/CSVUploadDialog';
 import HoldingsInputTable from '@/features/schedule-fa/components/HoldingsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
-import { useHoldings } from '@/features/schedule-fa/hooks/useHoldings';
+import {
+	useAddHoldingsMutation,
+	useClearHoldingsMutation,
+	useHoldingsQuery,
+	useSetHoldingsMutation,
+} from '@/features/schedule-fa/hooks/useHoldings';
 import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
 import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
 import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
@@ -42,7 +47,10 @@ function getYearOptions(): number[] {
 
 export default function ScheduleFAPage() {
 	const [year, setYear] = useState(getDefaultYear());
-	const { holdings, setHoldings, clearHoldings } = useHoldings();
+	const { data: holdings = [] } = useHoldingsQuery();
+	const { mutate: setHoldings } = useSetHoldingsMutation();
+	const { mutate: addHoldings } = useAddHoldingsMutation();
+	const { mutate: clearHoldings } = useClearHoldingsMutation();
 
 	const validHoldings = useMemo(
 		() => holdings.filter((h) => h.symbol && h.quantity > 0 && h.purchaseDate),
@@ -134,7 +142,7 @@ export default function ScheduleFAPage() {
 	}, [allDataReady, stockQueries, rateQueries, holdings, year]);
 
 	const handleCSVImport = (imported: HoldingInput[]) => {
-		setHoldings([...holdings, ...imported]);
+		addHoldings(imported);
 	};
 
 	const handleHoldingsChange = (updated: HoldingInput[]) => {
