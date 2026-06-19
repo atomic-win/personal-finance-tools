@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon';
 import { useState } from 'react';
+import ErrorComponent from '@/components/error-component';
+import LoadingComponent from '@/components/loading-component';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
 	Select,
@@ -8,7 +10,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { Spinner } from '@/components/ui/spinner';
 import {
 	Table,
 	TableBody,
@@ -25,8 +26,8 @@ import type {
 	GroupingOption,
 	ScheduleFARow,
 	StockInfoResponse,
+	Transaction,
 } from '@/features/schedule-fa/lib/types';
-
 
 export default function ScheduleFAOutput() {
 	const [year, setYear] = useState(getDefaultYear());
@@ -35,107 +36,95 @@ export default function ScheduleFAOutput() {
 	const { data: transactions = [] } = useTransactionsQuery();
 
 	const validTransactions = transactions.filter(
-		(h) => h.symbol && h.units > 0 && h.date,
+		(h) => h.symbol && h.units > 0 && h.date
 	);
 	const uniqueSymbols = [...new Set(validTransactions.map((h) => h.symbol))];
-	const hasValidTransactions = uniqueSymbols.length > 0;
 
-	const stockQueries = useStockInfoQueries(
-		hasValidTransactions ? uniqueSymbols : [],
-	);
+	const stockQueries = useStockInfoQueries(uniqueSymbols);
 
 	const uniqueCurrencies = [
 		...new Set(
-			stockQueries
-				.filter((q) => q.data?.currency)
-				.map((q) => q.data!.currency),
+			stockQueries.map((q) => q.data?.currency).filter(Boolean) as string[]
 		),
 	];
 
-	const rateQueries = useTTBuyRateQueries(
-		uniqueCurrencies,
-		hasValidTransactions && uniqueCurrencies.length > 0,
-	);
+	const rateQueries = useTTBuyRateQueries(uniqueCurrencies);
 
-	const isLoading =
-		hasValidTransactions &&
-		(stockQueries.some((q) => q.isLoading) ||
-			rateQueries.some((q) => q.isLoading) ||
-			(stockQueries.some((q) => q.isSuccess) &&
-				uniqueCurrencies.length === 0));
-
-	const hasError =
-		hasValidTransactions &&
-		(stockQueries.some((q) => q.isError) || rateQueries.some((q) => q.isError));
-
-	const allDataReady =
-		hasValidTransactions &&
-		stockQueries.length > 0 &&
-		stockQueries.every((q) => q.isSuccess) &&
-		rateQueries.length > 0 &&
-		rateQueries.every((q) => q.isSuccess);
-
-	let rows: ScheduleFARow[] = [];
-
-	if (allDataReady) {
-		const stockData = new Map<string, StockInfoResponse>();
-		for (const q of stockQueries) {
-			if (q.data) {
-				stockData.set(q.data.symbol, q.data);
-			}
-		}
-
-		const ratesByCurrency = new Map<string, ExchangeRate[]>();
-		for (const q of rateQueries) {
-			if (q.data) {
-				ratesByCurrency.set(q.data.currency, q.data.rates);
-			}
-		}
-
-		if (stockData.size > 0 && ratesByCurrency.size > 0) {
-			const { heldLots, soldLots } = processTransactions(validTransactions);
-
-			rows = computeScheduleFARows({
-				heldLots,
-				soldLots,
-				stockData,
-				ratesByCurrency,
-				year,
-			});
-		}
+	if (stockQueries.some((q) => q.isLoading)) {
+		return <LoadingComponent loadingMessage='Fetching stock information...' />;
 	}
 
-	const displayRows = groupRows(rows, grouping);
-
-	if (!hasValidTransactions) return null;
-
-	if (isLoading) {
+	if (stockQueries.some((q) => q.isError)) {
 		return (
-			<div className='flex items-center gap-2 text-sm text-muted-foreground p-4'>
-				<Spinner className='size-4' />
-				Fetching data...
-			</div>
+			<>
+				<ErrorComponent errorMessage='Failed to fetch stock information. Please check the stock symbols and try again.' />
+				<div className='p-4'>
+					{stockQueries
+						.filter((q) => q.isError)
+						.map((q, i) => (
+							<p key={uniqueSymbols[i]} className='text-sm text-destructive'>
+								{uniqueSymbols[i]}:{' '}
+								{(q.error as Error)?.message ?? 'Unknown error'}
+							</p>
+						))}
+				</div>
+			</>
 		);
 	}
 
-	if (hasError) {
+	if (rateQueries.some((q) => q.isLoading)) {
+		return <LoadingComponent loadingMessage='Fetching exchange rates...' />;
+	}
+
+	if (rateQueries.some((q) => q.isError)) {
+		return (
+			<>
+				<ErrorComponent errorMessage='Failed to fetch exchange rates. Please try again later.' />
+				<div className='p-4'>
+					{rateQueries
+						.filter((q) => q.isError)
+						.map((q, i) => (
+							<p key={uniqueCurrencies[i]} className='text-sm text-destructive'>
+								{uniqueCurrencies[i]}:{' '}
+								{(q.error as Error)?.message ?? 'Unknown error'}
+							</p>
+						))}
+				</div>
+			</>
+		);
+	}
+
+	const stockData = new Map<string, StockInfoResponse>();
+	for (const q of stockQueries.filter((q) => !!q.data)) {
+		stockData.set(q.data.symbol, q.data);
+	}
+
+	const ratesByCurrency = new Map<string, ExchangeRate[]>();
+	for (const q of rateQueries.filter((q) => !!q.data)) {
+		ratesByCurrency.set(q.data.currency, q.data.rates);
+	}
+
+	if (stockData.size === 0 || ratesByCurrency.size === 0) {
 		return (
 			<div className='p-4'>
-				<p className='text-destructive'>
-					Failed to fetch some data. Please check your stock symbols and try again.
+				<p className='text-muted-foreground'>
+					No valid stock or exchange rate data available to compute Schedule FA.
 				</p>
-				{stockQueries
-					.filter((q) => q.isError)
-					.map((q, i) => (
-						<p key={uniqueSymbols[i]} className='text-sm text-destructive'>
-							{uniqueSymbols[i]}: {(q.error as Error)?.message ?? 'Unknown error'}
-						</p>
-					))}
 			</div>
 		);
 	}
 
-	if (rows.length === 0) return null;
+	const { heldLots, soldLots } = processTransactions(validTransactions);
+
+	const rows = computeScheduleFARows({
+		heldLots,
+		soldLots,
+		stockData,
+		ratesByCurrency,
+		year,
+	});
+
+	const displayRows = groupRows(rows, grouping);
 
 	return (
 		<div className='space-y-4'>
@@ -143,7 +132,9 @@ export default function ScheduleFAOutput() {
 				<h2 className='text-lg font-semibold'>Schedule FA — Table A3 Output</h2>
 				<div className='flex items-center gap-4'>
 					<div className='flex items-center gap-2'>
-						<span className='text-sm text-muted-foreground'>Reporting Year:</span>
+						<span className='text-sm text-muted-foreground'>
+							Reporting Year:
+						</span>
 						<Select
 							value={String(year)}
 							onValueChange={(v) => setYear(Number(v))}
@@ -246,11 +237,13 @@ type Lot = {
 
 // --- FIFO lot matching ---
 
-function applyFIFO(
-	transactions: { date: string; symbol: string; type: 'Buy' | 'Sell'; units: number; price: number }[],
-): { heldLots: Lot[]; soldLots: Lot[] } {
+function applyFIFO(transactions: Transaction[]): {
+	heldLots: Lot[];
+	soldLots: Lot[];
+} {
 	const sorted = [...transactions].sort(
-		(a, b) => DateTime.fromISO(a.date).toMillis() - DateTime.fromISO(b.date).toMillis(),
+		(a, b) =>
+			DateTime.fromISO(a.date).toMillis() - DateTime.fromISO(b.date).toMillis()
 	);
 
 	const buyLots: { date: string; price: number; remaining: number }[] = [];
@@ -281,7 +274,7 @@ function applyFIFO(
 
 			if (unitsToSell > 0) {
 				throw new Error(
-					`Cannot sell ${tx.units} units of ${tx.symbol} on ${tx.date}: insufficient units`,
+					`Cannot sell ${tx.units} units of ${tx.symbol} on ${tx.date}: insufficient units`
 				);
 			}
 		}
@@ -301,9 +294,10 @@ function applyFIFO(
 	return { heldLots, soldLots };
 }
 
-function processTransactions(
-	transactions: { date: string; symbol: string; type: 'Buy' | 'Sell'; units: number; price: number }[],
-): { heldLots: Lot[]; soldLots: Lot[] } {
+function processTransactions(transactions: Transaction[]): {
+	heldLots: Lot[];
+	soldLots: Lot[];
+} {
 	const bySymbol = new Map<string, typeof transactions>();
 	for (const tx of transactions) {
 		const existing = bySymbol.get(tx.symbol) ?? [];
@@ -353,7 +347,7 @@ function getLastDayOfPreviousMonth(dateStr: string): string {
 function findPeakPrice(
 	dailyPrices: DailyPrice[],
 	fromDate: string,
-	toDate: string,
+	toDate: string
 ): { peakPrice: number; peakDate: string } {
 	let peakPrice = 0;
 	let peakDate = fromDate;
@@ -372,7 +366,7 @@ function findPeakPrice(
 
 function findClosingPrice(
 	dailyPrices: DailyPrice[],
-	date: string,
+	date: string
 ): { closingPrice: number; closingDate: string } {
 	let closest: DailyPrice | null = null;
 	for (const p of dailyPrices) {
@@ -394,7 +388,7 @@ function computeDividends(
 	year: number,
 	rates: ExchangeRate[],
 	heldFrom: string,
-	heldTo: string,
+	heldTo: string
 ): { totalUSD: number; totalINR: number } {
 	const yearStart = `${year}-01-01`;
 	const yearEnd = `${year}-12-31`;
@@ -420,7 +414,7 @@ function computeDividends(
 function computeSaleProceeds(
 	lot: Lot,
 	year: number,
-	rates: ExchangeRate[],
+	rates: ExchangeRate[]
 ): { totalUSD: number; totalINR: number } {
 	if (!lot.soldOn || !lot.salePrice) return { totalUSD: 0, totalINR: 0 };
 
@@ -468,7 +462,11 @@ function computeScheduleFARows(input: {
 		const rates = ratesByCurrency.get(stock.currency) ?? [];
 
 		const peakFrom = lot.acquiredOn > yearStart ? lot.acquiredOn : yearStart;
-		const { peakPrice, peakDate } = findPeakPrice(stock.dailyPrices, peakFrom, yearEnd);
+		const { peakPrice, peakDate } = findPeakPrice(
+			stock.dailyPrices,
+			peakFrom,
+			yearEnd
+		);
 		const { closingPrice } = findClosingPrice(stock.dailyPrices, yearEnd);
 
 		const initialValueForeign = lot.purchasePrice * lot.quantity;
@@ -479,12 +477,16 @@ function computeScheduleFARows(input: {
 		const closingRate = findRate(rates, yearEnd);
 
 		const divs = computeDividends(
-			stock.dividends, lot.quantity, year, rates,
-			lot.acquiredOn, lot.soldOn ?? yearEnd,
+			stock.dividends,
+			lot.quantity,
+			year,
+			rates,
+			lot.acquiredOn,
+			lot.soldOn ?? yearEnd
 		);
 
 		const relatedSoldLots = (soldBySymbol.get(lot.symbol) ?? []).filter(
-			(s) => s.acquiredOn === lot.acquiredOn,
+			(s) => s.acquiredOn === lot.acquiredOn
 		);
 		let saleProceedsForeign = 0;
 		let saleProceedsINR = 0;
@@ -498,7 +500,9 @@ function computeScheduleFARows(input: {
 			slNo: slNo++,
 			countryNameAndCode: `${stock.country} — ${stock.countryCode}`,
 			nameOfEntity: stock.name,
-			addressOfEntity: [stock.address, stock.city, stock.state].filter(Boolean).join(', '),
+			addressOfEntity: [stock.address, stock.city, stock.state]
+				.filter(Boolean)
+				.join(', '),
 			zipCode: stock.zip,
 			natureOfEntity: 'Equity Shares',
 			dateOfAcquiring: lot.acquiredOn,
@@ -519,7 +523,10 @@ function computeScheduleFARows(input: {
 	return rows;
 }
 
-function groupRows(rows: ScheduleFARow[], option: GroupingOption): ScheduleFARow[] {
+function groupRows(
+	rows: ScheduleFARow[],
+	option: GroupingOption
+): ScheduleFARow[] {
 	if (option === 'none') return rows;
 
 	const groupKey = (row: ScheduleFARow): string => {
@@ -546,7 +553,7 @@ function groupRows(rows: ScheduleFARow[], option: GroupingOption): ScheduleFARow
 		const first = group[0];
 		const earliestDate = group.reduce(
 			(min, r) => (r.dateOfAcquiring < min ? r.dateOfAcquiring : min),
-			first.dateOfAcquiring,
+			first.dateOfAcquiring
 		);
 
 		grouped.push({
