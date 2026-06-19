@@ -38,9 +38,10 @@ export default function TransactionsInputTable() {
 				<table className='w-full caption-bottom text-sm'>
 					<thead className='sticky top-0 z-10 bg-background shadow-[inset_0_-1px_0_0_var(--color-border)]'>
 						<tr>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-24'>Type</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-28'>Symbol</th>
 							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-40'>Date</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Remarks</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-28'>Symbol</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-24'>Type</th>
 							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-24'>Units</th>
 							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-32'>Price</th>
 							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-10' />
@@ -50,7 +51,7 @@ export default function TransactionsInputTable() {
 						{transactions.length === 0 && (
 							<TableRow>
 								<TableCell
-									colSpan={6}
+									colSpan={7}
 									className='text-center text-muted-foreground'
 								>
 									No transactions added. Add manually or upload a file.
@@ -59,6 +60,36 @@ export default function TransactionsInputTable() {
 						)}
 						{transactions.map((tx) => (
 							<TableRow key={tx.id}>
+								<TableCell>
+									<Input
+										type='date'
+										value={tx.date}
+										onChange={(e) =>
+											updateTransaction({ ...tx, date: e.target.value })
+										}
+										className='w-36'
+									/>
+								</TableCell>
+								<TableCell>
+									<Input
+										value={tx.remarks}
+										onChange={(e) =>
+											updateTransaction({ ...tx, remarks: e.target.value })
+										}
+										placeholder=''
+										className='w-full min-w-20'
+									/>
+								</TableCell>
+								<TableCell>
+									<Input
+										value={tx.symbol}
+										onChange={(e) =>
+											updateTransaction({ ...tx, symbol: e.target.value })
+										}
+										placeholder='AAPL'
+										className='w-24'
+									/>
+								</TableCell>
 								<TableCell>
 									<Select
 										value={tx.type}
@@ -74,26 +105,6 @@ export default function TransactionsInputTable() {
 											<SelectItem value='Sell'>Sell</SelectItem>
 										</SelectContent>
 									</Select>
-								</TableCell>
-								<TableCell>
-									<Input
-										value={tx.symbol}
-										onChange={(e) =>
-											updateTransaction({ ...tx, symbol: e.target.value })
-										}
-										placeholder='AAPL'
-										className='w-24'
-									/>
-								</TableCell>
-								<TableCell>
-									<Input
-										type='date'
-										value={tx.date}
-										onChange={(e) =>
-											updateTransaction({ ...tx, date: e.target.value })
-										}
-										className='w-36'
-									/>
 								</TableCell>
 								<TableCell>
 									<Input
