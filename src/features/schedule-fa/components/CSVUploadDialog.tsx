@@ -3,25 +3,12 @@ import { DateTime } from 'luxon';
 import { useRef, useState } from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '@/components/ui/dialog';
 import { useSetTransactionsMutation } from '@/features/schedule-fa/hooks/transactions';
 import type { Transaction } from '@/features/schedule-fa/lib/types';
 
-// --- CSV parsing ---
-
-export default function CSVUploadDialog() {
+export default function CSVUploadButton() {
 	const { mutate: setTransactions } = useSetTransactionsMutation();
-	const [open, setOpen] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [preview, setPreview] = useState<TransactionInput[] | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,100 +16,43 @@ export default function CSVUploadDialog() {
 		if (!file) return;
 
 		setError(null);
-		setPreview(null);
 
 		try {
 			const text = await file.text();
 			const transactions = parseCSV(text);
-			setPreview(transactions);
+			setTransactions(transactions);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : 'Failed to parse CSV');
+			setError(err instanceof Error ? err.message : 'Failed to parse file');
 		}
-	};
 
-	const handleImport = () => {
-		if (preview) {
-			setTransactions(preview);
-			setOpen(false);
-			setPreview(null);
-			setError(null);
-		}
-	};
-
-	const handleOpenChange = (nextOpen: boolean) => {
-		setOpen(nextOpen);
-		if (!nextOpen) {
-			setPreview(null);
-			setError(null);
-			if (fileInputRef.current) {
-				fileInputRef.current.value = '';
-			}
+		if (fileInputRef.current) {
+			fileInputRef.current.value = '';
 		}
 	};
 
 	return (
-		<Dialog open={open} onOpenChange={handleOpenChange}>
-			<DialogTrigger render={<Button variant='outline' size='sm' />}>
+		<div className='flex items-center gap-2'>
+			<Button
+				variant='outline'
+				size='sm'
+				onClick={() => fileInputRef.current?.click()}
+			>
 				<UploadIcon className='size-4' />
 				Upload File
-			</DialogTrigger>
-			<DialogContent className='sm:max-w-lg'>
-				<DialogHeader>
-					<DialogTitle>Upload Transactions CSV / TSV</DialogTitle>
-					<DialogDescription>
-						CSV or TSV format: Date, Remarks, Symbol, Type (Buy/Sell), Units, Price
-					</DialogDescription>
-				</DialogHeader>
-				<div className='space-y-4'>
-					<input
-						ref={fileInputRef}
-						type='file'
-						accept='.csv,.tsv,.txt'
-						onChange={handleFileChange}
-						className='block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/80 cursor-pointer'
-					/>
-					{error && <p className='text-sm text-destructive'>{error}</p>}
-					{preview && (
-						<div className='space-y-2'>
-							<p className='text-sm text-muted-foreground'>
-								Found <strong>{preview.length}</strong> transactions:
-							</p>
-							<div className='max-h-48 overflow-y-auto text-xs border rounded-md'>
-								<table className='w-full'>
-									<thead>
-										<tr className='border-b bg-muted/50'>
-											<th className='p-2 text-left'>Type</th>
-											<th className='p-2 text-left'>Symbol</th>
-											<th className='p-2 text-left'>Date</th>
-											<th className='p-2 text-left'>Units</th>
-											<th className='p-2 text-left'>Price</th>
-										</tr>
-									</thead>
-									<tbody>
-										{preview.map((h) => (
-											<tr key={h.id} className='border-b last:border-0'>
-												<td className='p-2'>{h.type}</td>
-												<td className='p-2'>{h.symbol}</td>
-												<td className='p-2'>{h.date}</td>
-												<td className='p-2'>{h.units}</td>
-												<td className='p-2'>${h.price}</td>
-											</tr>
-										))}
-									</tbody>
-								</table>
-							</div>
-						</div>
-					)}
-				</div>
-				<DialogFooter>
-					<Button onClick={handleImport} disabled={!preview}>
-						Import {preview?.length ?? 0} Transactions
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
+			</Button>
+			<input
+				ref={fileInputRef}
+				type='file'
+				accept='.csv,.tsv,.txt'
+				onChange={handleFileChange}
+				className='hidden'
+			/>
+			{error && <span className='text-sm text-destructive'>{error}</span>}
+		</div>
 	);
 }
+
+// --- CSV parsing ---
 
 type TransactionInput = Omit<Transaction, 'id'>;
 
@@ -135,12 +65,6 @@ const csvRowSchema = z.object({
 	Price: z.coerce.number().nonnegative(),
 });
 
-function detectDelimiter(headerLine: string): string {
-	const tabCount = (headerLine.match(/\t/g) || []).length;
-	const commaCount = (headerLine.match(/,/g) || []).length;
-	return tabCount > commaCount ? '\t' : ',';
-}
-
 const dateFormats = [
 	'yyyy-MM-dd',
 	'yyyy/MM/dd',
@@ -152,6 +76,12 @@ const dateFormats = [
 	'd/M/yyyy',
 	'dd.MM.yyyy',
 ];
+
+function detectDelimiter(headerLine: string): string {
+	const tabCount = (headerLine.match(/\t/g) || []).length;
+	const commaCount = (headerLine.match(/,/g) || []).length;
+	return tabCount > commaCount ? '\t' : ',';
+}
 
 function normalizeDate(raw: string, rowNum: number): string {
 	for (const fmt of dateFormats) {
@@ -213,4 +143,3 @@ function parseCSV(csvText: string): TransactionInput[] {
 
 	return transactions;
 }
-
