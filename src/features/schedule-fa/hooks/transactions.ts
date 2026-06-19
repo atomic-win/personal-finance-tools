@@ -28,7 +28,7 @@ export function useSetTransactionsMutation() {
 
 	return useMutation({
 		mutationKey: [...QUERY_KEY, 'set'],
-		mutationFn: async (transactions: (Transaction | Omit<Transaction, 'id'>)[]) => {
+		mutationFn: async (transactions: Transaction[]) => {
 			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
 
 			const previousData =
@@ -36,7 +36,7 @@ export function useSetTransactionsMutation() {
 
 			const withIds = transactions.map((t) => ({
 				...t,
-				id: 'id' in t ? t.id : v7(),
+				id: t.id || v7(),
 			}));
 
 			queryClient.setQueryData<Transaction[]>(QUERY_KEY, withIds);

@@ -54,8 +54,6 @@ export default function CSVUploadButton() {
 
 // --- CSV parsing ---
 
-type TransactionInput = Omit<Transaction, 'id'>;
-
 const csvRowSchema = z.object({
 	Date: z.string(),
 	Remarks: z.string().optional(),
@@ -97,7 +95,7 @@ function normalizeDate(raw: string, rowNum: number): string {
 	throw new Error(`Row ${rowNum}: Unable to parse date "${raw}"`);
 }
 
-function parseCSV(csvText: string): TransactionInput[] {
+function parseCSV(csvText: string): Transaction[] {
 	const lines = csvText.trim().split('\n');
 	if (lines.length < 2) {
 		throw new Error('File must have a header row and at least one data row');
@@ -112,7 +110,7 @@ function parseCSV(csvText: string): TransactionInput[] {
 		}
 	}
 
-	const transactions: TransactionInput[] = [];
+	const transactions: Transaction[] = [];
 
 	for (let i = 1; i < lines.length; i++) {
 		const line = lines[i].trim();
@@ -132,6 +130,7 @@ function parseCSV(csvText: string): TransactionInput[] {
 		}
 
 		transactions.push({
+			id: '',
 			date: normalizeDate(parsed.data.Date, i + 1),
 			remarks: parsed.data.Remarks ?? '',
 			symbol: parsed.data.Symbol.toUpperCase(),
