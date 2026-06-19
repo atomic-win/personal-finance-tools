@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,7 +10,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { Spinner } from '@/components/ui/spinner';
 import CSVUploadDialog from '@/features/schedule-fa/components/CSVUploadDialog';
 import HoldingsInputTable from '@/features/schedule-fa/components/HoldingsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
@@ -18,15 +17,6 @@ import {
 	useClearTransactionsMutation,
 	useTransactionsQuery,
 } from '@/features/schedule-fa/hooks/useHoldings';
-import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
-import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
-import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
-import { computeScheduleFARows } from '@/features/schedule-fa/lib/schedule-fa-compute';
-import type {
-	ExchangeRate,
-	ScheduleFARow,
-	StockInfoResponse,
-} from '@/features/schedule-fa/lib/types';
 
 function getDefaultYear(): number {
 	return DateTime.now().year - 1;
@@ -45,83 +35,6 @@ export default function ScheduleFAPage() {
 	const [year, setYear] = useState(getDefaultYear());
 	const { data: holdings = [] } = useTransactionsQuery();
 	const { mutate: clearTransactions } = useClearTransactionsMutation();
-
-	const validHoldings = useMemo(
-		() => holdings.filter((h) => h.symbol && h.units > 0 && h.date),
-		[holdings],
-	);
-
-	const uniqueSymbols = useMemo(
-		() => [...new Set(validHoldings.map((h) => h.symbol))],
-		[validHoldings]
-	);
-
-	const hasValidHoldings = uniqueSymbols.length > 0;
-	const stockQueries = useMultipleStockInfo(hasValidHoldings ? uniqueSymbols : []);
-
-	// Get unique currencies from fetched stock data
-	const uniqueCurrencies = useMemo(() => {
-		const currencies = new Set<string>();
-		for (const q of stockQueries) {
-			if (q.data?.currency) {
-				currencies.add(q.data.currency);
-			}
-		}
-		return [...currencies];
-	}, [stockQueries]);
-
-	const rateQueries = useMultipleTTBuyRates(
-		uniqueCurrencies,
-		hasValidHoldings && uniqueCurrencies.length > 0,
-	);
-
-	const isLoading =
-		hasValidHoldings &&
-		(stockQueries.some((q) => q.isLoading) ||
-			rateQueries.some((q) => q.isLoading) ||
-			(stockQueries.some((q) => q.isSuccess) && uniqueCurrencies.length === 0));
-
-	const hasError =
-		hasValidHoldings &&
-		(stockQueries.some((q) => q.isError) || rateQueries.some((q) => q.isError));
-
-	const allDataReady =
-		hasValidHoldings &&
-		stockQueries.length > 0 &&
-		stockQueries.every((q) => q.isSuccess) &&
-		rateQueries.length > 0 &&
-		rateQueries.every((q) => q.isSuccess);
-
-	const rows: ScheduleFARow[] = useMemo(() => {
-		if (!allDataReady) return [];
-
-		const stockData = new Map<string, StockInfoResponse>();
-		for (const q of stockQueries) {
-			if (q.data) {
-				stockData.set(q.symbol, q.data);
-			}
-		}
-
-		// Build rates map by currency
-		const ratesByCurrency = new Map<string, ExchangeRate[]>();
-		for (const q of rateQueries) {
-			if (q.data) {
-				ratesByCurrency.set(q.currency, q.data);
-			}
-		}
-
-		if (stockData.size === 0 || ratesByCurrency.size === 0) return [];
-
-		const { heldLots, soldLots } = processTransactions(validHoldings);
-
-		return computeScheduleFARows({
-			heldLots,
-			soldLots,
-			stockData,
-			ratesByCurrency,
-			year,
-		});
-	}, [allDataReady, stockQueries, rateQueries, holdings, year]);
 
 	return (
 		<>
@@ -152,9 +65,7 @@ export default function ScheduleFAPage() {
 									</span>
 									<Select
 										value={String(year)}
-										onValueChange={(v) => {
-											setYear(Number(v));
-										}}
+										onValueChange={(v) => setYear(Number(v))}
 									>
 										<SelectTrigger className='w-24'>
 											<SelectValue />
@@ -181,42 +92,12 @@ export default function ScheduleFAPage() {
 							</div>
 						</CardTitle>
 					</CardHeader>
-					<CardContent className='space-y-4'>
+					<CardContent>
 						<HoldingsInputTable />
-						{isLoading && (
-							<div className='flex items-center gap-2 text-sm text-muted-foreground'>
-								<Spinner className='size-4' />
-								Fetching data...
-							</div>
-						)}
 					</CardContent>
 				</Card>
 
-				{hasError && (
-					<Card>
-						<CardContent>
-							<p className='text-destructive'>
-								Failed to fetch some data. Please check your stock symbols and
-								try again.
-							</p>
-							{stockQueries
-								.filter((q) => q.isError)
-								.map((q) => (
-									<p key={q.symbol} className='text-sm text-destructive'>
-										{q.symbol}: {(q.error as Error)?.message ?? 'Unknown error'}
-									</p>
-								))}
-						</CardContent>
-					</Card>
-				)}
-
-				{!isLoading && rows.length > 0 && (
-					<Card>
-						<CardContent>
-							<ScheduleFAOutput rows={rows} />
-						</CardContent>
-					</Card>
-				)}
+				<ScheduleFAOutput year={year} />
 			</div>
 		</>
 	);

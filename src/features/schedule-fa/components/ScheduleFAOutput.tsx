@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
 	Select,
@@ -7,6 +7,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import {
 	Table,
 	TableBody,
@@ -15,23 +16,137 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { groupRows } from '@/features/schedule-fa/lib/schedule-fa-compute';
+import { useTransactionsQuery } from '@/features/schedule-fa/hooks/useHoldings';
+import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
+import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
+import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
+import {
+	computeScheduleFARows,
+	groupRows,
+} from '@/features/schedule-fa/lib/schedule-fa-compute';
 import type {
+	ExchangeRate,
 	GroupingOption,
 	ScheduleFARow,
+	StockInfoResponse,
 } from '@/features/schedule-fa/lib/types';
-
-type Props = {
-	rows: ScheduleFARow[];
-};
 
 function formatAmount(value: number): string {
 	return `₹${Math.round(value).toLocaleString('en-IN')}`;
 }
 
-export default function ScheduleFAOutput({ rows }: Props) {
+export default function ScheduleFAOutput({ year }: { year: number }) {
 	const [grouping, setGrouping] = useState<GroupingOption>('none');
+
+	const { data: holdings = [] } = useTransactionsQuery();
+
+	const validHoldings = useMemo(
+		() => holdings.filter((h) => h.symbol && h.units > 0 && h.date),
+		[holdings],
+	);
+
+	const uniqueSymbols = useMemo(
+		() => [...new Set(validHoldings.map((h) => h.symbol))],
+		[validHoldings],
+	);
+
+	const hasValidHoldings = uniqueSymbols.length > 0;
+	const stockQueries = useMultipleStockInfo(
+		hasValidHoldings ? uniqueSymbols : [],
+	);
+
+	const uniqueCurrencies = useMemo(() => {
+		const currencies = new Set<string>();
+		for (const q of stockQueries) {
+			if (q.data?.currency) {
+				currencies.add(q.data.currency);
+			}
+		}
+		return [...currencies];
+	}, [stockQueries]);
+
+	const rateQueries = useMultipleTTBuyRates(
+		uniqueCurrencies,
+		hasValidHoldings && uniqueCurrencies.length > 0,
+	);
+
+	const isLoading =
+		hasValidHoldings &&
+		(stockQueries.some((q) => q.isLoading) ||
+			rateQueries.some((q) => q.isLoading) ||
+			(stockQueries.some((q) => q.isSuccess) &&
+				uniqueCurrencies.length === 0));
+
+	const hasError =
+		hasValidHoldings &&
+		(stockQueries.some((q) => q.isError) || rateQueries.some((q) => q.isError));
+
+	const allDataReady =
+		hasValidHoldings &&
+		stockQueries.length > 0 &&
+		stockQueries.every((q) => q.isSuccess) &&
+		rateQueries.length > 0 &&
+		rateQueries.every((q) => q.isSuccess);
+
+	const rows: ScheduleFARow[] = useMemo(() => {
+		if (!allDataReady) return [];
+
+		const stockData = new Map<string, StockInfoResponse>();
+		for (const q of stockQueries) {
+			if (q.data) {
+				stockData.set(q.symbol, q.data);
+			}
+		}
+
+		const ratesByCurrency = new Map<string, ExchangeRate[]>();
+		for (const q of rateQueries) {
+			if (q.data) {
+				ratesByCurrency.set(q.currency, q.data);
+			}
+		}
+
+		if (stockData.size === 0 || ratesByCurrency.size === 0) return [];
+
+		const { heldLots, soldLots } = processTransactions(validHoldings);
+
+		return computeScheduleFARows({
+			heldLots,
+			soldLots,
+			stockData,
+			ratesByCurrency,
+			year,
+		});
+	}, [allDataReady, stockQueries, rateQueries, validHoldings, year]);
+
 	const displayRows = groupRows(rows, grouping);
+
+	if (!hasValidHoldings) return null;
+
+	if (isLoading) {
+		return (
+			<div className='flex items-center gap-2 text-sm text-muted-foreground p-4'>
+				<Spinner className='size-4' />
+				Fetching data...
+			</div>
+		);
+	}
+
+	if (hasError) {
+		return (
+			<div className='p-4'>
+				<p className='text-destructive'>
+					Failed to fetch some data. Please check your stock symbols and try again.
+				</p>
+				{stockQueries
+					.filter((q) => q.isError)
+					.map((q) => (
+						<p key={q.symbol} className='text-sm text-destructive'>
+							{q.symbol}: {(q.error as Error)?.message ?? 'Unknown error'}
+						</p>
+					))}
+			</div>
+		);
+	}
 
 	if (rows.length === 0) return null;
 
