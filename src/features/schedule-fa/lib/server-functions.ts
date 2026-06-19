@@ -44,6 +44,7 @@ export const fetchStockInfo = createServerFn({ method: 'GET' })
 			symbol,
 			name: price?.longName ?? quoteType?.longName ?? symbol,
 			exchange: price?.exchangeName ?? quoteType?.exchange ?? '',
+			currency: price?.currency ?? chartData.meta?.currency ?? 'USD',
 			country: getCountryFromExchange(price?.exchangeName ?? ''),
 			countryCode: getCountryCodeFromExchange(price?.exchangeName ?? ''),
 			dailyPrices,

@@ -15,10 +15,11 @@ import CSVUploadDialog from '@/features/schedule-fa/components/CSVUploadDialog';
 import HoldingsInputTable from '@/features/schedule-fa/components/HoldingsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
 import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
-import { useTTBuyRate } from '@/features/schedule-fa/hooks/useTTBuyRate';
+import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
 import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
 import { computeScheduleFARows } from '@/features/schedule-fa/lib/schedule-fa-compute';
 import type {
+	ExchangeRate,
 	HoldingInput,
 	ScheduleFARow,
 	StockInfoResponse,
@@ -49,15 +50,30 @@ export default function ScheduleFAPage() {
 	);
 
 	const stockQueries = useMultipleStockInfo(generated ? uniqueSymbols : []);
-	const ttBuyRateQuery = useTTBuyRate('USD', generated);
+
+	// Get unique currencies from fetched stock data
+	const uniqueCurrencies = useMemo(() => {
+		const currencies = new Set<string>();
+		for (const q of stockQueries) {
+			if (q.data?.currency) {
+				currencies.add(q.data.currency);
+			}
+		}
+		return [...currencies];
+	}, [stockQueries]);
+
+	const rateQueries = useMultipleTTBuyRates(
+		uniqueCurrencies,
+		generated && uniqueCurrencies.length > 0,
+	);
 
 	const isLoading =
 		generated &&
-		(stockQueries.some((q) => q.isLoading) || ttBuyRateQuery.isLoading);
+		(stockQueries.some((q) => q.isLoading) || rateQueries.some((q) => q.isLoading));
 
 	const hasError =
 		generated &&
-		(stockQueries.some((q) => q.isError) || ttBuyRateQuery.isError);
+		(stockQueries.some((q) => q.isError) || rateQueries.some((q) => q.isError));
 
 	const rows: ScheduleFARow[] = useMemo(() => {
 		if (!generated) return [];
@@ -70,8 +86,15 @@ export default function ScheduleFAPage() {
 			}
 		}
 
-		const rates = ttBuyRateQuery.data ?? [];
-		if (stockData.size === 0 || rates.length === 0) return [];
+		// Build rates map by currency
+		const ratesByCurrency = new Map<string, ExchangeRate[]>();
+		for (const q of rateQueries) {
+			if (q.data) {
+				ratesByCurrency.set(q.currency, q.data);
+			}
+		}
+
+		if (stockData.size === 0 || ratesByCurrency.size === 0) return [];
 
 		// Convert holdings to transactions and apply FIFO
 		const transactions: Transaction[] = holdings
@@ -91,7 +114,7 @@ export default function ScheduleFAPage() {
 			heldLots,
 			soldLots,
 			stockData,
-			rates,
+			ratesByCurrency,
 			year,
 		});
 	}, [
@@ -99,7 +122,7 @@ export default function ScheduleFAPage() {
 		isLoading,
 		hasError,
 		stockQueries,
-		ttBuyRateQuery.data,
+		rateQueries,
 		holdings,
 		year,
 	]);

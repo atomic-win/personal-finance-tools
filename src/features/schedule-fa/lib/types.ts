@@ -52,6 +52,7 @@ export type StockInfoResponse = {
 	symbol: string;
 	name: string;
 	exchange: string;
+	currency: string;
 	country: string;
 	countryCode: string;
 	dailyPrices: DailyPrice[];

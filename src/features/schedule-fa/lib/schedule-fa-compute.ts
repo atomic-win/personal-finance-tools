@@ -135,7 +135,7 @@ export type ComputeInput = {
 	heldLots: Lot[];
 	soldLots: Lot[];
 	stockData: Map<string, StockInfoResponse>;
-	rates: ExchangeRate[];
+	ratesByCurrency: Map<string, ExchangeRate[]>;
 	year: number;
 };
 
@@ -143,7 +143,7 @@ export type ComputeInput = {
  * Compute Schedule FA rows for all lots (held + sold in reporting year).
  */
 export function computeScheduleFARows(input: ComputeInput): ScheduleFARow[] {
-	const { heldLots, soldLots, stockData, rates, year } = input;
+	const { heldLots, soldLots, stockData, ratesByCurrency, year } = input;
 	const yearStart = `${year}-01-01`;
 	const yearEnd = `${year}-12-31`;
 
@@ -161,6 +161,8 @@ export function computeScheduleFARows(input: ComputeInput): ScheduleFARow[] {
 	for (const lot of heldLots) {
 		const stock = stockData.get(lot.symbol);
 		if (!stock) continue;
+
+		const rates = ratesByCurrency.get(stock.currency) ?? [];
 
 		// Peak: within held period ∩ calendar year
 		const peakFrom = lot.acquiredOn > yearStart ? lot.acquiredOn : yearStart;
