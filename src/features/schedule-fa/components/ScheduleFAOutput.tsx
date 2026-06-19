@@ -72,11 +72,11 @@ export default function ScheduleFAOutput({ rows }: Props) {
 							<TableHead>Zip Code</TableHead>
 							<TableHead>Nature of Entity</TableHead>
 							<TableHead>Date of Acquiring</TableHead>
-							<TableHead className='text-right'>Initial Value (INR)</TableHead>
-							<TableHead className='text-right'>Peak Value (INR)</TableHead>
-							<TableHead className='text-right'>Closing Balance (INR)</TableHead>
-							<TableHead className='text-right'>Dividends (INR)</TableHead>
-							<TableHead className='text-right'>Sale Proceeds (INR)</TableHead>
+							<TableHead className='text-right'>Initial Value</TableHead>
+							<TableHead className='text-right'>Peak Value</TableHead>
+							<TableHead className='text-right'>Closing Balance</TableHead>
+							<TableHead className='text-right'>Dividends</TableHead>
+							<TableHead className='text-right'>Sale Proceeds</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
