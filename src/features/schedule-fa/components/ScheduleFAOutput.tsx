@@ -327,8 +327,12 @@ function calculateRowItemsForOneSymbol(
 		['asc', 'desc']
 	);
 
-	const buys = sorted.filter((tx) => tx.type === 'Buy').map((tx) => ({ ...tx }));
-	const sells = sorted.filter((tx) => tx.type === 'Sell').map((tx) => ({ ...tx }));
+	const buys = sorted
+		.filter((tx) => tx.type === 'Buy')
+		.map((tx) => ({ ...tx }));
+	const sells = sorted
+		.filter((tx) => tx.type === 'Sell')
+		.map((tx) => ({ ...tx }));
 
 	if (
 		_.reduce(buys, (sum, b) => sum + b.units, 0) <
@@ -410,7 +414,7 @@ function calculateRowItemsForOneSymbol(
 				if (dividend.date >= buy.date && dividend.date < sell.date) {
 					dividends.push({
 						date: dividend.date,
-						units: dividend.amount,
+						units: dividend.amount * matchedUnits,
 						price: 1,
 						exchangeRate: findPreviousMonthEndRate(rates, dividend.date),
 					});
