@@ -18,18 +18,6 @@ import {
 	useTransactionsQuery,
 } from '@/features/schedule-fa/hooks/transactions';
 
-function getDefaultYear(): number {
-	return DateTime.now().year - 1;
-}
-
-function getYearOptions(): number[] {
-	const currentYear = DateTime.now().year;
-	const years: number[] = [];
-	for (let y = currentYear; y >= 2015; y--) {
-		years.push(y);
-	}
-	return years;
-}
 
 export default function ScheduleFAPage() {
 	const [year, setYear] = useState(getDefaultYear());
@@ -101,4 +89,17 @@ export default function ScheduleFAPage() {
 			</div>
 		</>
 	);
+}
+
+function getDefaultYear(): number {
+	return DateTime.now().year - 1;
+}
+
+function getYearOptions(): number[] {
+	const currentYear = DateTime.now().year;
+	const years: number[] = [];
+	for (let y = currentYear; y >= 2015; y--) {
+		years.push(y);
+	}
+	return years;
 }
