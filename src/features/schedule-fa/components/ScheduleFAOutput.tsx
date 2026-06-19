@@ -3,7 +3,6 @@ import { DateTime } from 'luxon';
 import { useState } from 'react';
 import ErrorComponent from '@/components/error-component';
 import LoadingComponent from '@/components/loading-component';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
 	Select,
 	SelectContent,
@@ -12,11 +11,8 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import {
-	Table,
 	TableBody,
 	TableCell,
-	TableHead,
-	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
 import {
@@ -180,24 +176,24 @@ export default function ScheduleFAOutput() {
 				</div>
 			</div>
 
-			<ScrollArea className='border rounded-lg'>
-				<Table>
-					<TableHeader>
-						<TableRow>
-							<TableHead className='text-center'>Sl. No</TableHead>
-							<TableHead>Country Name & Code</TableHead>
-							<TableHead>Name of Entity</TableHead>
-							<TableHead>Address of Entity</TableHead>
-							<TableHead>Zip Code</TableHead>
-							<TableHead>Nature of Entity</TableHead>
-							<TableHead>Date of Acquiring</TableHead>
-							<TableHead className='text-right'>Initial Value</TableHead>
-							<TableHead className='text-right'>Peak Value</TableHead>
-							<TableHead className='text-right'>Closing Balance</TableHead>
-							<TableHead className='text-right'>Dividends</TableHead>
-							<TableHead className='text-right'>Sale Proceeds</TableHead>
-						</TableRow>
-					</TableHeader>
+			<div className='border rounded-lg max-h-96 overflow-auto'>
+				<table className='w-full caption-bottom text-sm'>
+					<thead className='sticky top-0 z-10 bg-background shadow-[inset_0_-1px_0_0_var(--color-border)]'>
+						<tr>
+							<th className='h-10 px-2 text-center align-middle font-medium whitespace-nowrap'>Sl. No</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Country Name & Code</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Name of Entity</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Address of Entity</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Zip Code</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Nature of Entity</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Date of Acquiring</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Initial Value</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Peak Value</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Closing Balance</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Dividends</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Sale Proceeds</th>
+						</tr>
+					</thead>
 					<TableBody>
 						{rowItems.map((rowItem, index) => (
 							<TableRow key={index.toString()}>
@@ -216,8 +212,8 @@ export default function ScheduleFAOutput() {
 							</TableRow>
 						))}
 					</TableBody>
-				</Table>
-			</ScrollArea>
+				</table>
+			</div>
 		</div>
 	);
 }
