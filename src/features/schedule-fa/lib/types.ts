@@ -55,6 +55,10 @@ export type StockInfoResponse = {
 	currency: string;
 	country: string;
 	countryCode: string;
+	address: string;
+	city: string;
+	state: string;
+	zip: string;
 	dailyPrices: DailyPrice[];
 	dividends: Dividend[];
 };

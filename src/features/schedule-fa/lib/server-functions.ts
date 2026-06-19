@@ -17,7 +17,9 @@ export const fetchStockInfo = createServerFn({ method: 'GET' })
 		const today = DateTime.now().toISODate() ?? '2025-12-31';
 
 		const [quoteSummary, chartData, dividendChart] = await Promise.all([
-			yf.quoteSummary(symbol, { modules: ['price', 'quoteType'] }),
+			yf.quoteSummary(symbol, {
+				modules: ['price', 'quoteType', 'summaryProfile'],
+			}),
 			yf.chart(symbol, { period1: '2000-01-01', period2: today }),
 			yf.chart(symbol, {
 				period1: '2000-01-01',
@@ -28,6 +30,7 @@ export const fetchStockInfo = createServerFn({ method: 'GET' })
 
 		const price = quoteSummary.price;
 		const quoteType = quoteSummary.quoteType;
+		const profile = quoteSummary.summaryProfile;
 
 		const dailyPrices = (chartData.quotes ?? []).map((q) => ({
 			date: formatDate(q.date),
@@ -45,8 +48,12 @@ export const fetchStockInfo = createServerFn({ method: 'GET' })
 			name: price?.longName ?? quoteType?.longName ?? symbol,
 			exchange: price?.exchangeName ?? quoteType?.exchange ?? '',
 			currency: price?.currency ?? chartData.meta?.currency ?? 'USD',
-			country: getCountryFromExchange(price?.exchangeName ?? ''),
-			countryCode: getCountryCodeFromExchange(price?.exchangeName ?? ''),
+			country: profile?.country ?? getCountryFromExchange(price?.exchangeName ?? ''),
+			countryCode: getCountryCodeFromCountry(profile?.country ?? '') || getCountryCodeFromExchange(price?.exchangeName ?? ''),
+			address: profile?.address1 ?? '',
+			city: profile?.city ?? '',
+			state: profile?.state ?? '',
+			zip: profile?.zip ?? '',
 			dailyPrices,
 			dividends,
 		};
@@ -100,4 +107,26 @@ function getCountryFromExchange(exchange: string): string {
 
 function getCountryCodeFromExchange(exchange: string): string {
 	return exchangeCountryMap[exchange]?.code ?? 'US';
+}
+
+const countryCodeMap: Record<string, string> = {
+	'United States': 'US',
+	'United Kingdom': 'GB',
+	Japan: 'JP',
+	Germany: 'DE',
+	'Hong Kong': 'HK',
+	Australia: 'AU',
+	Canada: 'CA',
+	France: 'FR',
+	Switzerland: 'CH',
+	Netherlands: 'NL',
+	India: 'IN',
+	China: 'CN',
+	Singapore: 'SG',
+	Ireland: 'IE',
+	Sweden: 'SE',
+};
+
+function getCountryCodeFromCountry(country: string): string {
+	return countryCodeMap[country] ?? '';
 }

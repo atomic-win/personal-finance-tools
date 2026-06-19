@@ -207,8 +207,10 @@ export function computeScheduleFARows(input: ComputeInput): ScheduleFARow[] {
 			slNo: slNo++,
 			countryNameAndCode: `${stock.country} — ${stock.countryCode}`,
 			nameOfEntity: stock.name,
-			addressOfEntity: stock.exchange,
-			zipCode: '',
+			addressOfEntity: [stock.address, stock.city, stock.state]
+				.filter(Boolean)
+				.join(', '),
+			zipCode: stock.zip,
 			natureOfEntity: 'Equity Shares',
 			dateOfAcquiring: lot.acquiredOn,
 			initialValueUSD,
