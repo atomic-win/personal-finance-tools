@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import YahooFinance from 'yahoo-finance2';
 import { z } from 'zod';
 
-const yf = new YahooFinance({ suppressNotices: ['ripHistorical'] });
+const yf = new YahooFinance();
 
 const stockInfoInputSchema = z.object({
 	symbol: z.string().min(1),
@@ -14,10 +14,16 @@ export const fetchStockInfo = createServerFn({ method: 'GET' })
 	.handler(async ({ data }) => {
 		const { symbol } = data;
 
+		const today = DateTime.now().toISODate() ?? '2025-12-31';
+
 		const [quoteSummary, dailyPrices, dividends] = await Promise.all([
 			yf.quoteSummary(symbol, { modules: ['price', 'quoteType'] }),
-			yf.historical(symbol, { period1: '2000-01-01' }),
-			yf.historical(symbol, { period1: '2000-01-01', events: 'dividends' }),
+			yf.historical(symbol, { period1: '2000-01-01', period2: today }),
+			yf.historical(symbol, {
+				period1: '2000-01-01',
+				period2: today,
+				events: 'dividends',
+			}),
 		]);
 
 		const price = quoteSummary.price;
@@ -50,7 +56,11 @@ export const fetchTTBuyRate = createServerFn({ method: 'GET' })
 	.handler(async ({ data }) => {
 		const ticker = `${data.from.toUpperCase()}INR=X`;
 
-		const history = await yf.historical(ticker, { period1: '2000-01-01' });
+		const today = DateTime.now().toISODate() ?? '2025-12-31';
+		const history = await yf.historical(ticker, {
+			period1: '2000-01-01',
+			period2: today,
+		});
 
 		return history.map((entry) => ({
 			date: formatDate(entry.date),
