@@ -9,11 +9,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import {
-	TableBody,
-	TableCell,
-	TableRow,
-} from '@/components/ui/table';
+import { TableBody, TableCell, TableRow } from '@/components/ui/table';
 import {
 	useAddTransactionMutation,
 	useRemoveTransactionMutation,
@@ -38,12 +34,24 @@ export default function TransactionsInputTable() {
 				<table className='w-full caption-bottom text-sm'>
 					<thead className='sticky top-0 z-10 bg-background shadow-[inset_0_-1px_0_0_var(--color-border)]'>
 						<tr>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-40'>Date</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Remarks</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-28'>Symbol</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-24'>Type</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-24'>Units</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-32'>Price</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-40'>
+								Date
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>
+								Remarks
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-28'>
+								Symbol
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-24'>
+								Type
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-24'>
+								Units
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-32'>
+								Price
+							</th>
 							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-10' />
 						</tr>
 					</thead>
@@ -151,7 +159,7 @@ export default function TransactionsInputTable() {
 					</TableBody>
 				</table>
 			</div>
-			<div className='flex justify-end mt-2'>
+			<div className='flex justify-end mt-6'>
 				<Button size='sm' onClick={() => addTransaction()}>
 					<PlusIcon className='size-4' />
 					Add Row
