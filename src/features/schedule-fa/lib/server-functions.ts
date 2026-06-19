@@ -16,18 +16,29 @@ export const fetchStockInfo = createServerFn({ method: 'GET' })
 
 		const today = DateTime.now().toISODate() ?? '2025-12-31';
 
-		const [quoteSummary, dailyPrices, dividends] = await Promise.all([
+		const [quoteSummary, chartData, dividendChart] = await Promise.all([
 			yf.quoteSummary(symbol, { modules: ['price', 'quoteType'] }),
-			yf.historical(symbol, { period1: '2000-01-01', period2: today }),
-			yf.historical(symbol, {
+			yf.chart(symbol, { period1: '2000-01-01', period2: today }),
+			yf.chart(symbol, {
 				period1: '2000-01-01',
 				period2: today,
-				events: 'dividends',
+				events: 'div',
 			}),
 		]);
 
 		const price = quoteSummary.price;
 		const quoteType = quoteSummary.quoteType;
+
+		const dailyPrices = (chartData.quotes ?? []).map((q) => ({
+			date: formatDate(q.date),
+			close: q.close ?? 0,
+			high: q.high ?? 0,
+		}));
+
+		const dividends = (dividendChart.events?.dividends ?? []).map((d) => ({
+			date: formatDate(d.date),
+			amount: d.amount,
+		}));
 
 		return {
 			symbol,
@@ -35,15 +46,8 @@ export const fetchStockInfo = createServerFn({ method: 'GET' })
 			exchange: price?.exchangeName ?? quoteType?.exchange ?? '',
 			country: getCountryFromExchange(price?.exchangeName ?? ''),
 			countryCode: getCountryCodeFromExchange(price?.exchangeName ?? ''),
-			dailyPrices: dailyPrices.map((p) => ({
-				date: formatDate(p.date),
-				close: p.close,
-				high: p.high,
-			})),
-			dividends: dividends.map((d) => ({
-				date: formatDate(d.date),
-				amount: d.dividends,
-			})),
+			dailyPrices,
+			dividends,
 		};
 	});
 
@@ -57,14 +61,14 @@ export const fetchTTBuyRate = createServerFn({ method: 'GET' })
 		const ticker = `${data.from.toUpperCase()}INR=X`;
 
 		const today = DateTime.now().toISODate() ?? '2025-12-31';
-		const history = await yf.historical(ticker, {
+		const chartData = await yf.chart(ticker, {
 			period1: '2000-01-01',
 			period2: today,
 		});
 
-		return history.map((entry) => ({
+		return (chartData.quotes ?? []).map((entry) => ({
 			date: formatDate(entry.date),
-			rate: entry.close,
+			rate: entry.close ?? 0,
 		}));
 	});
 
