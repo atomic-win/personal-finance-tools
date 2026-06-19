@@ -293,6 +293,8 @@ function calculateRowItems(
 			for (const [_, rows] of Object.entries(rowsGroupedByYear)) {
 				allRows.push(combineRows(rows));
 			}
+
+			continue;
 		}
 
 		allRows.push(...rowsForSymbol);
