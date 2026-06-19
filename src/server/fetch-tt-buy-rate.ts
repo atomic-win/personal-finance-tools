@@ -35,7 +35,7 @@ export const fetchTTBuyRate = createServerFn({ method: 'GET' })
 			throw new Error('Invalid CSV format: missing DATE or TT BUY column');
 		}
 
-		const rates: { date: string; rate: number }[] = [];
+		const parsed: [number, number][] = [];
 		for (let i = 1; i < lines.length; i++) {
 			const cols = lines[i].split(',');
 			const rawDate = cols[dateIdx]?.trim();
@@ -46,8 +46,16 @@ export const fetchTTBuyRate = createServerFn({ method: 'GET' })
 			const dt = DateTime.fromFormat(rawDate, 'yyyy-MM-dd HH:mm');
 			if (!dt.isValid) continue;
 
-			rates.push({ date: dt.toISODate()!, rate: ttBuy });
+			parsed.push([dt.toMillis(), ttBuy]);
 		}
 
-		return rates;
+		parsed.sort((a, b) => a[0] - b[0]);
+
+		const ratesMap = new Map<string, number>();
+		for (const [millis, rate] of parsed) {
+			const date = DateTime.fromMillis(millis).toISODate()!;
+			ratesMap.set(date, rate);
+		}
+
+		return [...ratesMap.entries()].map(([date, rate]) => ({ date, rate }));
 	});
