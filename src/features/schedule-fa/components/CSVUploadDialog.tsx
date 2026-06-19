@@ -73,7 +73,7 @@ export default function CSVUploadDialog({ onImport }: Props) {
 		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogTrigger render={<Button variant='outline' size='sm' />}>
 				<UploadIcon className='size-4' />
-				Upload CSV
+				Upload File
 			</DialogTrigger>
 			<DialogContent className='sm:max-w-lg'>
 				<DialogHeader>
