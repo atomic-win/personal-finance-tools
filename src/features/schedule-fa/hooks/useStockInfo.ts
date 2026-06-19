@@ -1,5 +1,5 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
-import { fetchStockInfo } from '@/server/fetch-stock-info';
+import { fetchStockInfo } from '@/features/schedule-fa/server/fetch-stock-info';
 import type { StockInfoResponse } from '@/features/schedule-fa/lib/types';
 
 export function useStockInfo(symbol: string | null) {
