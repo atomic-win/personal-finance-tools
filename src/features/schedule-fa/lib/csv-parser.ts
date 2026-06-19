@@ -1,5 +1,4 @@
 import { DateTime } from 'luxon';
-import { v7 } from 'uuid';
 import { csvRowSchema, type Lot, type Transaction } from './types';
 
 function detectDelimiter(headerLine: string): string {
@@ -35,7 +34,9 @@ function normalizeDate(raw: string, rowNum: number): string {
 	throw new Error(`Row ${rowNum}: Unable to parse date "${raw}"`);
 }
 
-export function parseCSV(csvText: string): Transaction[] {
+export type TransactionInput = Omit<Transaction, 'id'>;
+
+export function parseCSV(csvText: string): TransactionInput[] {
 	const lines = csvText.trim().split('\n');
 	if (lines.length < 2) {
 		throw new Error('File must have a header row and at least one data row');
@@ -50,7 +51,7 @@ export function parseCSV(csvText: string): Transaction[] {
 		}
 	}
 
-	const transactions: Transaction[] = [];
+	const transactions: TransactionInput[] = [];
 
 	for (let i = 1; i < lines.length; i++) {
 		const line = lines[i].trim();
@@ -70,7 +71,6 @@ export function parseCSV(csvText: string): Transaction[] {
 		}
 
 		transactions.push({
-			id: v7(),
 			date: normalizeDate(parsed.data.Date, i + 1),
 			remarks: parsed.data.Remarks ?? '',
 			symbol: parsed.data.Symbol.toUpperCase(),
@@ -87,7 +87,7 @@ export function parseCSV(csvText: string): Transaction[] {
  * Applies FIFO lot matching to a list of transactions for a single symbol.
  * Returns remaining held lots and sold lots.
  */
-export function applyFIFO(transactions: Transaction[]): {
+export function applyFIFO(transactions: TransactionInput[]): {
 	heldLots: Lot[];
 	soldLots: Lot[];
 } {
@@ -146,11 +146,11 @@ export function applyFIFO(transactions: Transaction[]): {
 /**
  * Groups transactions by symbol and applies FIFO to each.
  */
-export function processTransactions(transactions: Transaction[]): {
+export function processTransactions(transactions: TransactionInput[]): {
 	heldLots: Lot[];
 	soldLots: Lot[];
 } {
-	const bySymbol = new Map<string, Transaction[]>();
+	const bySymbol = new Map<string, TransactionInput[]>();
 	for (const tx of transactions) {
 		const existing = bySymbol.get(tx.symbol) ?? [];
 		existing.push(tx);

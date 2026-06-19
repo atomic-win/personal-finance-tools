@@ -15,20 +15,22 @@ import CSVUploadDialog from '@/features/schedule-fa/components/CSVUploadDialog';
 import HoldingsInputTable from '@/features/schedule-fa/components/HoldingsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
 import {
-	useAddHoldingsMutation,
-	useClearHoldingsMutation,
-	useHoldingsQuery,
-	useSetHoldingsMutation,
+	useAddTransactionMutation,
+	useClearTransactionsMutation,
+	useSetTransactionsMutation,
+	useTransactionsQuery,
 } from '@/features/schedule-fa/hooks/useHoldings';
 import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
 import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
-import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
+import {
+	type TransactionInput,
+	processTransactions,
+} from '@/features/schedule-fa/lib/csv-parser';
 import { computeScheduleFARows } from '@/features/schedule-fa/lib/schedule-fa-compute';
 import type {
 	ExchangeRate,
 	ScheduleFARow,
 	StockInfoResponse,
-	Transaction,
 } from '@/features/schedule-fa/lib/types';
 
 function getDefaultYear(): number {
@@ -46,10 +48,10 @@ function getYearOptions(): number[] {
 
 export default function ScheduleFAPage() {
 	const [year, setYear] = useState(getDefaultYear());
-	const { data: holdings = [] } = useHoldingsQuery();
-	const { mutate: setHoldings } = useSetHoldingsMutation();
-	const { mutate: addHoldings } = useAddHoldingsMutation();
-	const { mutate: clearHoldings } = useClearHoldingsMutation();
+	const { data: holdings = [] } = useTransactionsQuery();
+	const { mutate: setTransactions } = useSetTransactionsMutation();
+	const { mutate: addTransaction } = useAddTransactionMutation();
+	const { mutate: clearTransactions } = useClearTransactionsMutation();
 
 	const validHoldings = useMemo(
 		() => holdings.filter((h) => h.symbol && h.units > 0 && h.date),
@@ -128,12 +130,12 @@ export default function ScheduleFAPage() {
 		});
 	}, [allDataReady, stockQueries, rateQueries, holdings, year]);
 
-	const handleCSVImport = (imported: Transaction[]) => {
-		addHoldings(imported);
+	const handleCSVImport = (imported: TransactionInput[]) => {
+		setTransactions([...holdings, ...imported]);
 	};
 
 	const handleHoldingsChange = (updated: Transaction[]) => {
-		setHoldings(updated);
+		setTransactions(updated);
 	};
 
 	return (
@@ -186,7 +188,7 @@ export default function ScheduleFAPage() {
 									<Button
 										variant='destructive'
 										size='sm'
-										onClick={clearHoldings}
+										onClick={clearTransactions}
 									>
 										Clear All
 									</Button>

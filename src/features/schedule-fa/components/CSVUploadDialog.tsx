@@ -10,17 +10,16 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
-import { parseCSV } from '@/features/schedule-fa/lib/csv-parser';
-import type { Transaction } from '@/features/schedule-fa/lib/types';
+import { parseCSV, type TransactionInput } from '@/features/schedule-fa/lib/csv-parser';
 
 type Props = {
-	onImport: (holdings: Transaction[]) => void;
+	onImport: (transactions: TransactionInput[]) => void;
 };
 
 export default function CSVUploadDialog({ onImport }: Props) {
 	const [open, setOpen] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [preview, setPreview] = useState<Transaction[] | null>(null);
+	const [preview, setPreview] = useState<TransactionInput[] | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
