@@ -9,14 +9,14 @@ function detectDelimiter(headerLine: string): string {
 
 const dateFormats = [
 	'yyyy-MM-dd',
-	'dd/MM/yyyy',
-	'MM/dd/yyyy',
-	'dd-MM-yyyy',
-	'MM-dd-yyyy',
 	'yyyy/MM/dd',
-	'dd.MM.yyyy',
-	'd/M/yyyy',
+	'MM-dd-yyyy',
+	'MM/dd/yyyy',
 	'M/d/yyyy',
+	'dd-MM-yyyy',
+	'dd/MM/yyyy',
+	'd/M/yyyy',
+	'dd.MM.yyyy',
 ];
 
 function normalizeDate(raw: string, rowNum: number): string {
