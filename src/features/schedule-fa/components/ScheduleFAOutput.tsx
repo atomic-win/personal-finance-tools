@@ -465,11 +465,11 @@ function combineRows(rows: RowItem[]): RowItem {
 	return {
 		...rows[0],
 		dateOfAcquiring: _.minBy(rows, 'dateOfAcquiring')!.dateOfAcquiring,
-		initials: _.flatMap(rows, 'initials'),
-		peaks: _.flatMap(rows, 'peaks'),
-		closings: _.flatMap(rows, 'closings'),
-		dividends: _.flatMap(rows, 'dividends'),
-		saleProceeds: _.flatMap(rows, 'saleProceeds'),
+		initials: flattenDatedValues(rows.map((r) => r.initials)),
+		peaks: flattenDatedValues(rows.map((r) => r.peaks)),
+		closings: flattenDatedValues(rows.map((r) => r.closings)),
+		dividends: flattenDatedValues(rows.map((r) => r.dividends)),
+		saleProceeds: flattenDatedValues(rows.map((r) => r.saleProceeds)),
 	};
 }
 
@@ -520,6 +520,17 @@ function getYearOptions(): number[] {
 		years.push(y);
 	}
 	return years;
+}
+
+function flattenDatedValues(values: DatedValue[][]): DatedValue[] {
+	return _.toArray(_.groupBy(_.flatMap(values), ['date', 'price'])).map(
+		(group) => ({
+			date: group[0].date,
+			units: _.sumBy(group, 'units'),
+			price: group[0].price,
+			exchangeRate: group[0].exchangeRate,
+		})
+	);
 }
 
 function formatAmount(values: DatedValue[]): string {
