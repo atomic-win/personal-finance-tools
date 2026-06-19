@@ -519,14 +519,14 @@ function getYearOptions(): number[] {
 }
 
 function flattenDatedValues(values: DatedValue[][]): DatedValue[] {
-	return _.toArray(_.groupBy(_.flatMap(values), ['date', 'price'])).map(
-		(group) => ({
-			date: group[0].date,
-			units: _.sumBy(group, 'units'),
-			price: group[0].price,
-			exchangeRate: group[0].exchangeRate,
-		})
-	);
+	const all = _.flatMap(values);
+	const grouped = _.groupBy(all, (v) => `${v.date}|${v.price}`);
+	return Object.values(grouped).map((group) => ({
+		date: group[0].date,
+		units: _.sumBy(group, 'units'),
+		price: group[0].price,
+		exchangeRate: group[0].exchangeRate,
+	}));
 }
 
 function formatAmount(values: DatedValue[]): string {
