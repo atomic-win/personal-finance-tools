@@ -13,8 +13,6 @@ export const csvRowSchema = z.object({
 
 export type CSVRow = z.infer<typeof csvRowSchema>;
 
-// --- Holdings (after parsing / manual entry) ---
-
 // --- Transaction (input row — from CSV or manual entry) ---
 
 export type Transaction = {

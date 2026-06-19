@@ -22,11 +22,11 @@ import {
 	useRemoveTransactionMutation,
 	useTransactionsQuery,
 	useUpdateTransactionMutation,
-} from '@/features/schedule-fa/hooks/useHoldings';
+} from '@/features/schedule-fa/hooks/transactions';
 import type { Transaction } from '@/features/schedule-fa/lib/types';
 
-export default function HoldingsInputTable() {
-	const { data: holdings = [] } = useTransactionsQuery();
+export default function TransactionsInputTable() {
+	const { data: transactions = [] } = useTransactionsQuery();
 	const { mutate: addTransaction } = useAddTransactionMutation();
 	const { mutate: updateTransaction } = useUpdateTransactionMutation();
 	const { mutate: removeTransaction } = useRemoveTransactionMutation();
@@ -36,7 +36,7 @@ export default function HoldingsInputTable() {
 		field: keyof Transaction,
 		value: string | number
 	) => {
-		const tx = holdings.find((h) => h.id === id);
+		const tx = transactions.find((h) => h.id === id);
 		if (tx) {
 			updateTransaction({ ...tx, [field]: value });
 		}
@@ -60,7 +60,7 @@ export default function HoldingsInputTable() {
 				<ScrollArea className='h-96'>
 					<Table>
 						<TableBody>
-						{holdings.length === 0 && (
+						{transactions.length === 0 && (
 							<TableRow>
 								<TableCell
 									colSpan={6}
@@ -70,12 +70,12 @@ export default function HoldingsInputTable() {
 								</TableCell>
 							</TableRow>
 						)}
-						{holdings.map((holding) => (
-							<TableRow key={holding.id}>
+						{transactions.map((tx) => (
+							<TableRow key={tx.id}>
 								<TableCell>
 									<Select
-										value={holding.type}
-										onValueChange={(v) => updateField(holding.id, 'type', v)}
+										value={tx.type}
+										onValueChange={(v) => updateField(tx.id, 'type', v)}
 									>
 										<SelectTrigger className='w-20'>
 											<SelectValue />
@@ -88,10 +88,10 @@ export default function HoldingsInputTable() {
 								</TableCell>
 								<TableCell>
 									<Input
-										value={holding.symbol}
+										value={tx.symbol}
 										onChange={(e) =>
 											updateField(
-												holding.id,
+												tx.id,
 												'symbol',
 												e.target.value.toUpperCase()
 											)
@@ -103,9 +103,9 @@ export default function HoldingsInputTable() {
 								<TableCell>
 									<Input
 										type='date'
-										value={holding.date}
+										value={tx.date}
 										onChange={(e) =>
-											updateField(holding.id, 'date', e.target.value)
+											updateField(tx.id, 'date', e.target.value)
 										}
 										className='w-40'
 									/>
@@ -113,10 +113,10 @@ export default function HoldingsInputTable() {
 								<TableCell>
 									<Input
 										type='number'
-										value={holding.units || ''}
+										value={tx.units || ''}
 										onChange={(e) =>
 											updateField(
-												holding.id,
+												tx.id,
 												'units',
 												Number(e.target.value)
 											)
@@ -129,10 +129,10 @@ export default function HoldingsInputTable() {
 								<TableCell>
 									<Input
 										type='number'
-										value={holding.price || ''}
+										value={tx.price || ''}
 										onChange={(e) =>
 											updateField(
-												holding.id,
+												tx.id,
 												'price',
 												Number(e.target.value)
 											)
@@ -147,7 +147,7 @@ export default function HoldingsInputTable() {
 									<Button
 										variant='ghost'
 										size='icon-sm'
-										onClick={() => removeTransaction(holding.id)}
+										onClick={() => removeTransaction(tx.id)}
 									>
 										<Trash2Icon className='size-4' />
 									</Button>

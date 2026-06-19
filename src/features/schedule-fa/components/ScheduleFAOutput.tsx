@@ -16,7 +16,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { useTransactionsQuery } from '@/features/schedule-fa/hooks/useHoldings';
+import { useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
 import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
 import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
 import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
@@ -38,16 +38,16 @@ function formatAmount(value: number): string {
 export default function ScheduleFAOutput({ year }: { year: number }) {
 	const [grouping, setGrouping] = useState<GroupingOption>('none');
 
-	const { data: holdings = [] } = useTransactionsQuery();
+	const { data: transactions = [] } = useTransactionsQuery();
 
-	const validHoldings = holdings.filter(
+	const validTransactions = transactions.filter(
 		(h) => h.symbol && h.units > 0 && h.date,
 	);
-	const uniqueSymbols = [...new Set(validHoldings.map((h) => h.symbol))];
-	const hasValidHoldings = uniqueSymbols.length > 0;
+	const uniqueSymbols = [...new Set(validTransactions.map((h) => h.symbol))];
+	const hasValidTransactions = uniqueSymbols.length > 0;
 
 	const stockQueries = useMultipleStockInfo(
-		hasValidHoldings ? uniqueSymbols : [],
+		hasValidTransactions ? uniqueSymbols : [],
 	);
 
 	const uniqueCurrencies = [
@@ -60,22 +60,22 @@ export default function ScheduleFAOutput({ year }: { year: number }) {
 
 	const rateQueries = useMultipleTTBuyRates(
 		uniqueCurrencies,
-		hasValidHoldings && uniqueCurrencies.length > 0,
+		hasValidTransactions && uniqueCurrencies.length > 0,
 	);
 
 	const isLoading =
-		hasValidHoldings &&
+		hasValidTransactions &&
 		(stockQueries.some((q) => q.isLoading) ||
 			rateQueries.some((q) => q.isLoading) ||
 			(stockQueries.some((q) => q.isSuccess) &&
 				uniqueCurrencies.length === 0));
 
 	const hasError =
-		hasValidHoldings &&
+		hasValidTransactions &&
 		(stockQueries.some((q) => q.isError) || rateQueries.some((q) => q.isError));
 
 	const allDataReady =
-		hasValidHoldings &&
+		hasValidTransactions &&
 		stockQueries.length > 0 &&
 		stockQueries.every((q) => q.isSuccess) &&
 		rateQueries.length > 0 &&
@@ -99,7 +99,7 @@ export default function ScheduleFAOutput({ year }: { year: number }) {
 		}
 
 		if (stockData.size > 0 && ratesByCurrency.size > 0) {
-			const { heldLots, soldLots } = processTransactions(validHoldings);
+			const { heldLots, soldLots } = processTransactions(validTransactions);
 
 			rows = computeScheduleFARows({
 				heldLots,
@@ -113,7 +113,7 @@ export default function ScheduleFAOutput({ year }: { year: number }) {
 
 	const displayRows = groupRows(rows, grouping);
 
-	if (!hasValidHoldings) return null;
+	if (!hasValidTransactions) return null;
 
 	if (isLoading) {
 		return (

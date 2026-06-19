@@ -10,7 +10,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
-import { useSetTransactionsMutation, useTransactionsQuery } from '@/features/schedule-fa/hooks/useHoldings';
+import { useSetTransactionsMutation, useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
 import { parseCSV, type TransactionInput } from '@/features/schedule-fa/lib/csv-parser';
 
 export default function CSVUploadDialog() {

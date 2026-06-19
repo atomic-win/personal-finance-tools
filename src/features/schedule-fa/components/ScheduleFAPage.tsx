@@ -11,12 +11,12 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import CSVUploadDialog from '@/features/schedule-fa/components/CSVUploadDialog';
-import HoldingsInputTable from '@/features/schedule-fa/components/HoldingsInputTable';
+import TransactionsInputTable from '@/features/schedule-fa/components/TransactionsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
 import {
 	useClearTransactionsMutation,
 	useTransactionsQuery,
-} from '@/features/schedule-fa/hooks/useHoldings';
+} from '@/features/schedule-fa/hooks/transactions';
 
 function getDefaultYear(): number {
 	return DateTime.now().year - 1;
@@ -33,7 +33,7 @@ function getYearOptions(): number[] {
 
 export default function ScheduleFAPage() {
 	const [year, setYear] = useState(getDefaultYear());
-	const { data: holdings = [] } = useTransactionsQuery();
+	const { data: transactions = [] } = useTransactionsQuery();
 	const { mutate: clearTransactions } = useClearTransactionsMutation();
 
 	return (
@@ -57,7 +57,7 @@ export default function ScheduleFAPage() {
 				<Card>
 					<CardHeader>
 						<CardTitle className='flex items-center justify-between'>
-							<span>Holdings</span>
+							<span>Transactions</span>
 							<div className='flex items-center gap-3'>
 								<div className='flex items-center gap-2'>
 									<span className='text-sm font-normal text-muted-foreground'>
@@ -80,7 +80,7 @@ export default function ScheduleFAPage() {
 									</Select>
 								</div>
 								<CSVUploadDialog />
-								{holdings.length > 0 && (
+								{transactions.length > 0 && (
 									<Button
 										variant='destructive'
 										size='sm'
@@ -93,7 +93,7 @@ export default function ScheduleFAPage() {
 						</CardTitle>
 					</CardHeader>
 					<CardContent>
-						<HoldingsInputTable />
+						<TransactionsInputTable />
 					</CardContent>
 				</Card>
 
