@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
 	Select,
@@ -40,30 +40,23 @@ export default function ScheduleFAOutput({ year }: { year: number }) {
 
 	const { data: holdings = [] } = useTransactionsQuery();
 
-	const validHoldings = useMemo(
-		() => holdings.filter((h) => h.symbol && h.units > 0 && h.date),
-		[holdings],
+	const validHoldings = holdings.filter(
+		(h) => h.symbol && h.units > 0 && h.date,
 	);
-
-	const uniqueSymbols = useMemo(
-		() => [...new Set(validHoldings.map((h) => h.symbol))],
-		[validHoldings],
-	);
-
+	const uniqueSymbols = [...new Set(validHoldings.map((h) => h.symbol))];
 	const hasValidHoldings = uniqueSymbols.length > 0;
+
 	const stockQueries = useMultipleStockInfo(
 		hasValidHoldings ? uniqueSymbols : [],
 	);
 
-	const uniqueCurrencies = useMemo(() => {
-		const currencies = new Set<string>();
-		for (const q of stockQueries) {
-			if (q.data?.currency) {
-				currencies.add(q.data.currency);
-			}
-		}
-		return [...currencies];
-	}, [stockQueries]);
+	const uniqueCurrencies = [
+		...new Set(
+			stockQueries
+				.filter((q) => q.data?.currency)
+				.map((q) => q.data!.currency),
+		),
+	];
 
 	const rateQueries = useMultipleTTBuyRates(
 		uniqueCurrencies,
@@ -88,9 +81,9 @@ export default function ScheduleFAOutput({ year }: { year: number }) {
 		rateQueries.length > 0 &&
 		rateQueries.every((q) => q.isSuccess);
 
-	const rows: ScheduleFARow[] = useMemo(() => {
-		if (!allDataReady) return [];
+	let rows: ScheduleFARow[] = [];
 
+	if (allDataReady) {
 		const stockData = new Map<string, StockInfoResponse>();
 		for (const q of stockQueries) {
 			if (q.data) {
@@ -105,18 +98,18 @@ export default function ScheduleFAOutput({ year }: { year: number }) {
 			}
 		}
 
-		if (stockData.size === 0 || ratesByCurrency.size === 0) return [];
+		if (stockData.size > 0 && ratesByCurrency.size > 0) {
+			const { heldLots, soldLots } = processTransactions(validHoldings);
 
-		const { heldLots, soldLots } = processTransactions(validHoldings);
-
-		return computeScheduleFARows({
-			heldLots,
-			soldLots,
-			stockData,
-			ratesByCurrency,
-			year,
-		});
-	}, [allDataReady, stockQueries, rateQueries, validHoldings, year]);
+			rows = computeScheduleFARows({
+				heldLots,
+				soldLots,
+				stockData,
+				ratesByCurrency,
+				year,
+			});
+		}
+	}
 
 	const displayRows = groupRows(rows, grouping);
 
