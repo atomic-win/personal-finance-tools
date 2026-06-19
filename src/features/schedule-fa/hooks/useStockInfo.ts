@@ -1,18 +1,12 @@
 import { useQueries, useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { fetchStockInfo } from '@/features/schedule-fa/lib/server-functions';
 import type { StockInfoResponse } from '@/features/schedule-fa/lib/types';
-
-async function fetchStockInfo(symbol: string): Promise<StockInfoResponse> {
-	const { data } = await axios.get<StockInfoResponse>('/api/stock-info', {
-		params: { symbol },
-	});
-	return data;
-}
 
 export function useStockInfo(symbol: string | null) {
 	return useQuery({
 		queryKey: ['stock-info', symbol],
-		queryFn: () => fetchStockInfo(symbol!),
+		queryFn: () =>
+			fetchStockInfo({ data: { symbol: symbol! } }) as Promise<StockInfoResponse>,
 		enabled: !!symbol,
 		staleTime: Number.POSITIVE_INFINITY,
 	});
@@ -22,7 +16,8 @@ export function useMultipleStockInfo(symbols: string[]) {
 	const results = useQueries({
 		queries: symbols.map((symbol) => ({
 			queryKey: ['stock-info', symbol],
-			queryFn: () => fetchStockInfo(symbol),
+			queryFn: () =>
+				fetchStockInfo({ data: { symbol } }) as Promise<StockInfoResponse>,
 			enabled: !!symbol,
 			staleTime: Number.POSITIVE_INFINITY,
 		})),

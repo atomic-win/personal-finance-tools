@@ -1,37 +1,29 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createServerFn } from '@tanstack/react-start';
 import { DateTime } from 'luxon';
 import YahooFinance from 'yahoo-finance2';
+import { z } from 'zod';
 
 const yf = new YahooFinance({ suppressNotices: ['ripHistorical'] });
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-	if (req.method !== 'GET') {
-		return res.status(405).json({ error: 'Method not allowed' });
-	}
+const stockInfoInputSchema = z.object({
+	symbol: z.string().min(1),
+});
 
-	const symbol = req.query.symbol;
-	if (!symbol || typeof symbol !== 'string') {
-		return res
-			.status(400)
-			.json({ error: 'Missing required query parameter: symbol' });
-	}
+export const fetchStockInfo = createServerFn({ method: 'GET' })
+	.validator(stockInfoInputSchema)
+	.handler(async ({ data }) => {
+		const { symbol } = data;
 
-	try {
 		const [quoteSummary, dailyPrices, dividends] = await Promise.all([
 			yf.quoteSummary(symbol, { modules: ['price', 'quoteType'] }),
-			yf.historical(symbol, {
-				period1: '2000-01-01',
-			}),
-			yf.historical(symbol, {
-				period1: '2000-01-01',
-				events: 'dividends',
-			}),
+			yf.historical(symbol, { period1: '2000-01-01' }),
+			yf.historical(symbol, { period1: '2000-01-01', events: 'dividends' }),
 		]);
 
 		const price = quoteSummary.price;
 		const quoteType = quoteSummary.quoteType;
 
-		const response = {
+		return {
 			symbol,
 			name: price?.longName ?? quoteType?.longName ?? symbol,
 			exchange: price?.exchangeName ?? quoteType?.exchange ?? '',
@@ -47,19 +39,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 				amount: d.dividends,
 			})),
 		};
+	});
 
-		res.setHeader(
-			'Cache-Control',
-			's-maxage=86400, stale-while-revalidate=3600'
-		);
-		return res.status(200).json(response);
-	} catch (error) {
-		const message = error instanceof Error ? error.message : 'Unknown error';
-		return res
-			.status(404)
-			.json({ error: `Failed to fetch data for symbol: ${symbol}`, message });
-	}
-}
+const ttBuyRateInputSchema = z.object({
+	from: z.string().min(1),
+});
+
+export const fetchTTBuyRate = createServerFn({ method: 'GET' })
+	.validator(ttBuyRateInputSchema)
+	.handler(async ({ data }) => {
+		const ticker = `${data.from.toUpperCase()}INR=X`;
+
+		const history = await yf.historical(ticker, { period1: '2000-01-01' });
+
+		return history.map((entry) => ({
+			date: formatDate(entry.date),
+			rate: entry.close,
+		}));
+	});
 
 function formatDate(date: Date): string {
 	return DateTime.fromJSDate(date).toISODate() ?? '';
