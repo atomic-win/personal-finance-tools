@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon';
 import { useMemo, useState } from 'react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Select,
@@ -42,14 +41,19 @@ function getYearOptions(): number[] {
 export default function ScheduleFAPage() {
 	const [year, setYear] = useState(getDefaultYear());
 	const [holdings, setHoldings] = useState<HoldingInput[]>([]);
-	const [generated, setGenerated] = useState(false);
 
-	const uniqueSymbols = useMemo(
-		() => [...new Set(holdings.map((h) => h.symbol).filter(Boolean))],
-		[holdings]
+	const validHoldings = useMemo(
+		() => holdings.filter((h) => h.symbol && h.quantity > 0 && h.purchaseDate),
+		[holdings],
 	);
 
-	const stockQueries = useMultipleStockInfo(generated ? uniqueSymbols : []);
+	const uniqueSymbols = useMemo(
+		() => [...new Set(validHoldings.map((h) => h.symbol))],
+		[validHoldings]
+	);
+
+	const hasValidHoldings = uniqueSymbols.length > 0;
+	const stockQueries = useMultipleStockInfo(hasValidHoldings ? uniqueSymbols : []);
 
 	// Get unique currencies from fetched stock data
 	const uniqueCurrencies = useMemo(() => {
@@ -64,21 +68,21 @@ export default function ScheduleFAPage() {
 
 	const rateQueries = useMultipleTTBuyRates(
 		uniqueCurrencies,
-		generated && uniqueCurrencies.length > 0,
+		hasValidHoldings && uniqueCurrencies.length > 0,
 	);
 
 	const isLoading =
-		generated &&
+		hasValidHoldings &&
 		(stockQueries.some((q) => q.isLoading) ||
 			rateQueries.some((q) => q.isLoading) ||
 			(stockQueries.some((q) => q.isSuccess) && uniqueCurrencies.length === 0));
 
 	const hasError =
-		generated &&
+		hasValidHoldings &&
 		(stockQueries.some((q) => q.isError) || rateQueries.some((q) => q.isError));
 
 	const allDataReady =
-		generated &&
+		hasValidHoldings &&
 		stockQueries.length > 0 &&
 		stockQueries.every((q) => q.isSuccess) &&
 		rateQueries.length > 0 &&
@@ -127,27 +131,13 @@ export default function ScheduleFAPage() {
 		});
 	}, [allDataReady, stockQueries, rateQueries, holdings, year]);
 
-	const handleGenerate = () => {
-		const validHoldings = holdings.filter(
-			(h) => h.symbol && h.quantity > 0 && h.purchaseDate
-		);
-		if (validHoldings.length === 0) return;
-		setGenerated(true);
-	};
-
 	const handleCSVImport = (imported: HoldingInput[]) => {
 		setHoldings((prev) => [...prev, ...imported]);
-		setGenerated(false);
 	};
 
 	const handleHoldingsChange = (updated: HoldingInput[]) => {
 		setHoldings(updated);
-		setGenerated(false);
 	};
-
-	const validCount = holdings.filter(
-		(h) => h.symbol && h.quantity > 0 && h.purchaseDate
-	).length;
 
 	return (
 		<>
@@ -180,7 +170,6 @@ export default function ScheduleFAPage() {
 										value={String(year)}
 										onValueChange={(v) => {
 											setYear(Number(v));
-											setGenerated(false);
 										}}
 									>
 										<SelectTrigger className='w-24'>
@@ -204,21 +193,12 @@ export default function ScheduleFAPage() {
 							holdings={holdings}
 							onChange={handleHoldingsChange}
 						/>
-						<div className='flex justify-end'>
-							<Button
-								onClick={handleGenerate}
-								disabled={validCount === 0 || isLoading}
-							>
-								{isLoading ? (
-									<>
-										<Spinner className='size-4' />
-										Fetching data...
-									</>
-								) : (
-									`Generate Schedule FA (${validCount} holdings)`
-								)}
-							</Button>
-						</div>
+						{isLoading && (
+							<div className='flex items-center gap-2 text-sm text-muted-foreground'>
+								<Spinner className='size-4' />
+								Fetching data...
+							</div>
+						)}
 					</CardContent>
 				</Card>
 
