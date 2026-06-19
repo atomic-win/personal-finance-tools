@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { HoldingInput } from '@/features/schedule-fa/lib/types';
+import type { Transaction } from '@/features/schedule-fa/lib/types';
 
 const QUERY_KEY = ['schedule-fa-holdings'];
 
@@ -10,13 +10,13 @@ export function useHoldingsQuery() {
 		queryKey: QUERY_KEY,
 		queryFn: async () => {
 			const data =
-				queryClient.getQueryData<HoldingInput[]>(QUERY_KEY);
+				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
 			if (data) {
 				return data;
 			}
 
-			queryClient.setQueryData<HoldingInput[]>(QUERY_KEY, []);
+			queryClient.setQueryData<Transaction[]>(QUERY_KEY, []);
 			return [];
 		},
 		staleTime: Number.POSITIVE_INFINITY,
@@ -28,13 +28,13 @@ export function useSetHoldingsMutation() {
 
 	return useMutation({
 		mutationKey: [...QUERY_KEY, 'set'],
-		mutationFn: async (holdings: HoldingInput[]) => {
+		mutationFn: async (holdings: Transaction[]) => {
 			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
 
 			const previousData =
-				queryClient.getQueryData<HoldingInput[]>(QUERY_KEY);
+				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
-			queryClient.setQueryData<HoldingInput[]>(QUERY_KEY, holdings);
+			queryClient.setQueryData<Transaction[]>(QUERY_KEY, holdings);
 
 			return { previousData };
 		},
@@ -42,7 +42,7 @@ export function useSetHoldingsMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				QUERY_KEY,
-				(context as { previousData: HoldingInput[] }).previousData,
+				(context as { previousData: Transaction[] }).previousData,
 			);
 		},
 	});
@@ -53,13 +53,13 @@ export function useAddHoldingsMutation() {
 
 	return useMutation({
 		mutationKey: [...QUERY_KEY, 'add'],
-		mutationFn: async (newHoldings: HoldingInput[]) => {
+		mutationFn: async (newHoldings: Transaction[]) => {
 			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
 
 			const previousData =
-				queryClient.getQueryData<HoldingInput[]>(QUERY_KEY);
+				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
-			queryClient.setQueryData<HoldingInput[]>(QUERY_KEY, [
+			queryClient.setQueryData<Transaction[]>(QUERY_KEY, [
 				...(previousData ?? []),
 				...newHoldings,
 			]);
@@ -70,7 +70,7 @@ export function useAddHoldingsMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				QUERY_KEY,
-				(context as { previousData: HoldingInput[] }).previousData,
+				(context as { previousData: Transaction[] }).previousData,
 			);
 		},
 	});
@@ -85,9 +85,9 @@ export function useClearHoldingsMutation() {
 			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
 
 			const previousData =
-				queryClient.getQueryData<HoldingInput[]>(QUERY_KEY);
+				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
-			queryClient.setQueryData<HoldingInput[]>(QUERY_KEY, []);
+			queryClient.setQueryData<Transaction[]>(QUERY_KEY, []);
 
 			return { previousData };
 		},
@@ -95,7 +95,7 @@ export function useClearHoldingsMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				QUERY_KEY,
-				(context as { previousData: HoldingInput[] }).previousData,
+				(context as { previousData: Transaction[] }).previousData,
 			);
 		},
 	});

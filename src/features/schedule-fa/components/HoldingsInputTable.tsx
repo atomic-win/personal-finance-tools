@@ -17,17 +17,17 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import type { HoldingInput } from '@/features/schedule-fa/lib/types';
+import type { Transaction } from '@/features/schedule-fa/lib/types';
 
 type Props = {
-	holdings: HoldingInput[];
-	onChange: (holdings: HoldingInput[]) => void;
+	holdings: Transaction[];
+	onChange: (holdings: Transaction[]) => void;
 };
 
 export default function HoldingsInputTable({ holdings, onChange }: Props) {
 	const updateHolding = (
 		id: string,
-		field: keyof HoldingInput,
+		field: keyof Transaction,
 		value: string | number
 	) => {
 		onChange(holdings.map((h) => (h.id === id ? { ...h, [field]: value } : h)));
@@ -39,10 +39,11 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 			{
 				id: crypto.randomUUID(),
 				symbol: '',
-				quantity: 0,
-				purchaseDate: '',
-				purchasePrice: 0,
+				units: 0,
+				date: '',
+				price: 0,
 				type: 'Buy',
+				remarks: '',
 			},
 		]);
 	};
@@ -112,9 +113,9 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 								<TableCell>
 									<Input
 										type='date'
-										value={holding.purchaseDate}
+										value={holding.date}
 										onChange={(e) =>
-											updateHolding(holding.id, 'purchaseDate', e.target.value)
+											updateHolding(holding.id, 'date', e.target.value)
 										}
 										className='w-40'
 									/>
@@ -122,11 +123,11 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 								<TableCell>
 									<Input
 										type='number'
-										value={holding.quantity || ''}
+										value={holding.units || ''}
 										onChange={(e) =>
 											updateHolding(
 												holding.id,
-												'quantity',
+												'units',
 												Number(e.target.value)
 											)
 										}
@@ -138,11 +139,11 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 								<TableCell>
 									<Input
 										type='number'
-										value={holding.purchasePrice || ''}
+										value={holding.price || ''}
 										onChange={(e) =>
 											updateHolding(
 												holding.id,
-												'purchasePrice',
+												'price',
 												Number(e.target.value)
 											)
 										}

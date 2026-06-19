@@ -11,16 +11,16 @@ import {
 	DialogTrigger,
 } from '@/components/ui/dialog';
 import { parseCSV } from '@/features/schedule-fa/lib/csv-parser';
-import type { HoldingInput } from '@/features/schedule-fa/lib/types';
+import type { Transaction } from '@/features/schedule-fa/lib/types';
 
 type Props = {
-	onImport: (holdings: HoldingInput[]) => void;
+	onImport: (holdings: Transaction[]) => void;
 };
 
 export default function CSVUploadDialog({ onImport }: Props) {
 	const [open, setOpen] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [preview, setPreview] = useState<HoldingInput[] | null>(null);
+	const [preview, setPreview] = useState<Transaction[] | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -33,17 +33,7 @@ export default function CSVUploadDialog({ onImport }: Props) {
 		try {
 			const text = await file.text();
 			const transactions = parseCSV(text);
-
-			const holdings: HoldingInput[] = transactions.map((tx) => ({
-				id: crypto.randomUUID(),
-				symbol: tx.symbol,
-				quantity: tx.units,
-				purchaseDate: tx.date,
-				purchasePrice: tx.price,
-				type: tx.type,
-			}));
-
-			setPreview(holdings);
+			setPreview(transactions);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : 'Failed to parse CSV');
 		}
@@ -112,9 +102,9 @@ export default function CSVUploadDialog({ onImport }: Props) {
 											<tr key={h.id} className='border-b last:border-0'>
 												<td className='p-2'>{h.type}</td>
 												<td className='p-2'>{h.symbol}</td>
-												<td className='p-2'>{h.purchaseDate}</td>
-												<td className='p-2'>{h.quantity}</td>
-												<td className='p-2'>${h.purchasePrice}</td>
+												<td className='p-2'>{h.date}</td>
+												<td className='p-2'>{h.units}</td>
+												<td className='p-2'>${h.price}</td>
 											</tr>
 										))}
 									</tbody>

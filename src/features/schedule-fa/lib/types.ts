@@ -15,13 +15,16 @@ export type CSVRow = z.infer<typeof csvRowSchema>;
 
 // --- Holdings (after parsing / manual entry) ---
 
-export type HoldingInput = {
+// --- Transaction (input row — from CSV or manual entry) ---
+
+export type Transaction = {
 	id: string;
 	symbol: string;
-	quantity: number;
-	purchaseDate: string;
-	purchasePrice: number;
+	date: string;
 	type: 'Buy' | 'Sell';
+	units: number;
+	price: number;
+	remarks: string;
 };
 
 // --- FIFO Lot ---
@@ -94,14 +97,3 @@ export type ScheduleFARow = {
 // --- Grouping ---
 
 export type GroupingOption = 'none' | 'by-stock' | 'by-year';
-
-// --- Transactions (from CSV) ---
-
-export type Transaction = {
-	date: string;
-	remarks: string;
-	symbol: string;
-	type: 'Buy' | 'Sell';
-	units: number;
-	price: number;
-};

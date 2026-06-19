@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import { v7 } from 'uuid';
 import { csvRowSchema, type Lot, type Transaction } from './types';
 
 function detectDelimiter(headerLine: string): string {
@@ -69,6 +70,7 @@ export function parseCSV(csvText: string): Transaction[] {
 		}
 
 		transactions.push({
+			id: v7(),
 			date: normalizeDate(parsed.data.Date, i + 1),
 			remarks: parsed.data.Remarks ?? '',
 			symbol: parsed.data.Symbol.toUpperCase(),

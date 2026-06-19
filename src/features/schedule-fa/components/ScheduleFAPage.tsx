@@ -26,7 +26,6 @@ import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
 import { computeScheduleFARows } from '@/features/schedule-fa/lib/schedule-fa-compute';
 import type {
 	ExchangeRate,
-	HoldingInput,
 	ScheduleFARow,
 	StockInfoResponse,
 	Transaction,
@@ -53,7 +52,7 @@ export default function ScheduleFAPage() {
 	const { mutate: clearHoldings } = useClearHoldingsMutation();
 
 	const validHoldings = useMemo(
-		() => holdings.filter((h) => h.symbol && h.quantity > 0 && h.purchaseDate),
+		() => holdings.filter((h) => h.symbol && h.units > 0 && h.date),
 		[holdings],
 	);
 
@@ -118,19 +117,7 @@ export default function ScheduleFAPage() {
 
 		if (stockData.size === 0 || ratesByCurrency.size === 0) return [];
 
-		// Convert holdings to transactions and apply FIFO
-		const transactions: Transaction[] = holdings
-			.filter((h) => h.symbol && h.quantity > 0 && h.purchaseDate)
-			.map((h) => ({
-				date: h.purchaseDate,
-				remarks: '',
-				symbol: h.symbol,
-				type: h.type,
-				units: h.quantity,
-				price: h.purchasePrice,
-			}));
-
-		const { heldLots, soldLots } = processTransactions(transactions);
+		const { heldLots, soldLots } = processTransactions(validHoldings);
 
 		return computeScheduleFARows({
 			heldLots,
@@ -141,11 +128,11 @@ export default function ScheduleFAPage() {
 		});
 	}, [allDataReady, stockQueries, rateQueries, holdings, year]);
 
-	const handleCSVImport = (imported: HoldingInput[]) => {
+	const handleCSVImport = (imported: Transaction[]) => {
 		addHoldings(imported);
 	};
 
-	const handleHoldingsChange = (updated: HoldingInput[]) => {
+	const handleHoldingsChange = (updated: Transaction[]) => {
 		setHoldings(updated);
 	};
 
