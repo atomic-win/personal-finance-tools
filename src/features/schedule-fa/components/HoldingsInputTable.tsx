@@ -53,116 +53,120 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 
 	return (
 		<div className='space-y-2'>
-			<ScrollArea className='max-h-96 border rounded-lg'>
-			<Table>
-				<TableHeader>
-					<TableRow>
-						<TableHead>Type</TableHead>
-						<TableHead>Symbol</TableHead>
-						<TableHead>Date</TableHead>
-						<TableHead>Units</TableHead>
-						<TableHead>Price (USD)</TableHead>
-						<TableHead className='w-10' />
-					</TableRow>
-				</TableHeader>
-				<TableBody>
-					{holdings.length === 0 && (
+			<div className='border rounded-lg'>
+				<Table>
+					<TableHeader className='sticky top-0 z-10 bg-background'>
 						<TableRow>
-							<TableCell
-								colSpan={6}
-								className='text-center text-muted-foreground'
-							>
-								No transactions added. Add manually or upload a CSV/TSV.
-							</TableCell>
+							<TableHead>Type</TableHead>
+							<TableHead>Symbol</TableHead>
+							<TableHead>Date</TableHead>
+							<TableHead>Units</TableHead>
+							<TableHead>Price (USD)</TableHead>
+							<TableHead className='w-10' />
 						</TableRow>
-					)}
-					{holdings.map((holding) => (
-						<TableRow key={holding.id}>
-							<TableCell>
-								<Select
-									value={holding.type}
-									onValueChange={(v) => updateHolding(holding.id, 'type', v)}
+					</TableHeader>
+				</Table>
+				<ScrollArea className='h-96'>
+					<Table>
+						<TableBody>
+						{holdings.length === 0 && (
+							<TableRow>
+								<TableCell
+									colSpan={6}
+									className='text-center text-muted-foreground'
 								>
-									<SelectTrigger className='w-20'>
-										<SelectValue />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value='Buy'>Buy</SelectItem>
-										<SelectItem value='Sell'>Sell</SelectItem>
-									</SelectContent>
-								</Select>
-							</TableCell>
-							<TableCell>
-								<Input
-									value={holding.symbol}
-									onChange={(e) =>
-										updateHolding(
-											holding.id,
-											'symbol',
-											e.target.value.toUpperCase()
-										)
-									}
-									placeholder='AAPL'
-									className='w-24'
-								/>
-							</TableCell>
-							<TableCell>
-								<Input
-									type='date'
-									value={holding.purchaseDate}
-									onChange={(e) =>
-										updateHolding(holding.id, 'purchaseDate', e.target.value)
-									}
-									className='w-40'
-								/>
-							</TableCell>
-							<TableCell>
-								<Input
-									type='number'
-									value={holding.quantity || ''}
-									onChange={(e) =>
-										updateHolding(
-											holding.id,
-											'quantity',
-											Number(e.target.value)
-										)
-									}
-									placeholder='10'
-									className='w-20'
-									min={0}
-								/>
-							</TableCell>
-							<TableCell>
-								<Input
-									type='number'
-									value={holding.purchasePrice || ''}
-									onChange={(e) =>
-										updateHolding(
-											holding.id,
-											'purchasePrice',
-											Number(e.target.value)
-										)
-									}
-									placeholder='172.50'
-									className='w-28'
-									min={0}
-									step='0.01'
-								/>
-							</TableCell>
-							<TableCell>
-								<Button
-									variant='ghost'
-									size='icon-sm'
-									onClick={() => removeRow(holding.id)}
-								>
-									<Trash2Icon className='size-4' />
-								</Button>
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
-			</ScrollArea>
+									No transactions added. Add manually or upload a CSV/TSV.
+								</TableCell>
+							</TableRow>
+						)}
+						{holdings.map((holding) => (
+							<TableRow key={holding.id}>
+								<TableCell>
+									<Select
+										value={holding.type}
+										onValueChange={(v) => updateHolding(holding.id, 'type', v)}
+									>
+										<SelectTrigger className='w-20'>
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value='Buy'>Buy</SelectItem>
+											<SelectItem value='Sell'>Sell</SelectItem>
+										</SelectContent>
+									</Select>
+								</TableCell>
+								<TableCell>
+									<Input
+										value={holding.symbol}
+										onChange={(e) =>
+											updateHolding(
+												holding.id,
+												'symbol',
+												e.target.value.toUpperCase()
+											)
+										}
+										placeholder='AAPL'
+										className='w-24'
+									/>
+								</TableCell>
+								<TableCell>
+									<Input
+										type='date'
+										value={holding.purchaseDate}
+										onChange={(e) =>
+											updateHolding(holding.id, 'purchaseDate', e.target.value)
+										}
+										className='w-40'
+									/>
+								</TableCell>
+								<TableCell>
+									<Input
+										type='number'
+										value={holding.quantity || ''}
+										onChange={(e) =>
+											updateHolding(
+												holding.id,
+												'quantity',
+												Number(e.target.value)
+											)
+										}
+										placeholder='10'
+										className='w-20'
+										min={0}
+									/>
+								</TableCell>
+								<TableCell>
+									<Input
+										type='number'
+										value={holding.purchasePrice || ''}
+										onChange={(e) =>
+											updateHolding(
+												holding.id,
+												'purchasePrice',
+												Number(e.target.value)
+											)
+										}
+										placeholder='172.50'
+										className='w-28'
+										min={0}
+										step='0.01'
+									/>
+								</TableCell>
+								<TableCell>
+									<Button
+										variant='ghost'
+										size='icon-sm'
+										onClick={() => removeRow(holding.id)}
+									>
+										<Trash2Icon className='size-4' />
+									</Button>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+				</ScrollArea>
+			</div>
 			<Button variant='outline' size='sm' onClick={addRow}>
 				<PlusIcon className='size-4' />
 				Add Row
