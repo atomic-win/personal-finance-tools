@@ -11,18 +11,26 @@ import type {
 
 /**
  * Find the exchange rate for a given date.
- * Uses the closest available date on or before the requested date.
+ * Prefers the closest available date on or before the requested date.
+ * Falls back to the closest date after if none exists before.
  */
 export function findRate(rates: ExchangeRate[], date: string): number {
-	let closest: ExchangeRate | null = null;
+	let closestBefore: ExchangeRate | null = null;
+	let closestAfter: ExchangeRate | null = null;
+
 	for (const r of rates) {
 		if (r.date <= date) {
-			if (!closest || r.date > closest.date) {
-				closest = r;
+			if (!closestBefore || r.date > closestBefore.date) {
+				closestBefore = r;
+			}
+		} else {
+			if (!closestAfter || r.date < closestAfter.date) {
+				closestAfter = r;
 			}
 		}
 	}
-	return closest?.rate ?? 0;
+
+	return (closestBefore ?? closestAfter)?.rate ?? 0;
 }
 
 /**
