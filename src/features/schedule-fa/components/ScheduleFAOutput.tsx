@@ -327,8 +327,8 @@ function calculateRowItemsForOneSymbol(
 		['asc', 'desc']
 	);
 
-	const buys = sorted.filter((tx) => tx.type === 'Buy');
-	const sells = sorted.filter((tx) => tx.type === 'Sell');
+	const buys = sorted.filter((tx) => tx.type === 'Buy').map((tx) => ({ ...tx }));
+	const sells = sorted.filter((tx) => tx.type === 'Sell').map((tx) => ({ ...tx }));
 
 	if (
 		_.reduce(buys, (sum, b) => sum + b.units, 0) <
