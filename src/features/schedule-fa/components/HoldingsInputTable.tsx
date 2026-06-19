@@ -167,10 +167,12 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 				</Table>
 				</ScrollArea>
 			</div>
-			<Button variant='outline' size='sm' onClick={addRow}>
-				<PlusIcon className='size-4' />
-				Add Row
-			</Button>
+			<div className='flex justify-end'>
+				<Button size='sm' onClick={addRow}>
+					<PlusIcon className='size-4' />
+					Add Row
+				</Button>
+			</div>
 		</div>
 	);
 }
