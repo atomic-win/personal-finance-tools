@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import { useMemo, useState } from 'react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
 	Select,
@@ -13,6 +14,7 @@ import { Spinner } from '@/components/ui/spinner';
 import CSVUploadDialog from '@/features/schedule-fa/components/CSVUploadDialog';
 import HoldingsInputTable from '@/features/schedule-fa/components/HoldingsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
+import { useHoldings } from '@/features/schedule-fa/hooks/useHoldings';
 import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
 import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
 import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
@@ -40,7 +42,7 @@ function getYearOptions(): number[] {
 
 export default function ScheduleFAPage() {
 	const [year, setYear] = useState(getDefaultYear());
-	const [holdings, setHoldings] = useState<HoldingInput[]>([]);
+	const { holdings, setHoldings, clearHoldings } = useHoldings();
 
 	const validHoldings = useMemo(
 		() => holdings.filter((h) => h.symbol && h.quantity > 0 && h.purchaseDate),
@@ -132,7 +134,7 @@ export default function ScheduleFAPage() {
 	}, [allDataReady, stockQueries, rateQueries, holdings, year]);
 
 	const handleCSVImport = (imported: HoldingInput[]) => {
-		setHoldings((prev) => [...prev, ...imported]);
+		setHoldings([...holdings, ...imported]);
 	};
 
 	const handleHoldingsChange = (updated: HoldingInput[]) => {
@@ -185,6 +187,15 @@ export default function ScheduleFAPage() {
 									</Select>
 								</div>
 								<CSVUploadDialog onImport={handleCSVImport} />
+								{holdings.length > 0 && (
+									<Button
+										variant='destructive'
+										size='sm'
+										onClick={clearHoldings}
+									>
+										Clear All
+									</Button>
+								)}
 							</div>
 						</CardTitle>
 					</CardHeader>
