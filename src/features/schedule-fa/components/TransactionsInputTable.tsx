@@ -147,7 +147,7 @@ export default function TransactionsInputTable() {
 								</TableCell>
 								<TableCell>
 									<Button
-										variant='ghost'
+										variant='destructive'
 										size='icon-sm'
 										onClick={() => removeTransaction(tx.id)}
 									>
