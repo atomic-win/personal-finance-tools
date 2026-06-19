@@ -166,12 +166,14 @@ export default function ScheduleFAOutput() {
 							onValueChange={(v) => setGrouping(v as GroupingOption)}
 						>
 							<SelectTrigger className='w-48'>
-								<SelectValue />
+								<SelectValue placeholder='Select grouping'>
+									{displayGrouping(grouping)}
+								</SelectValue>
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value='none'>No Grouping</SelectItem>
-								<SelectItem value='by-stock'>By Stock</SelectItem>
-								<SelectItem value='by-year'>By Acquisition Year</SelectItem>
+								<SelectItem value='none'>{displayGrouping('none')}</SelectItem>
+								<SelectItem value='by-stock'>{displayGrouping('by-stock')}</SelectItem>
+								<SelectItem value='by-year'>{displayGrouping('by-year')}</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
@@ -587,4 +589,15 @@ function ValueCell({ values }: { values: DatedValue[] }) {
 			</TooltipProvider>
 		</TableCell>
 	);
+}
+
+function displayGrouping(option: GroupingOption): string {
+	switch (option) {
+		case "none":
+			return "No Grouping";
+		case "by-stock":
+			return "By Stock";
+		case "by-year":
+			return "By Acquisition Year";
+	}
 }
