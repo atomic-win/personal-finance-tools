@@ -1,13 +1,21 @@
 import { DateTime } from 'luxon';
 import type {
-	DailyPrice,
-	Dividend,
 	ExchangeRate,
 	GroupingOption,
-	Lot,
 	ScheduleFARow,
 	StockInfoResponse,
 } from './types';
+
+type DailyPrice = { date: string; close: number; high: number };
+type Dividend = { date: string; amount: number };
+type Lot = {
+	symbol: string;
+	acquiredOn: string;
+	quantity: number;
+	purchasePrice: number;
+	soldOn: string | null;
+	salePrice: number | null;
+};
 
 /**
  * Find the exchange rate for a given date.

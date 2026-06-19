@@ -1,18 +1,3 @@
-import { z } from 'zod';
-
-// --- CSV Input ---
-
-export const csvRowSchema = z.object({
-	Date: z.string(),
-	Remarks: z.string().optional(),
-	Symbol: z.string().min(1),
-	Type: z.enum(['Buy', 'Sell']),
-	Units: z.coerce.number().positive(),
-	Price: z.coerce.number().nonnegative(),
-});
-
-export type CSVRow = z.infer<typeof csvRowSchema>;
-
 // --- Transaction (input row — from CSV or manual entry) ---
 
 export type Transaction = {
@@ -25,29 +10,7 @@ export type Transaction = {
 	remarks: string;
 };
 
-// --- FIFO Lot ---
-
-export type Lot = {
-	symbol: string;
-	acquiredOn: string;
-	quantity: number;
-	purchasePrice: number;
-	soldOn: string | null;
-	salePrice: number | null;
-};
-
 // --- API Responses ---
-
-export type DailyPrice = {
-	date: string;
-	close: number;
-	high: number;
-};
-
-export type Dividend = {
-	date: string;
-	amount: number;
-};
 
 export type StockInfoResponse = {
 	symbol: string;
@@ -60,8 +23,8 @@ export type StockInfoResponse = {
 	city: string;
 	state: string;
 	zip: string;
-	dailyPrices: DailyPrice[];
-	dividends: Dividend[];
+	dailyPrices: { date: string; close: number; high: number }[];
+	dividends: { date: string; amount: number }[];
 };
 
 export type ExchangeRate = {

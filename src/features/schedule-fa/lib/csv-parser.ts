@@ -1,5 +1,24 @@
 import { DateTime } from 'luxon';
-import { csvRowSchema, type Lot, type Transaction } from './types';
+import { z } from 'zod';
+import type { Transaction } from './types';
+
+const csvRowSchema = z.object({
+	Date: z.string(),
+	Remarks: z.string().optional(),
+	Symbol: z.string().min(1),
+	Type: z.enum(['Buy', 'Sell']),
+	Units: z.coerce.number().positive(),
+	Price: z.coerce.number().nonnegative(),
+});
+
+type Lot = {
+	symbol: string;
+	acquiredOn: string;
+	quantity: number;
+	purchasePrice: number;
+	soldOn: string | null;
+	salePrice: number | null;
+};
 
 function detectDelimiter(headerLine: string): string {
 	const tabCount = (headerLine.match(/\t/g) || []).length;
