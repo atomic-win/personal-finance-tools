@@ -18,8 +18,8 @@ import {
 	TableRow,
 } from '@/components/ui/table';
 import { useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
-import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
-import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
+import { useStockInfoQueries } from '@/features/schedule-fa/hooks/useStockInfo';
+import { useTTBuyRateQueries } from '@/features/schedule-fa/hooks/useTTBuyRate';
 import type {
 	ExchangeRate,
 	GroupingOption,
@@ -40,7 +40,7 @@ export default function ScheduleFAOutput() {
 	const uniqueSymbols = [...new Set(validTransactions.map((h) => h.symbol))];
 	const hasValidTransactions = uniqueSymbols.length > 0;
 
-	const stockQueries = useMultipleStockInfo(
+	const stockQueries = useStockInfoQueries(
 		hasValidTransactions ? uniqueSymbols : [],
 	);
 
@@ -52,7 +52,7 @@ export default function ScheduleFAOutput() {
 		),
 	];
 
-	const rateQueries = useMultipleTTBuyRates(
+	const rateQueries = useTTBuyRateQueries(
 		uniqueCurrencies,
 		hasValidTransactions && uniqueCurrencies.length > 0,
 	);

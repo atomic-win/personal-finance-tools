@@ -12,7 +12,7 @@ export function useStockInfo(symbol: string | null) {
 	});
 }
 
-export function useMultipleStockInfo(symbols: string[]) {
+export function useStockInfoQueries(symbols: string[]) {
 	const results = useQueries({
 		queries: symbols.map((symbol) => ({
 			queryKey: ['stock-info', symbol],

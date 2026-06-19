@@ -11,7 +11,7 @@ export function useTTBuyRate(from = 'USD', enabled = true) {
 	});
 }
 
-export function useMultipleTTBuyRates(currencies: string[], enabled = true) {
+export function useTTBuyRateQueries(currencies: string[], enabled = true) {
 	const results = useQueries({
 		queries: currencies.map((from) => ({
 			queryKey: ['tt-buy-rate', from],
