@@ -33,7 +33,8 @@ export default function ScheduleFAOutput() {
 	const [year, setYear] = useState(getDefaultYear());
 	const [grouping, setGrouping] = useState<GroupingOption>('none');
 
-	const { data: transactions = [] } = useTransactionsQuery();
+	const { isLoading: isLoadingTransactions, data: transactions = [] } =
+		useTransactionsQuery();
 
 	const validTransactions = transactions.filter(
 		(h) => h.symbol && h.units > 0 && h.date
@@ -50,14 +51,18 @@ export default function ScheduleFAOutput() {
 
 	const rateQueries = useTTBuyRateQueries(uniqueCurrencies);
 
+	if (isLoadingTransactions) {
+		return null; // Don't show loading state for transactions, as the input table already has one
+	}
+
 	if (stockQueries.some((q) => q.isLoading)) {
-		return <LoadingComponent loadingMessage='Fetching stock information...' />;
+		return <LoadingComponent loadingMessage='Loading stock information...' />;
 	}
 
 	if (stockQueries.some((q) => q.isError)) {
 		return (
 			<>
-				<ErrorComponent errorMessage='Failed to fetch stock information. Please check the stock symbols and try again.' />
+				<ErrorComponent errorMessage='Failed to load stock information. Please check the stock symbols and try again.' />
 				<div className='p-4'>
 					{stockQueries
 						.filter((q) => q.isError)
@@ -73,13 +78,13 @@ export default function ScheduleFAOutput() {
 	}
 
 	if (rateQueries.some((q) => q.isLoading)) {
-		return <LoadingComponent loadingMessage='Fetching exchange rates...' />;
+		return <LoadingComponent loadingMessage='Loading exchange rates...' />;
 	}
 
 	if (rateQueries.some((q) => q.isError)) {
 		return (
 			<>
-				<ErrorComponent errorMessage='Failed to fetch exchange rates. Please try again later.' />
+				<ErrorComponent errorMessage='Failed to load exchange rates. Please try again later.' />
 				<div className='p-4'>
 					{rateQueries
 						.filter((q) => q.isError)
