@@ -10,7 +10,7 @@ const stockInfoInputSchema = z.object({
 });
 
 export const fetchStockInfo = createServerFn({ method: 'GET' })
-	.validator(stockInfoInputSchema)
+	.inputValidator(stockInfoInputSchema)
 	.handler(async ({ data }) => {
 		const { symbol } = data;
 
@@ -46,7 +46,7 @@ const ttBuyRateInputSchema = z.object({
 });
 
 export const fetchTTBuyRate = createServerFn({ method: 'GET' })
-	.validator(ttBuyRateInputSchema)
+	.inputValidator(ttBuyRateInputSchema)
 	.handler(async ({ data }) => {
 		const ticker = `${data.from.toUpperCase()}INR=X`;
 
