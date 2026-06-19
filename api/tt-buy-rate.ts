@@ -1,6 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { DateTime } from 'luxon';
-import yahooFinance from 'yahoo-finance2';
+import YahooFinance from 'yahoo-finance2';
+
+const yf = new YahooFinance({ suppressNotices: ['ripHistorical'] });
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
 	if (req.method !== 'GET') {
@@ -17,7 +19,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 	const ticker = `${from.toUpperCase()}INR=X`;
 
 	try {
-		const history = await yahooFinance.historical(ticker, {
+		const history = await yf.historical(ticker, {
 			period1: '2000-01-01',
 		});
 
