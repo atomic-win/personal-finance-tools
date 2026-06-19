@@ -25,11 +25,8 @@ type Props = {
 	rows: ScheduleFARow[];
 };
 
-function formatAmount(value: number, currency: string): string {
-	if (currency === 'INR') {
-		return `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-	}
-	return `${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
+function formatAmount(value: number): string {
+	return `₹${Math.round(value).toLocaleString('en-IN')}`;
 }
 
 export default function ScheduleFAOutput({ rows }: Props) {
@@ -90,19 +87,19 @@ export default function ScheduleFAOutput({ rows }: Props) {
 								<TableCell>{row.natureOfEntity}</TableCell>
 								<TableCell>{row.dateOfAcquiring}</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.initialValueINR, 'INR')}
+									{formatAmount(row.initialValueINR)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.peakValueINR, 'INR')}
+									{formatAmount(row.peakValueINR)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.closingBalanceINR, 'INR')}
+									{formatAmount(row.closingBalanceINR)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.totalDividendsINR, 'INR')}
+									{formatAmount(row.totalDividendsINR)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.totalSaleProceedsINR, 'INR')}
+									{formatAmount(row.totalSaleProceedsINR)}
 								</TableCell>
 							</TableRow>
 						))}
