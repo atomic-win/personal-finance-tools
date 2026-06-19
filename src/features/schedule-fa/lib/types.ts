@@ -12,7 +12,7 @@ export type Transaction = {
 
 // --- API Responses ---
 
-export type StockInfoResponse = {
+export type StockData = {
 	symbol: string;
 	name: string;
 	exchange: string;
@@ -23,7 +23,7 @@ export type StockInfoResponse = {
 	city: string;
 	state: string;
 	zip: string;
-	dailyPrices: { date: string; close: number; high: number }[];
+	dailyPrices: { date: string; price: number }[];
 	dividends: { date: string; amount: number }[];
 };
 
@@ -31,30 +31,3 @@ export type ExchangeRate = {
 	date: string;
 	rate: number;
 };
-
-// --- Schedule FA Output Row ---
-
-export type ScheduleFARow = {
-	slNo: number;
-	countryNameAndCode: string;
-	nameOfEntity: string;
-	addressOfEntity: string;
-	zipCode: string;
-	natureOfEntity: string;
-	dateOfAcquiring: string;
-	currency: string;
-	initialValueForeign: number;
-	initialValueINR: number;
-	peakValueForeign: number;
-	peakValueINR: number;
-	closingBalanceForeign: number;
-	closingBalanceINR: number;
-	totalDividendsForeign: number;
-	totalDividendsINR: number;
-	totalSaleProceedsForeign: number;
-	totalSaleProceedsINR: number;
-};
-
-// --- Grouping ---
-
-export type GroupingOption = 'none' | 'by-stock' | 'by-year';

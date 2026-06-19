@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
 import ErrorComponent from '@/components/error-component';
@@ -23,11 +24,11 @@ import { useStockInfoQueries } from '@/features/schedule-fa/hooks/useStockInfo';
 import { useTTBuyRateQueries } from '@/features/schedule-fa/hooks/useTTBuyRate';
 import type {
 	ExchangeRate,
-	GroupingOption,
-	ScheduleFARow,
-	StockInfoResponse,
+	StockData,
 	Transaction,
 } from '@/features/schedule-fa/lib/types';
+
+type GroupingOption = 'none' | 'by-stock' | 'by-year';
 
 export default function ScheduleFAOutput() {
 	const [year, setYear] = useState(getDefaultYear());
@@ -99,7 +100,7 @@ export default function ScheduleFAOutput() {
 		);
 	}
 
-	const stockData = new Map<string, StockInfoResponse>();
+	const stockData = new Map<string, StockData>();
 	for (const q of stockQueries.filter((q) => !!q.data)) {
 		stockData.set(q.data.symbol, q.data);
 	}
@@ -119,17 +120,13 @@ export default function ScheduleFAOutput() {
 		);
 	}
 
-	const { heldLots, soldLots } = processTransactions(validTransactions);
-
-	const rows = computeScheduleFARows({
-		heldLots,
-		soldLots,
+	const rowItems = calculateRowItems(
+		validTransactions,
 		stockData,
 		ratesByCurrency,
 		year,
-	});
-
-	const displayRows = groupRows(rows, grouping);
+		grouping
+	);
 
 	return (
 		<div className='space-y-4'>
@@ -194,29 +191,29 @@ export default function ScheduleFAOutput() {
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{displayRows.map((row) => (
-							<TableRow key={row.slNo}>
-								<TableCell className='text-center'>{row.slNo}</TableCell>
-								<TableCell>{row.countryNameAndCode}</TableCell>
-								<TableCell>{row.nameOfEntity}</TableCell>
-								<TableCell>{row.addressOfEntity}</TableCell>
-								<TableCell>{row.zipCode || '—'}</TableCell>
-								<TableCell>{row.natureOfEntity}</TableCell>
-								<TableCell>{row.dateOfAcquiring}</TableCell>
+						{rowItems.map((rowItem, index) => (
+							<TableRow key={index.toString()}>
+								<TableCell className='text-center'>{index + 1}</TableCell>
+								<TableCell>{rowItem.countryNameAndCode}</TableCell>
+								<TableCell>{rowItem.nameOfEntity}</TableCell>
+								<TableCell>{rowItem.addressOfEntity}</TableCell>
+								<TableCell>{rowItem.zipCode || '—'}</TableCell>
+								<TableCell>{rowItem.natureOfEntity}</TableCell>
+								<TableCell>{rowItem.dateOfAcquiring}</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.initialValueINR)}
+									{formatAmount(rowItem.initials)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.peakValueINR)}
+									{formatAmount(rowItem.peaks)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.closingBalanceINR)}
+									{formatAmount(rowItem.closings)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.totalDividendsINR)}
+									{formatAmount(rowItem.dividends)}
 								</TableCell>
 								<TableCell className='text-right'>
-									{formatAmount(row.totalSaleProceedsINR)}
+									{formatAmount(rowItem.saleProceeds)}
 								</TableCell>
 							</TableRow>
 						))}
@@ -227,104 +224,250 @@ export default function ScheduleFAOutput() {
 	);
 }
 
-// --- Local types ---
-
-type DailyPrice = { date: string; close: number; high: number };
-type Dividend = { date: string; amount: number };
-type Lot = {
-	symbol: string;
-	acquiredOn: string;
-	quantity: number;
-	purchasePrice: number;
-	soldOn: string | null;
-	salePrice: number | null;
+type DatedValue = {
+	date: string;
+	units: number;
+	price: number;
+	exchangeRate: ExchangeRate;
 };
 
-// --- FIFO lot matching ---
+type RowItem = {
+	countryNameAndCode: string;
+	nameOfEntity: string;
+	addressOfEntity: string;
+	zipCode: string;
+	natureOfEntity: string;
+	dateOfAcquiring: string;
+	currency: string;
+	initials: DatedValue[];
+	peaks: DatedValue[];
+	closings: DatedValue[];
+	dividends: DatedValue[];
+	saleProceeds: DatedValue[];
+};
 
-function applyFIFO(transactions: Transaction[]): {
-	heldLots: Lot[];
-	soldLots: Lot[];
-} {
-	const sorted = [...transactions].sort(
-		(a, b) =>
-			DateTime.fromISO(a.date).toMillis() - DateTime.fromISO(b.date).toMillis()
+function calculateRowItems(
+	transactions: Transaction[],
+	stockData: Map<string, StockData>,
+	ratesByCurrency: Map<string, ExchangeRate[]>,
+	year: number,
+	grouping: GroupingOption
+): RowItem[] {
+	const transactionsBySymbol = _.groupBy(transactions, 'symbol');
+
+	const allRows: RowItem[] = [];
+	for (const [symbol, txs] of Object.entries(transactionsBySymbol)) {
+		const stock = stockData.get(symbol);
+		if (!stock) {
+			throw new Error(`Missing stock data for symbol ${symbol}`);
+		}
+
+		const rates = ratesByCurrency.get(stock.currency);
+		if (!rates) {
+			throw new Error(
+				`Missing exchange rate data for currency ${stock.currency}`
+			);
+		}
+
+		const rowsForSymbol = calculateRowItemsForOneSymbol(
+			txs,
+			stock,
+			rates,
+			year
+		);
+
+		if (rowsForSymbol.length === 0) {
+			continue; // Skip symbols that don't have any transactions affecting Schedule FA for the year
+		}
+
+		if (grouping === 'by-stock') {
+			allRows.push(combineRows(rowsForSymbol));
+			continue;
+		}
+
+		if (grouping === 'by-year') {
+			const rowsGroupedByYear = _.groupBy(rowsForSymbol, (row) =>
+				row.dateOfAcquiring.slice(0, 4)
+			);
+
+			for (const [_, rows] of Object.entries(rowsGroupedByYear)) {
+				allRows.push(combineRows(rows));
+			}
+		}
+
+		allRows.push(...rowsForSymbol);
+	}
+
+	return allRows;
+}
+
+function calculateRowItemsForOneSymbol(
+	transactions: Transaction[],
+	stock: StockData,
+	rates: ExchangeRate[],
+	year: number
+): RowItem[] {
+	const calendarYearStart = `${year}-01-01`;
+	const calendarYearEnd = `${year}-12-31`;
+
+	const dailyPricesInYear = stock.dailyPrices.filter(
+		(p) => p.date >= calendarYearStart && p.date <= calendarYearEnd
 	);
 
-	const buyLots: { date: string; price: number; remaining: number }[] = [];
-	const soldLots: Lot[] = [];
+	const dividendsInYear = stock.dividends.filter(
+		(d) => d.date >= calendarYearStart && d.date <= calendarYearEnd
+	);
 
-	for (const tx of sorted) {
-		if (tx.type === 'Buy') {
-			buyLots.push({ date: tx.date, price: tx.price, remaining: tx.units });
-		} else {
-			let unitsToSell = tx.units;
-			for (const lot of buyLots) {
-				if (unitsToSell <= 0) break;
-				if (lot.remaining <= 0) continue;
+	const priceAtYearEnd = _.maxBy(dailyPricesInYear, 'date')!;
+	const exchangeRateAtYearEnd = findRate(rates, priceAtYearEnd.date);
 
-				const soldFromLot = Math.min(lot.remaining, unitsToSell);
-				lot.remaining -= soldFromLot;
-				unitsToSell -= soldFromLot;
+	const sorted = _.sortBy(
+		transactions.filter((tx) => tx.date <= calendarYearEnd),
+		['date', 'type'],
+		['asc', 'desc']
+	);
 
-				soldLots.push({
-					symbol: tx.symbol,
-					acquiredOn: lot.date,
-					quantity: soldFromLot,
-					purchasePrice: lot.price,
-					soldOn: tx.date,
-					salePrice: tx.price,
+	const buys = sorted.filter((tx) => tx.type === 'Buy');
+	const sells = sorted.filter((tx) => tx.type === 'Sell');
+
+	if (
+		_.reduce(buys, (sum, b) => sum + b.units, 0) <
+		_.reduce(sells, (sum, s) => sum + s.units, 0)
+	) {
+		throw new Error(
+			`Total units sold for ${stock.symbol} exceed total units bought.`
+		);
+	}
+
+	sells.reverse();
+
+	const rows: RowItem[] = [];
+	for (const buy of buys) {
+		const initials: DatedValue[] = [];
+		const peaks: DatedValue[] = [];
+		const closings: DatedValue[] = [];
+		const dividends: DatedValue[] = [];
+		const saleProceeds: DatedValue[] = [];
+
+		while (buy.units > 0) {
+			if (sells.length !== 0 && sells[sells.length - 1].units === 0) {
+				sells.pop();
+				continue;
+			}
+
+			const sell =
+				sells.length > 0
+					? sells[sells.length - 1]
+					: {
+							id: '',
+							symbol: buy.symbol,
+							date: `${year + 1}-01-01`,
+							type: 'Sell' as const,
+							units: buy.units,
+							price: 0,
+							remarks: '',
+						};
+
+			const matchedUnits = Math.min(buy.units, sell.units);
+
+			buy.units -= matchedUnits;
+			sell.units -= matchedUnits;
+
+			if (sell.date < calendarYearStart) {
+				continue; // This sale doesn't affect Schedule FA for the year, so skip to next iteration without adding a row
+			}
+
+			const peak = _.maxBy(
+				[
+					...dailyPricesInYear.filter(
+						(p) => p.date >= buy.date && p.date < sell.date
+					),
+					buy.date >= calendarYearStart && buy.date <= calendarYearEnd
+						? { date: buy.date, price: buy.price }
+						: { date: buy.date, price: 0 },
+					sell.date >= calendarYearStart && sell.date <= calendarYearEnd
+						? { date: sell.date, price: sell.price }
+						: { date: sell.date, price: 0 },
+				],
+				'price'
+			)!;
+
+			initials.push({
+				date: buy.date,
+				units: matchedUnits,
+				price: buy.price,
+				exchangeRate: findRate(rates, buy.date),
+			});
+
+			peaks.push({
+				date: peak.date,
+				units: matchedUnits,
+				price: peak.price,
+				exchangeRate: findRate(rates, peak.date),
+			});
+
+			for (const dividend of dividendsInYear) {
+				if (dividend.date >= buy.date && dividend.date < sell.date) {
+					dividends.push({
+						date: dividend.date,
+						units: dividend.amount,
+						price: 1,
+						exchangeRate: findPreviousMonthEndRate(rates, dividend.date),
+					});
+				}
+			}
+
+			if (sell.date <= calendarYearEnd) {
+				saleProceeds.push({
+					date: sell.date,
+					units: matchedUnits,
+					price: sell.price,
+					exchangeRate: findRate(rates, sell.date),
+				});
+			} else {
+				closings.push({
+					date: priceAtYearEnd.date,
+					units: matchedUnits,
+					price: priceAtYearEnd.price,
+					exchangeRate: exchangeRateAtYearEnd,
 				});
 			}
 
-			if (unitsToSell > 0) {
-				throw new Error(
-					`Cannot sell ${tx.units} units of ${tx.symbol} on ${tx.date}: insufficient units`
-				);
-			}
+			rows.push({
+				countryNameAndCode: `${stock.country} — ${stock.countryCode}`,
+				nameOfEntity: stock.name,
+				addressOfEntity: [stock.address, stock.city, stock.state]
+					.filter(Boolean)
+					.join(', '),
+				zipCode: stock.zip,
+				natureOfEntity: 'Equity Shares',
+				dateOfAcquiring: buy.date,
+				currency: stock.currency,
+				initials,
+				peaks,
+				closings,
+				dividends,
+				saleProceeds,
+			});
 		}
 	}
 
-	const heldLots: Lot[] = buyLots
-		.filter((lot) => lot.remaining > 0)
-		.map((lot) => ({
-			symbol: sorted[0].symbol,
-			acquiredOn: lot.date,
-			quantity: lot.remaining,
-			purchasePrice: lot.price,
-			soldOn: null,
-			salePrice: null,
-		}));
-
-	return { heldLots, soldLots };
+	return rows;
 }
 
-function processTransactions(transactions: Transaction[]): {
-	heldLots: Lot[];
-	soldLots: Lot[];
-} {
-	const bySymbol = new Map<string, typeof transactions>();
-	for (const tx of transactions) {
-		const existing = bySymbol.get(tx.symbol) ?? [];
-		existing.push(tx);
-		bySymbol.set(tx.symbol, existing);
-	}
-
-	const allHeldLots: Lot[] = [];
-	const allSoldLots: Lot[] = [];
-
-	for (const [, txns] of bySymbol) {
-		const { heldLots, soldLots } = applyFIFO(txns);
-		allHeldLots.push(...heldLots);
-		allSoldLots.push(...soldLots);
-	}
-
-	return { heldLots: allHeldLots, soldLots: allSoldLots };
+function combineRows(rows: RowItem[]): RowItem {
+	return {
+		...rows[0],
+		dateOfAcquiring: _.minBy(rows, 'dateOfAcquiring')!.dateOfAcquiring,
+		initials: _.flatMap(rows, 'initials'),
+		peaks: _.flatMap(rows, 'peaks'),
+		closings: _.flatMap(rows, 'closings'),
+		dividends: _.flatMap(rows, 'dividends'),
+		saleProceeds: _.flatMap(rows, 'saleProceeds'),
+	};
 }
 
-// --- Computation helpers ---
-
-function findRate(rates: ExchangeRate[], date: string): number {
+function findRate(rates: ExchangeRate[], date: string): ExchangeRate {
 	let closestBefore: ExchangeRate | null = null;
 	let closestAfter: ExchangeRate | null = null;
 
@@ -340,254 +483,24 @@ function findRate(rates: ExchangeRate[], date: string): number {
 		}
 	}
 
-	return (closestBefore ?? closestAfter)?.rate ?? 0;
-}
-
-function getLastDayOfPreviousMonth(dateStr: string): string {
-	const dt = DateTime.fromISO(dateStr);
-	const lastDay = dt.startOf('month').minus({ days: 1 });
-	return lastDay.toISODate() ?? dateStr;
-}
-
-function findPeakPrice(
-	dailyPrices: DailyPrice[],
-	fromDate: string,
-	toDate: string
-): { peakPrice: number; peakDate: string } {
-	let peakPrice = 0;
-	let peakDate = fromDate;
-
-	for (const p of dailyPrices) {
-		if (p.date >= fromDate && p.date <= toDate) {
-			if (p.close > peakPrice) {
-				peakPrice = p.close;
-				peakDate = p.date;
-			}
-		}
+	if (!closestBefore && !closestAfter) {
+		throw new Error(
+			`No exchange rates available to find rate for date ${date}`
+		);
 	}
 
-	return { peakPrice, peakDate };
+	return (closestBefore ?? closestAfter)!;
 }
 
-function findClosingPrice(
-	dailyPrices: DailyPrice[],
-	date: string
-): { closingPrice: number; closingDate: string } {
-	let closest: DailyPrice | null = null;
-	for (const p of dailyPrices) {
-		if (p.date <= date) {
-			if (!closest || p.date > closest.date) {
-				closest = p;
-			}
-		}
-	}
-	return {
-		closingPrice: closest?.close ?? 0,
-		closingDate: closest?.date ?? date,
-	};
-}
-
-function computeDividends(
-	dividends: Dividend[],
-	quantity: number,
-	year: number,
+function findPreviousMonthEndRate(
 	rates: ExchangeRate[],
-	heldFrom: string,
-	heldTo: string
-): { totalUSD: number; totalINR: number } {
-	const yearStart = `${year}-01-01`;
-	const yearEnd = `${year}-12-31`;
-	const from = heldFrom > yearStart ? heldFrom : yearStart;
-	const to = heldTo < yearEnd ? heldTo : yearEnd;
-
-	let totalUSD = 0;
-	let totalINR = 0;
-
-	for (const d of dividends) {
-		if (d.date >= from && d.date <= to) {
-			const divUSD = d.amount * quantity;
-			const rateDate = getLastDayOfPreviousMonth(d.date);
-			const rate = findRate(rates, rateDate);
-			totalUSD += divUSD;
-			totalINR += divUSD * rate;
-		}
-	}
-
-	return { totalUSD, totalINR };
-}
-
-function computeSaleProceeds(
-	lot: Lot,
-	year: number,
-	rates: ExchangeRate[]
-): { totalUSD: number; totalINR: number } {
-	if (!lot.soldOn || !lot.salePrice) return { totalUSD: 0, totalINR: 0 };
-
-	const yearStart = `${year}-01-01`;
-	const yearEnd = `${year}-12-31`;
-
-	if (lot.soldOn < yearStart || lot.soldOn > yearEnd) {
-		return { totalUSD: 0, totalINR: 0 };
-	}
-
-	const totalUSD = lot.salePrice * lot.quantity;
-	const rateDate = getLastDayOfPreviousMonth(lot.soldOn);
-	const rate = findRate(rates, rateDate);
-
-	return { totalUSD, totalINR: totalUSD * rate };
-}
-
-function computeScheduleFARows(input: {
-	heldLots: Lot[];
-	soldLots: Lot[];
-	stockData: Map<string, StockInfoResponse>;
-	ratesByCurrency: Map<string, ExchangeRate[]>;
-	year: number;
-}): ScheduleFARow[] {
-	const { heldLots, soldLots, stockData, ratesByCurrency, year } = input;
-	const yearStart = `${year}-01-01`;
-	const yearEnd = `${year}-12-31`;
-
-	const rows: ScheduleFARow[] = [];
-	let slNo = 1;
-
-	const soldBySymbol = new Map<string, Lot[]>();
-	for (const lot of soldLots) {
-		const existing = soldBySymbol.get(lot.symbol) ?? [];
-		existing.push(lot);
-		soldBySymbol.set(lot.symbol, existing);
-	}
-
-	for (const lot of heldLots) {
-		if (lot.acquiredOn > yearEnd) continue;
-
-		const stock = stockData.get(lot.symbol);
-		if (!stock) continue;
-
-		const rates = ratesByCurrency.get(stock.currency) ?? [];
-
-		const peakFrom = lot.acquiredOn > yearStart ? lot.acquiredOn : yearStart;
-		const { peakPrice, peakDate } = findPeakPrice(
-			stock.dailyPrices,
-			peakFrom,
-			yearEnd
-		);
-		const { closingPrice } = findClosingPrice(stock.dailyPrices, yearEnd);
-
-		const initialValueForeign = lot.purchasePrice * lot.quantity;
-		const initialRate = findRate(rates, lot.acquiredOn);
-		const peakValueForeign = peakPrice * lot.quantity;
-		const peakRate = findRate(rates, peakDate);
-		const closingBalanceForeign = closingPrice * lot.quantity;
-		const closingRate = findRate(rates, yearEnd);
-
-		const divs = computeDividends(
-			stock.dividends,
-			lot.quantity,
-			year,
-			rates,
-			lot.acquiredOn,
-			lot.soldOn ?? yearEnd
-		);
-
-		const relatedSoldLots = (soldBySymbol.get(lot.symbol) ?? []).filter(
-			(s) => s.acquiredOn === lot.acquiredOn
-		);
-		let saleProceedsForeign = 0;
-		let saleProceedsINR = 0;
-		for (const soldLot of relatedSoldLots) {
-			const sp = computeSaleProceeds(soldLot, year, rates);
-			saleProceedsForeign += sp.totalUSD;
-			saleProceedsINR += sp.totalINR;
-		}
-
-		rows.push({
-			slNo: slNo++,
-			countryNameAndCode: `${stock.country} — ${stock.countryCode}`,
-			nameOfEntity: stock.name,
-			addressOfEntity: [stock.address, stock.city, stock.state]
-				.filter(Boolean)
-				.join(', '),
-			zipCode: stock.zip,
-			natureOfEntity: 'Equity Shares',
-			dateOfAcquiring: lot.acquiredOn,
-			currency: stock.currency,
-			initialValueForeign,
-			initialValueINR: initialValueForeign * initialRate,
-			peakValueForeign,
-			peakValueINR: peakValueForeign * peakRate,
-			closingBalanceForeign,
-			closingBalanceINR: closingBalanceForeign * closingRate,
-			totalDividendsForeign: divs.totalUSD,
-			totalDividendsINR: divs.totalINR,
-			totalSaleProceedsForeign: saleProceedsForeign,
-			totalSaleProceedsINR: saleProceedsINR,
-		});
-	}
-
-	return rows;
-}
-
-function groupRows(
-	rows: ScheduleFARow[],
-	option: GroupingOption
-): ScheduleFARow[] {
-	if (option === 'none') return rows;
-
-	const groupKey = (row: ScheduleFARow): string => {
-		switch (option) {
-			case 'by-stock':
-				return row.nameOfEntity;
-			case 'by-year':
-				return row.dateOfAcquiring.substring(0, 4);
-		}
-	};
-
-	const groups = new Map<string, ScheduleFARow[]>();
-	for (const row of rows) {
-		const key = groupKey(row);
-		const existing = groups.get(key) ?? [];
-		existing.push(row);
-		groups.set(key, existing);
-	}
-
-	const grouped: ScheduleFARow[] = [];
-	let slNo = 1;
-
-	for (const [, group] of groups) {
-		const first = group[0];
-		const earliestDate = group.reduce(
-			(min, r) => (r.dateOfAcquiring < min ? r.dateOfAcquiring : min),
-			first.dateOfAcquiring
-		);
-
-		grouped.push({
-			slNo: slNo++,
-			countryNameAndCode: first.countryNameAndCode,
-			nameOfEntity: first.nameOfEntity,
-			addressOfEntity: first.addressOfEntity,
-			zipCode: first.zipCode,
-			natureOfEntity: first.natureOfEntity,
-			dateOfAcquiring: earliestDate,
-			currency: first.currency,
-			initialValueForeign: sumField(group, 'initialValueForeign'),
-			initialValueINR: sumField(group, 'initialValueINR'),
-			peakValueForeign: sumField(group, 'peakValueForeign'),
-			peakValueINR: sumField(group, 'peakValueINR'),
-			closingBalanceForeign: sumField(group, 'closingBalanceForeign'),
-			closingBalanceINR: sumField(group, 'closingBalanceINR'),
-			totalDividendsForeign: sumField(group, 'totalDividendsForeign'),
-			totalDividendsINR: sumField(group, 'totalDividendsINR'),
-			totalSaleProceedsForeign: sumField(group, 'totalSaleProceedsForeign'),
-			totalSaleProceedsINR: sumField(group, 'totalSaleProceedsINR'),
-		});
-	}
-
-	return grouped;
-}
-
-function sumField(rows: ScheduleFARow[], key: keyof ScheduleFARow): number {
-	return rows.reduce((acc, r) => acc + (r[key] as number), 0);
+	date: string
+): ExchangeRate {
+	const lastDayOfPrevMonth = DateTime.fromISO(date)
+		.startOf('month')
+		.minus({ days: 1 })
+		.toISODate()!;
+	return findRate(rates, lastDayOfPrevMonth);
 }
 
 function getDefaultYear(): number {
@@ -603,6 +516,7 @@ function getYearOptions(): number[] {
 	return years;
 }
 
-function formatAmount(value: number): string {
+function formatAmount(values: DatedValue[]): string {
+	const value = _.sumBy(values, (v) => v.units * v.price * v.exchangeRate.rate);
 	return `₹${Math.round(value).toLocaleString('en-IN')}`;
 }

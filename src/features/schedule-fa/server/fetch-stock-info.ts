@@ -34,8 +34,7 @@ export const fetchStockInfo = createServerFn({ method: 'GET' })
 
 		const dailyPrices = (chartData.quotes ?? []).map((q) => ({
 			date: formatDate(q.date),
-			close: q.close ?? 0,
-			high: q.high ?? 0,
+			price: q.close ?? 0,
 		}));
 
 		const dividends = (dividendChart.events?.dividends ?? []).map((d) => ({
@@ -49,8 +48,7 @@ export const fetchStockInfo = createServerFn({ method: 'GET' })
 			exchange: price?.exchangeName ?? quoteType?.exchange ?? '',
 			currency: price?.currency ?? chartData.meta?.currency ?? 'USD',
 			country:
-				profile?.country ??
-				getCountryFromExchange(price?.exchangeName ?? ''),
+				profile?.country ?? getCountryFromExchange(price?.exchangeName ?? ''),
 			countryCode:
 				getCountryCodeFromCountry(profile?.country ?? '') ||
 				getCountryCodeFromExchange(price?.exchangeName ?? ''),
