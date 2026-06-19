@@ -1,7 +1,7 @@
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import CSVUploadButton from '@/features/schedule-fa/components/CSVUploadButton';
+import CSVUploadButton from '@/features/schedule-fa/components/UploadButton';
 import TransactionsInputTable from '@/features/schedule-fa/components/TransactionsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
 import {
