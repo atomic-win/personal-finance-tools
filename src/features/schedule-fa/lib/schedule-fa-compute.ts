@@ -81,21 +81,26 @@ export function findClosingPrice(
 
 /**
  * Compute dividends for a reporting year, with per-dividend INR conversion.
+ * Only counts dividends within the lot's held period ∩ calendar year.
  */
 function computeDividends(
 	dividends: Dividend[],
 	quantity: number,
 	year: number,
-	rates: ExchangeRate[]
+	rates: ExchangeRate[],
+	heldFrom: string,
+	heldTo: string
 ): { totalUSD: number; totalINR: number } {
 	const yearStart = `${year}-01-01`;
 	const yearEnd = `${year}-12-31`;
+	const from = heldFrom > yearStart ? heldFrom : yearStart;
+	const to = heldTo < yearEnd ? heldTo : yearEnd;
 
 	let totalUSD = 0;
 	let totalINR = 0;
 
 	for (const d of dividends) {
-		if (d.date >= yearStart && d.date <= yearEnd) {
+		if (d.date >= from && d.date <= to) {
 			const divUSD = d.amount * quantity;
 			const rateDate = getLastDayOfPreviousMonth(d.date);
 			const rate = findRate(rates, rateDate);
@@ -192,7 +197,14 @@ export function computeScheduleFARows(input: ComputeInput): ScheduleFARow[] {
 		const closingRate = findRate(rates, yearEnd);
 
 		// Dividends
-		const divs = computeDividends(stock.dividends, lot.quantity, year, rates);
+		const divs = computeDividends(
+			stock.dividends,
+			lot.quantity,
+			year,
+			rates,
+			lot.acquiredOn,
+			lot.soldOn ?? yearEnd,
+		);
 
 		// Sale proceeds from sold lots of same symbol acquired on the same date
 		const relatedSoldLots = (soldBySymbol.get(lot.symbol) ?? []).filter(
