@@ -1,15 +1,6 @@
-import { DateTime } from 'luxon';
-import { useState } from 'react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from '@/components/ui/select';
 import CSVUploadDialog from '@/features/schedule-fa/components/CSVUploadDialog';
 import TransactionsInputTable from '@/features/schedule-fa/components/TransactionsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
@@ -20,7 +11,6 @@ import {
 
 
 export default function ScheduleFAPage() {
-	const [year, setYear] = useState(getDefaultYear());
 	const { data: transactions = [] } = useTransactionsQuery();
 	const { mutate: clearTransactions } = useClearTransactionsMutation();
 
@@ -47,26 +37,6 @@ export default function ScheduleFAPage() {
 						<CardTitle className='flex items-center justify-between'>
 							<span>Transactions</span>
 							<div className='flex items-center gap-3'>
-								<div className='flex items-center gap-2'>
-									<span className='text-sm font-normal text-muted-foreground'>
-										Reporting Year:
-									</span>
-									<Select
-										value={String(year)}
-										onValueChange={(v) => setYear(Number(v))}
-									>
-										<SelectTrigger className='w-24'>
-											<SelectValue />
-										</SelectTrigger>
-										<SelectContent>
-											{getYearOptions().map((y) => (
-												<SelectItem key={y} value={String(y)}>
-													{y}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</div>
 								<CSVUploadDialog />
 								{transactions.length > 0 && (
 									<Button
@@ -85,21 +55,8 @@ export default function ScheduleFAPage() {
 					</CardContent>
 				</Card>
 
-				<ScheduleFAOutput year={year} />
+				<ScheduleFAOutput />
 			</div>
 		</>
 	);
-}
-
-function getDefaultYear(): number {
-	return DateTime.now().year - 1;
-}
-
-function getYearOptions(): number[] {
-	const currentYear = DateTime.now().year;
-	const years: number[] = [];
-	for (let y = currentYear; y >= 2015; y--) {
-		years.push(y);
-	}
-	return years;
 }

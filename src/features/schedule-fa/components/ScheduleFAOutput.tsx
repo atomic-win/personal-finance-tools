@@ -28,7 +28,8 @@ import type {
 } from '@/features/schedule-fa/lib/types';
 
 
-export default function ScheduleFAOutput({ year }: { year: number }) {
+export default function ScheduleFAOutput() {
+	const [year, setYear] = useState(getDefaultYear());
 	const [grouping, setGrouping] = useState<GroupingOption>('none');
 
 	const { data: transactions = [] } = useTransactionsQuery();
@@ -140,21 +141,41 @@ export default function ScheduleFAOutput({ year }: { year: number }) {
 		<div className='space-y-4'>
 			<div className='flex items-center justify-between'>
 				<h2 className='text-lg font-semibold'>Schedule FA — Table A3 Output</h2>
-				<div className='flex items-center gap-2'>
-					<span className='text-sm text-muted-foreground'>Group by:</span>
-					<Select
-						value={grouping}
-						onValueChange={(v) => setGrouping(v as GroupingOption)}
-					>
-						<SelectTrigger className='w-48'>
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value='none'>No Grouping</SelectItem>
-							<SelectItem value='by-stock'>By Stock</SelectItem>
-							<SelectItem value='by-year'>By Acquisition Year</SelectItem>
-						</SelectContent>
-					</Select>
+				<div className='flex items-center gap-4'>
+					<div className='flex items-center gap-2'>
+						<span className='text-sm text-muted-foreground'>Reporting Year:</span>
+						<Select
+							value={String(year)}
+							onValueChange={(v) => setYear(Number(v))}
+						>
+							<SelectTrigger className='w-24'>
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{getYearOptions().map((y) => (
+									<SelectItem key={y} value={String(y)}>
+										{y}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
+					<div className='flex items-center gap-2'>
+						<span className='text-sm text-muted-foreground'>Group by:</span>
+						<Select
+							value={grouping}
+							onValueChange={(v) => setGrouping(v as GroupingOption)}
+						>
+							<SelectTrigger className='w-48'>
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value='none'>No Grouping</SelectItem>
+								<SelectItem value='by-stock'>By Stock</SelectItem>
+								<SelectItem value='by-year'>By Acquisition Year</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
 			</div>
 
@@ -555,6 +576,19 @@ function groupRows(rows: ScheduleFARow[], option: GroupingOption): ScheduleFARow
 
 function sumField(rows: ScheduleFARow[], key: keyof ScheduleFARow): number {
 	return rows.reduce((acc, r) => acc + (r[key] as number), 0);
+}
+
+function getDefaultYear(): number {
+	return DateTime.now().year - 1;
+}
+
+function getYearOptions(): number[] {
+	const currentYear = DateTime.now().year;
+	const years: number[] = [];
+	for (let y = currentYear; y >= 2015; y--) {
+		years.push(y);
+	}
+	return years;
 }
 
 function formatAmount(value: number): string {
