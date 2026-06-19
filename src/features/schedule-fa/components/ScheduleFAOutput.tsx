@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
 	Select,
 	SelectContent,
@@ -60,7 +61,7 @@ export default function ScheduleFAOutput({ rows }: Props) {
 				</div>
 			</div>
 
-			<div className='overflow-x-auto border rounded-lg'>
+			<ScrollArea className='border rounded-lg'>
 				<Table>
 					<TableHeader>
 						<TableRow>
@@ -131,7 +132,7 @@ export default function ScheduleFAOutput({ rows }: Props) {
 						))}
 					</TableBody>
 				</Table>
-			</div>
+			</ScrollArea>
 		</div>
 	);
 }

@@ -1,6 +1,7 @@
 import { PlusIcon, Trash2Icon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
 	Select,
 	SelectContent,
@@ -52,6 +53,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 
 	return (
 		<div className='space-y-2'>
+			<ScrollArea className='max-h-96 border rounded-lg'>
 			<Table>
 				<TableHeader>
 					<TableRow>
@@ -160,6 +162,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 					))}
 				</TableBody>
 			</Table>
+			</ScrollArea>
 			<Button variant='outline' size='sm' onClick={addRow}>
 				<PlusIcon className='size-4' />
 				Add Row
