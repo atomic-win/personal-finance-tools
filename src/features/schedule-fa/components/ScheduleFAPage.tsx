@@ -69,15 +69,23 @@ export default function ScheduleFAPage() {
 
 	const isLoading =
 		generated &&
-		(stockQueries.some((q) => q.isLoading) || rateQueries.some((q) => q.isLoading));
+		(stockQueries.some((q) => q.isLoading) ||
+			rateQueries.some((q) => q.isLoading) ||
+			(stockQueries.some((q) => q.isSuccess) && uniqueCurrencies.length === 0));
 
 	const hasError =
 		generated &&
 		(stockQueries.some((q) => q.isError) || rateQueries.some((q) => q.isError));
 
+	const allDataReady =
+		generated &&
+		stockQueries.length > 0 &&
+		stockQueries.every((q) => q.isSuccess) &&
+		rateQueries.length > 0 &&
+		rateQueries.every((q) => q.isSuccess);
+
 	const rows: ScheduleFARow[] = useMemo(() => {
-		if (!generated) return [];
-		if (isLoading || hasError) return [];
+		if (!allDataReady) return [];
 
 		const stockData = new Map<string, StockInfoResponse>();
 		for (const q of stockQueries) {
@@ -117,15 +125,7 @@ export default function ScheduleFAPage() {
 			ratesByCurrency,
 			year,
 		});
-	}, [
-		generated,
-		isLoading,
-		hasError,
-		stockQueries,
-		rateQueries,
-		holdings,
-		year,
-	]);
+	}, [allDataReady, stockQueries, rateQueries, holdings, year]);
 
 	const handleGenerate = () => {
 		const validHoldings = holdings.filter(
