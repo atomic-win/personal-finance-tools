@@ -1,0 +1,134 @@
+import { UploadIcon } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
+import { parseCSV } from '@/features/schedule-fa/lib/csv-parser';
+import type { HoldingInput } from '@/features/schedule-fa/lib/types';
+
+type Props = {
+	onImport: (holdings: HoldingInput[]) => void;
+};
+
+export default function CSVUploadDialog({ onImport }: Props) {
+	const [open, setOpen] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [preview, setPreview] = useState<HoldingInput[] | null>(null);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		setError(null);
+		setPreview(null);
+
+		try {
+			const text = await file.text();
+			const transactions = parseCSV(text);
+
+			const holdings: HoldingInput[] = transactions.map((tx) => ({
+				id: crypto.randomUUID(),
+				symbol: tx.symbol,
+				quantity: tx.units,
+				purchaseDate: tx.date,
+				purchasePrice: tx.price,
+				type: tx.type,
+			}));
+
+			setPreview(holdings);
+		} catch (err) {
+			setError(err instanceof Error ? err.message : 'Failed to parse CSV');
+		}
+	};
+
+	const handleImport = () => {
+		if (preview) {
+			onImport(preview);
+			setOpen(false);
+			setPreview(null);
+			setError(null);
+		}
+	};
+
+	const handleOpenChange = (nextOpen: boolean) => {
+		setOpen(nextOpen);
+		if (!nextOpen) {
+			setPreview(null);
+			setError(null);
+			if (fileInputRef.current) {
+				fileInputRef.current.value = '';
+			}
+		}
+	};
+
+	return (
+		<Dialog open={open} onOpenChange={handleOpenChange}>
+			<DialogTrigger render={<Button variant='outline' size='sm' />}>
+				<UploadIcon className='size-4' />
+				Upload CSV
+			</DialogTrigger>
+			<DialogContent className='sm:max-w-lg'>
+				<DialogHeader>
+					<DialogTitle>Upload Transactions CSV / TSV</DialogTitle>
+					<DialogDescription>
+						CSV or TSV format: Date, Remarks, Symbol, Type (Buy/Sell), Units, Price
+					</DialogDescription>
+				</DialogHeader>
+				<div className='space-y-4'>
+					<input
+						ref={fileInputRef}
+						type='file'
+						accept='.csv,.tsv,.txt'
+						onChange={handleFileChange}
+						className='block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/80 cursor-pointer'
+					/>
+					{error && <p className='text-sm text-destructive'>{error}</p>}
+					{preview && (
+						<div className='space-y-2'>
+							<p className='text-sm text-muted-foreground'>
+								Found <strong>{preview.length}</strong> transactions:
+							</p>
+							<div className='max-h-48 overflow-y-auto text-xs border rounded-md'>
+								<table className='w-full'>
+									<thead>
+										<tr className='border-b bg-muted/50'>
+											<th className='p-2 text-left'>Type</th>
+											<th className='p-2 text-left'>Symbol</th>
+											<th className='p-2 text-left'>Date</th>
+											<th className='p-2 text-left'>Units</th>
+											<th className='p-2 text-left'>Price</th>
+										</tr>
+									</thead>
+									<tbody>
+										{preview.map((h) => (
+											<tr key={h.id} className='border-b last:border-0'>
+												<td className='p-2'>{h.type}</td>
+												<td className='p-2'>{h.symbol}</td>
+												<td className='p-2'>{h.purchaseDate}</td>
+												<td className='p-2'>{h.quantity}</td>
+												<td className='p-2'>${h.purchasePrice}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					)}
+				</div>
+				<DialogFooter>
+					<Button onClick={handleImport} disabled={!preview}>
+						Import {preview?.length ?? 0} Transactions
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+}

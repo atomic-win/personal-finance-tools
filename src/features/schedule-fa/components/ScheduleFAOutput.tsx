@@ -1,0 +1,137 @@
+import { useState } from 'react';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
+import { groupRows } from '@/features/schedule-fa/lib/schedule-fa-compute';
+import type {
+	GroupingOption,
+	ScheduleFARow,
+} from '@/features/schedule-fa/lib/types';
+
+type Props = {
+	rows: ScheduleFARow[];
+};
+
+function formatCurrency(value: number, currency: 'USD' | 'INR'): string {
+	if (currency === 'USD') {
+		return `$${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+	}
+	return `₹${value.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+}
+
+export default function ScheduleFAOutput({ rows }: Props) {
+	const [grouping, setGrouping] = useState<GroupingOption>('none');
+	const displayRows = groupRows(rows, grouping);
+
+	if (rows.length === 0) return null;
+
+	return (
+		<div className='space-y-4'>
+			<div className='flex items-center justify-between'>
+				<h2 className='text-lg font-semibold'>Schedule FA — Table A3 Output</h2>
+				<div className='flex items-center gap-2'>
+					<span className='text-sm text-muted-foreground'>Group by:</span>
+					<Select
+						value={grouping}
+						onValueChange={(v) => setGrouping(v as GroupingOption)}
+					>
+						<SelectTrigger className='w-48'>
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value='none'>No Grouping</SelectItem>
+							<SelectItem value='by-stock'>By Stock</SelectItem>
+							<SelectItem value='by-year'>By Acquisition Year</SelectItem>
+							<SelectItem value='by-stock-and-year'>By Stock + Year</SelectItem>
+						</SelectContent>
+					</Select>
+				</div>
+			</div>
+
+			<div className='overflow-x-auto border rounded-lg'>
+				<Table>
+					<TableHeader>
+						<TableRow>
+							<TableHead className='text-center'>Sl. No</TableHead>
+							<TableHead>Country Name & Code</TableHead>
+							<TableHead>Name of Entity</TableHead>
+							<TableHead>Address of Entity</TableHead>
+							<TableHead>Zip Code</TableHead>
+							<TableHead>Nature of Entity</TableHead>
+							<TableHead>Date of Acquiring</TableHead>
+							<TableHead className='text-right'>Initial Value (USD)</TableHead>
+							<TableHead className='text-right'>Initial Value (INR)</TableHead>
+							<TableHead className='text-right'>Peak Value (USD)</TableHead>
+							<TableHead className='text-right'>Peak Value (INR)</TableHead>
+							<TableHead className='text-right'>
+								Closing Balance (USD)
+							</TableHead>
+							<TableHead className='text-right'>
+								Closing Balance (INR)
+							</TableHead>
+							<TableHead className='text-right'>Dividends (USD)</TableHead>
+							<TableHead className='text-right'>Dividends (INR)</TableHead>
+							<TableHead className='text-right'>Sale Proceeds (USD)</TableHead>
+							<TableHead className='text-right'>Sale Proceeds (INR)</TableHead>
+						</TableRow>
+					</TableHeader>
+					<TableBody>
+						{displayRows.map((row) => (
+							<TableRow key={row.slNo}>
+								<TableCell className='text-center'>{row.slNo}</TableCell>
+								<TableCell>{row.countryNameAndCode}</TableCell>
+								<TableCell>{row.nameOfEntity}</TableCell>
+								<TableCell>{row.addressOfEntity}</TableCell>
+								<TableCell>{row.zipCode || '—'}</TableCell>
+								<TableCell>{row.natureOfEntity}</TableCell>
+								<TableCell>{row.dateOfAcquiring}</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.initialValueUSD, 'USD')}
+								</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.initialValueINR, 'INR')}
+								</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.peakValueUSD, 'USD')}
+								</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.peakValueINR, 'INR')}
+								</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.closingBalanceUSD, 'USD')}
+								</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.closingBalanceINR, 'INR')}
+								</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.totalDividendsUSD, 'USD')}
+								</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.totalDividendsINR, 'INR')}
+								</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.totalSaleProceedsUSD, 'USD')}
+								</TableCell>
+								<TableCell className='text-right'>
+									{formatCurrency(row.totalSaleProceedsINR, 'INR')}
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</div>
+		</div>
+	);
+}

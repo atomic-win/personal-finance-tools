@@ -19,6 +19,7 @@ import { Route as CalculatorsSipSwpRouteImport } from './routes/calculators/sip-
 import { Route as CalculatorsSipRouteImport } from './routes/calculators/sip'
 import { Route as CalculatorsRecurringDepositRouteImport } from './routes/calculators/recurring-deposit'
 import { Route as CalculatorsFixedDepositRouteImport } from './routes/calculators/fixed-deposit'
+import { Route as ItrScheduleFaA3RouteImport } from './routes/itr/schedule-fa/a3'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -75,6 +76,11 @@ const CalculatorsFixedDepositRoute = CalculatorsFixedDepositRouteImport.update({
   path: '/calculators/fixed-deposit',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ItrScheduleFaA3Route = ItrScheduleFaA3RouteImport.update({
+  id: '/itr/schedule-fa/a3',
+  path: '/itr/schedule-fa/a3',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/indian-mutual-funds-analysis/nav': typeof IndianMutualFundsAnalysisNavRoute
   '/indian-mutual-funds-analysis/sip': typeof IndianMutualFundsAnalysisSipRoute
   '/indian-mutual-funds-analysis/swp': typeof IndianMutualFundsAnalysisSwpRoute
+  '/itr/schedule-fa/a3': typeof ItrScheduleFaA3Route
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -99,6 +106,7 @@ export interface FileRoutesByTo {
   '/indian-mutual-funds-analysis/nav': typeof IndianMutualFundsAnalysisNavRoute
   '/indian-mutual-funds-analysis/sip': typeof IndianMutualFundsAnalysisSipRoute
   '/indian-mutual-funds-analysis/swp': typeof IndianMutualFundsAnalysisSwpRoute
+  '/itr/schedule-fa/a3': typeof ItrScheduleFaA3Route
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/indian-mutual-funds-analysis/nav': typeof IndianMutualFundsAnalysisNavRoute
   '/indian-mutual-funds-analysis/sip': typeof IndianMutualFundsAnalysisSipRoute
   '/indian-mutual-funds-analysis/swp': typeof IndianMutualFundsAnalysisSwpRoute
+  '/itr/schedule-fa/a3': typeof ItrScheduleFaA3Route
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/indian-mutual-funds-analysis/nav'
     | '/indian-mutual-funds-analysis/sip'
     | '/indian-mutual-funds-analysis/swp'
+    | '/itr/schedule-fa/a3'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/indian-mutual-funds-analysis/nav'
     | '/indian-mutual-funds-analysis/sip'
     | '/indian-mutual-funds-analysis/swp'
+    | '/itr/schedule-fa/a3'
   id:
     | '__root__'
     | '/'
@@ -150,6 +161,7 @@ export interface FileRouteTypes {
     | '/indian-mutual-funds-analysis/nav'
     | '/indian-mutual-funds-analysis/sip'
     | '/indian-mutual-funds-analysis/swp'
+    | '/itr/schedule-fa/a3'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -163,6 +175,7 @@ export interface RootRouteChildren {
   IndianMutualFundsAnalysisNavRoute: typeof IndianMutualFundsAnalysisNavRoute
   IndianMutualFundsAnalysisSipRoute: typeof IndianMutualFundsAnalysisSipRoute
   IndianMutualFundsAnalysisSwpRoute: typeof IndianMutualFundsAnalysisSwpRoute
+  ItrScheduleFaA3Route: typeof ItrScheduleFaA3Route
 }
 
 declare module '@tanstack/react-router' {
@@ -237,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalculatorsFixedDepositRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/itr/schedule-fa/a3': {
+      id: '/itr/schedule-fa/a3'
+      path: '/itr/schedule-fa/a3'
+      fullPath: '/itr/schedule-fa/a3'
+      preLoaderRoute: typeof ItrScheduleFaA3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -251,6 +271,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndianMutualFundsAnalysisNavRoute: IndianMutualFundsAnalysisNavRoute,
   IndianMutualFundsAnalysisSipRoute: IndianMutualFundsAnalysisSipRoute,
   IndianMutualFundsAnalysisSwpRoute: IndianMutualFundsAnalysisSwpRoute,
+  ItrScheduleFaA3Route: ItrScheduleFaA3Route,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
