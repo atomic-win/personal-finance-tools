@@ -159,6 +159,9 @@ export function computeScheduleFARows(input: ComputeInput): ScheduleFARow[] {
 	}
 
 	for (const lot of heldLots) {
+		// Skip lots acquired after the reporting year
+		if (lot.acquiredOn > yearEnd) continue;
+
 		const stock = stockData.get(lot.symbol);
 		if (!stock) continue;
 
