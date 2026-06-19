@@ -434,24 +434,24 @@ function calculateRowItemsForOneSymbol(
 					exchangeRate: exchangeRateAtYearEnd,
 				});
 			}
-
-			rows.push({
-				countryNameAndCode: `${stock.country} — ${stock.countryCode}`,
-				nameOfEntity: stock.name,
-				addressOfEntity: [stock.address, stock.city, stock.state]
-					.filter(Boolean)
-					.join(', '),
-				zipCode: stock.zip,
-				natureOfEntity: 'Equity Shares',
-				dateOfAcquiring: buy.date,
-				currency: stock.currency,
-				initials,
-				peaks,
-				closings,
-				dividends,
-				saleProceeds,
-			});
 		}
+
+		rows.push({
+			countryNameAndCode: `${stock.country} — ${stock.countryCode}`,
+			nameOfEntity: stock.name,
+			addressOfEntity: [stock.address, stock.city, stock.state]
+				.filter(Boolean)
+				.join(', '),
+			zipCode: stock.zip,
+			natureOfEntity: 'Equity Shares',
+			dateOfAcquiring: buy.date,
+			currency: stock.currency,
+			initials,
+			peaks,
+			closings,
+			dividends,
+			saleProceeds,
+		});
 	}
 
 	return rows;
@@ -562,14 +562,21 @@ function ValueCell({ values }: { values: DatedValue[] }) {
 								{values.map((v, i) => (
 									<tr key={i.toString()}>
 										<td className='pr-3'>{v.date}</td>
-										<td className='pr-3 text-right'>{Number(v.units.toFixed(3))}</td>
-										<td className='pr-3 text-right'>{Number(v.price.toFixed(2))}</td>
+										<td className='pr-3 text-right'>
+											{Number(v.units.toFixed(3))}
+										</td>
+										<td className='pr-3 text-right'>
+											{Number(v.price.toFixed(2))}
+										</td>
 										<td className='pr-3'>{v.exchangeRate.date}</td>
 										<td className='pr-3 text-right'>
 											{Number(v.exchangeRate.rate.toFixed(2))}
 										</td>
 										<td className='text-right'>
-											₹{Math.round(v.units * v.price * v.exchangeRate.rate).toLocaleString('en-IN')}
+											₹
+											{Math.round(
+												v.units * v.price * v.exchangeRate.rate
+											).toLocaleString('en-IN')}
 										</td>
 									</tr>
 								))}
