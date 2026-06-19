@@ -81,14 +81,14 @@ export default function ScheduleFAOutput() {
 		const stockData = new Map<string, StockInfoResponse>();
 		for (const q of stockQueries) {
 			if (q.data) {
-				stockData.set(q.symbol, q.data);
+				stockData.set(q.data.symbol, q.data);
 			}
 		}
 
 		const ratesByCurrency = new Map<string, ExchangeRate[]>();
 		for (const q of rateQueries) {
 			if (q.data) {
-				ratesByCurrency.set(q.currency, q.data);
+				ratesByCurrency.set(q.data.currency, q.data.rates);
 			}
 		}
 
@@ -126,9 +126,9 @@ export default function ScheduleFAOutput() {
 				</p>
 				{stockQueries
 					.filter((q) => q.isError)
-					.map((q) => (
-						<p key={q.symbol} className='text-sm text-destructive'>
-							{q.symbol}: {(q.error as Error)?.message ?? 'Unknown error'}
+					.map((q, i) => (
+						<p key={uniqueSymbols[i]} className='text-sm text-destructive'>
+							{uniqueSymbols[i]}: {(q.error as Error)?.message ?? 'Unknown error'}
 						</p>
 					))}
 			</div>

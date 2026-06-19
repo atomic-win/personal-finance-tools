@@ -37,6 +37,7 @@ export function useSetTransactionsMutation() {
 			const withIds = transactions.map((t) => ({
 				...t,
 				id: t.id || v7(),
+				symbol: t.symbol.toUpperCase(),
 			}));
 
 			queryClient.setQueryData<Transaction[]>(QUERY_KEY, withIds);
@@ -100,10 +101,12 @@ export function useUpdateTransactionMutation() {
 			const previousData =
 				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
+			const normalized = { ...transaction, symbol: transaction.symbol.toUpperCase() };
+
 			queryClient.setQueryData<Transaction[]>(
 				QUERY_KEY,
 				previousData?.map((t) =>
-					t.id === transaction.id ? transaction : t,
+					t.id === normalized.id ? normalized : t,
 				),
 			);
 

@@ -133,7 +133,7 @@ function parseFile(csvText: string): Transaction[] {
 			id: '',
 			date: normalizeDate(parsed.data.Date, i + 1),
 			remarks: parsed.data.Remarks ?? '',
-			symbol: parsed.data.Symbol.toUpperCase(),
+			symbol: parsed.data.Symbol,
 			type: parsed.data.Type,
 			units: parsed.data.Units,
 			price: parsed.data.Price,

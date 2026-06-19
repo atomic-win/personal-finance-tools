@@ -78,7 +78,7 @@ export default function TransactionsInputTable() {
 									<Input
 										value={tx.symbol}
 										onChange={(e) =>
-											updateTransaction({ ...tx, symbol: e.target.value.toUpperCase() })
+											updateTransaction({ ...tx, symbol: e.target.value })
 										}
 										placeholder='AAPL'
 										className='w-24'
