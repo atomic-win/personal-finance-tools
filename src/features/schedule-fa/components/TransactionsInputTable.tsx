@@ -23,24 +23,12 @@ import {
 	useTransactionsQuery,
 	useUpdateTransactionMutation,
 } from '@/features/schedule-fa/hooks/transactions';
-import type { Transaction } from '@/features/schedule-fa/lib/types';
 
 export default function TransactionsInputTable() {
 	const { data: transactions = [] } = useTransactionsQuery();
 	const { mutate: addTransaction } = useAddTransactionMutation();
 	const { mutate: updateTransaction } = useUpdateTransactionMutation();
 	const { mutate: removeTransaction } = useRemoveTransactionMutation();
-
-	const updateField = (
-		id: string,
-		field: keyof Transaction,
-		value: string | number
-	) => {
-		const tx = transactions.find((h) => h.id === id);
-		if (tx) {
-			updateTransaction({ ...tx, [field]: value });
-		}
-	};
 
 	return (
 		<div className='space-y-2'>
@@ -75,7 +63,7 @@ export default function TransactionsInputTable() {
 								<TableCell>
 									<Select
 										value={tx.type}
-										onValueChange={(v) => updateField(tx.id, 'type', v)}
+										onValueChange={(v) => updateTransaction({ ...tx, type: v as 'Buy' | 'Sell' })}
 									>
 										<SelectTrigger className='w-20'>
 											<SelectValue />
@@ -90,11 +78,7 @@ export default function TransactionsInputTable() {
 									<Input
 										value={tx.symbol}
 										onChange={(e) =>
-											updateField(
-												tx.id,
-												'symbol',
-												e.target.value.toUpperCase()
-											)
+											updateTransaction({ ...tx, symbol: e.target.value.toUpperCase() })
 										}
 										placeholder='AAPL'
 										className='w-24'
@@ -105,7 +89,7 @@ export default function TransactionsInputTable() {
 										type='date'
 										value={tx.date}
 										onChange={(e) =>
-											updateField(tx.id, 'date', e.target.value)
+											updateTransaction({ ...tx, date: e.target.value })
 										}
 										className='w-40'
 									/>
@@ -115,11 +99,7 @@ export default function TransactionsInputTable() {
 										type='number'
 										value={tx.units || ''}
 										onChange={(e) =>
-											updateField(
-												tx.id,
-												'units',
-												Number(e.target.value)
-											)
+											updateTransaction({ ...tx, units: Number(e.target.value) })
 										}
 										placeholder='10'
 										className='w-20'
@@ -131,11 +111,7 @@ export default function TransactionsInputTable() {
 										type='number'
 										value={tx.price || ''}
 										onChange={(e) =>
-											updateField(
-												tx.id,
-												'price',
-												Number(e.target.value)
-											)
+											updateTransaction({ ...tx, price: Number(e.target.value) })
 										}
 										placeholder='172.50'
 										className='w-28'
