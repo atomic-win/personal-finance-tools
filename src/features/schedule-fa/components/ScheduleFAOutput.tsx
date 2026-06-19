@@ -19,6 +19,12 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
 import { useStockInfoQueries } from '@/features/schedule-fa/hooks/useStockInfo';
 import { useTTBuyRateQueries } from '@/features/schedule-fa/hooks/useTTBuyRate';
@@ -200,21 +206,11 @@ export default function ScheduleFAOutput() {
 								<TableCell>{rowItem.zipCode || '—'}</TableCell>
 								<TableCell>{rowItem.natureOfEntity}</TableCell>
 								<TableCell>{rowItem.dateOfAcquiring}</TableCell>
-								<TableCell className='text-right'>
-									{formatAmount(rowItem.initials)}
-								</TableCell>
-								<TableCell className='text-right'>
-									{formatAmount(rowItem.peaks)}
-								</TableCell>
-								<TableCell className='text-right'>
-									{formatAmount(rowItem.closings)}
-								</TableCell>
-								<TableCell className='text-right'>
-									{formatAmount(rowItem.dividends)}
-								</TableCell>
-								<TableCell className='text-right'>
-									{formatAmount(rowItem.saleProceeds)}
-								</TableCell>
+								<ValueCell values={rowItem.initials} />
+								<ValueCell values={rowItem.peaks} />
+								<ValueCell values={rowItem.closings} />
+								<ValueCell values={rowItem.dividends} />
+								<ValueCell values={rowItem.saleProceeds} />
 							</TableRow>
 						))}
 					</TableBody>
@@ -536,4 +532,52 @@ function flattenDatedValues(values: DatedValue[][]): DatedValue[] {
 function formatAmount(values: DatedValue[]): string {
 	const value = _.sumBy(values, (v) => v.units * v.price * v.exchangeRate.rate);
 	return `₹${Math.round(value).toLocaleString('en-IN')}`;
+}
+
+function ValueCell({ values }: { values: DatedValue[] }) {
+	if (values.length === 0) {
+		return <TableCell className='text-right'>₹0</TableCell>;
+	}
+
+	return (
+		<TableCell className='text-right'>
+			<TooltipProvider>
+				<Tooltip>
+					<TooltipTrigger className='cursor-help underline decoration-dotted underline-offset-4'>
+						{formatAmount(values)}
+					</TooltipTrigger>
+					<TooltipContent className='max-w-sm'>
+						<table className='text-xs'>
+							<thead>
+								<tr>
+									<th className='pr-3 text-left'>Date</th>
+									<th className='pr-3 text-right'>Units</th>
+									<th className='pr-3 text-right'>Price</th>
+									<th className='pr-3 text-left'>TTBR Date</th>
+									<th className='pr-3 text-right'>TTBR</th>
+									<th className='text-right'>INR</th>
+								</tr>
+							</thead>
+							<tbody>
+								{values.map((v, i) => (
+									<tr key={i.toString()}>
+										<td className='pr-3'>{v.date}</td>
+										<td className='pr-3 text-right'>{Number(v.units.toFixed(3))}</td>
+										<td className='pr-3 text-right'>{Number(v.price.toFixed(2))}</td>
+										<td className='pr-3'>{v.exchangeRate.date}</td>
+										<td className='pr-3 text-right'>
+											{Number(v.exchangeRate.rate.toFixed(2))}
+										</td>
+										<td className='text-right'>
+											₹{Math.round(v.units * v.price * v.exchangeRate.rate).toLocaleString('en-IN')}
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</TooltipContent>
+				</Tooltip>
+			</TooltipProvider>
+		</TableCell>
+	);
 }
