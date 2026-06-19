@@ -15,17 +15,12 @@ import CSVUploadDialog from '@/features/schedule-fa/components/CSVUploadDialog';
 import HoldingsInputTable from '@/features/schedule-fa/components/HoldingsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
 import {
-	useAddTransactionMutation,
 	useClearTransactionsMutation,
-	useSetTransactionsMutation,
 	useTransactionsQuery,
 } from '@/features/schedule-fa/hooks/useHoldings';
 import { useMultipleStockInfo } from '@/features/schedule-fa/hooks/useStockInfo';
 import { useMultipleTTBuyRates } from '@/features/schedule-fa/hooks/useTTBuyRate';
-import {
-	type TransactionInput,
-	processTransactions,
-} from '@/features/schedule-fa/lib/csv-parser';
+import { processTransactions } from '@/features/schedule-fa/lib/csv-parser';
 import { computeScheduleFARows } from '@/features/schedule-fa/lib/schedule-fa-compute';
 import type {
 	ExchangeRate,
@@ -49,8 +44,6 @@ function getYearOptions(): number[] {
 export default function ScheduleFAPage() {
 	const [year, setYear] = useState(getDefaultYear());
 	const { data: holdings = [] } = useTransactionsQuery();
-	const { mutate: setTransactions } = useSetTransactionsMutation();
-	const { mutate: addTransaction } = useAddTransactionMutation();
 	const { mutate: clearTransactions } = useClearTransactionsMutation();
 
 	const validHoldings = useMemo(
@@ -130,14 +123,6 @@ export default function ScheduleFAPage() {
 		});
 	}, [allDataReady, stockQueries, rateQueries, holdings, year]);
 
-	const handleCSVImport = (imported: TransactionInput[]) => {
-		setTransactions([...holdings, ...imported]);
-	};
-
-	const handleHoldingsChange = (updated: Transaction[]) => {
-		setTransactions(updated);
-	};
-
 	return (
 		<>
 			<SidebarTriggerWithBreadcrumb
@@ -183,12 +168,12 @@ export default function ScheduleFAPage() {
 										</SelectContent>
 									</Select>
 								</div>
-								<CSVUploadDialog onImport={handleCSVImport} />
+								<CSVUploadDialog />
 								{holdings.length > 0 && (
 									<Button
 										variant='destructive'
 										size='sm'
-										onClick={clearTransactions}
+										onClick={() => clearTransactions()}
 									>
 										Clear All
 									</Button>
@@ -197,10 +182,7 @@ export default function ScheduleFAPage() {
 						</CardTitle>
 					</CardHeader>
 					<CardContent className='space-y-4'>
-						<HoldingsInputTable
-							holdings={holdings}
-							onChange={handleHoldingsChange}
-						/>
+						<HoldingsInputTable />
 						{isLoading && (
 							<div className='flex items-center gap-2 text-sm text-muted-foreground'>
 								<Spinner className='size-4' />

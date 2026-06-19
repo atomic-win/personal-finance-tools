@@ -10,13 +10,12 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog';
+import { useSetTransactionsMutation, useTransactionsQuery } from '@/features/schedule-fa/hooks/useHoldings';
 import { parseCSV, type TransactionInput } from '@/features/schedule-fa/lib/csv-parser';
 
-type Props = {
-	onImport: (transactions: TransactionInput[]) => void;
-};
-
-export default function CSVUploadDialog({ onImport }: Props) {
+export default function CSVUploadDialog() {
+	const { data: existing = [] } = useTransactionsQuery();
+	const { mutate: setTransactions } = useSetTransactionsMutation();
 	const [open, setOpen] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [preview, setPreview] = useState<TransactionInput[] | null>(null);
@@ -40,7 +39,7 @@ export default function CSVUploadDialog({ onImport }: Props) {
 
 	const handleImport = () => {
 		if (preview) {
-			onImport(preview);
+			setTransactions([...existing, ...preview]);
 			setOpen(false);
 			setPreview(null);
 			setError(null);

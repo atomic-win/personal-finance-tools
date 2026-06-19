@@ -17,39 +17,29 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import {
+	useAddTransactionMutation,
+	useRemoveTransactionMutation,
+	useTransactionsQuery,
+	useUpdateTransactionMutation,
+} from '@/features/schedule-fa/hooks/useHoldings';
 import type { Transaction } from '@/features/schedule-fa/lib/types';
 
-type Props = {
-	holdings: Transaction[];
-	onChange: (holdings: Transaction[]) => void;
-};
+export default function HoldingsInputTable() {
+	const { data: holdings = [] } = useTransactionsQuery();
+	const { mutate: addTransaction } = useAddTransactionMutation();
+	const { mutate: updateTransaction } = useUpdateTransactionMutation();
+	const { mutate: removeTransaction } = useRemoveTransactionMutation();
 
-export default function HoldingsInputTable({ holdings, onChange }: Props) {
-	const updateHolding = (
+	const updateField = (
 		id: string,
 		field: keyof Transaction,
 		value: string | number
 	) => {
-		onChange(holdings.map((h) => (h.id === id ? { ...h, [field]: value } : h)));
-	};
-
-	const addRow = () => {
-		onChange([
-			...holdings,
-			{
-				id: crypto.randomUUID(),
-				symbol: '',
-				units: 0,
-				date: '',
-				price: 0,
-				type: 'Buy',
-				remarks: '',
-			},
-		]);
-	};
-
-	const removeRow = (id: string) => {
-		onChange(holdings.filter((h) => h.id !== id));
+		const tx = holdings.find((h) => h.id === id);
+		if (tx) {
+			updateTransaction({ ...tx, [field]: value });
+		}
 	};
 
 	return (
@@ -85,7 +75,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 								<TableCell>
 									<Select
 										value={holding.type}
-										onValueChange={(v) => updateHolding(holding.id, 'type', v)}
+										onValueChange={(v) => updateField(holding.id, 'type', v)}
 									>
 										<SelectTrigger className='w-20'>
 											<SelectValue />
@@ -100,7 +90,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 									<Input
 										value={holding.symbol}
 										onChange={(e) =>
-											updateHolding(
+											updateField(
 												holding.id,
 												'symbol',
 												e.target.value.toUpperCase()
@@ -115,7 +105,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 										type='date'
 										value={holding.date}
 										onChange={(e) =>
-											updateHolding(holding.id, 'date', e.target.value)
+											updateField(holding.id, 'date', e.target.value)
 										}
 										className='w-40'
 									/>
@@ -125,7 +115,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 										type='number'
 										value={holding.units || ''}
 										onChange={(e) =>
-											updateHolding(
+											updateField(
 												holding.id,
 												'units',
 												Number(e.target.value)
@@ -141,7 +131,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 										type='number'
 										value={holding.price || ''}
 										onChange={(e) =>
-											updateHolding(
+											updateField(
 												holding.id,
 												'price',
 												Number(e.target.value)
@@ -157,7 +147,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 									<Button
 										variant='ghost'
 										size='icon-sm'
-										onClick={() => removeRow(holding.id)}
+										onClick={() => removeTransaction(holding.id)}
 									>
 										<Trash2Icon className='size-4' />
 									</Button>
@@ -169,7 +159,7 @@ export default function HoldingsInputTable({ holdings, onChange }: Props) {
 				</ScrollArea>
 			</div>
 			<div className='flex justify-end'>
-				<Button size='sm' onClick={addRow}>
+				<Button size='sm' onClick={() => addTransaction()}>
 					<PlusIcon className='size-4' />
 					Add Row
 				</Button>
