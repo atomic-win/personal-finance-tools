@@ -1,8 +1,6 @@
 import _ from 'lodash';
 import { DateTime } from 'luxon';
 import { useState } from 'react';
-import ErrorComponent from '@/components/error-component';
-import LoadingComponent from '@/components/loading-component';
 import {
 	Select,
 	SelectContent,
@@ -25,6 +23,7 @@ import type {
 	StockData,
 	Transaction,
 } from '@/features/schedule-fa/lib/types';
+import { cn } from '@/lib/utils';
 
 type GroupingOption = 'none' | 'by-stock' | 'by-year';
 
@@ -35,78 +34,13 @@ export default function ScheduleFAOutput() {
 	const { isLoading: isLoadingTransactions, data: transactions = [] } =
 		useTransactionsQuery();
 
-	const validTransactions = transactions.filter(
-		(h) => h.symbol && h.units > 0 && h.date
-	);
-	const uniqueSymbols = [...new Set(validTransactions.map((h) => h.symbol))];
-
-	const stockQueries = useStockInfoQueries(uniqueSymbols);
-
-	const uniqueCurrencies = [
-		...new Set(
-			stockQueries.map((q) => q.data?.currency).filter(Boolean) as string[]
-		),
-	];
-
-	const rateQueries = useTTBuyRateQueries(uniqueCurrencies);
-
 	if (isLoadingTransactions) {
 		return null; // Don't show loading state for transactions, as the input table already has one
 	}
 
-	if (stockQueries.some((q) => q.isLoading)) {
-		return <LoadingComponent loadingMessage='Loading stock information...' />;
-	}
-
-	if (stockQueries.some((q) => q.isError)) {
-		return (
-			<>
-				<ErrorComponent errorMessage='Failed to load stock information. Please check the stock symbols and try again.' />
-				<div className='p-4'>
-					{stockQueries
-						.filter((q) => q.isError)
-						.map((q, i) => (
-							<p key={uniqueSymbols[i]} className='text-sm text-destructive'>
-								{uniqueSymbols[i]}:{' '}
-								{(q.error as Error)?.message ?? 'Unknown error'}
-							</p>
-						))}
-				</div>
-			</>
-		);
-	}
-
-	if (rateQueries.some((q) => q.isLoading)) {
-		return <LoadingComponent loadingMessage='Loading exchange rates...' />;
-	}
-
-	if (rateQueries.some((q) => q.isError)) {
-		return (
-			<>
-				<ErrorComponent errorMessage='Failed to load exchange rates. Please try again later.' />
-				<div className='p-4'>
-					{rateQueries
-						.filter((q) => q.isError)
-						.map((q, i) => (
-							<p key={uniqueCurrencies[i]} className='text-sm text-destructive'>
-								{uniqueCurrencies[i]}:{' '}
-								{(q.error as Error)?.message ?? 'Unknown error'}
-							</p>
-						))}
-				</div>
-			</>
-		);
-	}
-
-	const stockData = new Map<string, StockData>();
-	for (const q of stockQueries.filter((q) => !!q.data)) {
-		stockData.set(q.data.symbol, q.data);
-	}
-
-	const ratesByCurrency = new Map<string, ExchangeRate[]>();
-	for (const q of rateQueries.filter((q) => !!q.data)) {
-		ratesByCurrency.set(q.data.currency, q.data.rates);
-	}
+	const validTransactions = transactions.filter(
+		(h) => h.symbol && h.units > 0 && h.date
+	);
 
 	return (
 		<div className='space-y-4'>
@@ -201,13 +135,11 @@ export default function ScheduleFAOutput() {
 						</tr>
 					</thead>
 					<TableBody>
-						{renderTableBody(
-							transactions,
-							stockData,
-							ratesByCurrency,
-							year,
-							grouping
-						)}
+						<A3TableRows
+							transactions={validTransactions}
+							year={year}
+							grouping={grouping}
+						/>
 					</TableBody>
 				</table>
 			</div>
@@ -237,20 +169,88 @@ type RowItem = {
 	saleProceeds: DatedValue[];
 };
 
-function renderTableBody(
-	transactions: Transaction[],
-	stockData: Map<string, StockData>,
-	ratesByCurrency: Map<string, ExchangeRate[]>,
-	year: number,
-	grouping: GroupingOption
-) {
+function A3TableRows({
+	transactions,
+	year,
+	grouping,
+}: {
+	transactions: Transaction[];
+	year: number;
+	grouping: GroupingOption;
+}) {
+	const uniqueSymbols = [...new Set(transactions.map((h) => h.symbol))];
+
+	const stockQueries = useStockInfoQueries(uniqueSymbols);
+
+	const uniqueCurrencies = [
+		...new Set(
+			stockQueries.map((q) => q.data?.currency).filter(Boolean) as string[]
+		),
+	];
+
+	const rateQueries = useTTBuyRateQueries(uniqueCurrencies);
+
+	if (stockQueries.some((q) => q.isLoading)) {
+		return <TableRowsMessage message='Loading stock information...' />;
+	}
+
+	if (stockQueries.some((q) => q.isError)) {
+		return (
+			<>
+				<TableRowsMessage message='Failed to load stock information. Please check the stock symbols and try again.' />
+				{stockQueries
+					.filter((q) => q.isError)
+					.map((q, i) => (
+						<TableRowsMessage
+							key={i.toString()}
+							message={`${uniqueSymbols[i]}: ${(q.error as Error)?.message ?? 'Unknown error'}`}
+							className='text-sm text-destructive'
+						/>
+					))}
+			</>
+		);
+	}
+
+	if (rateQueries.some((q) => q.isLoading)) {
+		return <TableRowsMessage message='Loading exchange rates...' />;
+	}
+
+	if (rateQueries.some((q) => q.isError)) {
+		return (
+			<>
+				<TableRowsMessage message='Failed to load exchange rates. Please try again later.' />
+				{rateQueries
+					.filter((q) => q.isError)
+					.map((q, i) => (
+						<TableRowsMessage
+							key={i.toString()}
+							message={`${uniqueCurrencies[i]}: ${(q.error as Error)?.message ?? 'Unknown error'}`}
+							className='text-sm text-destructive'
+						/>
+					))}
+			</>
+		);
+	}
+
+	const stockData = new Map<string, StockData>();
+	for (const q of stockQueries.filter((q) => !!q.data)) {
+		stockData.set(q.data.symbol, q.data);
+	}
+
+	const ratesByCurrency = new Map<string, ExchangeRate[]>();
+	for (const q of rateQueries.filter((q) => !!q.data)) {
+		ratesByCurrency.set(q.data.currency, q.data.rates);
+	}
+
 	if (stockData.size === 0) {
-		return renderError('No valid stock data available to compute Schedule FA.');
+		return (
+			<TableRowsMessage message='No valid stock data available to compute Schedule FA.' />
+		);
 	}
 
 	if (ratesByCurrency.size === 0) {
-		return renderError(
-			'No valid exchange rate data available to compute Schedule FA.'
+		return (
+			<TableRowsMessage message='No valid exchange rate data available to compute Schedule FA.' />
 		);
 	}
 
@@ -263,8 +263,8 @@ function renderTableBody(
 	);
 
 	if (rowItems.length === 0) {
-		return renderError(
-			'No transactions affecting Schedule FA for the selected year.'
+		return (
+			<TableRowsMessage message='No transactions affecting Schedule FA for the selected year.' />
 		);
 	}
 
@@ -286,10 +286,19 @@ function renderTableBody(
 	));
 }
 
-function renderError(message: string) {
+function TableRowsMessage({
+	message,
+	className,
+}: {
+	message: string;
+	className?: string;
+}) {
 	return (
 		<TableRow>
-			<TableCell colSpan={15} className='text-center text-destructive'>
+			<TableCell
+				colSpan={15}
+				className={cn('text-center text-muted-foreground', className)}
+			>
 				{message}
 			</TableCell>
 		</TableRow>
