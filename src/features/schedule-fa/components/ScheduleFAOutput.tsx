@@ -10,11 +10,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import {
-	TableBody,
-	TableCell,
-	TableRow,
-} from '@/components/ui/table';
+import { TableBody, TableCell, TableRow } from '@/components/ui/table';
 import {
 	Tooltip,
 	TooltipContent,
@@ -112,24 +108,6 @@ export default function ScheduleFAOutput() {
 		ratesByCurrency.set(q.data.currency, q.data.rates);
 	}
 
-	if (stockData.size === 0 || ratesByCurrency.size === 0) {
-		return (
-			<div className='p-4'>
-				<p className='text-muted-foreground'>
-					No valid stock or exchange rate data available to compute Schedule FA.
-				</p>
-			</div>
-		);
-	}
-
-	const rowItems = calculateRowItems(
-		validTransactions,
-		stockData,
-		ratesByCurrency,
-		year,
-		grouping
-	);
-
 	return (
 		<div className='space-y-4'>
 			<div className='flex items-center justify-between'>
@@ -168,8 +146,12 @@ export default function ScheduleFAOutput() {
 							</SelectTrigger>
 							<SelectContent>
 								<SelectItem value='none'>{displayGrouping('none')}</SelectItem>
-								<SelectItem value='by-stock'>{displayGrouping('by-stock')}</SelectItem>
-								<SelectItem value='by-year'>{displayGrouping('by-year')}</SelectItem>
+								<SelectItem value='by-stock'>
+									{displayGrouping('by-stock')}
+								</SelectItem>
+								<SelectItem value='by-year'>
+									{displayGrouping('by-year')}
+								</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
@@ -180,37 +162,52 @@ export default function ScheduleFAOutput() {
 				<table className='w-full caption-bottom text-sm'>
 					<thead className='sticky top-0 z-10 bg-background shadow-[inset_0_-1px_0_0_var(--color-border)]'>
 						<tr>
-							<th className='h-10 px-2 text-center align-middle font-medium whitespace-nowrap'>Sl. No</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Country Name & Code</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Name of Entity</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Address of Entity</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Zip Code</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Nature of Entity</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>Date of Acquiring</th>
-							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Initial Value</th>
-							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Peak Value</th>
-							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Closing Balance</th>
-							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Dividends</th>
-							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>Sale Proceeds</th>
+							<th className='h-10 px-2 text-center align-middle font-medium whitespace-nowrap'>
+								Sl. No
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>
+								Country Name & Code
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>
+								Name of Entity
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>
+								Address of Entity
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>
+								Zip Code
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>
+								Nature of Entity
+							</th>
+							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>
+								Date of Acquiring
+							</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>
+								Initial Value
+							</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>
+								Peak Value
+							</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>
+								Closing Balance
+							</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>
+								Dividends
+							</th>
+							<th className='h-10 px-2 text-right align-middle font-medium whitespace-nowrap'>
+								Sale Proceeds
+							</th>
 						</tr>
 					</thead>
 					<TableBody>
-						{rowItems.map((rowItem, index) => (
-							<TableRow key={index.toString()}>
-								<TableCell className='text-center'>{index + 1}</TableCell>
-								<TableCell>{rowItem.countryNameAndCode}</TableCell>
-								<TableCell>{rowItem.nameOfEntity}</TableCell>
-								<TableCell>{rowItem.addressOfEntity}</TableCell>
-								<TableCell>{rowItem.zipCode || '—'}</TableCell>
-								<TableCell>{rowItem.natureOfEntity}</TableCell>
-								<TableCell>{rowItem.dateOfAcquiring}</TableCell>
-								<ValueCell values={rowItem.initials} />
-								<ValueCell values={rowItem.peaks} />
-								<ValueCell values={rowItem.closings} />
-								<ValueCell values={rowItem.dividends} />
-								<ValueCell values={rowItem.saleProceeds} />
-							</TableRow>
-						))}
+						{renderTableBody(
+							transactions,
+							stockData,
+							ratesByCurrency,
+							year,
+							grouping
+						)}
 					</TableBody>
 				</table>
 			</div>
@@ -240,6 +237,65 @@ type RowItem = {
 	saleProceeds: DatedValue[];
 };
 
+function renderTableBody(
+	transactions: Transaction[],
+	stockData: Map<string, StockData>,
+	ratesByCurrency: Map<string, ExchangeRate[]>,
+	year: number,
+	grouping: GroupingOption
+) {
+	if (stockData.size === 0) {
+		return renderError('No valid stock data available to compute Schedule FA.');
+	}
+
+	if (ratesByCurrency.size === 0) {
+		return renderError(
+			'No valid exchange rate data available to compute Schedule FA.'
+		);
+	}
+
+	const rowItems = calculateRowItems(
+		transactions,
+		stockData,
+		ratesByCurrency,
+		year,
+		grouping
+	);
+
+	if (rowItems.length === 0) {
+		return renderError(
+			'No transactions affecting Schedule FA for the selected year.'
+		);
+	}
+
+	return rowItems.map((rowItem, index) => (
+		<TableRow key={index.toString()}>
+			<TableCell className='text-center'>{index + 1}</TableCell>
+			<TableCell>{rowItem.countryNameAndCode}</TableCell>
+			<TableCell>{rowItem.nameOfEntity}</TableCell>
+			<TableCell>{rowItem.addressOfEntity}</TableCell>
+			<TableCell>{rowItem.zipCode || '—'}</TableCell>
+			<TableCell>{rowItem.natureOfEntity}</TableCell>
+			<TableCell>{rowItem.dateOfAcquiring}</TableCell>
+			<ValueCell values={rowItem.initials} />
+			<ValueCell values={rowItem.peaks} />
+			<ValueCell values={rowItem.closings} />
+			<ValueCell values={rowItem.dividends} />
+			<ValueCell values={rowItem.saleProceeds} />
+		</TableRow>
+	));
+}
+
+function renderError(message: string) {
+	return (
+		<TableRow>
+			<TableCell colSpan={15} className='text-center text-destructive'>
+				{message}
+			</TableCell>
+		</TableRow>
+	);
+}
+
 function calculateRowItems(
 	transactions: Transaction[],
 	stockData: Map<string, StockData>,
@@ -247,7 +303,12 @@ function calculateRowItems(
 	year: number,
 	grouping: GroupingOption
 ): RowItem[] {
-	const transactionsBySymbol = _.groupBy(transactions, 'symbol');
+	const calendarYearEnd = `${year}-12-31`;
+
+	const transactionsBySymbol = _.groupBy(
+		transactions.filter((tx) => tx.date <= calendarYearEnd),
+		'symbol'
+	);
 
 	const allRows: RowItem[] = [];
 	for (const [symbol, txs] of Object.entries(transactionsBySymbol)) {
@@ -326,6 +387,7 @@ function calculateRowItemsForOneSymbol(
 	const buys = sorted
 		.filter((tx) => tx.type === 'Buy')
 		.map((tx) => ({ ...tx }));
+
 	const sells = sorted
 		.filter((tx) => tx.type === 'Sell')
 		.map((tx) => ({ ...tx }));
@@ -589,11 +651,11 @@ function ValueCell({ values }: { values: DatedValue[] }) {
 
 function displayGrouping(option: GroupingOption): string {
 	switch (option) {
-		case "none":
-			return "No Grouping";
-		case "by-stock":
-			return "By Stock";
-		case "by-year":
-			return "By Acquisition Year";
+		case 'none':
+			return 'No Grouping';
+		case 'by-stock':
+			return 'By Stock';
+		case 'by-year':
+			return 'By Acquisition Year';
 	}
 }
