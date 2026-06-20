@@ -125,7 +125,7 @@ export default function ScheduleFAOutput() {
 								<SelectValue />
 							</SelectTrigger>
 							<SelectContent>
-								{getYearOptions().map((y) => (
+								{getYearOptions(validTransactions).map((y) => (
 									<SelectItem key={y} value={String(y)}>
 										{y}
 									</SelectItem>
@@ -569,10 +569,19 @@ function getDefaultYear(): number {
 	return DateTime.now().year - 1;
 }
 
-function getYearOptions(): number[] {
+function getYearOptions(transactions: Transaction[]): number[] {
 	const currentYear = DateTime.now().year;
+	const minYearFromTransactions = _.minBy(transactions, 'date')?.date;
+
 	const years: number[] = [];
-	for (let y = currentYear; y >= 2015; y--) {
+	for (
+		let y = currentYear;
+		y >=
+		(minYearFromTransactions
+			? DateTime.fromISO(minYearFromTransactions).year
+			: currentYear);
+		y--
+	) {
 		years.push(y);
 	}
 	return years;
