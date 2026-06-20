@@ -31,8 +31,7 @@ export function useSetTransactionsMutation() {
 		mutationFn: async (transactions: Transaction[]) => {
 			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
 
-			const previousData =
-				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
+			const previousData = queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
 			const withIds = transactions.map((t) => ({
 				...t,
@@ -48,7 +47,7 @@ export function useSetTransactionsMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				QUERY_KEY,
-				(context as { previousData: Transaction[] }).previousData,
+				(context as { previousData: Transaction[] }).previousData
 			);
 		},
 	});
@@ -62,8 +61,7 @@ export function useAddTransactionMutation() {
 		mutationFn: async () => {
 			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
 
-			const previousData =
-				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
+			const previousData = queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
 			queryClient.setQueryData<Transaction[]>(QUERY_KEY, [
 				...(previousData ?? []),
@@ -84,7 +82,7 @@ export function useAddTransactionMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				QUERY_KEY,
-				(context as { previousData: Transaction[] }).previousData,
+				(context as { previousData: Transaction[] }).previousData
 			);
 		},
 	});
@@ -98,16 +96,16 @@ export function useUpdateTransactionMutation() {
 		mutationFn: async (transaction: Transaction) => {
 			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
 
-			const previousData =
-				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
+			const previousData = queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
-			const normalized = { ...transaction, symbol: transaction.symbol.toUpperCase() };
+			const normalized = {
+				...transaction,
+				symbol: transaction.symbol.toUpperCase(),
+			};
 
 			queryClient.setQueryData<Transaction[]>(
 				QUERY_KEY,
-				previousData?.map((t) =>
-					t.id === normalized.id ? normalized : t,
-				),
+				previousData?.map((t) => (t.id === normalized.id ? normalized : t))
 			);
 
 			return { previousData };
@@ -116,7 +114,7 @@ export function useUpdateTransactionMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				QUERY_KEY,
-				(context as { previousData: Transaction[] }).previousData,
+				(context as { previousData: Transaction[] }).previousData
 			);
 		},
 	});
@@ -130,12 +128,11 @@ export function useRemoveTransactionMutation() {
 		mutationFn: async (id: string) => {
 			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
 
-			const previousData =
-				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
+			const previousData = queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
 			queryClient.setQueryData<Transaction[]>(
 				QUERY_KEY,
-				previousData?.filter((t) => t.id !== id),
+				previousData?.filter((t) => t.id !== id)
 			);
 
 			return { previousData };
@@ -144,7 +141,7 @@ export function useRemoveTransactionMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				QUERY_KEY,
-				(context as { previousData: Transaction[] }).previousData,
+				(context as { previousData: Transaction[] }).previousData
 			);
 		},
 	});
@@ -158,8 +155,7 @@ export function useClearTransactionsMutation() {
 		mutationFn: async () => {
 			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
 
-			const previousData =
-				queryClient.getQueryData<Transaction[]>(QUERY_KEY);
+			const previousData = queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
 			queryClient.setQueryData<Transaction[]>(QUERY_KEY, []);
 
@@ -169,7 +165,7 @@ export function useClearTransactionsMutation() {
 			console.error(err);
 			queryClient.setQueryData(
 				QUERY_KEY,
-				(context as { previousData: Transaction[] }).previousData,
+				(context as { previousData: Transaction[] }).previousData
 			);
 		},
 	});

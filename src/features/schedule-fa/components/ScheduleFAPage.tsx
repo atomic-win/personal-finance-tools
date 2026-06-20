@@ -1,14 +1,13 @@
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import UploadButton from '@/features/schedule-fa/components/UploadButton';
-import TransactionsInputTable from '@/features/schedule-fa/components/TransactionsInputTable';
 import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
+import TransactionsInputTable from '@/features/schedule-fa/components/TransactionsInputTable';
+import UploadButton from '@/features/schedule-fa/components/UploadButton';
 import {
 	useClearTransactionsMutation,
 	useTransactionsQuery,
 } from '@/features/schedule-fa/hooks/transactions';
-
 
 export default function ScheduleFAPage() {
 	const { data: transactions = [] } = useTransactionsQuery();
