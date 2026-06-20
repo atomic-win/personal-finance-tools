@@ -1,39 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Personal Finance Tools
+
+A web application providing calculators and analysis tools for personal finance — investment return calculators, Indian mutual fund analysis, and ITR schedule generation.
+
+## Tech Stack
+
+- **Framework**: [TanStack Start](https://tanstack.com/start) (Vite + Nitro)
+- **UI**: React 19, Tailwind CSS v4, [shadcn/ui](https://ui.shadcn.com/)
+- **Routing**: [TanStack Router](https://tanstack.com/router) (file-based)
+- **Data**: [TanStack Query](https://tanstack.com/query) (persisted to localStorage)
+- **Forms**: React Hook Form + Zod
+- **Charts**: Recharts
+- **Linting/Formatting**: [Biome](https://biomejs.dev/)
+- **Deployment**: [Vercel](https://vercel.com/)
+
+## Features
+
+- **Calculators** — Fixed Deposit, Recurring Deposit, SIP, and SWP return calculators.
+- **Indian Mutual Fund Analysis** — CAGR, NAV, SIP, and SWP analysis tools for Indian mutual funds (uses Web Workers for heavy computation).
+- **ITR Schedule FA / A3** — Generate Schedule FA (Foreign Assets) and Schedule A3 for Indian income tax returns.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+# Install dependencies
+npm install
+
+# Start dev server (http://localhost:3000)
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Production build
+npm run build
+
+# Preview production build
+npm run preview
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Available Scripts
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Command           | Description                      |
+| ----------------- | -------------------------------- |
+| `npm run dev`     | Start dev server on port 3000    |
+| `npm run build`   | Production build (Vite + Nitro)  |
+| `npm run preview` | Preview production build         |
+| `npm run start`   | Start production server          |
+| `npm run lint`    | Run Biome linter                 |
+| `npm run format`  | Auto-format with Biome           |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+src/
+├── components/       # Shared UI components (shadcn/ui primitives in ui/)
+├── features/         # Feature modules with components, hooks, lib, server, workers
+│   ├── calculators/
+│   ├── indian-mutual-funds-analysis/
+│   └── schedule-fa-a3/
+├── hooks/            # Shared custom hooks
+├── lib/              # Shared utilities
+└── routes/           # TanStack Router file-based routes
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For detailed architecture and conventions, see [AGENTS.md](./AGENTS.md).
 
 ## License & Usage Notice
 
