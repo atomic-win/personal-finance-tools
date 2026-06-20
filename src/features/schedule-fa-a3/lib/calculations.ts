@@ -4,7 +4,7 @@ import type {
 	ExchangeRate,
 	StockData,
 	Transaction,
-} from '@/features/schedule-fa/lib/types';
+} from '@/features/schedule-fa-a3/lib/types';
 
 export type GroupingOption = 'none' | 'by-stock' | 'by-year';
 

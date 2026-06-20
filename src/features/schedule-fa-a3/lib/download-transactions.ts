@@ -1,4 +1,4 @@
-import type { Transaction } from '@/features/schedule-fa/lib/types';
+import type { Transaction } from '@/features/schedule-fa-a3/lib/types';
 
 export function downloadTransactions(transactions: Transaction[]) {
 	const header = 'Date,Remarks,Symbol,Type,Units,Price';

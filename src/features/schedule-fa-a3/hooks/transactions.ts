@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { v7 } from 'uuid';
-import type { Transaction } from '@/features/schedule-fa/lib/types';
+import type { Transaction } from '@/features/schedule-fa-a3/lib/types';
 
 const QUERY_KEY = ['schedule-fa-transactions'];
 

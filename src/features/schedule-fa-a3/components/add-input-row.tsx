@@ -10,8 +10,8 @@ import {
 	SelectValue,
 } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { useAddTransactionMutation } from '@/features/schedule-fa/hooks/transactions';
-import type { Transaction } from '@/features/schedule-fa/lib/types';
+import { useAddTransactionMutation } from '@/features/schedule-fa-a3/hooks/transactions';
+import type { Transaction } from '@/features/schedule-fa-a3/lib/types';
 
 export default function AddTransactionRow() {
 	const { mutate: addTransaction } = useAddTransactionMutation();

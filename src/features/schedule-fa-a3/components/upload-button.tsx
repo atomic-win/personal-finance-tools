@@ -3,8 +3,8 @@ import { DateTime } from 'luxon';
 import { useRef, useState } from 'react';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
-import { useSetTransactionsMutation } from '@/features/schedule-fa/hooks/transactions';
-import type { Transaction } from '@/features/schedule-fa/lib/types';
+import { useSetTransactionsMutation } from '@/features/schedule-fa-a3/hooks/transactions';
+import type { Transaction } from '@/features/schedule-fa-a3/lib/types';
 
 export default function UploadButton() {
 	const { mutate: setTransactions } = useSetTransactionsMutation();

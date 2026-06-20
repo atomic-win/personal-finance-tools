@@ -6,7 +6,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
-import type { DatedValue } from '@/features/schedule-fa/lib/calculations';
+import type { DatedValue } from '@/features/schedule-fa-a3/lib/calculations';
 
 export default function A3TableValueCell({ values }: { values: DatedValue[] }) {
 	if (values.length === 0) {

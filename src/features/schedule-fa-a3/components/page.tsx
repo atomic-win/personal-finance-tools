@@ -2,14 +2,14 @@ import { DownloadIcon, Trash2Icon } from 'lucide-react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ScheduleFAOutput from '@/features/schedule-fa/components/schedule-fa-output';
-import TransactionsInputTable from '@/features/schedule-fa/components/transactions-input-table';
-import UploadButton from '@/features/schedule-fa/components/upload-button';
+import TransactionsInputTable from '@/features/schedule-fa-a3/components/input-table';
+import ScheduleFAOutput from '@/features/schedule-fa-a3/components/output-table';
+import UploadButton from '@/features/schedule-fa-a3/components/upload-button';
 import {
 	useClearTransactionsMutation,
 	useTransactionsQuery,
-} from '@/features/schedule-fa/hooks/transactions';
-import { downloadTransactions } from '@/features/schedule-fa/lib/download-transactions';
+} from '@/features/schedule-fa-a3/hooks/transactions';
+import { downloadTransactions } from '@/features/schedule-fa-a3/lib/download-transactions';
 
 export default function ScheduleFAPage() {
 	const { data: transactions = [] } = useTransactionsQuery();

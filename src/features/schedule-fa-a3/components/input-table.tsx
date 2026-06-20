@@ -17,12 +17,12 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import AddTransactionRow from '@/features/schedule-fa/components/add-transaction-row';
+import AddTransactionRow from '@/features/schedule-fa-a3/components/add-input-row';
 import {
 	useRemoveTransactionMutation,
 	useTransactionsQuery,
 	useUpdateTransactionMutation,
-} from '@/features/schedule-fa/hooks/transactions';
+} from '@/features/schedule-fa-a3/hooks/transactions';
 
 export default function TransactionsInputTable() {
 	const { isLoading: isLoadingTransactions, data: transactions = [] } =

@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
-import type { StockData } from '@/features/schedule-fa/lib/types';
-import { fetchStockInfo } from '@/features/schedule-fa/server/fetch-stock-info';
+import type { StockData } from '@/features/schedule-fa-a3/lib/types';
+import { fetchStockInfo } from '@/features/schedule-fa-a3/server/fetch-stock-info';
 
 export function useStockInfoQueries(symbols: string[]) {
 	return useQueries({

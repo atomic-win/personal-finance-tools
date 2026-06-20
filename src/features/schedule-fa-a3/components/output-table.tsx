@@ -15,10 +15,10 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import A3TableRows from '@/features/schedule-fa/components/a3-table-rows';
-import { useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
-import type { GroupingOption } from '@/features/schedule-fa/lib/calculations';
-import type { Transaction } from '@/features/schedule-fa/lib/types';
+import A3TableRows from '@/features/schedule-fa-a3/components/output-row';
+import { useTransactionsQuery } from '@/features/schedule-fa-a3/hooks/transactions';
+import type { GroupingOption } from '@/features/schedule-fa-a3/lib/calculations';
+import type { Transaction } from '@/features/schedule-fa-a3/lib/types';
 
 export default function ScheduleFAOutput() {
 	const [year, setYear] = useState(getDefaultYear());

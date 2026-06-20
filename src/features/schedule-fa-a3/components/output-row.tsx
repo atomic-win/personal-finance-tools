@@ -1,17 +1,17 @@
 import { TableCell, TableRow } from '@/components/ui/table';
-import A3TableRowsMessage from '@/features/schedule-fa/components/a3-table-rows-message';
-import A3TableValueCell from '@/features/schedule-fa/components/a3-table-value-cell';
-import { useStockInfoQueries } from '@/features/schedule-fa/hooks/use-stock-info';
-import { useTTBuyRateQueries } from '@/features/schedule-fa/hooks/use-tt-buy-rate';
+import A3TableRowsMessage from '@/features/schedule-fa-a3/components/output-row-message';
+import A3TableValueCell from '@/features/schedule-fa-a3/components/output-row-value-cell';
+import { useStockInfoQueries } from '@/features/schedule-fa-a3/hooks/use-stock-info';
+import { useTTBuyRateQueries } from '@/features/schedule-fa-a3/hooks/use-tt-buy-rate';
 import {
 	calculateRowItems,
 	type GroupingOption,
-} from '@/features/schedule-fa/lib/calculations';
+} from '@/features/schedule-fa-a3/lib/calculations';
 import type {
 	ExchangeRate,
 	StockData,
 	Transaction,
-} from '@/features/schedule-fa/lib/types';
+} from '@/features/schedule-fa-a3/lib/types';
 
 export default function A3TableRows({
 	transactions,
