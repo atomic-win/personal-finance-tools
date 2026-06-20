@@ -387,8 +387,20 @@ function calculateRowItemsForOneSymbol(
 	const priceAtYearEnd = _.maxBy(dailyPricesInYear, 'date')!;
 	const exchangeRateAtYearEnd = findRate(rates, priceAtYearEnd.date);
 
+	const groupedTransactions = _.groupBy(
+		transactions,
+		(tx) => `${tx.date}|${tx.type}|${tx.price}`
+	);
+
 	const sorted = _.sortBy(
-		transactions.filter((tx) => tx.date <= calendarYearEnd),
+		Object.values(groupedTransactions).map((group) => {
+			const totalUnits = _.sumBy(group, 'units');
+			const representativeTx = group[0];
+			return {
+				...representativeTx,
+				units: totalUnits,
+			};
+		}),
 		['date', 'type'],
 		['asc', 'desc']
 	);
