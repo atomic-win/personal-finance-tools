@@ -1,3 +1,5 @@
+import _ from 'lodash';
+import { DateTime } from 'luxon';
 import { useState } from 'react';
 import {
 	Select,
@@ -15,12 +17,8 @@ import {
 } from '@/components/ui/table';
 import A3TableRows from '@/features/schedule-fa/components/a3-table-rows';
 import { useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
-import {
-	displayGrouping,
-	getDefaultYear,
-	getYearOptions,
-	type GroupingOption,
-} from '@/features/schedule-fa/lib/calculations';
+import type { GroupingOption } from '@/features/schedule-fa/lib/calculations';
+import type { Transaction } from '@/features/schedule-fa/lib/types';
 
 export default function ScheduleFAOutput() {
 	const [year, setYear] = useState(getDefaultYear());
@@ -116,4 +114,37 @@ export default function ScheduleFAOutput() {
 			</div>
 		</div>
 	);
+}
+
+function getDefaultYear(): number {
+	return DateTime.now().year - 1;
+}
+
+function getYearOptions(transactions: Transaction[]): number[] {
+	const currentYear = DateTime.now().year;
+	const minYearFromTransactions = _.minBy(transactions, 'date')?.date;
+
+	const years: number[] = [];
+	for (
+		let y = currentYear;
+		y >=
+		(minYearFromTransactions
+			? DateTime.fromISO(minYearFromTransactions).year
+			: currentYear);
+		y--
+	) {
+		years.push(y);
+	}
+	return years;
+}
+
+function displayGrouping(option: GroupingOption): string {
+	switch (option) {
+		case 'none':
+			return 'No Grouping';
+		case 'by-stock':
+			return 'By Stock';
+		case 'by-year':
+			return 'By Acquisition Year';
+	}
 }

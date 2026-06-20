@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import { TableCell } from '@/components/ui/table';
 import {
 	Tooltip,
@@ -5,14 +6,9 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {
-	formatAmount,
-	type DatedValue,
-} from '@/features/schedule-fa/lib/calculations';
+import type { DatedValue } from '@/features/schedule-fa/lib/calculations';
 
-export default function A3TableValueCell({
-	values,
-}: { values: DatedValue[] }) {
+export default function A3TableValueCell({ values }: { values: DatedValue[] }) {
 	if (values.length === 0) {
 		return <TableCell className='text-right'>₹0</TableCell>;
 	}
@@ -65,4 +61,9 @@ export default function A3TableValueCell({
 			</TooltipProvider>
 		</TableCell>
 	);
+}
+
+function formatAmount(values: DatedValue[]): string {
+	const value = _.sumBy(values, (v) => v.units * v.price * v.exchangeRate.rate);
+	return `₹${Math.round(value).toLocaleString('en-IN')}`;
 }

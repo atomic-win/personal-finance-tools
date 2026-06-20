@@ -322,28 +322,6 @@ function findPreviousMonthEndRate(
 	return findRate(rates, lastDayOfPrevMonth);
 }
 
-export function getDefaultYear(): number {
-	return DateTime.now().year - 1;
-}
-
-export function getYearOptions(transactions: Transaction[]): number[] {
-	const currentYear = DateTime.now().year;
-	const minYearFromTransactions = _.minBy(transactions, 'date')?.date;
-
-	const years: number[] = [];
-	for (
-		let y = currentYear;
-		y >=
-		(minYearFromTransactions
-			? DateTime.fromISO(minYearFromTransactions).year
-			: currentYear);
-		y--
-	) {
-		years.push(y);
-	}
-	return years;
-}
-
 function flattenDatedValues(values: DatedValue[][]): DatedValue[] {
 	const all = _.flatMap(values);
 	const grouped = _.groupBy(all, (v) => `${v.date}|${v.price}`);
@@ -353,20 +331,4 @@ function flattenDatedValues(values: DatedValue[][]): DatedValue[] {
 		price: group[0].price,
 		exchangeRate: group[0].exchangeRate,
 	}));
-}
-
-export function formatAmount(values: DatedValue[]): string {
-	const value = _.sumBy(values, (v) => v.units * v.price * v.exchangeRate.rate);
-	return `₹${Math.round(value).toLocaleString('en-IN')}`;
-}
-
-export function displayGrouping(option: GroupingOption): string {
-	switch (option) {
-		case 'none':
-			return 'No Grouping';
-		case 'by-stock':
-			return 'By Stock';
-		case 'by-year':
-			return 'By Acquisition Year';
-	}
 }

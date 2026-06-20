@@ -1,7 +1,6 @@
 import { TableCell, TableRow } from '@/components/ui/table';
 import A3TableRowsMessage from '@/features/schedule-fa/components/a3-table-rows-message';
 import A3TableValueCell from '@/features/schedule-fa/components/a3-table-value-cell';
-import { useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
 import { useStockInfoQueries } from '@/features/schedule-fa/hooks/use-stock-info';
 import { useTTBuyRateQueries } from '@/features/schedule-fa/hooks/use-tt-buy-rate';
 import {

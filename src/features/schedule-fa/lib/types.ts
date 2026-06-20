@@ -1,5 +1,3 @@
-// --- Transaction (input row — from file or manual entry) ---
-
 export type Transaction = {
 	id: string;
 	symbol: string;
@@ -9,8 +7,6 @@ export type Transaction = {
 	price: number;
 	remarks: string;
 };
-
-// --- API Responses ---
 
 export type StockData = {
 	symbol: string;
