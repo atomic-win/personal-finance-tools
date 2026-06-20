@@ -10,7 +10,14 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { TableBody, TableCell, TableRow } from '@/components/ui/table';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
 import {
 	useAddTransactionMutation,
 	useRemoveTransactionMutation,
@@ -32,30 +39,18 @@ export default function TransactionsInputTable() {
 	return (
 		<div className='space-y-2'>
 			<div className='border rounded-lg max-h-96 overflow-auto'>
-				<table className='w-full caption-bottom text-sm'>
-					<thead className='sticky top-0 z-10 bg-background shadow-[inset_0_-1px_0_0_var(--color-border)]'>
-						<tr>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-40'>
-								Date
-							</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap'>
-								Remarks
-							</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-28'>
-								Symbol
-							</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-24'>
-								Type
-							</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-24'>
-								Units
-							</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-32'>
-								Price
-							</th>
-							<th className='h-10 px-2 text-left align-middle font-medium whitespace-nowrap w-10' />
-						</tr>
-					</thead>
+				<Table>
+					<TableHeader className='sticky top-0 z-10 bg-background shadow-[inset_0_-1px_0_0_var(--color-border)]'>
+						<TableRow>
+							<TableHead className='w-40'>Date</TableHead>
+							<TableHead>Remarks</TableHead>
+							<TableHead className='w-28'>Symbol</TableHead>
+							<TableHead className='w-24'>Type</TableHead>
+							<TableHead className='w-24'>Units</TableHead>
+							<TableHead className='w-32'>Price</TableHead>
+							<TableHead className='w-10' />
+						</TableRow>
+					</TableHeader>
 					<TableBody>
 						{transactions.length === 0 && (
 							<TableRow>
@@ -157,7 +152,7 @@ export default function TransactionsInputTable() {
 							</TableRow>
 						))}
 					</TableBody>
-				</table>
+				</Table>
 			</div>
 			<AddTransactionRow />
 		</div>
@@ -192,18 +187,18 @@ function AddTransactionRow() {
 
 	return (
 		<div className='pr-4'>
-			<table className='w-full text-sm'>
-				<tbody>
-					<tr>
-						<td className='p-2 w-40'>
+			<Table>
+				<TableBody>
+					<TableRow className="border-0">
+						<TableCell className='w-40'>
 							<Input
 								type='date'
 								value={draft.date}
 								onChange={(e) => setDraft({ ...draft, date: e.target.value })}
 								className='w-36'
 							/>
-						</td>
-						<td className='p-2'>
+						</TableCell>
+						<TableCell>
 							<Input
 								value={draft.remarks}
 								onChange={(e) =>
@@ -212,16 +207,16 @@ function AddTransactionRow() {
 								placeholder='Remarks'
 								className='w-full min-w-20'
 							/>
-						</td>
-						<td className='p-2 w-28'>
+						</TableCell>
+						<TableCell className='w-28'>
 							<Input
 								value={draft.symbol}
 								onChange={(e) => setDraft({ ...draft, symbol: e.target.value })}
 								placeholder='AAPL'
 								className='w-24'
 							/>
-						</td>
-						<td className='p-2 w-24'>
+						</TableCell>
+						<TableCell className='w-24'>
 							<Select
 								value={draft.type}
 								onValueChange={(v) =>
@@ -236,8 +231,8 @@ function AddTransactionRow() {
 									<SelectItem value='Sell'>Sell</SelectItem>
 								</SelectContent>
 							</Select>
-						</td>
-						<td className='p-2 w-24'>
+						</TableCell>
+						<TableCell className='w-24'>
 							<Input
 								type='number'
 								value={draft.units || ''}
@@ -248,8 +243,8 @@ function AddTransactionRow() {
 								className='w-20'
 								min={0}
 							/>
-						</td>
-						<td className='p-2 w-32'>
+						</TableCell>
+						<TableCell className='w-32'>
 							<Input
 								type='number'
 								value={draft.price || ''}
@@ -261,15 +256,15 @@ function AddTransactionRow() {
 								min={0}
 								step='0.01'
 							/>
-						</td>
-						<td className='p-2 w-10'>
+						</TableCell>
+						<TableCell className='w-10'>
 							<Button size='icon-sm' onClick={handleAdd} disabled={!canAdd}>
 								<PlusIcon className='size-4' />
 							</Button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
+						</TableCell>
+					</TableRow>
+				</TableBody>
+			</Table>
 		</div>
 	);
 }
