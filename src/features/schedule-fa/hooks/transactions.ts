@@ -58,21 +58,15 @@ export function useAddTransactionMutation() {
 
 	return useMutation({
 		mutationKey: [...QUERY_KEY, 'add'],
-		mutationFn: async () => {
-			await queryClient.cancelQueries({ queryKey: QUERY_KEY });
-
+		mutationFn: async (transaction: Omit<Transaction, 'id'>) => {
 			const previousData = queryClient.getQueryData<Transaction[]>(QUERY_KEY);
 
 			queryClient.setQueryData<Transaction[]>(QUERY_KEY, [
 				...(previousData ?? []),
 				{
+					...transaction,
 					id: v7(),
-					symbol: '',
-					date: '',
-					type: 'Buy',
-					units: 0,
-					price: 0,
-					remarks: '',
+					symbol: transaction.symbol.toUpperCase(),
 				},
 			]);
 
