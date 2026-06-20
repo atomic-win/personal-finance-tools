@@ -32,6 +32,7 @@
 		"lodash": "^4.17.21",
 		"lucide-react": "^0.483.0",
 		"luxon": "^3.7.2",
+		"nitro": "3.0.260603-beta",
 		"percentile": "^1.6.0",
 		"react": "19.2.6",
 		"react-dom": "19.2.6",
