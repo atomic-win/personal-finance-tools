@@ -189,7 +189,7 @@ function AddTransactionRow() {
 		<div className='pr-4'>
 			<Table>
 				<TableBody>
-					<TableRow className="border-0">
+					<TableRow className='border-0'>
 						<TableCell className='w-40'>
 							<Input
 								type='date'
