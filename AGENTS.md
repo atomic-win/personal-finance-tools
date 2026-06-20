@@ -104,3 +104,4 @@ src/
 - **`src/routeTree.gen.ts` is auto-generated** by TanStack Router — never edit manually. It is also excluded from Biome linting.
 - **Vercel deploys only `main` branch and PRs** — feature/fix/dev branches are ignored per `vercel.json`.
 - **All rights reserved** — this project has no open-source license. Code is public for viewing only.
+- **Keep `AGENTS.md` and `README.md` up to date** whenever you add new features, change the tech stack, modify commands, or alter project structure.
