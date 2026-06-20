@@ -15,10 +15,10 @@ import {
 	SidebarGroupLabel,
 	SidebarMenu,
 } from '@/components/ui/sidebar';
-import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
-import { useIpQuery } from '@/hooks/useIpQuery';
-import { useLocaleQuery } from '@/hooks/useLocaleQuery';
-import useUpdateSettingMutation from '@/hooks/useUpdateSettingMutation';
+import { useCurrencyQuery } from '@/hooks/use-currency-query';
+import { useIpQuery } from '@/hooks/use-ip-query';
+import { useLocaleQuery } from '@/hooks/use-locale-query';
+import useUpdateSettingMutation from '@/hooks/use-update-setting-mutation';
 import { cn, LOCALE_OPTIONS } from '@/lib/utils';
 
 export default function SettingsSidebarGroup() {

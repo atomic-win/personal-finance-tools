@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import NavChartPage from '@/features/indian-mutual-funds-analysis/components/NavPage';
+import NavChartPage from '@/features/indian-mutual-funds-analysis/components/nav-page';
 
 export const Route = createFileRoute('/indian-mutual-funds-analysis/nav')({
 	component: Page,

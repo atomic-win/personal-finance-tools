@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import type { z } from 'zod';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
-import CalculatorCard from '@/features/calculators/components/CalculatorCard';
+import CalculatorCard from '@/features/calculators/components/calculator-card';
 import {
 	useAddCalculatorMutation,
 	useCalculatorsQuery,

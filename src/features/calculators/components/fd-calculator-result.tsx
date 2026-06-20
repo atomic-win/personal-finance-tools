@@ -1,4 +1,4 @@
-import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
+import CalculatorResultTableRow from '@/features/calculators/components/calculator-result-table-row';
 import type { FdCalculator } from '@/features/calculators/lib/types';
 import { calculateFdResult } from '@/features/calculators/lib/utils';
 

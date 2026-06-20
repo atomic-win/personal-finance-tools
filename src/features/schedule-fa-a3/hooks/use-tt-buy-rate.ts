@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
-import type { ExchangeRate } from '@/features/schedule-fa/lib/types';
-import { fetchTTBuyRate } from '@/features/schedule-fa/server/fetch-tt-buy-rate';
+import type { ExchangeRate } from '@/features/schedule-fa-a3/lib/types';
+import { fetchTTBuyRate } from '@/features/schedule-fa-a3/server/fetch-tt-buy-rate';
 
 export function useTTBuyRateQueries(currencies: string[]) {
 	return useQueries({

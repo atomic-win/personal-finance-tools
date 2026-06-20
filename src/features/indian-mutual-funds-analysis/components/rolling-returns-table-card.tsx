@@ -17,7 +17,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
+import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/with-mutual-funds';
 import { useRollingReturnsQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
 import {
 	type MutualFund,

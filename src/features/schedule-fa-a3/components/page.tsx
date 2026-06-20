@@ -2,14 +2,14 @@ import { DownloadIcon, Trash2Icon } from 'lucide-react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
-import TransactionsInputTable from '@/features/schedule-fa/components/TransactionsInputTable';
-import UploadButton from '@/features/schedule-fa/components/UploadButton';
+import TransactionsInputTable from '@/features/schedule-fa-a3/components/input-table';
+import ScheduleFAOutput from '@/features/schedule-fa-a3/components/output-table';
+import UploadButton from '@/features/schedule-fa-a3/components/upload-button';
 import {
 	useClearTransactionsMutation,
 	useTransactionsQuery,
-} from '@/features/schedule-fa/hooks/transactions';
-import type { Transaction } from '@/features/schedule-fa/lib/types';
+} from '@/features/schedule-fa-a3/hooks/transactions';
+import { downloadTransactions } from '@/features/schedule-fa-a3/lib/download-transactions';
 
 export default function ScheduleFAPage() {
 	const { data: transactions = [] } = useTransactionsQuery();
@@ -71,19 +71,4 @@ export default function ScheduleFAPage() {
 			</div>
 		</>
 	);
-}
-
-function downloadTransactions(transactions: Transaction[]) {
-	const header = 'Date,Remarks,Symbol,Type,Units,Price';
-	const rows = transactions.map(
-		(t) => `${t.date},${t.remarks},${t.symbol},${t.type},${t.units},${t.price}`
-	);
-	const csv = [header, ...rows].join('\n');
-	const blob = new Blob([csv], { type: 'text/csv' });
-	const url = URL.createObjectURL(blob);
-	const a = document.createElement('a');
-	a.href = url;
-	a.download = 'transactions.csv';
-	a.click();
-	URL.revokeObjectURL(url);
 }

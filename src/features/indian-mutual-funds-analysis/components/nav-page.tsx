@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
-import NavChartCard from '@/features/indian-mutual-funds-analysis/components/NavCard';
-import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
+import NavChartCard from '@/features/indian-mutual-funds-analysis/components/nav-card';
+import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/select-mutual-funds-card';
 import { PresetTimeDurations } from '@/features/indian-mutual-funds-analysis/lib/types';
 
 export default function NavChartPage() {
