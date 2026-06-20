@@ -1,3 +1,4 @@
+import { Trash2Icon } from 'lucide-react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,7 +44,8 @@ export default function ScheduleFAPage() {
 										size='sm'
 										onClick={() => clearTransactions()}
 									>
-										Clear All
+										<Trash2Icon className='size-4' />
+									Clear All
 									</Button>
 								)}
 							</div>
