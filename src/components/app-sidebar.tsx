@@ -65,6 +65,16 @@ const data = [
 			},
 		],
 	},
+	{
+		title: 'ITR Tools',
+		url: '#',
+		items: [
+			{
+				title: 'Schedule FA — A3',
+				url: '/itr/schedule-fa/a3',
+			},
+		],
+	},
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

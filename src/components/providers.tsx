@@ -1,6 +1,7 @@
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client';
+import { useEffect, useRef } from 'react';
 import { AppSidebar } from '@/components/app-sidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
@@ -14,18 +15,25 @@ const queryClient = new QueryClient({
 	},
 });
 
-const localStoragePersister = createAsyncStoragePersister({
-	storage: localStorage,
-});
-
-persistQueryClient({
-	queryClient,
-	persister: localStoragePersister,
-});
-
 export default function Providers({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
+	const persisted = useRef(false);
+
+	useEffect(() => {
+		if (persisted.current) return;
+		persisted.current = true;
+
+		const localStoragePersister = createAsyncStoragePersister({
+			storage: window.localStorage,
+		});
+
+		persistQueryClient({
+			queryClient,
+			persister: localStoragePersister,
+		});
+	}, []);
+
 	return (
 		<QueryClientProvider client={queryClient}>
 			<SidebarProvider>
