@@ -53,6 +53,7 @@ export const fetchTTBuyRate = createServerFn({ method: 'GET' })
 
 		const ratesMap = new Map<string, number>();
 		for (const [millis, rate] of parsed) {
+			// biome-ignore lint/style/noNonNullAssertion: we already check for valid dates above
 			const date = DateTime.fromMillis(millis).toISODate()!;
 			ratesMap.set(date, rate);
 		}

@@ -384,6 +384,13 @@ function calculateRowItemsForOneSymbol(
 		(d) => d.date >= calendarYearStart && d.date <= calendarYearEnd
 	);
 
+	if (dailyPricesInYear.length === 0) {
+		throw new Error(
+			`No price data available for ${stock.symbol} in the selected year.`
+		); // This is critical for calculations, so we throw an error instead of just skipping
+	}
+
+	// biome-ignore lint/style/noNonNullAssertion: we already check for valid dates above
 	const priceAtYearEnd = _.maxBy(dailyPricesInYear, 'date')!;
 	const exchangeRateAtYearEnd = findRate(rates, priceAtYearEnd.date);
 
@@ -460,6 +467,7 @@ function calculateRowItemsForOneSymbol(
 				continue; // This sale doesn't affect Schedule FA for the year, so skip to next iteration without adding a row
 			}
 
+			// biome-ignore lint/style/noNonNullAssertion: we already check for valid dates above
 			const peak = _.maxBy(
 				[
 					...dailyPricesInYear.filter(
@@ -541,6 +549,7 @@ function calculateRowItemsForOneSymbol(
 function combineRows(rows: RowItem[]): RowItem {
 	return {
 		...rows[0],
+		// biome-ignore lint/style/noNonNullAssertion: we already check for valid dates above
 		dateOfAcquiring: _.minBy(rows, 'dateOfAcquiring')!.dateOfAcquiring,
 		initials: flattenDatedValues(rows.map((r) => r.initials)),
 		peaks: flattenDatedValues(rows.map((r) => r.peaks)),
@@ -572,6 +581,7 @@ function findRate(rates: ExchangeRate[], date: string): ExchangeRate {
 		);
 	}
 
+	// biome-ignore lint/style/noNonNullAssertion: we already check for valid dates above
 	return (closestBefore ?? closestAfter)!;
 }
 
@@ -579,6 +589,7 @@ function findPreviousMonthEndRate(
 	rates: ExchangeRate[],
 	date: string
 ): ExchangeRate {
+	// biome-ignore lint/style/noNonNullAssertion: we already check for valid dates above
 	const lastDayOfPrevMonth = DateTime.fromISO(date)
 		.startOf('month')
 		.minus({ days: 1 })
