@@ -1,9 +1,9 @@
 import { useSearch } from '@tanstack/react-router';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
-import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components/ReturnsChartCard';
-import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/ReturnsForm';
-import RollingReturnsTableCard from '@/features/indian-mutual-funds-analysis/components/RollingReturnsTableCard';
-import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/SelectMutualFundsCard';
+import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components/returns-chart-card';
+import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/returns-form';
+import RollingReturnsTableCard from '@/features/indian-mutual-funds-analysis/components/rolling-returns-table-card';
+import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/select-mutual-funds-card';
 import {
 	Frequency,
 	PresetTimeDurations,

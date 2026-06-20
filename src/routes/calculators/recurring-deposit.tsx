@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import CalculatorPage from '@/features/calculators/components/CalculatorPage';
-import RdCalculatorResult from '@/features/calculators/components/RdCalculatorResult';
+import CalculatorPage from '@/features/calculators/components/calculator-page';
+import RdCalculatorResult from '@/features/calculators/components/rd-calculator-result';
 import {
 	type RdCalculator,
 	RdCalculatorSchema,

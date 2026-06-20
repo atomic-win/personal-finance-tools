@@ -1,7 +1,7 @@
 import ErrorComponent from '@/components/error-component';
 import LoadingComponent from '@/components/loading-component';
-import { useCurrencyQuery } from '@/hooks/useCurrencyQuery';
-import { useLocaleQuery } from '@/hooks/useLocaleQuery';
+import { useCurrencyQuery } from '@/hooks/use-currency-query';
+import { useLocaleQuery } from '@/hooks/use-locale-query';
 import { displayCurrencyAmountText } from '@/lib/utils';
 
 export default function CurrencyAmount({

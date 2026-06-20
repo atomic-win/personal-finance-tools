@@ -1,4 +1,4 @@
-import CalculatorResultTableRow from '@/features/calculators/components/CalculatorResultTableRow';
+import CalculatorResultTableRow from '@/features/calculators/components/calculator-result-table-row';
 import type { SipCalculator } from '@/features/calculators/lib/types';
 import { calculateSipResult } from '@/features/calculators/lib/utils';
 

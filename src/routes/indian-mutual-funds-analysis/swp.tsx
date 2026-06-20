@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import ReturnsPage from '@/features/indian-mutual-funds-analysis/components/ReturnsPage';
+import ReturnsPage from '@/features/indian-mutual-funds-analysis/components/returns-page';
 
 export const Route = createFileRoute('/indian-mutual-funds-analysis/swp')({
 	component: Page,

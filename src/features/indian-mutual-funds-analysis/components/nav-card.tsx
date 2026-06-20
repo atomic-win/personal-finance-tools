@@ -1,7 +1,5 @@
 import { DateTime } from 'luxon';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-import ErrorComponent from '@/components/error-component';
-import LoadingComponent from '@/components/loading-component';
 import {
 	Card,
 	CardContent,
@@ -18,26 +16,32 @@ import {
 	ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Label } from '@/components/ui/label';
-import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/withMutualFunds';
-import { useReturnQueries } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
-import type {
-	MutualFund,
-	Return,
-	ReturnRequest,
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select';
+import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/with-mutual-funds';
+import {
+	type MutualFund,
+	PresetTimeDurations,
 } from '@/features/indian-mutual-funds-analysis/lib/types';
 import {
 	displayPresetTimeDuration,
-	investmentDurationWithReturnTypeText,
-	returnTypeText,
+	getLuxonDuration,
 } from '@/features/indian-mutual-funds-analysis/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const LoadedReturnsChart = withMutualFunds(ReturnsChart);
+const LoadedNavChart = withMutualFunds(NavChart);
 
-export default function ReturnsChartCard({
-	returnRequest,
+export default function NavChartCard({
+	timeRange,
+	onTimeRangeChange,
 }: {
-	returnRequest: ReturnRequest;
+	timeRange: PresetTimeDurations;
+	onTimeRangeChange: (value: PresetTimeDurations) => void;
 }) {
 	const isMobile = useIsMobile();
 
@@ -49,31 +53,47 @@ export default function ReturnsChartCard({
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex flex-col md:flex-row md:items-center gap-4 space-y-2 md:space-y-0 border-b py-4'>
 				<div className='grid text-center md:text-left w-full gap-2'>
-					<CardTitle>{returnTypeText(returnRequest.returnType)}</CardTitle>
+					<CardTitle>NAV History</CardTitle>
 					<CardDescription>
-						{`Showing ${investmentDurationWithReturnTypeText(
-							returnRequest.investmentDuration,
-							returnRequest.returnType
-						)} for the last ${displayPresetTimeDuration(returnRequest.rollingWindow)}`}
+						Net Asset Value over time for selected mutual funds
 					</CardDescription>
 				</div>
+				<Select
+					value={timeRange}
+					onValueChange={(v) => onTimeRangeChange(v as PresetTimeDurations)}
+				>
+					<SelectTrigger className='w-40 rounded-lg'>
+						<SelectValue placeholder='Select range'>
+							{displayPresetTimeDuration(timeRange)}
+						</SelectValue>
+					</SelectTrigger>
+					<SelectContent className='rounded-xl'>
+						{Object.values(PresetTimeDurations).map((duration) => (
+							<SelectItem
+								key={duration}
+								value={duration}
+								className='rounded-lg'
+							>
+								{displayPresetTimeDuration(duration)}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
 			</CardHeader>
 			<CardContent className='p-6'>
-				<LoadedReturnsChart returnRequest={returnRequest} />
+				<LoadedNavChart timeRange={timeRange} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function ReturnsChart({
+function NavChart({
 	mutualfunds,
-	returnRequest,
+	timeRange,
 }: {
 	mutualfunds: MutualFund[];
-	returnRequest: ReturnRequest;
+	timeRange: PresetTimeDurations;
 }) {
-	const mutualFundReturnQueries = useReturnQueries(returnRequest, mutualfunds);
-
 	if (mutualfunds.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
@@ -82,24 +102,12 @@ function ReturnsChart({
 		);
 	}
 
-	if (mutualFundReturnQueries.some((r) => r.isFetching)) {
-		return <LoadingComponent loadingMessage='Calculating returns...' />;
-	}
-
-	if (mutualFundReturnQueries.some((r) => r.isError)) {
-		return (
-			<ErrorComponent errorMessage='Error occurred while calculating returns' />
-		);
-	}
-
-	const mutualFundReturns: Return[] = mutualFundReturnQueries
-		.map((r) => r.data)
-		.filter((r) => !!r)
-		.flat();
+	const now = DateTime.local();
+	const startDate = now.minus(getLuxonDuration(timeRange));
 
 	const chartConfig = mutualfunds.reduce(
 		(acc, mutualfund, i) => ({
-			// biome-ignore lint/performance/noAccumulatingSpread: We need to accumulate the config for each mutual fund to create the final chart config.
+			// biome-ignore lint/performance/noAccumulatingSpread: Need to accumulate config for each mutual fund.
 			...acc,
 			[mutualfund.schemeCode.toString()]: {
 				label: mutualfund.schemeName,
@@ -109,33 +117,43 @@ function ReturnsChart({
 		{}
 	) as ChartConfig;
 
-	const chartDataMap = new Map<
-		number,
-		{
-			date: number;
-		}
-	>();
+	const chartDataMap = new Map<number, { date: number }>();
+	let maxNav = 0;
 
-	mutualFundReturns.forEach((r) => {
-		const date = DateTime.fromISO(r.date).toMillis();
+	for (const mutualfund of mutualfunds) {
+		for (const [dateStr, nav] of Object.entries(mutualfund.navs)) {
+			const dt = DateTime.fromISO(dateStr);
+			if (dt < startDate) continue;
 
-		if (!chartDataMap.has(date)) {
-			chartDataMap.set(date, {
-				date,
+			const millis = dt.toMillis();
+			if (!chartDataMap.has(millis)) {
+				chartDataMap.set(millis, { date: millis });
+			}
+
+			// biome-ignore lint/style/noNonNullAssertion: We just ensured this above with the has() check.
+			const data = chartDataMap.get(millis)!;
+			chartDataMap.set(millis, {
+				...data,
+				[mutualfund.schemeCode.toString()]: nav,
 			});
-		}
 
-		// biome-ignore lint/style/noNonNullAssertion: We are sure that the data will always be available as we are controlling the date range and format.
-		const data = chartDataMap.get(date)!;
-		chartDataMap.set(date, {
-			...data,
-			[r.schemeCode.toString()]: Number(r.return.toFixed(2)),
-		});
-	});
+			if (nav > maxNav) {
+				maxNav = nav;
+			}
+		}
+	}
 
 	const chartData = Array.from(chartDataMap.values()).sort(
 		(a, b) => a.date - b.date
 	);
+
+	if (chartData.length === 0) {
+		return (
+			<div className='flex items-center justify-center'>
+				<Label>No NAV data available for the selected time range</Label>
+			</div>
+		);
+	}
 
 	return (
 		<ChartContainer config={chartConfig}>
@@ -147,23 +165,23 @@ function ReturnsChart({
 					axisLine={true}
 					tickMargin={8}
 					minTickGap={32}
-					// biome-ignore lint/style/noNonNullAssertion: We are sure that the date will always be valid as we are controlling the date format.
-					tickFormatter={(value) => DateTime.fromMillis(value).toISODate()!}
+					tickFormatter={(value) =>
+						DateTime.fromMillis(value).toISODate() ?? ''
+					}
 				/>
 				<YAxis
 					tickLine={true}
 					axisLine={true}
 					tickMargin={8}
 					minTickGap={32}
-					unit={'%'}
 					label={{
-						value: investmentDurationWithReturnTypeText(
-							returnRequest.investmentDuration,
-							returnRequest.returnType
-						),
+						value: 'NAV (₹)',
 						position: 'insideLeft',
 						angle: -90,
 						style: { textAnchor: 'middle' },
+					}}
+					padding={{
+						top: 50,
 					}}
 				/>
 				<ChartTooltip
@@ -174,7 +192,6 @@ function ReturnsChart({
 							className='w-full'
 							formatter={(value, name, item, index) => (
 								<>
-									{/* Add this before the first item */}
 									{index === 0 && (
 										<div className='flex basis-full items-center pt-1.5 text-xs font-medium text-foreground'>
 											{DateTime.fromMillis(item.payload.date).toISODate()}
@@ -189,7 +206,7 @@ function ReturnsChart({
 									/>
 									{chartConfig[name as keyof typeof chartConfig]?.label}
 									<div className='ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground'>
-										{value}%
+										₹{value}
 									</div>
 								</>
 							)}
@@ -204,7 +221,6 @@ function ReturnsChart({
 						stroke={`var(--color-${mutualfund.schemeCode})`}
 						strokeWidth={2}
 						dot={false}
-						unit={'%'}
 					/>
 				))}
 				<ChartLegend content={<ChartLegendContent />} />

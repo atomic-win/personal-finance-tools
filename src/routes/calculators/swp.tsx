@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import CalculatorPage from '@/features/calculators/components/CalculatorPage';
-import SwpCalculatorResult from '@/features/calculators/components/SwpCalculatorResult';
+import CalculatorPage from '@/features/calculators/components/calculator-page';
+import SwpCalculatorResult from '@/features/calculators/components/swp-calculator-result';
 import {
 	type SwpCalculator,
 	swpCalculatorSchema,

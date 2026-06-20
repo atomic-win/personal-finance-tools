@@ -23,8 +23,8 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useTransactionsQuery } from '@/features/schedule-fa/hooks/transactions';
-import { useStockInfoQueries } from '@/features/schedule-fa/hooks/useStockInfo';
-import { useTTBuyRateQueries } from '@/features/schedule-fa/hooks/useTTBuyRate';
+import { useStockInfoQueries } from '@/features/schedule-fa/hooks/use-stock-info';
+import { useTTBuyRateQueries } from '@/features/schedule-fa/hooks/use-tt-buy-rate';
 import type {
 	ExchangeRate,
 	StockData,

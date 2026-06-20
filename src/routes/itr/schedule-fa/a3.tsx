@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import ScheduleFAPage from '@/features/schedule-fa/components/ScheduleFAPage';
+import ScheduleFAPage from '@/features/schedule-fa/components/schedule-fa-page';
 
 export const Route = createFileRoute('/itr/schedule-fa/a3')({
 	component: Page,

@@ -2,9 +2,9 @@ import { DownloadIcon, Trash2Icon } from 'lucide-react';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import ScheduleFAOutput from '@/features/schedule-fa/components/ScheduleFAOutput';
-import TransactionsInputTable from '@/features/schedule-fa/components/TransactionsInputTable';
-import UploadButton from '@/features/schedule-fa/components/UploadButton';
+import ScheduleFAOutput from '@/features/schedule-fa/components/schedule-fa-output';
+import TransactionsInputTable from '@/features/schedule-fa/components/transactions-input-table';
+import UploadButton from '@/features/schedule-fa/components/upload-button';
 import {
 	useClearTransactionsMutation,
 	useTransactionsQuery,
