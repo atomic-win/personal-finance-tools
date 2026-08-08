@@ -396,18 +396,24 @@ export function convertInstrumentCurrency(
 	}
 
 	const prices: Record<string, number> = {};
+	const dates = Object.keys(instrument.prices).sort();
+	let lastKnownRate: number | undefined;
 
-	for (const [date, price] of Object.entries(instrument.prices)) {
-		const rate = fxRates[date];
+	for (const date of dates) {
+		lastKnownRate = fxRates[date] ?? lastKnownRate;
 
-		if (rate) {
-			prices[date] = price * rate;
+		if (lastKnownRate) {
+			prices[date] = instrument.prices[date] * lastKnownRate;
 		}
 	}
+
+	const convertedDates = Object.keys(prices);
 
 	return {
 		...instrument,
 		currency: targetCurrency,
-		...buildDailySeries(prices),
+		earliestDate: convertedDates[0] ?? instrument.lastDate,
+		lastDate: convertedDates[convertedDates.length - 1] ?? instrument.lastDate,
+		prices,
 	};
 }
