@@ -18,21 +18,21 @@ import {
 	ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Label } from '@/components/ui/label';
-import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/with-mutual-funds';
-import { useReturnQueries } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import { withInstruments } from '@/features/investment-analysis/hoc/with-instruments';
+import { useReturnQueries } from '@/features/investment-analysis/hooks/instruments';
 import type {
-	MutualFund,
+	Instrument,
 	Return,
 	ReturnRequest,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/investment-analysis/lib/types';
 import {
 	displayPresetTimeDuration,
 	investmentDurationWithReturnTypeText,
 	returnTypeText,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/investment-analysis/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const LoadedReturnsChart = withMutualFunds(ReturnsChart);
+const LoadedReturnsChart = withInstruments(ReturnsChart);
 
 export default function ReturnsChartCard({
 	returnRequest,
@@ -66,43 +66,43 @@ export default function ReturnsChartCard({
 }
 
 function ReturnsChart({
-	mutualfunds,
+	instruments,
 	returnRequest,
 }: {
-	mutualfunds: MutualFund[];
+	instruments: Instrument[];
 	returnRequest: ReturnRequest;
 }) {
-	const mutualFundReturnQueries = useReturnQueries(returnRequest, mutualfunds);
+	const returnQueries = useReturnQueries(returnRequest, instruments);
 
-	if (mutualfunds.length === 0) {
+	if (instruments.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
-				<Label>No mutual funds selected</Label>
+				<Label>No mutual funds or indexes selected</Label>
 			</div>
 		);
 	}
 
-	if (mutualFundReturnQueries.some((r) => r.isFetching)) {
+	if (returnQueries.some((r) => r.isFetching)) {
 		return <LoadingComponent loadingMessage='Calculating returns...' />;
 	}
 
-	if (mutualFundReturnQueries.some((r) => r.isError)) {
+	if (returnQueries.some((r) => r.isError)) {
 		return (
 			<ErrorComponent errorMessage='Error occurred while calculating returns' />
 		);
 	}
 
-	const mutualFundReturns: Return[] = mutualFundReturnQueries
+	const instrumentReturns: Return[] = returnQueries
 		.map((r) => r.data)
 		.filter((r) => !!r)
 		.flat();
 
-	const chartConfig = mutualfunds.reduce(
-		(acc, mutualfund, i) => ({
-			// biome-ignore lint/performance/noAccumulatingSpread: We need to accumulate the config for each mutual fund to create the final chart config.
+	const chartConfig = instruments.reduce(
+		(acc, instrument, i) => ({
+			// biome-ignore lint/performance/noAccumulatingSpread: We need to accumulate the config for each instrument to create the final chart config.
 			...acc,
-			[mutualfund.schemeCode.toString()]: {
-				label: mutualfund.schemeName,
+			[instrument.id]: {
+				label: instrument.name,
 				color: `var(--chart-${i + 1})`,
 			},
 		}),
@@ -116,7 +116,7 @@ function ReturnsChart({
 		}
 	>();
 
-	mutualFundReturns.forEach((r) => {
+	instrumentReturns.forEach((r) => {
 		const date = DateTime.fromISO(r.date).toMillis();
 
 		if (!chartDataMap.has(date)) {
@@ -129,7 +129,7 @@ function ReturnsChart({
 		const data = chartDataMap.get(date)!;
 		chartDataMap.set(date, {
 			...data,
-			[r.schemeCode.toString()]: Number(r.return.toFixed(2)),
+			[r.instrumentId]: Number(r.return.toFixed(2)),
 		});
 	});
 
@@ -196,12 +196,12 @@ function ReturnsChart({
 						/>
 					}
 				/>
-				{mutualfunds.map((mutualfund) => (
+				{instruments.map((instrument) => (
 					<Line
-						key={mutualfund.schemeCode}
-						dataKey={mutualfund.schemeCode.toString()}
+						key={instrument.id}
+						dataKey={instrument.id}
 						type='monotone'
-						stroke={`var(--color-${mutualfund.schemeCode})`}
+						stroke={chartConfig[instrument.id]?.color}
 						strokeWidth={2}
 						dot={false}
 						unit={'%'}

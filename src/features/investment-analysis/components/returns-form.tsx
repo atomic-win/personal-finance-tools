@@ -18,12 +18,12 @@ import {
 	type ReturnRequest,
 	type ReturnType,
 	RollingReturnType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/investment-analysis/lib/types';
 import {
 	displayFrequency,
 	displayPresetTimeDuration,
 	rollingReturnTypeText,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/investment-analysis/lib/utils';
 
 const schema = z.object({
 	frequency: z.nativeEnum(Frequency),

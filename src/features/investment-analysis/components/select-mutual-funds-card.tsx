@@ -23,8 +23,8 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover';
-import { useMutualFundListQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
-import type { MutualFund } from '@/features/indian-mutual-funds-analysis/lib/types';
+import { useMutualFundListQuery } from '@/features/investment-analysis/hooks/instruments';
+import type { MutualFundListItem } from '@/features/investment-analysis/lib/types';
 import { cn } from '@/lib/utils';
 
 const schema = z.object({
@@ -85,7 +85,7 @@ function MutualFundSearchForm({
 	mutualfunds,
 	schemeCodes,
 }: {
-	mutualfunds: MutualFund[];
+	mutualfunds: MutualFundListItem[];
 	schemeCodes: number[];
 }) {
 	const search = useSearch({ strict: false }) as Record<
@@ -109,7 +109,7 @@ function MutualFundSearchForm({
 			limit: 10,
 			key: 'schemeName',
 		})
-		.map((x) => x.obj as MutualFund)
+		.map((x) => x.obj as MutualFundListItem)
 		.filter((mutualfund) => !schemeCodes.includes(mutualfund.schemeCode));
 
 	function addSchemeCode() {
@@ -223,7 +223,7 @@ function MutualFundsDisplay({
 	mutualfunds,
 	schemeCodes,
 }: {
-	mutualfunds: MutualFund[];
+	mutualfunds: MutualFundListItem[];
 	schemeCodes: number[];
 }) {
 	if (!schemeCodes.length) {
@@ -244,7 +244,11 @@ function MutualFundsDisplay({
 	);
 }
 
-function MutualFundDisplayItem({ mutualfund }: { mutualfund: MutualFund }) {
+function MutualFundDisplayItem({
+	mutualfund,
+}: {
+	mutualfund: MutualFundListItem;
+}) {
 	const search = useSearch({ strict: false }) as Record<
 		string,
 		string | string[]

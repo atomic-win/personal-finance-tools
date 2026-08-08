@@ -17,21 +17,21 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
-import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/with-mutual-funds';
-import { useRollingReturnsQuery } from '@/features/indian-mutual-funds-analysis/hooks/mutualfunds';
+import { withInstruments } from '@/features/investment-analysis/hoc/with-instruments';
+import { useRollingReturnsQuery } from '@/features/investment-analysis/hooks/instruments';
 import {
-	type MutualFund,
+	type Instrument,
 	type ReturnRequest,
 	RollingReturnType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/investment-analysis/lib/types';
 import {
 	displayPresetTimeDuration,
 	investmentDurationWithReturnTypeText,
 	rollingReturnTypeText,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/investment-analysis/lib/utils';
 import { cn } from '@/lib/utils';
 
-const LoadedRollingReturnsTable = withMutualFunds(RollingReturnsTable);
+const LoadedRollingReturnsTable = withInstruments(RollingReturnsTable);
 
 export default function RollingReturnsTableCard({
 	returnRequest,
@@ -61,16 +61,16 @@ export default function RollingReturnsTableCard({
 }
 
 function RollingReturnsTable({
-	mutualfunds,
+	instruments,
 	returnRequest,
 }: {
-	mutualfunds: MutualFund[];
+	instruments: Instrument[];
 	returnRequest: ReturnRequest;
 }) {
-	if (mutualfunds.length === 0) {
+	if (instruments.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
-				<Label>No mutual funds selected</Label>
+				<Label>No mutual funds or indexes selected</Label>
 			</div>
 		);
 	}
@@ -80,19 +80,19 @@ function RollingReturnsTable({
 			<Table className='w-full'>
 				<TableHeader>
 					<TableRow>
-						<TableHead className='whitespace-nowrap'>Mutual Fund</TableHead>
+						<TableHead className='whitespace-nowrap'>Investment</TableHead>
 						<TableHead className='text-center'>
 							{rollingReturnTypeText(returnRequest.rollingReturnType)}
 						</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{mutualfunds.map((mf) => (
-						<TableRow key={mf.schemeCode}>
-							<TableCell>{mf.schemeName}</TableCell>
+					{instruments.map((instrument) => (
+						<TableRow key={instrument.id}>
+							<TableCell>{instrument.name}</TableCell>
 							<RollingReturnsTableCell
 								returnRequest={returnRequest}
-								mutualfund={mf}
+								instrument={instrument}
 							/>
 						</TableRow>
 					))}
@@ -103,13 +103,13 @@ function RollingReturnsTable({
 }
 
 function RollingReturnsTableCell({
-	mutualfund,
+	instrument,
 	returnRequest,
 }: {
-	mutualfund: MutualFund;
+	instrument: Instrument;
 	returnRequest: ReturnRequest;
 }) {
-	const rollingReturnsQuery = useRollingReturnsQuery(returnRequest, mutualfund);
+	const rollingReturnsQuery = useRollingReturnsQuery(returnRequest, instrument);
 
 	if (rollingReturnsQuery.isFetching) {
 		return (

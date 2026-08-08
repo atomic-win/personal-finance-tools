@@ -1,25 +1,26 @@
-import type { DateTime, DurationLike } from 'luxon';
+import { DateTime, type DurationLike } from 'luxon';
+import type { Instrument } from '@/features/investment-analysis/lib/types';
 import {
 	Frequency,
 	PresetTimeDurations,
 	type ReturnRequest,
 	type ReturnType,
 	RollingReturnType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/investment-analysis/lib/types';
 
-export function evaluateMutualFund(
-	navs: Record<string, number>,
+export function evaluateInstrument(
+	prices: Record<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime
 ): number {
 	const { returnType } = returnRequest;
 	switch (returnType) {
 		case 'cagr':
-			return calculateCagrReturn(navs, returnRequest, date);
+			return calculateCagrReturn(prices, returnRequest, date);
 		case 'sip':
-			return calculateSipReturn(navs, returnRequest, date);
+			return calculateSipReturn(prices, returnRequest, date);
 		case 'swp':
-			return calculateSwpReturn(navs, returnRequest, date);
+			return calculateSwpReturn(prices, returnRequest, date);
 		default:
 			throw new Error('Invalid return type');
 	}
@@ -173,7 +174,7 @@ export function getLuxonDuration(duration: PresetTimeDurations): DurationLike {
 }
 
 function calculateCagrReturn(
-	navs: Record<string, number>,
+	prices: Record<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime
 ) {
@@ -185,14 +186,14 @@ function calculateCagrReturn(
 	return (
 		100 *
 		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the start and end dates will always be available as we are controlling the date range through the investment duration and the available NAV data.
-		((navs[endDate.toISODate()!]! / navs[date.toISODate()!]!) **
+		((prices[endDate.toISODate()!]! / prices[date.toISODate()!]!) **
 			(1 / Math.max(1, endDate.diff(date, 'years')?.years)) -
 			1)
 	);
 }
 
 function calculateSipReturn(
-	navs: Record<string, number>,
+	prices: Record<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime
 ) {
@@ -224,7 +225,7 @@ function calculateSipReturn(
 		}
 
 		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the current date will always be available as we are controlling the date range through the investment duration and the available NAV data.
-		totalUnits += investmentAmount / navs[currentDate.toISODate()!]!;
+		totalUnits += investmentAmount / prices[currentDate.toISODate()!]!;
 
 		xirrInputs.push({
 			years: endDate.diff(currentDate, 'years')?.years ?? 0,
@@ -235,14 +236,14 @@ function calculateSipReturn(
 	xirrInputs.push({
 		years: 0,
 		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the end date will always be available as we are controlling the date range through the investment duration and the available NAV data.
-		amount: -totalUnits * navs[endDate.toISODate()!]!,
+		amount: -totalUnits * prices[endDate.toISODate()!]!,
 	});
 
 	return calculateXIRR(xirrInputs);
 }
 
 function calculateSwpReturn(
-	navs: Record<string, number>,
+	prices: Record<string, number>,
 	returnRequest: ReturnRequest,
 	date: DateTime
 ) {
@@ -274,7 +275,7 @@ function calculateSwpReturn(
 		}
 
 		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the current date will always be available as we are controlling the date range through the investment duration and the available NAV data.
-		totalUnits += investmentAmount / navs[currentDate.toISODate()!]!;
+		totalUnits += investmentAmount / prices[currentDate.toISODate()!]!;
 
 		xirrInputs.push({
 			years: endDate.diff(currentDate, 'years')?.years ?? 0,
@@ -285,7 +286,7 @@ function calculateSwpReturn(
 	xirrInputs.push({
 		years: endDate.diff(startDate, 'years')?.years ?? 0,
 		// biome-ignore lint/style/noNonNullAssertion: We are sure that the NAVs for the start date will always be available as we are controlling the date range through the investment duration and the available NAV data.
-		amount: totalUnits * navs[startDate.toISODate()!]!,
+		amount: totalUnits * prices[startDate.toISODate()!]!,
 	});
 
 	return calculateXIRR(xirrInputs);
@@ -346,4 +347,67 @@ function getLuxonDurationForFrequency(frequency: Frequency): DurationLike {
 		case Frequency.Yearly:
 			return { years: 1 };
 	}
+}
+
+export function buildDailySeries(rawPrices: Record<string, number>): {
+	earliestDate: string;
+	lastDate: string;
+	prices: Record<string, number>;
+} {
+	const dates = Object.keys(rawPrices).sort();
+
+	if (dates.length === 0) {
+		const today = DateTime.local().toISODate() ?? '';
+		return { earliestDate: today, lastDate: today, prices: {} };
+	}
+
+	const earliestDate = dates[0];
+	const lastDate = dates[dates.length - 1];
+	const prices: Record<string, number> = {};
+
+	let lastKnownPrice = rawPrices[earliestDate];
+
+	for (
+		let date = earliestDate;
+		date <= lastDate;
+		date = DateTime.fromISO(date).plus({ days: 1 }).toISODate() ?? lastDate
+	) {
+		if (rawPrices[date] !== undefined) {
+			lastKnownPrice = rawPrices[date];
+		}
+
+		prices[date] = lastKnownPrice;
+
+		if (date === lastDate) {
+			break;
+		}
+	}
+
+	return { earliestDate, lastDate, prices };
+}
+
+export function convertInstrumentCurrency(
+	instrument: Instrument,
+	fxRates: Record<string, number>,
+	targetCurrency: string
+): Instrument {
+	if (instrument.currency === targetCurrency) {
+		return instrument;
+	}
+
+	const prices: Record<string, number> = {};
+
+	for (const [date, price] of Object.entries(instrument.prices)) {
+		const rate = fxRates[date];
+
+		if (rate) {
+			prices[date] = price * rate;
+		}
+	}
+
+	return {
+		...instrument,
+		currency: targetCurrency,
+		...buildDailySeries(prices),
+	};
 }

@@ -1,16 +1,17 @@
 import { useSearch } from '@tanstack/react-router';
 import SidebarTriggerWithBreadcrumb from '@/components/sidebar-trigger-with-breadcrumb';
-import ReturnsChartCard from '@/features/indian-mutual-funds-analysis/components/returns-chart-card';
-import ReturnsForm from '@/features/indian-mutual-funds-analysis/components/returns-form';
-import RollingReturnsTableCard from '@/features/indian-mutual-funds-analysis/components/rolling-returns-table-card';
-import SelectMutualFundsCard from '@/features/indian-mutual-funds-analysis/components/select-mutual-funds-card';
+import ReturnsChartCard from '@/features/investment-analysis/components/returns-chart-card';
+import ReturnsForm from '@/features/investment-analysis/components/returns-form';
+import RollingReturnsTableCard from '@/features/investment-analysis/components/rolling-returns-table-card';
+import SelectIndexesCard from '@/features/investment-analysis/components/select-indexes-card';
+import SelectMutualFundsCard from '@/features/investment-analysis/components/select-mutual-funds-card';
 import {
 	Frequency,
 	PresetTimeDurations,
 	type ReturnRequest,
 	type ReturnType,
 	RollingReturnType,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/investment-analysis/lib/types';
 
 export default function ReturnsPage({
 	title,
@@ -28,7 +29,7 @@ export default function ReturnsPage({
 			<SidebarTriggerWithBreadcrumb
 				breadcrumbs={[
 					{
-						title: 'Indian Mutual Funds Analysis',
+						title: 'Investment Analysis',
 						href: '',
 						disabled: true,
 					},
@@ -36,7 +37,7 @@ export default function ReturnsPage({
 				]}
 			/>
 			<div className='px-4 space-y-2'>
-				<h1 className='text-2xl font-bold'>Indian Mutual Funds Analysis</h1>
+				<h1 className='text-2xl font-bold'>Investment Analysis</h1>
 				<h2 className='text-lg font-semibold'>{title} Returns</h2>
 				<p>{description}</p>
 				<ReturnsPageContainer returnType={returnType} />
@@ -83,8 +84,9 @@ function ReturnsPageContainer({ returnType }: { returnType: ReturnType }) {
 				<RollingReturnsTableCard returnRequest={returnsRequest} />
 				<ReturnsChartCard returnRequest={returnsRequest} />
 			</div>
-			<div className='order-1 md:order-2'>
+			<div className='order-1 md:order-2 space-y-4'>
 				<SelectMutualFundsCard />
+				<SelectIndexesCard />
 			</div>
 		</div>
 	);

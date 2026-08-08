@@ -36,11 +36,12 @@ src/
 │   │   ├── components/
 │   │   ├── hooks/
 │   │   └── lib/         # types.ts, utils.ts (calculation logic)
-│   ├── indian-mutual-funds-analysis/
+│   ├── investment-analysis/  # Mutual fund + stock market index analysis
 │   │   ├── components/
-│   │   ├── hoc/         # Higher-order components (e.g., with-mutual-funds)
-│   │   ├── hooks/
-│   │   ├── lib/         # types.ts, utils.ts
+│   │   ├── hoc/         # with-instruments (loads + currency-converts instruments)
+│   │   ├── hooks/       # instruments.ts (data + returns queries)
+│   │   ├── lib/         # types.ts, utils.ts, indexes.ts (supported index registry)
+│   │   ├── server/      # Server functions (index history, FX rates via Yahoo Finance)
 │   │   └── workers/     # Web Workers for heavy computation (returns.worker.ts)
 │   └── schedule-fa-a3/  # ITR Schedule FA / A3 generation
 │       ├── components/
@@ -53,7 +54,7 @@ src/
 │   ├── __root.tsx       # Root layout (HTML shell, providers, devtools)
 │   ├── index.tsx        # Home page
 │   ├── calculators/     # /calculators/* routes
-│   ├── indian-mutual-funds-analysis/  # /indian-mutual-funds-analysis/* routes
+│   ├── investment-analysis/  # /investment-analysis/* routes (price history, CAGR, SIP, SWP)
 │   └── itr/             # /itr/* routes (Schedule FA)
 ├── router.tsx           # Router creation + type registration
 ├── globals.css          # Tailwind CSS entry point
@@ -74,6 +75,10 @@ src/
 - **Route ↔ Feature mapping**: Routes in `src/routes/` are thin wrappers that import from `src/features/`.
 - **Server functions**: Server-side logic lives in `src/features/*/server/` and runs on Nitro.
 - **Web Workers**: CPU-intensive calculations (e.g., returns analysis) are offloaded to Web Workers.
+- **Instrument abstraction**: Mutual funds and stock market indexes are both normalised into the `Instrument` type (`id`, `name`, `type`, `currency`, `earliestDate`, `lastDate`, `prices`). Instrument ids are prefixed (`mf:<schemeCode>`, `index:<symbol>`), and the CAGR/SIP/SWP engine, worker, charts, and tables operate purely on `Instrument`.
+- **Instrument loading**: `withInstruments` (`hoc/with-instruments.tsx`) reads the repeated `mfSchemeCode` and `indexSymbol` search params, loads both data sets, and converts every price series into the user's settings currency using daily Yahoo Finance FX rates before passing `instruments` to the wrapped component.
+- **Supported indexes**: Registered in `lib/indexes.ts` (currently NASDAQ 100 `^NDX` and S&P 500 `^GSPC`). The index history server function validates symbols against this registry.
+- **Daily series**: `buildDailySeries` forward-fills sparse price/FX data into a continuous daily series; currency conversion trims a series to the dates for which an FX rate exists (Yahoo FX history starts ~2003).
 - **Query persistence**: TanStack Query caches are persisted to `localStorage` with a 24-hour GC time and 1-hour stale time.
 
 ### Component Patterns
@@ -103,6 +108,7 @@ src/
 - **No test suite exists** — there are no tests or test runner configured.
 - **`src/routeTree.gen.ts` is auto-generated** by TanStack Router — never edit manually. It is also excluded from Biome linting.
 - **Vercel deploys only `main` branch and PRs** — feature/fix/dev branches are ignored per `vercel.json`.
+- **`npm run lint` reports a pre-existing formatting error in `vercel.json`** (spaces vs tabs) — scope formatting to source with `npx biome check --write src/` and treat that single error as the baseline.
 - **All rights reserved** — this project has no open-source license. Code is public for viewing only.
 - **Keep `AGENTS.md` and `README.md` up to date** whenever you add new features, change the tech stack, modify commands, or alter project structure.
 - **Use `AGENTS.md` as a memory and decision store** — when you make significant architectural decisions, adopt new conventions, or discover important caveats, record them here so future agents and contributors have the context.

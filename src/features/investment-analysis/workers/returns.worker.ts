@@ -2,45 +2,45 @@
 
 import { DateTime } from 'luxon';
 import type {
-	MutualFund,
+	Instrument,
 	Return,
 	ReturnRequest,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/investment-analysis/lib/types';
 import {
-	evaluateMutualFund,
+	evaluateInstrument,
 	getLuxonDuration,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/investment-analysis/lib/utils';
 
 declare const self: DedicatedWorkerGlobalScope;
 
 self.onmessage = (
 	event: MessageEvent<{
-		mutualfund: MutualFund;
+		instrument: Instrument;
 		request: ReturnRequest;
 	}>
 ) => {
-	const { mutualfund, request } = event.data;
+	const { instrument, request } = event.data;
 	const { investmentDuration } = request;
 	const results: Return[] = [];
 
-	const endDate = DateTime.fromISO(mutualfund.lastDate).minus(
+	const endDate = DateTime.fromISO(instrument.lastDate).minus(
 		getLuxonDuration(investmentDuration)
 	);
-	if (endDate < DateTime.fromISO(mutualfund.earliestDate)) {
+	if (endDate < DateTime.fromISO(instrument.earliestDate)) {
 		self.postMessage(results);
 		return;
 	}
 
 	for (
-		let date = DateTime.fromISO(mutualfund.earliestDate);
+		let date = DateTime.fromISO(instrument.earliestDate);
 		date <= endDate;
 		date = date.plus({ days: 1 })
 	) {
 		results.push({
-			schemeCode: mutualfund.schemeCode,
+			instrumentId: instrument.id,
 			// biome-ignore lint/style/noNonNullAssertion: We are sure that the date will always be valid as we are controlling the date range and format.
 			date: date.plus(getLuxonDuration(investmentDuration)).toISODate()!,
-			return: evaluateMutualFund(mutualfund.navs, request, date),
+			return: evaluateInstrument(instrument.prices, request, date),
 		});
 	}
 
