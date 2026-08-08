@@ -44,24 +44,24 @@ const data = [
 		],
 	},
 	{
-		title: 'Indian Mutual Funds Analysis',
+		title: 'Investment Analysis',
 		url: '#',
 		items: [
 			{
-				title: 'NAV History',
-				url: '/indian-mutual-funds-analysis/nav',
+				title: 'Price History',
+				url: '/investment-analysis/price-history',
 			},
 			{
 				title: 'CAGR Returns',
-				url: '/indian-mutual-funds-analysis/cagr',
+				url: '/investment-analysis/cagr',
 			},
 			{
 				title: 'SIP Returns',
-				url: '/indian-mutual-funds-analysis/sip',
+				url: '/investment-analysis/sip',
 			},
 			{
 				title: 'SWP Returns',
-				url: '/indian-mutual-funds-analysis/swp',
+				url: '/investment-analysis/swp',
 			},
 		],
 	},

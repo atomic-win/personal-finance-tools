@@ -1,6 +1,6 @@
 # Personal Finance Tools
 
-A web application providing calculators and analysis tools for personal finance — investment return calculators, Indian mutual fund analysis, and ITR schedule generation.
+A web application providing calculators and analysis tools for personal finance — investment return calculators, mutual fund and stock market index analysis, and ITR schedule generation.
 
 ## Tech Stack
 
@@ -16,7 +16,7 @@ A web application providing calculators and analysis tools for personal finance 
 ## Features
 
 - **Calculators** — Fixed Deposit, Recurring Deposit, SIP, and SWP return calculators.
-- **Indian Mutual Fund Analysis** — CAGR, NAV, SIP, and SWP analysis tools for Indian mutual funds (uses Web Workers for heavy computation).
+- **Investment Analysis** — Price history, CAGR, SIP, and SWP analysis for Indian mutual funds and global stock market indexes (Nifty 50, Sensex, S&P 500, NASDAQ 100 and more), compared in the currency of your choice (uses Web Workers for heavy computation).
 - **ITR Schedule FA / A3** — Generate Schedule FA (Foreign Assets) and Schedule A3 for Indian income tax returns.
 
 ## Getting Started
@@ -53,7 +53,7 @@ src/
 ├── components/       # Shared UI components (shadcn/ui primitives in ui/)
 ├── features/         # Feature modules with components, hooks, lib, server, workers
 │   ├── calculators/
-│   ├── indian-mutual-funds-analysis/
+│   ├── investment-analysis/
 │   └── schedule-fa-a3/
 ├── hooks/            # Shared custom hooks
 ├── lib/              # Shared utilities

@@ -10,10 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as IndianMutualFundsAnalysisSwpRouteImport } from './routes/indian-mutual-funds-analysis/swp'
-import { Route as IndianMutualFundsAnalysisSipRouteImport } from './routes/indian-mutual-funds-analysis/sip'
-import { Route as IndianMutualFundsAnalysisNavRouteImport } from './routes/indian-mutual-funds-analysis/nav'
-import { Route as IndianMutualFundsAnalysisCagrRouteImport } from './routes/indian-mutual-funds-analysis/cagr'
+import { Route as InvestmentAnalysisSwpRouteImport } from './routes/investment-analysis/swp'
+import { Route as InvestmentAnalysisSipRouteImport } from './routes/investment-analysis/sip'
+import { Route as InvestmentAnalysisPriceHistoryRouteImport } from './routes/investment-analysis/price-history'
+import { Route as InvestmentAnalysisCagrRouteImport } from './routes/investment-analysis/cagr'
 import { Route as CalculatorsSwpRouteImport } from './routes/calculators/swp'
 import { Route as CalculatorsSipSwpRouteImport } from './routes/calculators/sip-swp'
 import { Route as CalculatorsSipRouteImport } from './routes/calculators/sip'
@@ -26,30 +26,27 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndianMutualFundsAnalysisSwpRoute =
-  IndianMutualFundsAnalysisSwpRouteImport.update({
-    id: '/indian-mutual-funds-analysis/swp',
-    path: '/indian-mutual-funds-analysis/swp',
+const InvestmentAnalysisSwpRoute = InvestmentAnalysisSwpRouteImport.update({
+  id: '/investment-analysis/swp',
+  path: '/investment-analysis/swp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestmentAnalysisSipRoute = InvestmentAnalysisSipRouteImport.update({
+  id: '/investment-analysis/sip',
+  path: '/investment-analysis/sip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestmentAnalysisPriceHistoryRoute =
+  InvestmentAnalysisPriceHistoryRouteImport.update({
+    id: '/investment-analysis/price-history',
+    path: '/investment-analysis/price-history',
     getParentRoute: () => rootRouteImport,
   } as any)
-const IndianMutualFundsAnalysisSipRoute =
-  IndianMutualFundsAnalysisSipRouteImport.update({
-    id: '/indian-mutual-funds-analysis/sip',
-    path: '/indian-mutual-funds-analysis/sip',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const IndianMutualFundsAnalysisNavRoute =
-  IndianMutualFundsAnalysisNavRouteImport.update({
-    id: '/indian-mutual-funds-analysis/nav',
-    path: '/indian-mutual-funds-analysis/nav',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const IndianMutualFundsAnalysisCagrRoute =
-  IndianMutualFundsAnalysisCagrRouteImport.update({
-    id: '/indian-mutual-funds-analysis/cagr',
-    path: '/indian-mutual-funds-analysis/cagr',
-    getParentRoute: () => rootRouteImport,
-  } as any)
+const InvestmentAnalysisCagrRoute = InvestmentAnalysisCagrRouteImport.update({
+  id: '/investment-analysis/cagr',
+  path: '/investment-analysis/cagr',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CalculatorsSwpRoute = CalculatorsSwpRouteImport.update({
   id: '/calculators/swp',
   path: '/calculators/swp',
@@ -89,10 +86,10 @@ export interface FileRoutesByFullPath {
   '/calculators/sip': typeof CalculatorsSipRoute
   '/calculators/sip-swp': typeof CalculatorsSipSwpRoute
   '/calculators/swp': typeof CalculatorsSwpRoute
-  '/indian-mutual-funds-analysis/cagr': typeof IndianMutualFundsAnalysisCagrRoute
-  '/indian-mutual-funds-analysis/nav': typeof IndianMutualFundsAnalysisNavRoute
-  '/indian-mutual-funds-analysis/sip': typeof IndianMutualFundsAnalysisSipRoute
-  '/indian-mutual-funds-analysis/swp': typeof IndianMutualFundsAnalysisSwpRoute
+  '/investment-analysis/cagr': typeof InvestmentAnalysisCagrRoute
+  '/investment-analysis/price-history': typeof InvestmentAnalysisPriceHistoryRoute
+  '/investment-analysis/sip': typeof InvestmentAnalysisSipRoute
+  '/investment-analysis/swp': typeof InvestmentAnalysisSwpRoute
   '/itr/schedule-fa/a3': typeof ItrScheduleFaA3Route
 }
 export interface FileRoutesByTo {
@@ -102,10 +99,10 @@ export interface FileRoutesByTo {
   '/calculators/sip': typeof CalculatorsSipRoute
   '/calculators/sip-swp': typeof CalculatorsSipSwpRoute
   '/calculators/swp': typeof CalculatorsSwpRoute
-  '/indian-mutual-funds-analysis/cagr': typeof IndianMutualFundsAnalysisCagrRoute
-  '/indian-mutual-funds-analysis/nav': typeof IndianMutualFundsAnalysisNavRoute
-  '/indian-mutual-funds-analysis/sip': typeof IndianMutualFundsAnalysisSipRoute
-  '/indian-mutual-funds-analysis/swp': typeof IndianMutualFundsAnalysisSwpRoute
+  '/investment-analysis/cagr': typeof InvestmentAnalysisCagrRoute
+  '/investment-analysis/price-history': typeof InvestmentAnalysisPriceHistoryRoute
+  '/investment-analysis/sip': typeof InvestmentAnalysisSipRoute
+  '/investment-analysis/swp': typeof InvestmentAnalysisSwpRoute
   '/itr/schedule-fa/a3': typeof ItrScheduleFaA3Route
 }
 export interface FileRoutesById {
@@ -116,10 +113,10 @@ export interface FileRoutesById {
   '/calculators/sip': typeof CalculatorsSipRoute
   '/calculators/sip-swp': typeof CalculatorsSipSwpRoute
   '/calculators/swp': typeof CalculatorsSwpRoute
-  '/indian-mutual-funds-analysis/cagr': typeof IndianMutualFundsAnalysisCagrRoute
-  '/indian-mutual-funds-analysis/nav': typeof IndianMutualFundsAnalysisNavRoute
-  '/indian-mutual-funds-analysis/sip': typeof IndianMutualFundsAnalysisSipRoute
-  '/indian-mutual-funds-analysis/swp': typeof IndianMutualFundsAnalysisSwpRoute
+  '/investment-analysis/cagr': typeof InvestmentAnalysisCagrRoute
+  '/investment-analysis/price-history': typeof InvestmentAnalysisPriceHistoryRoute
+  '/investment-analysis/sip': typeof InvestmentAnalysisSipRoute
+  '/investment-analysis/swp': typeof InvestmentAnalysisSwpRoute
   '/itr/schedule-fa/a3': typeof ItrScheduleFaA3Route
 }
 export interface FileRouteTypes {
@@ -131,10 +128,10 @@ export interface FileRouteTypes {
     | '/calculators/sip'
     | '/calculators/sip-swp'
     | '/calculators/swp'
-    | '/indian-mutual-funds-analysis/cagr'
-    | '/indian-mutual-funds-analysis/nav'
-    | '/indian-mutual-funds-analysis/sip'
-    | '/indian-mutual-funds-analysis/swp'
+    | '/investment-analysis/cagr'
+    | '/investment-analysis/price-history'
+    | '/investment-analysis/sip'
+    | '/investment-analysis/swp'
     | '/itr/schedule-fa/a3'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -144,10 +141,10 @@ export interface FileRouteTypes {
     | '/calculators/sip'
     | '/calculators/sip-swp'
     | '/calculators/swp'
-    | '/indian-mutual-funds-analysis/cagr'
-    | '/indian-mutual-funds-analysis/nav'
-    | '/indian-mutual-funds-analysis/sip'
-    | '/indian-mutual-funds-analysis/swp'
+    | '/investment-analysis/cagr'
+    | '/investment-analysis/price-history'
+    | '/investment-analysis/sip'
+    | '/investment-analysis/swp'
     | '/itr/schedule-fa/a3'
   id:
     | '__root__'
@@ -157,10 +154,10 @@ export interface FileRouteTypes {
     | '/calculators/sip'
     | '/calculators/sip-swp'
     | '/calculators/swp'
-    | '/indian-mutual-funds-analysis/cagr'
-    | '/indian-mutual-funds-analysis/nav'
-    | '/indian-mutual-funds-analysis/sip'
-    | '/indian-mutual-funds-analysis/swp'
+    | '/investment-analysis/cagr'
+    | '/investment-analysis/price-history'
+    | '/investment-analysis/sip'
+    | '/investment-analysis/swp'
     | '/itr/schedule-fa/a3'
   fileRoutesById: FileRoutesById
 }
@@ -171,10 +168,10 @@ export interface RootRouteChildren {
   CalculatorsSipRoute: typeof CalculatorsSipRoute
   CalculatorsSipSwpRoute: typeof CalculatorsSipSwpRoute
   CalculatorsSwpRoute: typeof CalculatorsSwpRoute
-  IndianMutualFundsAnalysisCagrRoute: typeof IndianMutualFundsAnalysisCagrRoute
-  IndianMutualFundsAnalysisNavRoute: typeof IndianMutualFundsAnalysisNavRoute
-  IndianMutualFundsAnalysisSipRoute: typeof IndianMutualFundsAnalysisSipRoute
-  IndianMutualFundsAnalysisSwpRoute: typeof IndianMutualFundsAnalysisSwpRoute
+  InvestmentAnalysisCagrRoute: typeof InvestmentAnalysisCagrRoute
+  InvestmentAnalysisPriceHistoryRoute: typeof InvestmentAnalysisPriceHistoryRoute
+  InvestmentAnalysisSipRoute: typeof InvestmentAnalysisSipRoute
+  InvestmentAnalysisSwpRoute: typeof InvestmentAnalysisSwpRoute
   ItrScheduleFaA3Route: typeof ItrScheduleFaA3Route
 }
 
@@ -187,32 +184,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/indian-mutual-funds-analysis/swp': {
-      id: '/indian-mutual-funds-analysis/swp'
-      path: '/indian-mutual-funds-analysis/swp'
-      fullPath: '/indian-mutual-funds-analysis/swp'
-      preLoaderRoute: typeof IndianMutualFundsAnalysisSwpRouteImport
+    '/investment-analysis/swp': {
+      id: '/investment-analysis/swp'
+      path: '/investment-analysis/swp'
+      fullPath: '/investment-analysis/swp'
+      preLoaderRoute: typeof InvestmentAnalysisSwpRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/indian-mutual-funds-analysis/sip': {
-      id: '/indian-mutual-funds-analysis/sip'
-      path: '/indian-mutual-funds-analysis/sip'
-      fullPath: '/indian-mutual-funds-analysis/sip'
-      preLoaderRoute: typeof IndianMutualFundsAnalysisSipRouteImport
+    '/investment-analysis/sip': {
+      id: '/investment-analysis/sip'
+      path: '/investment-analysis/sip'
+      fullPath: '/investment-analysis/sip'
+      preLoaderRoute: typeof InvestmentAnalysisSipRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/indian-mutual-funds-analysis/nav': {
-      id: '/indian-mutual-funds-analysis/nav'
-      path: '/indian-mutual-funds-analysis/nav'
-      fullPath: '/indian-mutual-funds-analysis/nav'
-      preLoaderRoute: typeof IndianMutualFundsAnalysisNavRouteImport
+    '/investment-analysis/price-history': {
+      id: '/investment-analysis/price-history'
+      path: '/investment-analysis/price-history'
+      fullPath: '/investment-analysis/price-history'
+      preLoaderRoute: typeof InvestmentAnalysisPriceHistoryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/indian-mutual-funds-analysis/cagr': {
-      id: '/indian-mutual-funds-analysis/cagr'
-      path: '/indian-mutual-funds-analysis/cagr'
-      fullPath: '/indian-mutual-funds-analysis/cagr'
-      preLoaderRoute: typeof IndianMutualFundsAnalysisCagrRouteImport
+    '/investment-analysis/cagr': {
+      id: '/investment-analysis/cagr'
+      path: '/investment-analysis/cagr'
+      fullPath: '/investment-analysis/cagr'
+      preLoaderRoute: typeof InvestmentAnalysisCagrRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/calculators/swp': {
@@ -267,10 +264,10 @@ const rootRouteChildren: RootRouteChildren = {
   CalculatorsSipRoute: CalculatorsSipRoute,
   CalculatorsSipSwpRoute: CalculatorsSipSwpRoute,
   CalculatorsSwpRoute: CalculatorsSwpRoute,
-  IndianMutualFundsAnalysisCagrRoute: IndianMutualFundsAnalysisCagrRoute,
-  IndianMutualFundsAnalysisNavRoute: IndianMutualFundsAnalysisNavRoute,
-  IndianMutualFundsAnalysisSipRoute: IndianMutualFundsAnalysisSipRoute,
-  IndianMutualFundsAnalysisSwpRoute: IndianMutualFundsAnalysisSwpRoute,
+  InvestmentAnalysisCagrRoute: InvestmentAnalysisCagrRoute,
+  InvestmentAnalysisPriceHistoryRoute: InvestmentAnalysisPriceHistoryRoute,
+  InvestmentAnalysisSipRoute: InvestmentAnalysisSipRoute,
+  InvestmentAnalysisSwpRoute: InvestmentAnalysisSwpRoute,
   ItrScheduleFaA3Route: ItrScheduleFaA3Route,
 }
 export const routeTree = rootRouteImport

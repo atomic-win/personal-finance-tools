@@ -23,20 +23,23 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select';
-import { withMutualFunds } from '@/features/indian-mutual-funds-analysis/hoc/with-mutual-funds';
+import { withInstruments } from '@/features/investment-analysis/hoc/with-instruments';
 import {
-	type MutualFund,
+	type Instrument,
 	PresetTimeDurations,
-} from '@/features/indian-mutual-funds-analysis/lib/types';
+} from '@/features/investment-analysis/lib/types';
 import {
 	displayPresetTimeDuration,
 	getLuxonDuration,
-} from '@/features/indian-mutual-funds-analysis/lib/utils';
+} from '@/features/investment-analysis/lib/utils';
+import { useCurrencyQuery } from '@/hooks/use-currency-query';
+import { useLocaleQuery } from '@/hooks/use-locale-query';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { displayCurrencyAmountText } from '@/lib/utils';
 
-const LoadedNavChart = withMutualFunds(NavChart);
+const LoadedPriceHistoryChart = withInstruments(PriceHistoryChart);
 
-export default function NavChartCard({
+export default function PriceHistoryCard({
 	timeRange,
 	onTimeRangeChange,
 }: {
@@ -53,9 +56,10 @@ export default function NavChartCard({
 		<Card className='rounded-lg shadow-md w-full'>
 			<CardHeader className='flex flex-col md:flex-row md:items-center gap-4 space-y-2 md:space-y-0 border-b py-4'>
 				<div className='grid text-center md:text-left w-full gap-2'>
-					<CardTitle>NAV History</CardTitle>
+					<CardTitle>Price History</CardTitle>
 					<CardDescription>
-						Net Asset Value over time for selected mutual funds
+						NAV and index levels over time for the selected mutual funds and
+						indexes
 					</CardDescription>
 				</div>
 				<Select
@@ -81,23 +85,29 @@ export default function NavChartCard({
 				</Select>
 			</CardHeader>
 			<CardContent className='p-6'>
-				<LoadedNavChart timeRange={timeRange} />
+				<LoadedPriceHistoryChart timeRange={timeRange} />
 			</CardContent>
 		</Card>
 	);
 }
 
-function NavChart({
-	mutualfunds,
+function PriceHistoryChart({
+	instruments,
 	timeRange,
 }: {
-	mutualfunds: MutualFund[];
+	instruments: Instrument[];
 	timeRange: PresetTimeDurations;
 }) {
-	if (mutualfunds.length === 0) {
+	const currencyQuery = useCurrencyQuery();
+	const localeQuery = useLocaleQuery();
+
+	const currency = currencyQuery.data || 'USD';
+	const locale = localeQuery.data || 'en-US';
+
+	if (instruments.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
-				<Label>No mutual funds selected</Label>
+				<Label>No mutual funds or indexes selected</Label>
 			</div>
 		);
 	}
@@ -105,12 +115,12 @@ function NavChart({
 	const now = DateTime.local();
 	const startDate = now.minus(getLuxonDuration(timeRange));
 
-	const chartConfig = mutualfunds.reduce(
-		(acc, mutualfund, i) => ({
-			// biome-ignore lint/performance/noAccumulatingSpread: Need to accumulate config for each mutual fund.
+	const chartConfig = instruments.reduce(
+		(acc, instrument, i) => ({
+			// biome-ignore lint/performance/noAccumulatingSpread: Need to accumulate config for each instrument.
 			...acc,
-			[mutualfund.schemeCode.toString()]: {
-				label: mutualfund.schemeName,
+			[instrument.id]: {
+				label: instrument.name,
 				color: `var(--chart-${i + 1})`,
 			},
 		}),
@@ -118,10 +128,9 @@ function NavChart({
 	) as ChartConfig;
 
 	const chartDataMap = new Map<number, { date: number }>();
-	let maxNav = 0;
 
-	for (const mutualfund of mutualfunds) {
-		for (const [dateStr, nav] of Object.entries(mutualfund.navs)) {
+	for (const instrument of instruments) {
+		for (const [dateStr, price] of Object.entries(instrument.prices)) {
 			const dt = DateTime.fromISO(dateStr);
 			if (dt < startDate) continue;
 
@@ -134,12 +143,8 @@ function NavChart({
 			const data = chartDataMap.get(millis)!;
 			chartDataMap.set(millis, {
 				...data,
-				[mutualfund.schemeCode.toString()]: nav,
+				[instrument.id]: price,
 			});
-
-			if (nav > maxNav) {
-				maxNav = nav;
-			}
 		}
 	}
 
@@ -150,7 +155,7 @@ function NavChart({
 	if (chartData.length === 0) {
 		return (
 			<div className='flex items-center justify-center'>
-				<Label>No NAV data available for the selected time range</Label>
+				<Label>No price data available for the selected time range</Label>
 			</div>
 		);
 	}
@@ -174,8 +179,11 @@ function NavChart({
 					axisLine={true}
 					tickMargin={8}
 					minTickGap={32}
+					tickFormatter={(value) =>
+						displayCurrencyAmountText(locale, currency, value, 'compact', 2)
+					}
 					label={{
-						value: 'NAV (₹)',
+						value: `Price (${currency})`,
 						position: 'insideLeft',
 						angle: -90,
 						style: { textAnchor: 'middle' },
@@ -206,19 +214,25 @@ function NavChart({
 									/>
 									{chartConfig[name as keyof typeof chartConfig]?.label}
 									<div className='ml-auto flex items-baseline gap-0.5 font-mono font-medium tabular-nums text-foreground'>
-										₹{value}
+										{displayCurrencyAmountText(
+											locale,
+											currency,
+											Number(value),
+											'standard',
+											2
+										)}
 									</div>
 								</>
 							)}
 						/>
 					}
 				/>
-				{mutualfunds.map((mutualfund) => (
+				{instruments.map((instrument) => (
 					<Line
-						key={mutualfund.schemeCode}
-						dataKey={mutualfund.schemeCode.toString()}
+						key={instrument.id}
+						dataKey={instrument.id}
 						type='monotone'
-						stroke={`var(--color-${mutualfund.schemeCode})`}
+						stroke={chartConfig[instrument.id]?.color}
 						strokeWidth={2}
 						dot={false}
 					/>
