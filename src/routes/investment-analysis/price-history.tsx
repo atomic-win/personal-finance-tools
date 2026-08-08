@@ -11,7 +11,7 @@ function Page() {
 			<title>Mutual Funds NAV and Index Price History</title>
 			<meta
 				name='keywords'
-				content='Mutual Funds, NAV, Net Asset Value, Stock Market Index, NASDAQ 100, S&P 500, Price History, Investment Analysis'
+				content='Mutual Funds, NAV, Net Asset Value, Stock Market Index, Nifty 50, Sensex, S&P 500, NASDAQ 100, Price History, Investment Analysis'
 			/>
 			<PriceHistoryPage />
 		</>

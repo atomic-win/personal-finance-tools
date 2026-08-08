@@ -34,7 +34,7 @@ export default function SelectIndexesCard() {
 			<CardHeader>
 				<CardTitle>Indexes</CardTitle>
 			</CardHeader>
-			<CardContent className='space-y-2'>
+			<CardContent className='space-y-2 max-h-96 overflow-y-auto'>
 				{SUPPORTED_INDEXES.map((index) => {
 					const isSelected = selectedSymbols.includes(index.symbol);
 

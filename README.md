@@ -16,7 +16,7 @@ A web application providing calculators and analysis tools for personal finance 
 ## Features
 
 - **Calculators** — Fixed Deposit, Recurring Deposit, SIP, and SWP return calculators.
-- **Investment Analysis** — Price history, CAGR, SIP, and SWP analysis for Indian mutual funds and global stock market indexes (NASDAQ 100, S&P 500), compared in the currency of your choice (uses Web Workers for heavy computation).
+- **Investment Analysis** — Price history, CAGR, SIP, and SWP analysis for Indian mutual funds and global stock market indexes (Nifty 50, Sensex, S&P 500, NASDAQ 100 and more), compared in the currency of your choice (uses Web Workers for heavy computation).
 - **ITR Schedule FA / A3** — Generate Schedule FA (Foreign Assets) and Schedule A3 for Indian income tax returns.
 
 ## Getting Started

@@ -77,7 +77,7 @@ src/
 - **Web Workers**: CPU-intensive calculations (e.g., returns analysis) are offloaded to Web Workers.
 - **Instrument abstraction**: Mutual funds and stock market indexes are both normalised into the `Instrument` type (`id`, `name`, `type`, `currency`, `earliestDate`, `lastDate`, `prices`). Instrument ids are prefixed (`mf:<schemeCode>`, `index:<symbol>`), and the CAGR/SIP/SWP engine, worker, charts, and tables operate purely on `Instrument`.
 - **Instrument loading**: `withInstruments` (`hoc/with-instruments.tsx`) reads the repeated `mfSchemeCode` and `indexSymbol` search params, loads both data sets, and converts every price series into the user's settings currency using daily Yahoo Finance FX rates before passing `instruments` to the wrapped component.
-- **Supported indexes**: Registered in `lib/indexes.ts` (currently NASDAQ 100 `^NDX` and S&P 500 `^GSPC`). The index history server function validates symbols against this registry.
+- **Supported indexes**: Registered in `lib/indexes.ts` (Indian, US, European, and Japanese benchmarks). Each entry declares its native currency, and the index history server function validates symbols against this registry.
 - **Daily series**: `buildDailySeries` forward-fills sparse price/FX data into a continuous daily series; currency conversion also forward-fills the last known FX rate, so a series is only trimmed at the start, before the first available rate (Yahoo FX history starts ~2003).
 - **Query persistence**: TanStack Query caches are persisted to `localStorage` with a 24-hour GC time and 1-hour stale time.
 

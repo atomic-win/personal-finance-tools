@@ -11,13 +11,13 @@ function Page() {
 			<title>Indian Mutual Funds and Index CAGR Returns</title>
 			<meta
 				name='keywords'
-				content='Mutual Funds, Stock Market Index, NASDAQ 100, S&P 500, Rolling Returns, CAGR, Investment Analysis, Financial Planning'
+				content='Mutual Funds, Stock Market Index, Nifty 50, Sensex, S&P 500, NASDAQ 100, Rolling Returns, CAGR, Investment Analysis, Financial Planning'
 			/>
 			<ReturnsPage
 				returnType='cagr'
 				title='CAGR'
 				href='/investment-analysis/cagr'
-				description='Analyze CAGR (Compound Annual Growth Rate) rolling returns of Indian Mutual Funds and global stock market indexes such as NASDAQ 100 and S&P 500. Compare long-term performance across different time frames, in your preferred currency, to make informed investment decisions.'
+				description='Analyze CAGR (Compound Annual Growth Rate) rolling returns of Indian Mutual Funds and global stock market indexes such as Nifty 50, Sensex, S&P 500 and NASDAQ 100. Compare long-term performance across different time frames, in your preferred currency, to make informed investment decisions.'
 			/>
 		</>
 	);
