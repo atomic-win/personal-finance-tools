@@ -4,6 +4,7 @@ export const SUPPORTED_INDEXES: SupportedIndex[] = [
 	{ symbol: '^NSEI', name: 'Nifty 50', currency: 'INR' },
 	{ symbol: '^BSESN', name: 'BSE Sensex', currency: 'INR' },
 	{ symbol: '^NSEMDCP50', name: 'Nifty Midcap 50', currency: 'INR' },
+	{ symbol: '^CRSLDX', name: 'Nifty 500', currency: 'INR' },
 	{ symbol: 'NIFTY_TOTAL_MKT.NS', name: 'Nifty Total Market', currency: 'INR' },
 	{ symbol: '^NDX', name: 'NASDAQ 100', currency: 'USD' },
 	{ symbol: '^IXIC', name: 'NASDAQ Composite', currency: 'USD' },
