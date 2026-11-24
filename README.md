@@ -35,6 +35,32 @@ npm run build
 npm run preview
 ```
 
+## Google Analytics
+
+Google Analytics 4 is optional and only loads in production builds when
+`VITE_GA_MEASUREMENT_ID` is set. Development (`npm run dev`) does not send analytics.
+The tracked `.env` leaves this setting blank so analytics is disabled by default.
+
+1. Create a GA4 property and a Web data stream for your site's URL. Copy the
+   measurement ID (`G-...`).
+2. In Vercel's project environment variables, set `VITE_GA_MEASUREMENT_ID` to that
+   ID for **Production**, then redeploy. Leave it unset for Preview to avoid
+   counting PR traffic. The ID is public and is embedded at build time.
+3. In the stream's **Enhanced measurement > Page views > Show advanced settings**,
+   enable **Page loads** and **Page changes based on browser history events**.
+   The Google tag handles initial page views and client-side navigation; do not
+   add another manual page-view listener or a second tag for the same stream.
+4. Visit the deployed site and navigate between tools. Confirm events in GA4's
+   Realtime report, or use DebugView with debug mode enabled.
+
+For a local production preview, set `VITE_GA_MEASUREMENT_ID=G-...` in `.env.local`,
+then run `npm run build` and `npm run preview`. Use a separate test stream if you
+do not want local visits in production reports. To disable analytics, remove the
+variable and rebuild/redeploy.
+
+This integration uses Google's default page-view collection (including page
+URLs); it does not add custom events for calculator inputs or uploaded tax data.
+
 ## Available Scripts
 
 | Command           | Description                      |

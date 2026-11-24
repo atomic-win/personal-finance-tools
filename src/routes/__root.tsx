@@ -12,6 +12,14 @@ import Providers from '@/components/providers';
 import '@fontsource/inter/latin.css';
 import '@/globals.css';
 
+const gaMeasurementId = import.meta.env.VITE_GA_MEASUREMENT_ID;
+
+if (gaMeasurementId && !/^G-[A-Z0-9]+$/.test(gaMeasurementId)) {
+	throw new Error(
+		'VITE_GA_MEASUREMENT_ID must be a GA4 measurement ID (G-...).'
+	);
+}
+
 export const Route = createRootRoute({
 	head: () => ({
 		meta: [
@@ -20,6 +28,21 @@ export const Route = createRootRoute({
 			{ title: 'Personal Finance Tools' },
 		],
 		links: [{ rel: 'icon', href: '/favicon.ico' }],
+		scripts:
+			import.meta.env.PROD && gaMeasurementId
+				? [
+						{
+							children: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${gaMeasurementId}');`,
+						},
+						{
+							async: true,
+							src: `https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`,
+						},
+					]
+				: [],
 	}),
 	component: RootComponent,
 });

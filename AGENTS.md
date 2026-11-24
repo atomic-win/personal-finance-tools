@@ -80,6 +80,7 @@ src/
 - **Supported indexes**: Registered in `lib/indexes.ts` (Indian, US, European, and Japanese benchmarks). Each entry declares its native currency, and the index history server function validates symbols against this registry.
 - **Daily series**: `buildDailySeries` forward-fills sparse price/FX data into a continuous daily series; currency conversion also forward-fills the last known FX rate, so a series is only trimmed at the start, before the first available rate (Yahoo FX history starts ~2003).
 - **Query persistence**: TanStack Query caches are persisted to `localStorage` with a 24-hour GC time and 1-hour stale time.
+- **Analytics**: The root route's `head.scripts` loads the standard GA4 tag only in production builds with `VITE_GA_MEASUREMENT_ID` configured. GA4 Enhanced Measurement handles browser-history page views; do not add manual page-view tracking alongside it. No custom financial-data events are sent.
 
 ### Component Patterns
 
@@ -101,6 +102,7 @@ src/
 ## Environment Variables
 
 - `VITE_BASE_URL` — Base URL for the application (defined in `.env`).
+- `VITE_GA_MEASUREMENT_ID` — Optional public GA4 measurement ID (`G-...`), embedded at build time. Blank in the tracked `.env` to disable analytics by default. Set only in Vercel Production to exclude previews. Development never loads the tag.
 - Local overrides go in `.env.local` (git-ignored).
 
 ## Important Notes
