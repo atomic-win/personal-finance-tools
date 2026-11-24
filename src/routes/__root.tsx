@@ -1,6 +1,7 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import {
+	Asset,
 	createRootRoute,
 	HeadContent,
 	Outlet,
@@ -28,20 +29,6 @@ export const Route = createRootRoute({
 			{ title: 'Personal Finance Tools' },
 		],
 		links: [{ rel: 'icon', href: '/favicon.ico' }],
-		scripts:
-			import.meta.env.PROD && gaMeasurementId
-				? [
-						{
-							children: `window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());`,
-						},
-						{
-							async: true,
-							src: `https://www.googletagmanager.com/gtm.js?id=${gaMeasurementId}`,
-						},
-					]
-				: [],
 	}),
 	component: RootComponent,
 });
@@ -75,6 +62,22 @@ function RootDocument({ children }: { children: ReactNode }) {
 	return (
 		<html lang='en'>
 			<head>
+				{import.meta.env.PROD && gaMeasurementId && (
+					<>
+						<Asset
+							tag='script'
+							attrs={{
+								async: true,
+								src: `https://www.googletagmanager.com/gtm.js?id=${gaMeasurementId}`,
+							}}
+						/>
+						<Asset tag='script'>
+							{`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());`}
+						</Asset>
+					</>
+				)}
 				<HeadContent />
 			</head>
 			<body className='min-h-screen bg-background font-sans antialiased'>

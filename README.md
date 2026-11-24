@@ -42,6 +42,8 @@ Google Analytics 4 is optional and only loads in production builds when
 The tracked `.env` leaves this setting blank so analytics is disabled by default.
 The Google tag loads through `gtm.js`; settings and destinations are managed in
 Google's tag UI rather than a deprecated in-page `gtag('config')` call.
+It is included once in the shared root document's `<head>`, before `HeadContent`,
+so all routes are covered without adding tags to individual pages.
 
 1. Create a GA4 property and a Web data stream for your site's URL. Copy the
    measurement ID (`G-...`).
