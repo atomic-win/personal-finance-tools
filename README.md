@@ -40,6 +40,8 @@ npm run preview
 Google Analytics 4 is optional and only loads in production builds when
 `VITE_GA_MEASUREMENT_ID` is set. Development (`npm run dev`) does not send analytics.
 The tracked `.env` leaves this setting blank so analytics is disabled by default.
+The Google tag loads through `gtm.js`; settings and destinations are managed in
+Google's tag UI rather than a deprecated in-page `gtag('config')` call.
 
 1. Create a GA4 property and a Web data stream for your site's URL. Copy the
    measurement ID (`G-...`).

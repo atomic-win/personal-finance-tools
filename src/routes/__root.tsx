@@ -34,12 +34,11 @@ export const Route = createRootRoute({
 						{
 							children: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', '${gaMeasurementId}');`,
+gtag('js', new Date());`,
 						},
 						{
 							async: true,
-							src: `https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`,
+							src: `https://www.googletagmanager.com/gtm.js?id=${gaMeasurementId}`,
 						},
 					]
 				: [],
