@@ -62,24 +62,24 @@ function RootDocument({ children }: { children: ReactNode }) {
 	return (
 		<html lang='en'>
 			<head>
-				{import.meta.env.PROD && gaMeasurementId && (
-					<>
-						<Asset
-							tag='script'
-							attrs={{
-								async: true,
-								src: `https://www.googletagmanager.com/gtm.js?id=${gaMeasurementId}`,
-							}}
-						/>
-						<Asset tag='script'>
-							{`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());`}
-						</Asset>
-					</>
-				)}
 				<HeadContent />
 			</head>
+			{import.meta.env.PROD && gaMeasurementId && (
+				<>
+					<Asset
+						tag='script'
+						attrs={{
+							async: true,
+							src: `https://www.googletagmanager.com/gtm.js?id=${gaMeasurementId}`,
+						}}
+					/>
+					<Asset tag='script'>
+						{`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());`}
+					</Asset>
+				</>
+			)}
 			<body className='min-h-screen bg-background font-sans antialiased'>
 				{children}
 				<Scripts />
