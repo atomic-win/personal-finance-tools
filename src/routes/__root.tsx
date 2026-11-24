@@ -1,7 +1,6 @@
 import { TanStackDevtools } from '@tanstack/react-devtools';
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import {
-	Asset,
 	createRootRoute,
 	HeadContent,
 	Outlet,
@@ -9,6 +8,7 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import type { ReactNode } from 'react';
+import { GoogleAnalytics } from 'tanstack-router-ga4';
 import Providers from '@/components/providers';
 import '@fontsource/inter/latin.css';
 import '@/globals.css';
@@ -64,23 +64,10 @@ function RootDocument({ children }: { children: ReactNode }) {
 			<head>
 				<HeadContent />
 			</head>
-			{import.meta.env.PROD && gaMeasurementId && (
-				<>
-					<Asset
-						tag='script'
-						attrs={{
-							async: true,
-							src: `https://www.googletagmanager.com/gtm.js?id=${gaMeasurementId}`,
-						}}
-					/>
-					<Asset tag='script'>
-						{`window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());`}
-					</Asset>
-				</>
-			)}
 			<body className='min-h-screen bg-background font-sans antialiased'>
+				{import.meta.env.PROD && gaMeasurementId && (
+					<GoogleAnalytics measurementId={gaMeasurementId} />
+				)}
 				{children}
 				<Scripts />
 			</body>
