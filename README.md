@@ -10,7 +10,7 @@ A web application providing calculators and analysis tools for personal finance 
 - **Data**: [TanStack Query](https://tanstack.com/query) (persisted to localStorage)
 - **Forms**: React Hook Form + Zod
 - **Charts**: Recharts
-- **Analytics**: Google Analytics 4 via `tanstack-router-ga4` (optional)
+- **Analytics**: Google Analytics 4 via the Google tag (optional)
 - **Linting/Formatting**: [Biome](https://biomejs.dev/)
 - **Deployment**: [Vercel](https://vercel.com/)
 
@@ -41,10 +41,10 @@ npm run preview
 Google Analytics 4 is optional and only loads in production builds when
 `VITE_GA_MEASUREMENT_ID` is set. Development (`npm run dev`) does not send analytics.
 The tracked `.env` leaves this setting blank so analytics is disabled by default.
-One `GoogleAnalytics` component from `tanstack-router-ga4` is mounted in the shared
-root document. It loads the Google tag into the head client-side when the browser
-is idle and sends page views on initial mount and pathname changes. Do not add a
-separate Google tag or page-view listener to individual routes.
+The Google tag loads through `gtm.js`; settings and destinations are managed in
+Google's tag UI rather than a deprecated in-page `gtag('config')` call.
+It is included once in the shared root document's `<head>`, before `HeadContent`,
+so all routes are covered without adding tags to individual pages.
 
 1. Create a GA4 property and a Web data stream for your site's URL. Copy the
    measurement ID (`G-...`).
@@ -52,9 +52,9 @@ separate Google tag or page-view listener to individual routes.
    ID for **Production**, then redeploy. Leave it unset for Preview to avoid
    counting PR traffic. The ID is public and is embedded at build time.
 3. In the stream's **Enhanced measurement > Page views > Show advanced settings**,
-   disable **Page changes based on browser history events** to avoid duplicate
-   page views. The library disables the tag's automatic initial page view and
-   sends initial and subsequent route page views itself.
+   enable **Page loads** and **Page changes based on browser history events**.
+   The Google tag handles initial page views and client-side navigation; do not
+   add another manual page-view listener or a second tag for the same stream.
 4. Visit the deployed site and navigate between tools. Confirm events in GA4's
    Realtime report, or use DebugView with debug mode enabled.
 
