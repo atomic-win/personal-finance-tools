@@ -17,6 +17,7 @@ This file provides context for AI agents and automated tools working on this cod
 | Styling       | Tailwind CSS v4 (via `@tailwindcss/vite`)                         |
 | Components    | shadcn/ui (Base UI variant) + Lucide icons                        |
 | Charts        | Recharts                                                          |
+| Analytics     | Google Analytics 4 via `tanstack-router-ga4` (optional)             |
 | Forms         | React Hook Form + Zod validation                                  |
 | Linting       | Biome (linter + formatter)                                        |
 | Language      | TypeScript (strict mode)                                          |
@@ -80,6 +81,7 @@ src/
 - **Supported indexes**: Registered in `lib/indexes.ts` (Indian, US, European, and Japanese benchmarks). Each entry declares its native currency, and the index history server function validates symbols against this registry.
 - **Daily series**: `buildDailySeries` forward-fills sparse price/FX data into a continuous daily series; currency conversion also forward-fills the last known FX rate, so a series is only trimmed at the start, before the first available rate (Yahoo FX history starts ~2003).
 - **Query persistence**: TanStack Query caches are persisted to `localStorage` with a 24-hour GC time and 1-hour stale time.
+- **Analytics**: The shared root document mounts one `GoogleAnalytics` component from `tanstack-router-ga4` only in production builds with `VITE_GA_MEASUREMENT_ID` configured. The library loads the tag client-side when idle and tracks initial mount and pathname changes, with `send_page_view: false` to suppress the tag's automatic initial event. Disable GA4 Enhanced Measurement's browser-history page views; do not add separate tags or page-view listeners. No custom financial-data events are sent.
 
 ### Component Patterns
 
@@ -101,6 +103,7 @@ src/
 ## Environment Variables
 
 - `VITE_BASE_URL` — Base URL for the application (defined in `.env`).
+- `VITE_GA_MEASUREMENT_ID` — Optional public GA4 measurement ID (`G-...`), embedded at build time. Blank in the tracked `.env` to disable analytics by default. Set only in Vercel Production to exclude previews. Development never loads the tag.
 - Local overrides go in `.env.local` (git-ignored).
 
 ## Important Notes
